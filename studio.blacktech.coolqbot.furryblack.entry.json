@@ -1,0 +1,30 @@
+// CoolQ的JSON解析器支持双斜线注释JcqSDK也支持
+{
+	"ret": 1,
+	"apiver": 9,
+	"name": "FurryBlack",
+	"description": "小动物形象机器人",
+	"author": "BlackTechStudio",
+	"version": "1.0.0",
+	"version_id": 1,
+	// 主类路径
+	"class": "studio.blacktech.coolqbot.furryblack.entry",
+	// 权限功能需要在配置文件注册才可使用
+	"event": [
+		{"id": 1,"type": 21,"name": "私聊消息处理","function": "privateMsg","priority": 30000},
+		{"id": 2,"type": 2,"name": "群消息处理","function": "groupMsg","priority": 30000},
+		{"id": 3,"type": 4,"name": "讨论组消息处理","function": "discussMsg","priority": 30000},
+//		{"id": 4,"type": 11,"name": "群文件上传事件处理","function": "groupUpload","priority": 30000},
+//		{"id": 5,"type": 101,"name": "群管理变动事件处理","function": "groupAdmin","priority": 30000},
+//		{"id": 6,"type": 102,"name": "群成员减少事件处理","function": "groupMemberDecrease","priority": 30000},
+//		{"id": 7,"type": 103,"name": "群成员增加事件处理","function": "groupMemberIncrease","priority": 30000},
+		{"id": 8,"type": 301,"name": "好友添加请求处理","function": "requestAddFriend","priority": 30000},
+		{"id": 9,"type": 302,"name": "群添加请求处理","function": "requestAddGroup","priority": 30000},
+//		{"id": 10,"type": 201,"name": "好友已添加事件处理","function": "friendAdd","priority": 30000},
+		{"id": 1001,"type": 1001,"name": "酷Q启动事件","priority": 30000,"function": "startup"},
+		{"id": 1002,"type": 1002,"name": "酷Q关闭事件","priority": 30000,"function": "exit"},
+		{"id": 1003,"type": 1003,"name": "应用已被启用","priority": 30000,"function": "enable"},
+		{"id": 1004,"type": 1004,"name": "应用将被停用","priority": 30000,"function": "disable"}
+	],
+	"auth": [101,103,106,110,120,121,122,123,123,125,126,128,130,131,140,150,151,160,161,180]
+}
