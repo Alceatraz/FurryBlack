@@ -69,7 +69,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	// @formatter:on
 
 	/***
-	 * 此main并非实际执行入口 JcqSDK调用的初始化函数为 startup() enable() disable() exit()
+	 * 此main并非实际执行入口
+	 * JcqSDK调用的初始化函数为 
+	 * startup() 
+	 * enable() 
+	 * disable() 
+	 * exit()
 	 * main仅用于JcqDebug模式
 	 *
 	 * @param args 启动参数
