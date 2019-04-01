@@ -4,8 +4,7 @@ import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
 
-public abstract class FunctionModuel {
-
+public abstract class FunctionListener {
 	public int counter = 0;
 	public String MODULE_NAME = null;
 	public String MODULE_COMMAND = null;
@@ -15,7 +14,7 @@ public abstract class FunctionModuel {
 	public String MODULE_FULLHELP = null;
 	public String MODULE_PRIVACY = null;
 
-	public abstract void excute(Workflow flow) throws Exception;
+	public abstract void listener(Workflow flow) throws Exception;
 
 	public void genHelpinfo() {
 		this.MODULE_FULLHELP = this.MODULE_COMMAND + " > " + this.MODULE_NAME + " v" + this.MODULE_VERSION + " - " + this.MODULE_DESCRIPTION + "\r\n√¸¡Ó”√∑®:\r\n" + this.MODULE_HELP + "\r\n“˛ÀΩ…˘√˜:\r\n" + this.MODULE_PRIVACY;
@@ -30,11 +29,11 @@ public abstract class FunctionModuel {
 	}
 
 	public static void disInfo(final Workflow flow, final String message) {
-		JcqApp.CQ.sendDiscussMsg(flow.dsid, "[CQ:at,qq=" + flow.qqid + "] " + message);
+		JcqApp.CQ.sendDiscussMsg(flow.dzid, "[CQ:at,qq=" + flow.qqid + "] " + message);
 	}
 
 	public static void disWarn(final Workflow flow, final String message) {
-		JcqApp.CQ.sendDiscussMsg(flow.dsid, "[CQ:at,qq=" + flow.qqid + "] √¸¡Ó¥ÌŒÛ: " + message);
+		JcqApp.CQ.sendDiscussMsg(flow.dzid, "[CQ:at,qq=" + flow.qqid + "] √¸¡Ó¥ÌŒÛ: " + message);
 	}
 
 	public static void grpAnno(final long gpid, final String message) {
@@ -50,5 +49,4 @@ public abstract class FunctionModuel {
 	}
 
 	public abstract String genReport();
-
 }

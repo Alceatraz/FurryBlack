@@ -6,8 +6,8 @@ import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.coolqbot.furryblack.Zwischenspiel;
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.module.Module_jrjp;
-import studio.blacktech.coolqbot.furryblack.module.Module_jrrp;
+import studio.blacktech.coolqbot.furryblack.module.Executor_jrjp;
+import studio.blacktech.coolqbot.furryblack.module.Executor_jrrp;
 
 public class Autobot_DailyTask implements Runnable {
 
@@ -25,8 +25,8 @@ public class Autobot_DailyTask implements Runnable {
 			Thread.sleep(time * 1000);
 			while (true) {
 				Autobot_DailyTask.date = new Date();
-				Module_jrrp.flush();
-				Module_jrjp.flush();
+				Executor_jrrp.flush();
+				Executor_jrjp.flush();
 				JcqApp.CQ.sendPrivateMsg(entry.OPERATOR, Zwischenspiel.genReport(Autobot_DailyTask.date));
 				Thread.sleep(86400000L);
 			}

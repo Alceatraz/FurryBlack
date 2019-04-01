@@ -2,9 +2,9 @@ package studio.blacktech.coolqbot.furryblack.module;
 
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
 
-public class Module_dice extends FunctionModuel {
+public class Executor_dice extends FunctionExecutor {
 
-	public Module_dice() {
+	public Executor_dice() {
 		this.MODULE_NAME = "扔骰子";
 		this.MODULE_HELP = "//dice 投掷一枚骰子";
 		this.MODULE_COMMAND = "dice";
@@ -14,18 +14,18 @@ public class Module_dice extends FunctionModuel {
 	}
 
 	@Override
-	public void excute(final Workflow flow) {
+	public void executor(final Workflow flow) {
 		this.counter++;
 		final String res = flow.length == 1 ? "[CQ:dice]" : flow.join(1) + "[CQ:dice]";
 		switch (flow.from) {
 		case 1:
-			FunctionModuel.priInfo(flow, res);
+			FunctionExecutor.priInfo(flow, res);
 			break;
 		case 2:
-			FunctionModuel.disInfo(flow, res);
+			FunctionExecutor.disInfo(flow, res);
 			break;
 		case 3:
-			FunctionModuel.grpInfo(flow, res);
+			FunctionExecutor.grpInfo(flow, res);
 			break;
 		}
 	}

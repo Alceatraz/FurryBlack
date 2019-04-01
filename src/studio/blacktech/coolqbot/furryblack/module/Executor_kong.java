@@ -2,9 +2,9 @@ package studio.blacktech.coolqbot.furryblack.module;
 
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
 
-public class Module_kong extends FunctionModuel {
+public class Executor_kong extends FunctionExecutor {
 
-	public Module_kong() {
+	public Executor_kong() {
 		this.MODULE_NAME = "变臭";
 		this.MODULE_HELP = "//kong 需要变臭的原句";
 		this.MODULE_COMMAND = "kong";
@@ -14,7 +14,7 @@ public class Module_kong extends FunctionModuel {
 	}
 
 	@Override
-	public void excute(final Workflow flow) {
+	public void executor(final Workflow flow) {
 		this.counter++;
 
 		if (flow.length == 1) {
@@ -32,13 +32,13 @@ public class Module_kong extends FunctionModuel {
 		builder.setLength(builder.length() - 1);
 		switch (flow.from) {
 		case 1:
-			FunctionModuel.priInfo(flow, builder.toString());
+			FunctionExecutor.priInfo(flow, builder.toString());
 			break;
 		case 2:
-			FunctionModuel.disInfo(flow, builder.toString());
+			FunctionExecutor.disInfo(flow, builder.toString());
 			break;
 		case 3:
-			FunctionModuel.grpInfo(flow, builder.toString());
+			FunctionExecutor.grpInfo(flow, builder.toString());
 			break;
 		}
 	}

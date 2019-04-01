@@ -33,10 +33,10 @@ public class Autobot_DailyDDNS implements Runnable {
 			this.temp = Zwischenspiel.ddnsGetIP();
 			if (this.temp == null) {
 				this.ADDRESS = "127.0.0.1";
-				JcqApp.CQ.sendPrivateMsg(entry.OPERATOR, LoggerX.time(this.date) + " [DDNS] 地址初始化失败");
+				JcqApp.CQ.sendPrivateMsg(entry.OPERATOR, LoggerX.time(this.date) + " [DDNS] 失败");
 			} else {
 				this.ADDRESS = this.temp;
-				JcqApp.CQ.sendPrivateMsg(entry.OPERATOR, LoggerX.time(this.date) + " [DDNS] 地址初始化成功\r\nIP - " + this.ADDRESS);
+				JcqApp.CQ.sendPrivateMsg(entry.OPERATOR, LoggerX.time(this.date) + " [DDNS] " + this.ADDRESS);
 			}
 			Thread.sleep(this.time * 1000);
 			while (true) {

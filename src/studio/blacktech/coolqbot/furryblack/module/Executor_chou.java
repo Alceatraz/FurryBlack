@@ -9,9 +9,9 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
 
-public class Module_chou extends FunctionModuel {
+public class Executor_chou extends FunctionExecutor {
 
-	public Module_chou() {
+	public Executor_chou() {
 		this.MODULE_NAME = "随机选人";
 		this.MODULE_HELP = "//chou 从本群随机选择一个人";
 		this.MODULE_COMMAND = "chou";
@@ -21,10 +21,10 @@ public class Module_chou extends FunctionModuel {
 	}
 
 	@Override
-	public void excute(final Workflow flow) {
+	public void executor(final Workflow flow) {
 		this.counter++;
 		if (flow.from < 3) {
-			FunctionModuel.priWarn(flow, "随机选人仅支持群");
+			FunctionExecutor.priWarn(flow, "随机选人仅支持群");
 			return;
 		}
 		int i;
@@ -48,9 +48,9 @@ public class Module_chou extends FunctionModuel {
 			nickname = theone.getNick();
 		}
 		if (flow.length == 1) {
-			FunctionModuel.grpInfo(flow, "随机抽到 " + nickname + "(" + theone.getQqId() + ")");
+			FunctionExecutor.grpInfo(flow, "随机抽到 " + nickname + "(" + theone.getQqId() + ")");
 		} else {
-			FunctionModuel.grpInfo(flow, "随机抽到 " + nickname + "(" + theone.getQqId() + ") : " + flow.join(1));
+			FunctionExecutor.grpInfo(flow, "随机抽到 " + nickname + "(" + theone.getQqId() + ") : " + flow.join(1));
 		}
 	}
 
@@ -58,4 +58,5 @@ public class Module_chou extends FunctionModuel {
 	public String genReport() {
 		return null;
 	}
+
 }

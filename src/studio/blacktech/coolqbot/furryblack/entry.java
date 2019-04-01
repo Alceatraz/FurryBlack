@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -15,16 +16,19 @@ import com.sobte.cqp.jcq.entity.IRequest;
 import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
-import studio.blacktech.coolqbot.furryblack.module.FunctionModuel;
-import studio.blacktech.coolqbot.furryblack.module.Module_chou;
-import studio.blacktech.coolqbot.furryblack.module.Module_dice;
-import studio.blacktech.coolqbot.furryblack.module.Module_jrjp;
-import studio.blacktech.coolqbot.furryblack.module.Module_jrrp;
-import studio.blacktech.coolqbot.furryblack.module.Module_kong;
-import studio.blacktech.coolqbot.furryblack.module.Module_mine;
-import studio.blacktech.coolqbot.furryblack.module.Module_roll;
-import studio.blacktech.coolqbot.furryblack.module.Module_roulette;
-import studio.blacktech.coolqbot.furryblack.module.Module_zhan;
+import studio.blacktech.coolqbot.furryblack.module.Executor_chou;
+import studio.blacktech.coolqbot.furryblack.module.Executor_dice;
+import studio.blacktech.coolqbot.furryblack.module.Executor_echo;
+import studio.blacktech.coolqbot.furryblack.module.Executor_jrjp;
+import studio.blacktech.coolqbot.furryblack.module.Executor_jrrp;
+import studio.blacktech.coolqbot.furryblack.module.Executor_kong;
+import studio.blacktech.coolqbot.furryblack.module.Executor_mine;
+import studio.blacktech.coolqbot.furryblack.module.Executor_nsfw;
+import studio.blacktech.coolqbot.furryblack.module.Executor_roll;
+import studio.blacktech.coolqbot.furryblack.module.Executor_roulette;
+import studio.blacktech.coolqbot.furryblack.module.Executor_zhan;
+import studio.blacktech.coolqbot.furryblack.module.FunctionExecutor;
+import studio.blacktech.coolqbot.furryblack.module.FunctionListener;
 import studio.blacktech.coolqbot.furryblack.scheduler.Autobot_DailyDDNS;
 import studio.blacktech.coolqbot.furryblack.scheduler.Autobot_DailyTask;
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
@@ -45,20 +49,21 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public static final long SELFQQID = 3477852529L;
 	public static final long OPERATOR = 1752384244L;
 
-	protected static TreeMap<String, FunctionModuel> MODULES = new TreeMap<String, FunctionModuel>();
+	protected static TreeMap<String, FunctionExecutor> Executor = new TreeMap<String, FunctionExecutor>();
+	protected static TreeMap<String, FunctionListener> Listener = new TreeMap<String, FunctionListener>();
 
-	private static ArrayList<String> BLACKLIST = new ArrayList<String>();
-	private static ArrayList<Long> USER_IGNORE = new ArrayList<Long>();
-	private static ArrayList<Long> DISC_IGNORE = new ArrayList<Long>();
-	private static ArrayList<Long> GROP_IGNORE = new ArrayList<Long>();
+	private static TreeMap<String, Thread> THREAD = new TreeMap<String, Thread>();
+
+	private static ArrayList<String> BLACKLIST = new ArrayList<String>(100);
+	private static ArrayList<Long> USER_IGNORE = new ArrayList<Long>(100);
+	private static ArrayList<Long> DISC_IGNORE = new ArrayList<Long>(100);
+	private static ArrayList<Long> GROP_IGNORE = new ArrayList<Long>(100);
 
 	private static String MESSAGE_MODULES = "";
 	private static String MESSAGE_HELPALL = "";
 
 	private static String APIURL_BASE = "";
 	private static String APIKEY_DDNS = "";
-
-	private static TreeMap<String, Thread> THREAD = new TreeMap<String, Thread>();
 
 	// @formatter:off
 
@@ -69,12 +74,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	// @formatter:on
 
 	/***
-	 * 此main并非实际执行入口
-	 * JcqSDK调用的初始化函数为 
-	 * startup() 
-	 * enable() 
-	 * disable() 
-	 * exit()
+	 * 此main并非实际执行入口 JcqSDK调用的初始化函数为 startup() enable() disable() exit()
 	 * main仅用于JcqDebug模式
 	 *
 	 * @param args 启动参数
@@ -119,6 +119,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int exit() {
+		System.exit(0);
 		return 0;
 	}
 
@@ -169,21 +170,23 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			reader.close();
 
 			// 加载模块
-			entry.register(new Module_chou());
-			entry.register(new Module_dice());
-			entry.register(new Module_jrjp());
-			entry.register(new Module_jrrp());
-			entry.register(new Module_kong());
-			entry.register(new Module_mine());
-			entry.register(new Module_roll());
-			entry.register(new Module_roulette());
-			entry.register(new Module_zhan());
+			entry.register(new Executor_chou());
+			entry.register(new Executor_dice());
+			entry.register(new Executor_echo());
+			entry.register(new Executor_jrjp());
+			entry.register(new Executor_jrrp());
+			entry.register(new Executor_kong());
+			entry.register(new Executor_mine());
+			entry.register(new Executor_nsfw());
+			entry.register(new Executor_roll());
+			entry.register(new Executor_roulette());
+			entry.register(new Executor_zhan());
 
 			// 预生成//list的内容 - 开始
 			StringBuilder builder = new StringBuilder("已经安装的插件: ");
-			builder.append(entry.MODULES.size());
-			for (final String temp : entry.MODULES.keySet()) {
-				final FunctionModuel module = entry.MODULES.get(temp);
+			builder.append(entry.Executor.size());
+			for (final String temp : entry.Executor.keySet()) {
+				final FunctionExecutor module = entry.Executor.get(temp);
 				builder.append("\r\n//");
 				builder.append(module.MODULE_COMMAND);
 				builder.append(" > ");
@@ -197,10 +200,10 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// 预生成//helpall的内容 - 开始
 			builder = new StringBuilder("已经安装的插件: ");
-			builder.append(entry.MODULES.size());
-			for (final String temp : entry.MODULES.keySet()) {
+			builder.append(entry.Executor.size());
+			for (final String temp : entry.Executor.keySet()) {
 				builder.append("\r\n\r\n");
-				builder.append(entry.MODULES.get(temp).MODULE_FULLHELP);
+				builder.append(entry.Executor.get(temp).MODULE_FULLHELP);
 			}
 			entry.MESSAGE_HELPALL = builder.toString();
 			// 预生成//helpall的内容 - 结束
@@ -233,6 +236,48 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return 0;
 	}
 
+	// ==============================================================================================================================================================
+
+	private static boolean ENABLE_LISTENER_USER = false;
+	private static boolean ENABLE_LISTENER_DISC = false;
+	private static boolean ENABLE_LISTENER_GROP = false;
+
+	private static HashMap<Long, FunctionListener> LISTENER_USER = new HashMap<Long, FunctionListener>(100);
+	private static HashMap<Long, HashMap<Long, FunctionListener>> LISTENER_DISC = new HashMap<Long, HashMap<Long, FunctionListener>>(100);
+	private static HashMap<Long, HashMap<Long, FunctionListener>> LISTENER_GROP = new HashMap<Long, HashMap<Long, FunctionListener>>(100);
+
+	public static void registerListenerPriv(final Long qqid) {
+		entry.ENABLE_LISTENER_USER = true;
+	}
+
+	public static void registerListenerDisc(final Long qqid, final Long dzid) {
+		entry.ENABLE_LISTENER_DISC = true;
+	}
+
+	public static void registerListenerGrop(final Long qqid, final Long gpid) {
+		entry.ENABLE_LISTENER_GROP = true;
+	}
+
+	public static void revokeListenerPriv(final Long qqid) {
+		if (entry.LISTENER_USER.size() == 0) {
+			entry.ENABLE_LISTENER_USER = false;
+		}
+	}
+
+	public static void revokeListenerDisc(final Long qqid, final Long dzid) {
+		if (entry.LISTENER_DISC.size() == 0) {
+			entry.ENABLE_LISTENER_DISC = false;
+		}
+	}
+
+	public static void revokeListenerGrop(final Long qqid, final Long gpid) {
+		if (entry.LISTENER_GROP.size() == 0) {
+			entry.ENABLE_LISTENER_GROP = false;
+		}
+	}
+
+	// ==============================================================================================================================================================
+
 	/***
 	 * 收到私聊时由JcqSDK调用
 	 */
@@ -242,7 +287,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 //			return IMsg.MSG_IGNORE;
 //		}
 		if (message.startsWith("//") && (message.length() > 2)) {
-			ExectorX.shell(new Workflow(mesg_type, mesg_id, user_id, message, mesg_font));
+			LogicX.executor(new Workflow(mesg_type, mesg_id, user_id, message, mesg_font));
+//		} else if (ENABLE_LISTENER_USER && LISTENER_USER.containsKey(user_id)) {
+//			LogicX.listener(new Workflow(mesg_type, mesg_id, user_id, message, mesg_font));
 		} else {
 			JcqApp.CQ.sendPrivateMsg(user_id, "为了保障用户隐私\r\n任何非//开头的内容都将被忽略\r\n请使用//help查看帮助");
 		}
@@ -258,7 +305,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 //			return IMsg.MSG_IGNORE;
 //		}
 		if (message.startsWith("//") && (message.length() > 2)) {
-			ExectorX.shell(new Workflow(mesg_type, mesg_id, user_id, discuss_id, message, mesg_font));
+			LogicX.executor(new Workflow(mesg_type, mesg_id, user_id, discuss_id, message, mesg_font));
+//		} else if (ENABLE_LISTENER_GROP && LISTENER_GROP.containsKey(discuss_id) && LISTENER_GROP.get(discuss_id).containsKey(user_id)) {
+//			LogicX.listener(new Workflow(mesg_type, mesg_id, user_id, discuss_id, message, mesg_font));
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -272,10 +321,14 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 //			return IMsg.MSG_IGNORE;
 //		}
 		if (message.startsWith("//") && (message.length() > 2)) {
-			ExectorX.shell(new Workflow(mesg_type, mesg_id, user_id, group_id, message, anonmessage, mesg_font));
+			LogicX.executor(new Workflow(mesg_type, mesg_id, user_id, group_id, message, anonmessage, mesg_font));
+//		} else if (ENABLE_LISTENER_GROP && LISTENER_GROP.containsKey(group_id) && LISTENER_GROP.get(group_id).containsKey(user_id)) {
+//			LogicX.listener(new Workflow(mesg_type, mesg_id, user_id, group_id, message, anonmessage, mesg_font));
 		}
 		return IMsg.MSG_IGNORE;
 	}
+
+	// ==============================================================================================================================================================
 
 	/***
 	 * 收到添加好友请求时由JcqSDK调用
@@ -293,7 +346,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int requestAddGroup(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final String msg, final String responseFlag) {
-		// subtype含义
+		// sub type
 		// 1 -> 作为管理时收到了用户加入申请
 		// 2 -> 收到好友邀请加入某群的邀请
 		if (subtype == 1) {
@@ -308,8 +361,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	// ==============================================================================================================================================================
 
-	private static void register(final FunctionModuel module) {
-		entry.MODULES.put(module.MODULE_COMMAND, module);
+	private static void register(final FunctionExecutor module) {
+		entry.Executor.put(module.MODULE_COMMAND, module);
 	}
 
 	public static String getAPIKEY_DDNS() {

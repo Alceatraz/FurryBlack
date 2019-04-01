@@ -7,9 +7,9 @@ import java.net.Socket;
 
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
 
-public class Module_mine extends FunctionModuel {
+public class Executor_mine extends FunctionExecutor {
 
-	public Module_mine() {
+	public Executor_mine() {
 		this.MODULE_NAME = "我的世界助手";
 		this.MODULE_HELP = "//mine status 查看服务器在线状态\r\n//mine online 列出服务器在线玩家";
 		this.MODULE_COMMAND = "mine";
@@ -19,7 +19,7 @@ public class Module_mine extends FunctionModuel {
 	}
 
 	@Override
-	public void excute(final Workflow flow) throws Exception {
+	public void executor(final Workflow flow) throws Exception {
 		this.counter++;
 		String res;
 		String temp;
@@ -59,13 +59,13 @@ public class Module_mine extends FunctionModuel {
 		}
 		switch (flow.from) {
 		case 1:
-			FunctionModuel.priInfo(flow, res);
+			FunctionExecutor.priInfo(flow, res);
 			break;
 		case 2:
-			FunctionModuel.disInfo(flow, res);
+			FunctionExecutor.disInfo(flow, res);
 			break;
 		case 3:
-			FunctionModuel.grpInfo(flow, res);
+			FunctionExecutor.grpInfo(flow, res);
 			break;
 		}
 	}

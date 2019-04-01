@@ -54,13 +54,13 @@ public class Zwischenspiel {
 		builder.append(LoggerX.time(date));
 		builder.append(" - 状态简报");
 		String report;
-		for (final String temp : entry.MODULES.keySet()) {
+		for (final String temp : entry.Executor.keySet()) {
 			builder.append("\r\n\r\n模块 ");
 			builder.append(temp);
 			builder.append(": ");
-			builder.append(entry.MODULES.get(temp).counter);
+			builder.append(entry.Executor.get(temp).counter);
 			builder.append(" 次调用\r\n");
-			report = entry.MODULES.get(temp).genReport();
+			report = entry.Executor.get(temp).genReport();
 			builder.append(report == null ? "无可用数据" : report);
 		}
 		return builder.toString();

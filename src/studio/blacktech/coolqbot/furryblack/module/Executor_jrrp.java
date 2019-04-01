@@ -7,14 +7,14 @@ import java.util.TreeMap;
 
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
 
-public class Module_jrrp extends FunctionModuel {
+public class Executor_jrrp extends FunctionExecutor {
 	private static HashMap<Long, Integer> jrrp = new HashMap<Long, Integer>();
 
 	public static void flush() {
-		Module_jrrp.jrrp.clear();
+		Executor_jrrp.jrrp.clear();
 	}
 
-	public Module_jrrp() {
+	public Executor_jrrp() {
 		this.MODULE_NAME = "今日运气";
 		this.MODULE_HELP = "//jrrp 今日运气";
 		this.MODULE_COMMAND = "jrrp";
@@ -24,22 +24,22 @@ public class Module_jrrp extends FunctionModuel {
 	}
 
 	@Override
-	public void excute(final Workflow flow) {
+	public void executor(final Workflow flow) {
 		this.counter++;
-		if (!Module_jrrp.jrrp.containsKey(flow.qqid)) {
+		if (!Executor_jrrp.jrrp.containsKey(flow.qqid)) {
 			final SecureRandom random = new SecureRandom();
-			Module_jrrp.jrrp.put(flow.qqid, random.nextInt(100));
+			Executor_jrrp.jrrp.put(flow.qqid, random.nextInt(100));
 		}
-		final String res = "今天的运气是" + Module_jrrp.jrrp.get(flow.qqid) + "%!!!";
+		final String res = "今天的运气是" + Executor_jrrp.jrrp.get(flow.qqid) + "%!!!";
 		switch (flow.from) {
 		case 1:
-			FunctionModuel.priInfo(flow, res);
+			FunctionExecutor.priInfo(flow, res);
 			break;
 		case 2:
-			FunctionModuel.disInfo(flow, res);
+			FunctionExecutor.disInfo(flow, res);
 			break;
 		case 3:
-			FunctionModuel.grpInfo(flow, res);
+			FunctionExecutor.grpInfo(flow, res);
 			break;
 		}
 	}
@@ -50,11 +50,11 @@ public class Module_jrrp extends FunctionModuel {
 			return null;
 		}
 		final TreeMap<Integer, Integer> frequency = new TreeMap<Integer, Integer>();
-		for (final long temp : Module_jrrp.jrrp.keySet()) {
-			final int luck = Module_jrrp.jrrp.get(temp);
+		for (final long temp : Executor_jrrp.jrrp.keySet()) {
+			final int luck = Executor_jrrp.jrrp.get(temp);
 			frequency.put(luck, frequency.containsKey(luck) ? frequency.get(luck) + 1 : 1);
 		}
-		final int size = Module_jrrp.jrrp.size();
+		final int size = Executor_jrrp.jrrp.size();
 		final StringBuilder builder = new StringBuilder();
 		builder.append("共生成了 ");
 		builder.append(size);

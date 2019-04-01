@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
 
-public class Module_roll extends FunctionModuel {
+public class Executor_roll extends FunctionExecutor {
 
 	private static int mode_1 = 0;
 	private static int mode_2 = 0;
@@ -13,7 +13,7 @@ public class Module_roll extends FunctionModuel {
 	private static int mode_fucked = 0;
 	private static int mode_fucker = 0;
 
-	public Module_roll() {
+	public Executor_roll() {
 		this.MODULE_NAME = "随机数";
 		this.MODULE_HELP = "//roll 随机选择一个真假 -> 1\r\n//roll 20 随机选择一个数字 -> 17\r\n//roll 10 20 随机选择一个数字 -> 13";
 		this.MODULE_COMMAND = "roll";
@@ -23,37 +23,37 @@ public class Module_roll extends FunctionModuel {
 	}
 
 	@Override
-	public void excute(final Workflow flow) {
+	public void executor(final Workflow flow) {
 		this.counter++;
 		String res = null;
 		final SecureRandom random = new SecureRandom();
 		switch (flow.length) {
 		case 1:
 			if (random.nextBoolean()) {
-				Module_roll.mode_fucker++;
+				Executor_roll.mode_fucker++;
 				res = "1";
 			} else {
-				Module_roll.mode_fucked++;
+				Executor_roll.mode_fucked++;
 				res = "0";
 			}
-			Module_roll.mode_1++;
+			Executor_roll.mode_1++;
 			break;
 		case 2:
 			int range = 100;
 			try {
 				range = Integer.parseInt(flow.command[1]);
 				res = Integer.toString(random.nextInt(range));
-				Module_roll.mode_2++;
+				Executor_roll.mode_2++;
 			} catch (final Exception exce) {
 				res = flow.command[1] + "是";
 				if (random.nextBoolean()) {
-					Module_roll.mode_fucker++;
+					Executor_roll.mode_fucker++;
 					res = res + "1";
 				} else {
-					Module_roll.mode_fucked++;
+					Executor_roll.mode_fucked++;
 					res = res + "0";
 				}
-				Module_roll.mode_1++;
+				Executor_roll.mode_1++;
 			}
 			break;
 		case 3:
@@ -63,26 +63,26 @@ public class Module_roll extends FunctionModuel {
 				min = Integer.parseInt(flow.command[1]);
 				max = Integer.parseInt(flow.command[2]);
 			} catch (final Exception exce) {
-				FunctionModuel.priWarn(flow, "参数必须是罗马数字");
+				FunctionExecutor.priWarn(flow, "参数必须是罗马数字");
 			}
 			int temp = random.nextInt(max);
 			if (temp < min) {
 				temp = ((temp / max) * (max - min)) + min;
 			}
 			res = Integer.toString(temp);
-			Module_roll.mode_3++;
+			Executor_roll.mode_3++;
 			break;
 		}
 
 		switch (flow.from) {
 		case 1:
-			FunctionModuel.priInfo(flow, res);
+			FunctionExecutor.priInfo(flow, res);
 			break;
 		case 2:
-			FunctionModuel.disInfo(flow, res);
+			FunctionExecutor.disInfo(flow, res);
 			break;
 		case 3:
-			FunctionModuel.grpInfo(flow, res);
+			FunctionExecutor.grpInfo(flow, res);
 			break;
 		}
 	}
@@ -94,15 +94,15 @@ public class Module_roll extends FunctionModuel {
 		}
 		final StringBuilder builder = new StringBuilder();
 		builder.append("模式1 - 真假: ");
-		builder.append(Module_roll.mode_1);
+		builder.append(Executor_roll.mode_1);
 		builder.append(" (");
-		builder.append(Module_roll.mode_fucker);
+		builder.append(Executor_roll.mode_fucker);
 		builder.append("/");
-		builder.append(Module_roll.mode_fucked);
+		builder.append(Executor_roll.mode_fucked);
 		builder.append(")\r\n模式2 - 单限: ");
-		builder.append(Module_roll.mode_2);
+		builder.append(Executor_roll.mode_2);
 		builder.append("\r\n模式3 - 双限: ");
-		builder.append(Module_roll.mode_3);
+		builder.append(Executor_roll.mode_3);
 		return builder.toString();
 	}
 }
