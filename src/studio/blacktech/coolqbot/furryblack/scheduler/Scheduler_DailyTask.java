@@ -4,6 +4,7 @@ import java.util.Date;
 
 import studio.blacktech.common.ConfigureX;
 import studio.blacktech.coolqbot.furryblack.MessageHandler;
+import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleScheduler;
 
 @SuppressWarnings("deprecation")
@@ -21,7 +22,7 @@ public class Scheduler_DailyTask extends ModuleScheduler {
 		try {
 			Thread.sleep(time * 1000);
 			while (true) {
-				userInfo(ConfigureX.OPERATOR(), MessageHandler.genReport());
+				Module.userInfo(ConfigureX.OPERATOR(), MessageHandler.genReport());
 //				Executor_jrrp.flush();
 //				Executor_jrjp.flush();
 				Thread.sleep(86400000L);

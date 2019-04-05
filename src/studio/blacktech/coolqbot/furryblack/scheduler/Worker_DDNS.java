@@ -7,6 +7,7 @@ import java.util.Date;
 
 import studio.blacktech.common.ConfigureX;
 import studio.blacktech.common.exception.ReInitializationException;
+import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleScheduler;
 
 @SuppressWarnings("deprecation")
@@ -25,18 +26,18 @@ public class Worker_DDNS extends ModuleScheduler {
 	private static String RESPONCE = null;
 
 	private static final Thread WORKER = new Thread(() -> {
-		RESPONCE = getIPAddress();
+		Worker_DDNS.RESPONCE = Worker_DDNS.getIPAddress();
 
-		if (RESPONCE == null) {
-			userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址获取失败");
-		} else if (!RESPONCE.equals(ADDRESS)) {
-			RESPONCE = setDDNSIPAddress(RESPONCE);
-			if (RESPONCE == null) {
-				userInfo(ConfigureX.OPERATOR(), "[DDNS] 域名更新失败");
+		if (Worker_DDNS.RESPONCE == null) {
+			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址获取失败");
+		} else if (!Worker_DDNS.RESPONCE.equals(Worker_DDNS.ADDRESS)) {
+			Worker_DDNS.RESPONCE = Worker_DDNS.setDDNSIPAddress(Worker_DDNS.RESPONCE);
+			if (Worker_DDNS.RESPONCE == null) {
+				Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 域名更新失败");
 			} else {
-				String[] temp = RESPONCE.split(" ");
-				userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址变更 " + temp[0] + "\r\n旧地址： " + ADDRESS + "新地址： " + temp[1]);
-				ADDRESS = RESPONCE;
+				String[] temp = Worker_DDNS.RESPONCE.split(" ");
+				Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址变更 " + temp[0] + "\r\n旧地址： " + Worker_DDNS.ADDRESS + "新地址： " + temp[1]);
+				Worker_DDNS.ADDRESS = Worker_DDNS.RESPONCE;
 			}
 		}
 	});
@@ -44,14 +45,14 @@ public class Worker_DDNS extends ModuleScheduler {
 	@Override
 	public void run() {
 
-		ADDRESS = getIPAddress();
-		userInfo(ConfigureX.OPERATOR(), "[DDNS] 成功 " + ADDRESS);
-		if (ADDRESS == null) {
-			RESPONCE = updateDDNSIPAddress();
-			userInfo(ConfigureX.OPERATOR(), "[DDNS] 重试 " + RESPONCE);
+		Worker_DDNS.ADDRESS = Worker_DDNS.getIPAddress();
+		Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 成功 " + Worker_DDNS.ADDRESS);
+		if (Worker_DDNS.ADDRESS == null) {
+			Worker_DDNS.RESPONCE = Worker_DDNS.updateDDNSIPAddress();
+			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 重试 " + Worker_DDNS.RESPONCE);
 		} else {
-			RESPONCE = setDDNSIPAddress(ADDRESS);
-			userInfo(ConfigureX.OPERATOR(), "[DDNS] 重试 " + RESPONCE);
+			Worker_DDNS.RESPONCE = Worker_DDNS.setDDNSIPAddress(Worker_DDNS.ADDRESS);
+			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 重试 " + Worker_DDNS.RESPONCE);
 		}
 
 		Date date = new Date();
@@ -70,7 +71,7 @@ public class Worker_DDNS extends ModuleScheduler {
 		}
 
 		while (true) {
-			WORKER.start();
+			Worker_DDNS.WORKER.start();
 			try {
 				Thread.sleep(3600000L);
 			} catch (InterruptedException exce) {

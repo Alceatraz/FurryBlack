@@ -18,6 +18,12 @@ import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 import studio.blacktech.coolqbot.furryblack.module.ModuleListener;
 import studio.blacktech.coolqbot.furryblack.module.ModuleTrigger;
 import studio.blacktech.coolqbot.furryblack.plugins.Executor_chou;
+import studio.blacktech.coolqbot.furryblack.plugins.Executor_echo;
+import studio.blacktech.coolqbot.furryblack.plugins.Executor_gamb;
+import studio.blacktech.coolqbot.furryblack.plugins.Executor_jrrp;
+import studio.blacktech.coolqbot.furryblack.plugins.Executor_kong;
+import studio.blacktech.coolqbot.furryblack.plugins.Executor_roll;
+import studio.blacktech.coolqbot.furryblack.plugins.Executor_zhan;
 
 public class MessageHandler extends Module {
 
@@ -104,7 +110,30 @@ public class MessageHandler extends Module {
 		reader.close();
 
 		// 注册模块
-		MessageHandler.EXECUTOR_GROP.put("chou", new Executor_chou());
+
+		MessageHandler.EXECUTOR_USER.put("dice", new Executor_chou());
+		MessageHandler.EXECUTOR_USER.put("echo", new Executor_echo());
+		MessageHandler.EXECUTOR_USER.put("jrrp", new Executor_jrrp());
+		MessageHandler.EXECUTOR_USER.put("kong", new Executor_kong());
+		MessageHandler.EXECUTOR_USER.put("roll", new Executor_roll());
+		MessageHandler.EXECUTOR_USER.put("zhan", new Executor_zhan());
+
+		MessageHandler.EXECUTOR_DISZ.put("dice", new Executor_chou());
+		MessageHandler.EXECUTOR_DISZ.put("echo", new Executor_echo());
+		MessageHandler.EXECUTOR_DISZ.put("jrrp", new Executor_jrrp());
+		MessageHandler.EXECUTOR_DISZ.put("kong", new Executor_kong());
+		MessageHandler.EXECUTOR_DISZ.put("kong", new Executor_kong());
+		MessageHandler.EXECUTOR_DISZ.put("roll", new Executor_roll());
+		MessageHandler.EXECUTOR_DISZ.put("zhan", new Executor_zhan());
+
+		MessageHandler.EXECUTOR_GROP.put("dice", new Executor_chou());
+		MessageHandler.EXECUTOR_GROP.put("echo", new Executor_echo());
+		MessageHandler.EXECUTOR_GROP.put("gamb", new Executor_gamb());
+		MessageHandler.EXECUTOR_GROP.put("jrrp", new Executor_jrrp());
+		MessageHandler.EXECUTOR_GROP.put("kong", new Executor_kong());
+		MessageHandler.EXECUTOR_GROP.put("kong", new Executor_kong());
+		MessageHandler.EXECUTOR_GROP.put("roll", new Executor_roll());
+		MessageHandler.EXECUTOR_GROP.put("zhan", new Executor_zhan());
 
 		// 预生成list的内容
 		builder = new StringBuilder("已经安装的插件 - 私聊可用: ");
@@ -382,7 +411,7 @@ public class MessageHandler extends Module {
 
 	@Override
 	public String getReport() {
-		return genReport();
+		return MessageHandler.genReport();
 	}
 
 	public static String genReport() {
@@ -390,43 +419,43 @@ public class MessageHandler extends Module {
 		StringBuilder builder = new StringBuilder();
 		builder.append(LoggerX.time());
 		builder.append(" - 状态简报\r\n系统状态:\r\n调用-私聊：");
-		builder.append(COUNT_USER_MESSAGE);
+		builder.append(MessageHandler.COUNT_USER_MESSAGE);
 		builder.append("\r\n调用-讨论组：");
-		builder.append(COUNT_DISZ_MESSAGE);
+		builder.append(MessageHandler.COUNT_DISZ_MESSAGE);
 		builder.append("\r\n调用-群聊：");
-		builder.append(COUNT_GROP_MESSAGE);
+		builder.append(MessageHandler.COUNT_GROP_MESSAGE);
 		builder.append("\r\n\r\n模块状态:\r\n模块-私聊:");
-		for (final String temp : EXECUTOR_USER.keySet()) {
+		for (final String temp : MessageHandler.EXECUTOR_USER.keySet()) {
 			builder.append("\r\n\r\n模块 ");
 			builder.append(temp);
 			builder.append(": ");
-			builder.append(EXECUTOR_USER.get(temp).COUNT);
+			builder.append(MessageHandler.EXECUTOR_USER.get(temp).COUNT);
 			builder.append(" 次调用\r\n");
-			report = EXECUTOR_USER.get(temp).getReport();
+			report = MessageHandler.EXECUTOR_USER.get(temp).getReport();
 			if (report != null) {
 				builder.append(report);
 			}
 		}
 		builder.append("\r\n模块-讨论:");
-		for (final String temp : EXECUTOR_DISZ.keySet()) {
+		for (final String temp : MessageHandler.EXECUTOR_DISZ.keySet()) {
 			builder.append("\r\n模块 ");
 			builder.append(temp);
 			builder.append(": ");
-			builder.append(EXECUTOR_DISZ.get(temp).COUNT);
+			builder.append(MessageHandler.EXECUTOR_DISZ.get(temp).COUNT);
 			builder.append(" 次调用\r\n");
-			report = EXECUTOR_DISZ.get(temp).getReport();
+			report = MessageHandler.EXECUTOR_DISZ.get(temp).getReport();
 			if (report != null) {
 				builder.append(report);
 			}
 		}
 		builder.append("\r\n模块-群聊:");
-		for (final String temp : EXECUTOR_GROP.keySet()) {
+		for (final String temp : MessageHandler.EXECUTOR_GROP.keySet()) {
 			builder.append("\r\n\r\n模块 ");
 			builder.append(temp);
 			builder.append(": ");
-			builder.append(EXECUTOR_GROP.get(temp).COUNT);
+			builder.append(MessageHandler.EXECUTOR_GROP.get(temp).COUNT);
 			builder.append(" 次调用\r\n");
-			report = EXECUTOR_GROP.get(temp).getReport();
+			report = MessageHandler.EXECUTOR_GROP.get(temp).getReport();
 			if (report != null) {
 				builder.append(report);
 			}

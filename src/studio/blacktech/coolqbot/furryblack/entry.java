@@ -89,7 +89,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			exce.printStackTrace();
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), "警告初始化失败！");
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), exce.getStackTrace().toString());
-			System.exit(1);
+			JcqAppAbstract.enable = false;
 		}
 		return 0;
 	}

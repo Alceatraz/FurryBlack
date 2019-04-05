@@ -17,19 +17,19 @@ public class Zwischenspiel extends Module {
 		final Date date = new Date();
 
 		if (message.length < 2) {
-			userInfo(ConfigureX.OPERATOR(), MessageHandler.genReport());
+			Module.userInfo(ConfigureX.OPERATOR(), MessageHandler.genReport());
 			return;
 		}
 		switch (message.cmd[1]) {
 
 		case "getddns":
-			userInfo(ConfigureX.OPERATOR(), Worker_DDNS.getIPAddress());
+			Module.userInfo(ConfigureX.OPERATOR(), Worker_DDNS.getIPAddress());
 			break;
 		case "setddns":
 			if (message.length < 3) {
-				userInfo(ConfigureX.OPERATOR(), Worker_DDNS.updateDDNSIPAddress());
+				Module.userInfo(ConfigureX.OPERATOR(), Worker_DDNS.updateDDNSIPAddress());
 			} else {
-				userInfo(ConfigureX.OPERATOR(), Worker_DDNS.setDDNSIPAddress(message.cmd[2]));
+				Module.userInfo(ConfigureX.OPERATOR(), Worker_DDNS.setDDNSIPAddress(message.cmd[2]));
 			}
 			break;
 		case "getdate":
@@ -43,7 +43,7 @@ public class Zwischenspiel extends Module {
 			builder.append("\r\nÊ±: " + date.getHours());
 			builder.append("\r\n·Ö: " + date.getMinutes());
 			builder.append("\r\nÃë: " + date.getSeconds());
-			userInfo(ConfigureX.OPERATOR(), builder.toString());
+			Module.userInfo(ConfigureX.OPERATOR(), builder.toString());
 			break;
 		case "say":
 			for (final Group temp : JcqApp.CQ.getGroupList()) {

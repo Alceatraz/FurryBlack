@@ -14,36 +14,36 @@ import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 @SuppressWarnings("unused")
 public class Executor_chou extends ModuleExecutor {
 
-	private final String MODULE_DISPLAYNAME = "随机抽人";
-	private final String MODULE_PACKAGENAME = "chou";
-	private final String MODULE_DESCRIPTION = "从群随机抽取一个人";
-	private final String MODULE_VERSION = "2.4.0";
-	private final String[] MODULE_USAGE = {
+	private String MODULE_DISPLAYNAME = "随机抽人";
+	private String MODULE_PACKAGENAME = "chou";
+	private String MODULE_DESCRIPTION = "从群随机抽取一个人";
+	private String MODULE_VERSION = "2.4.0";
+	private String[] MODULE_USAGE = {
 			"//chou ", "//chou 理由"
 	};
-	private final String[] MODULE_PRIVACY_LISTEN = {};
-	private final String[] MODULE_PRIVACY_EVENTS = {};
-	private final String[] MODULE_PRIVACY_STORED = {};
-	private final String[] MODULE_PRIVACY_CACHED = {};
-	private final String[] MODULE_PRIVACY_OBTAIN = {
+	private String[] MODULE_PRIVACY_LISTEN = {};
+	private String[] MODULE_PRIVACY_EVENTS = {};
+	private String[] MODULE_PRIVACY_STORED = {};
+	private String[] MODULE_PRIVACY_CACHED = {};
+	private String[] MODULE_PRIVACY_OBTAIN = {
 			"获取命令发送人", "获取群成员列表"
 	};
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-		final List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
+	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+		List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
 		Member member;
-		final int size = members.size();
+		int size = members.size();
 		long uid = 0;
 		do {
 			member = members.get(Executor_chou.random(size));
@@ -62,8 +62,8 @@ public class Executor_chou extends ModuleExecutor {
 		return true;
 	}
 
-	private static int random(final int size) {
-		final SecureRandom random = new SecureRandom();
+	private static int random(int size) {
+		SecureRandom random = new SecureRandom();
 		return random.nextInt(size);
 	}
 
