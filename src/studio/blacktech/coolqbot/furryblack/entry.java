@@ -1,7 +1,5 @@
 package studio.blacktech.coolqbot.furryblack;
 
-import java.util.HashMap;
-
 import com.sobte.cqp.jcq.entity.CQDebug;
 import com.sobte.cqp.jcq.entity.ICQVer;
 import com.sobte.cqp.jcq.entity.IMsg;
