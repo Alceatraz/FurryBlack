@@ -13,22 +13,24 @@ import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 public class Executor_jrrp extends ModuleExecutor {
 	private static HashMap<Long, Integer> jrrp = new HashMap<Long, Integer>();
 
-	private String MODULE_DISPLAYNAME = "今日运气";
-	private String MODULE_PACKAGENAME = "jrrp";
-	private String MODULE_DESCRIPTION = "今日运气";
-	private String MODULE_VERSION = "2.6.4";
-	private String[] MODULE_USAGE = {
-			"//jrrp"
-	};
-	private String[] MODULE_PRIVACY_LISTEN = {};
-	private String[] MODULE_PRIVACY_EVENTS = {};
-	private String[] MODULE_PRIVACY_STORED = {};
-	private String[] MODULE_PRIVACY_CACHED = {
-			"用户与运气对应表 - 每日UTC+8 00:00 清空"
-	};
-	private String[] MODULE_PRIVACY_OBTAIN = {
-			"获取命令发送人"
-	};
+	public Executor_jrrp() {
+		this.MODULE_DISPLAYNAME = "今日运气";
+		this.MODULE_PACKAGENAME = "jrrp";
+		this.MODULE_DESCRIPTION = "今日运气";
+		this.MODULE_VERSION = "2.6.4";
+		this.MODULE_USAGE = new String[] {
+				"//jrrp"
+		};
+		this.MODULE_PRIVACY_TRIGER = new String[] {};
+		this.MODULE_PRIVACY_LISTEN = new String[] {};
+		this.MODULE_PRIVACY_STORED = new String[] {};
+		this.MODULE_PRIVACY_CACHED = new String[] {
+				"用户与运气对应表 - 每日UTC+8 00:00 清空"
+		};
+		this.MODULE_PRIVACY_OBTAIN = new String[] {
+				"获取命令发送人"
+		};
+	}
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {

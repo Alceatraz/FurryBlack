@@ -6,7 +6,6 @@ import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
-@SuppressWarnings("unused")
 public class Executor_roll extends ModuleExecutor {
 
 	private static int mode_1 = 0;
@@ -16,20 +15,22 @@ public class Executor_roll extends ModuleExecutor {
 	private static int mode_fucked = 0;
 	private static int mode_fucker = 0;
 
-	private String MODULE_DISPLAYNAME = "随机数";
-	private String MODULE_PACKAGENAME = "roll";
-	private String MODULE_DESCRIPTION = "生成随机数或者真假";
-	private String MODULE_VERSION = "2.1.4";
-	private String[] MODULE_USAGE = {
-			"//roll", "//roll 数字", "//roll 数字 数字"
-	};
-	private String[] MODULE_PRIVACY_LISTEN = {};
-	private String[] MODULE_PRIVACY_EVENTS = {};
-	private String[] MODULE_PRIVACY_STORED = {};
-	private String[] MODULE_PRIVACY_CACHED = {};
-	private String[] MODULE_PRIVACY_OBTAIN = {
-			"获取命令发送人"
-	};
+	public Executor_roll() {
+		this.MODULE_DISPLAYNAME = "随机数";
+		this.MODULE_PACKAGENAME = "roll";
+		this.MODULE_DESCRIPTION = "生成随机数或者真假";
+		this.MODULE_VERSION = "2.1.4";
+		this.MODULE_USAGE = new String[] {
+				"//roll", "//roll 数字", "//roll 数字 数字"
+		};
+		this.MODULE_PRIVACY_TRIGER = new String[] {};
+		this.MODULE_PRIVACY_LISTEN = new String[] {};
+		this.MODULE_PRIVACY_STORED = new String[] {};
+		this.MODULE_PRIVACY_CACHED = new String[] {};
+		this.MODULE_PRIVACY_OBTAIN = new String[] {
+				"获取命令发送人"
+		};
+	}
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {

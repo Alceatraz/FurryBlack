@@ -44,15 +44,14 @@ public class Scheduler_DDNS extends ModuleScheduler {
 
 	@Override
 	public void run() {
-
 		Scheduler_DDNS.ADDRESS = Scheduler_DDNS.getIPAddress();
-		Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 成功 " + Scheduler_DDNS.ADDRESS);
+		Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址获取成功: " + Scheduler_DDNS.ADDRESS);
 		if (Scheduler_DDNS.ADDRESS == null) {
 			Scheduler_DDNS.RESPONCE = Scheduler_DDNS.updateDDNSIPAddress();
-			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 重试 " + Scheduler_DDNS.RESPONCE);
+			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 强制更新响应： " + Scheduler_DDNS.RESPONCE);
 		} else {
 			Scheduler_DDNS.RESPONCE = Scheduler_DDNS.setDDNSIPAddress(Scheduler_DDNS.ADDRESS);
-			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 重试 " + Scheduler_DDNS.RESPONCE);
+			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 域名更新响应： " + Scheduler_DDNS.RESPONCE);
 		}
 
 		Date date = new Date();

@@ -182,11 +182,11 @@ public class SystemHandler extends Module {
 		}
 		SystemHandler.MESSAGE_LIST_GROP = builder.toString();
 
-		SCHEDULER.put("TASK", new Thread(new Scheduler_Task()));
-		SCHEDULER.put("DDNS", new Thread(new Scheduler_DDNS()));
+		SystemHandler.SCHEDULER.put("TASK", new Thread(new Scheduler_Task()));
+		SystemHandler.SCHEDULER.put("DDNS", new Thread(new Scheduler_DDNS()));
 
-		SCHEDULER.get("TASK").start();
-		SCHEDULER.get("DDNS").start();
+		SystemHandler.SCHEDULER.get("TASK").start();
+		SystemHandler.SCHEDULER.get("DDNS").start();
 
 		return true;
 	}
@@ -339,7 +339,6 @@ public class SystemHandler extends Module {
 			}
 			return IMsg.MSG_IGNORE;
 		}
-		JcqApp.CQ.sendPrivateMsg(userid, "请使用//help查看帮助");
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -415,7 +414,6 @@ public class SystemHandler extends Module {
 			}
 			return IMsg.MSG_IGNORE;
 		}
-		JcqApp.CQ.sendPrivateMsg(userid, "请使用//help查看帮助");
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -428,43 +426,59 @@ public class SystemHandler extends Module {
 		String report;
 		StringBuilder builder = new StringBuilder();
 		builder.append(LoggerX.time());
-		builder.append(" - 状态简报\r\n系统状态:\r\n调用-私聊：");
+		builder.append(" - 状态简报");
+		builder.append("\r\n");
+
+		builder.append("系统状态：");
+		builder.append("\r\n");
+		builder.append("调用-私聊： ");
 		builder.append(SystemHandler.COUNT_USER_MESSAGE);
-		builder.append("\r\n调用-讨论组：");
+		builder.append("\r\n");
+		builder.append("调用-组聊： ");
 		builder.append(SystemHandler.COUNT_DISZ_MESSAGE);
-		builder.append("\r\n调用-群聊：");
+		builder.append("\r\n");
+		builder.append("调用-群聊： ");
 		builder.append(SystemHandler.COUNT_GROP_MESSAGE);
-		builder.append("\r\n\r\n模块状态:\r\n模块-私聊:");
+		builder.append("\r\n");
+
+		builder.append("模块状态:");
+		builder.append("\r\n");
+		builder.append("模块-私聊:");
 		for (final String temp : SystemHandler.EXECUTOR_USER.keySet()) {
-			builder.append("\r\n\r\n模块 ");
+			builder.append("\r\n");
+			builder.append("模块 ");
 			builder.append(temp);
 			builder.append(": ");
 			builder.append(SystemHandler.EXECUTOR_USER.get(temp).COUNT);
-			builder.append(" 次调用\r\n");
+			builder.append(" 次调用");
 			report = SystemHandler.EXECUTOR_USER.get(temp).getReport();
 			if (report != null) {
 				builder.append(report);
 			}
 		}
-		builder.append("\r\n模块-讨论:");
+		builder.append("\r\n");
+		builder.append("模块-组聊:");
 		for (final String temp : SystemHandler.EXECUTOR_DISZ.keySet()) {
-			builder.append("\r\n模块 ");
+			builder.append("\r\n");
+			builder.append("模块 ");
 			builder.append(temp);
 			builder.append(": ");
 			builder.append(SystemHandler.EXECUTOR_DISZ.get(temp).COUNT);
-			builder.append(" 次调用\r\n");
+			builder.append(" 次调用");
 			report = SystemHandler.EXECUTOR_DISZ.get(temp).getReport();
 			if (report != null) {
 				builder.append(report);
 			}
 		}
-		builder.append("\r\n模块-群聊:");
+		builder.append("\r\n");
+		builder.append("模块-群聊:");
 		for (final String temp : SystemHandler.EXECUTOR_GROP.keySet()) {
-			builder.append("\r\n\r\n模块 ");
+			builder.append("\r\n");
+			builder.append("模块 ");
 			builder.append(temp);
 			builder.append(": ");
 			builder.append(SystemHandler.EXECUTOR_GROP.get(temp).COUNT);
-			builder.append(" 次调用\r\n");
+			builder.append(" 次调用");
 			report = SystemHandler.EXECUTOR_GROP.get(temp).getReport();
 			if (report != null) {
 				builder.append(report);

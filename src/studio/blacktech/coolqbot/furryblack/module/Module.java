@@ -20,7 +20,7 @@ public abstract class Module {
 	public abstract String getReport();
 
 	public void genFullHelp() {
-		final StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder();
 		builder.append(this.MODULE_PACKAGENAME);
 		builder.append(" > ");
 		builder.append(this.MODULE_DISPLAYNAME);
@@ -35,7 +35,7 @@ public abstract class Module {
 		} else {
 			builder.append("√¸¡Ó”√∑®");
 			builder.append("\r\n");
-			for (final String temp : this.MODULE_USAGE) {
+			for (String temp : this.MODULE_USAGE) {
 				builder.append(temp);
 				builder.append("\r\n");
 			}
@@ -45,7 +45,7 @@ public abstract class Module {
 		builder.append(this.MODULE_PRIVACY_TRIGER.length);
 		builder.append("\r\n");
 		if (this.MODULE_PRIVACY_TRIGER.length != 0) {
-			for (final String temp : this.MODULE_PRIVACY_TRIGER) {
+			for (String temp : this.MODULE_PRIVACY_TRIGER) {
 				builder.append(temp);
 				builder.append("\r\n");
 			}
@@ -54,7 +54,7 @@ public abstract class Module {
 		builder.append(this.MODULE_PRIVACY_LISTEN.length);
 		builder.append("\r\n");
 		if (this.MODULE_PRIVACY_LISTEN.length != 0) {
-			for (final String temp : this.MODULE_PRIVACY_LISTEN) {
+			for (String temp : this.MODULE_PRIVACY_LISTEN) {
 				builder.append(temp);
 				builder.append("\r\n");
 			}
@@ -64,7 +64,7 @@ public abstract class Module {
 		builder.append(this.MODULE_PRIVACY_STORED.length);
 		builder.append("\r\n");
 		if (this.MODULE_PRIVACY_STORED.length != 0) {
-			for (final String temp : this.MODULE_PRIVACY_STORED) {
+			for (String temp : this.MODULE_PRIVACY_STORED) {
 				builder.append(temp);
 				builder.append("\r\n");
 			}
@@ -73,7 +73,7 @@ public abstract class Module {
 		builder.append(this.MODULE_PRIVACY_CACHED.length);
 		builder.append("\r\n");
 		if (this.MODULE_PRIVACY_CACHED.length != 0) {
-			for (final String temp : this.MODULE_PRIVACY_CACHED) {
+			for (String temp : this.MODULE_PRIVACY_CACHED) {
 				builder.append(temp);
 				builder.append("\r\n");
 			}
@@ -82,7 +82,7 @@ public abstract class Module {
 		builder.append(this.MODULE_PRIVACY_OBTAIN.length);
 		builder.append("\r\n");
 		if (this.MODULE_PRIVACY_OBTAIN.length != 0) {
-			for (final String temp : this.MODULE_PRIVACY_OBTAIN) {
+			for (String temp : this.MODULE_PRIVACY_OBTAIN) {
 				builder.append(temp);
 				builder.append("\r\n");
 			}

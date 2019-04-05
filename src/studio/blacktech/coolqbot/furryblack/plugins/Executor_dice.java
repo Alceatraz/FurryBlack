@@ -4,23 +4,25 @@ import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
-@SuppressWarnings("unused")
 public class Executor_dice extends ModuleExecutor {
 
-	private String MODULE_DISPLAYNAME = "扔骰子";
-	private String MODULE_PACKAGENAME = "dice";
-	private String MODULE_DESCRIPTION = "发送一个骰子表情";
-	private String MODULE_VERSION = "2.0.3";
-	private String[] MODULE_USAGE = {
-			"//dice", "//dice 投掷理由"
-	};
-	private String[] MODULE_PRIVACY_LISTEN = {};
-	private String[] MODULE_PRIVACY_EVENTS = {};
-	private String[] MODULE_PRIVACY_STORED = {};
-	private String[] MODULE_PRIVACY_CACHED = {};
-	private String[] MODULE_PRIVACY_OBTAIN = {
-			"获取命令发送人"
-	};
+	public Executor_dice() {
+
+		this.MODULE_DISPLAYNAME = "扔骰子";
+		this.MODULE_PACKAGENAME = "dice";
+		this.MODULE_DESCRIPTION = "发送一个骰子表情";
+		this.MODULE_VERSION = "2.0.3";
+		this.MODULE_USAGE = new String[] {
+				"//dice", "//dice 投掷理由"
+		};
+		this.MODULE_PRIVACY_TRIGER = new String[] {};
+		this.MODULE_PRIVACY_LISTEN = new String[] {};
+		this.MODULE_PRIVACY_STORED = new String[] {};
+		this.MODULE_PRIVACY_CACHED = new String[] {};
+		this.MODULE_PRIVACY_OBTAIN = new String[] {
+				"获取命令发送人"
+		};
+	}
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {

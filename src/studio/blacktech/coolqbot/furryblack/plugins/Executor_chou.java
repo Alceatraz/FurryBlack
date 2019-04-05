@@ -11,23 +11,24 @@ import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
-@SuppressWarnings("unused")
 public class Executor_chou extends ModuleExecutor {
 
-	private String MODULE_DISPLAYNAME = "随机抽人";
-	private String MODULE_PACKAGENAME = "chou";
-	private String MODULE_DESCRIPTION = "从群随机抽取一个人";
-	private String MODULE_VERSION = "2.4.0";
-	private String[] MODULE_USAGE = {
-			"//chou ", "//chou 理由"
-	};
-	private String[] MODULE_PRIVACY_LISTEN = {};
-	private String[] MODULE_PRIVACY_EVENTS = {};
-	private String[] MODULE_PRIVACY_STORED = {};
-	private String[] MODULE_PRIVACY_CACHED = {};
-	private String[] MODULE_PRIVACY_OBTAIN = {
-			"获取命令发送人", "获取群成员列表"
-	};
+	public Executor_chou() {
+		this.MODULE_DISPLAYNAME = "随机抽人";
+		this.MODULE_PACKAGENAME = "chou";
+		this.MODULE_DESCRIPTION = "从群随机抽取一个人";
+		this.MODULE_VERSION = "2.4.0";
+		this.MODULE_USAGE = new String[] {
+				"//chou ", "//chou 理由"
+		};
+		this.MODULE_PRIVACY_TRIGER = new String[] {};
+		this.MODULE_PRIVACY_LISTEN = new String[] {};
+		this.MODULE_PRIVACY_STORED = new String[] {};
+		this.MODULE_PRIVACY_CACHED = new String[] {};
+		this.MODULE_PRIVACY_OBTAIN = new String[] {
+				"获取命令发送人", "获取群成员列表"
+		};
+	}
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {

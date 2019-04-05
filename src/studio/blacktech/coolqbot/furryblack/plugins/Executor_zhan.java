@@ -8,28 +8,27 @@ import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
-@SuppressWarnings("unused")
 public class Executor_zhan extends ModuleExecutor {
 
 	private static TreeMap<Integer, String> CARD = new TreeMap<Integer, String>();
 	private static ArrayList<Integer> FREQ = new ArrayList<Integer>();
 
-	private String MODULE_DISPLAYNAME = "塔罗牌占卜";
-	private String MODULE_PACKAGENAME = "zhan";
-	private String MODULE_DESCRIPTION = "大阿卡那塔罗牌占卜";
-	private String MODULE_VERSION = "2.2.3";
-	private String[] MODULE_USAGE = {
-			"//zhan 理由"
-	};
-	private String[] MODULE_PRIVACY_LISTEN = {};
-	private String[] MODULE_PRIVACY_EVENTS = {};
-	private String[] MODULE_PRIVACY_STORED = {};
-	private String[] MODULE_PRIVACY_CACHED = {};
-	private String[] MODULE_PRIVACY_OBTAIN = {
-			"获取命令发送人"
-	};
-
 	public Executor_zhan() {
+
+		this.MODULE_DISPLAYNAME = "塔罗牌占卜";
+		this.MODULE_PACKAGENAME = "zhan";
+		this.MODULE_DESCRIPTION = "大阿卡那塔罗牌占卜";
+		this.MODULE_VERSION = "2.2.3";
+		this.MODULE_USAGE = new String[] {
+				"//zhan 理由"
+		};
+		this.MODULE_PRIVACY_TRIGER = new String[] {};
+		this.MODULE_PRIVACY_LISTEN = new String[] {};
+		this.MODULE_PRIVACY_STORED = new String[] {};
+		this.MODULE_PRIVACY_CACHED = new String[] {};
+		this.MODULE_PRIVACY_OBTAIN = new String[] {
+				"获取命令发送人"
+		};
 
 		Executor_zhan.CARD.put(1, "O. THE FOOL 愚者正位\r\n愚蠢 狂躁 挥霍无度 神志不清");
 		Executor_zhan.CARD.put(2, "O. THE FOOL 愚者逆位\r\n疏忽 缺乏 暮气 无效 虚荣");

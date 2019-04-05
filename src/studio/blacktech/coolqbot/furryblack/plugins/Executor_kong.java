@@ -7,20 +7,23 @@ import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 @SuppressWarnings("unused")
 public class Executor_kong extends ModuleExecutor {
 
-	private String MODULE_DISPLAYNAME = "变臭";
-	private String MODULE_PACKAGENAME = "kong";
-	private String MODULE_DESCRIPTION = "给 文 字 加 空 格";
-	private String MODULE_VERSION = "2.0.0";
-	private String[] MODULE_USAGE = {
-			"//kong 需要变臭的原句"
-	};
-	private String[] MODULE_PRIVACY_LISTEN = {};
-	private String[] MODULE_PRIVACY_EVENTS = {};
-	private String[] MODULE_PRIVACY_STORED = {};
-	private String[] MODULE_PRIVACY_CACHED = {};
-	private String[] MODULE_PRIVACY_OBTAIN = {
-			"获取命令发送人"
-	};
+	public Executor_kong() {
+
+		this.MODULE_DISPLAYNAME = "变臭";
+		this.MODULE_PACKAGENAME = "kong";
+		this.MODULE_DESCRIPTION = "给 文 字 加 空 格";
+		this.MODULE_VERSION = "2.0.0";
+		this.MODULE_USAGE = new String[] {
+				"//kong 需要变臭的原句"
+		};
+		this.MODULE_PRIVACY_TRIGER = new String[] {};
+		this.MODULE_PRIVACY_LISTEN = new String[] {};
+		this.MODULE_PRIVACY_STORED = new String[] {};
+		this.MODULE_PRIVACY_CACHED = new String[] {};
+		this.MODULE_PRIVACY_OBTAIN = new String[] {
+				"获取命令发送人"
+		};
+	}
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {

@@ -17,7 +17,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "1.19.0 2019-03-31 (15:00)";
+	public static final String PRODUCT_VERSION = "2.0.0 2019-04-05 (23:30)";
 
 	/***
 	 * 此main并非实际执行入口 JcqSDK调用的初始化函数为 startup() enable() disable() exit()
@@ -75,20 +75,15 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int enable() {
 		try {
-			// 获取数据目录
 			JcqAppAbstract.appDirectory = JcqApp.CQ.getAppDirectory();
-
 			ConfigureX.loadConfigure();
 			SystemHandler.init();
-
-			// 发送启动通知信息
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 已启动");
 			JcqAppAbstract.enable = true;
 		} catch (final Exception exce) {
-			// 初始化一旦出错立刻停机
 			exce.printStackTrace();
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), "警告初始化失败！");
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), exce.getStackTrace().toString());
+			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), exce.getMessage());
 			JcqAppAbstract.enable = false;
 		}
 		return 0;
@@ -123,7 +118,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n MSG:");
 			builder.append(message);
 			builder.append("\r\n StackTrace\r\n:");
-			builder.append(exce.getStackTrace().toString());
+			builder.append(exce.getMessage());
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
@@ -147,7 +142,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n MSG:");
 			builder.append(message);
 			builder.append("\r\n StackTrace\r\n:");
-			builder.append(exce.getStackTrace().toString());
+			builder.append(exce.getMessage());
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
@@ -168,7 +163,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n MSG:");
 			builder.append(message);
 			builder.append("\r\n StackTrace\r\n:");
-			builder.append(exce.getStackTrace().toString());
+			builder.append(exce.getMessage());
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
 		}
 		return IMsg.MSG_IGNORE;

@@ -12,33 +12,32 @@ import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
-@SuppressWarnings("unused")
 public class Executor_gamb extends ModuleExecutor {
 
 	private static HashMap<Long, RouletteRound> rounds = new HashMap<Long, RouletteRound>();
-
 	private static ArrayList<Integer> roulette = new ArrayList<Integer>();
 	private static int ROUND_EXPIRED = 0;
 	private static int ROUND_SUCCESS = 0;
 
-	private String MODULE_DISPLAYNAME = "俄罗斯轮盘赌";
-	private String MODULE_PACKAGENAME = "gamb";
-	private String MODULE_DESCRIPTION = "你看这子弹又尖又长，这名单又大又宽";
-	private String MODULE_VERSION = "2.12.4";
-	private String[] MODULE_USAGE = {
-			"///gamb 筹码 - 加入或者发起一局俄罗斯轮盘赌，玩家必须下注，且不可退出。十分钟仍未满员则自动解散对局。"
-	};
-	private String[] MODULE_PRIVACY_LISTEN = {};
-	private String[] MODULE_PRIVACY_EVENTS = {};
-	private String[] MODULE_PRIVACY_STORED = {};
-	private String[] MODULE_PRIVACY_CACHED = {
-			"群号-回合对应表 - 回合结束后删除", "回合-QQ号对应表 - 回合就结束后删除"
-	};
-	private String[] MODULE_PRIVACY_OBTAIN = {
-			"获取命令发送人", "用户的昵称和群昵称"
-	};
-
 	public Executor_gamb() {
+
+		this.MODULE_DISPLAYNAME = "俄罗斯轮盘赌";
+		this.MODULE_PACKAGENAME = "gamb";
+		this.MODULE_DESCRIPTION = "你看这子弹又尖又长，这名单又大又宽";
+		this.MODULE_VERSION = "2.12.4";
+		this.MODULE_USAGE = new String[] {
+				"//gamb 筹码 - 加入或者发起一局俄罗斯轮盘赌，玩家必须下注，且不可退出。十分钟仍未满员则自动解散对局。"
+		};
+		this.MODULE_PRIVACY_TRIGER = new String[] {};
+		this.MODULE_PRIVACY_LISTEN = new String[] {};
+		this.MODULE_PRIVACY_STORED = new String[] {};
+		this.MODULE_PRIVACY_CACHED = new String[] {
+				"群号-回合对应表 - 回合结束后删除", "回合-QQ号对应表 - 回合就结束后删除"
+		};
+		this.MODULE_PRIVACY_OBTAIN = new String[] {
+				"获取命令发送人", "用户的昵称和群昵称"
+		};
+
 		Executor_gamb.roulette.add(0);
 		Executor_gamb.roulette.add(0);
 		Executor_gamb.roulette.add(0);

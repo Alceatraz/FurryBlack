@@ -17,22 +17,24 @@ public class Executor_jrjp extends ModuleExecutor {
 	private static HashMap<Long, Integer> jrav = new HashMap<Long, Integer>();
 	private static HashMap<Long, Member> jrjp = new HashMap<Long, Member>();
 
-	private String MODULE_DISPLAYNAME = "今日祭品";
-	private String MODULE_PACKAGENAME = "jrjp";
-	private String MODULE_DESCRIPTION = "今日祭品";
-	private String MODULE_VERSION = "2.10.2";
-	private String[] MODULE_USAGE = {
-			"//jrjp"
-	};
-	private String[] MODULE_PRIVACY_LISTEN = {};
-	private String[] MODULE_PRIVACY_EVENTS = {};
-	private String[] MODULE_PRIVACY_STORED = {};
-	private String[] MODULE_PRIVACY_CACHED = {
-			"群号-QQ号对应表 - 每日UTC+8 00:00 清空", "群号-AV号对应表 - 每日UTC+8 00:00 清空"
-	};
-	private String[] MODULE_PRIVACY_OBTAIN = {
-			"获取命令发送人", "被抽到成员的昵称和群昵称"
-	};
+	public Executor_jrjp() {
+		this.MODULE_DISPLAYNAME = "今日祭品";
+		this.MODULE_PACKAGENAME = "jrjp";
+		this.MODULE_DESCRIPTION = "今日祭品";
+		this.MODULE_VERSION = "2.10.2";
+		this.MODULE_USAGE = new String[] {
+				"//jrjp"
+		};
+		this.MODULE_PRIVACY_TRIGER = new String[] {};
+		this.MODULE_PRIVACY_LISTEN = new String[] {};
+		this.MODULE_PRIVACY_STORED = new String[] {};
+		this.MODULE_PRIVACY_CACHED = new String[] {
+				"群号-QQ号对应表 - 每日UTC+8 00:00 清空", "群号-AV号对应表 - 每日UTC+8 00:00 清空"
+		};
+		this.MODULE_PRIVACY_OBTAIN = new String[] {
+				"获取命令发送人", "被抽到成员的昵称和群昵称"
+		};
+	}
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
