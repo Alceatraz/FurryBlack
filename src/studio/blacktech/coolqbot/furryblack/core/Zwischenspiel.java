@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack;
+package studio.blacktech.coolqbot.furryblack.core;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,8 +9,9 @@ import java.util.Date;
 import com.sobte.cqp.jcq.entity.Group;
 import com.sobte.cqp.jcq.event.JcqApp;
 
+import studio.blacktech.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
-import studio.blacktech.coolqbot.furryblack.utility.LoggerX;
 
 public class Zwischenspiel {
 

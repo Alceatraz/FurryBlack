@@ -1,7 +1,9 @@
-package studio.blacktech.coolqbot.furryblack;
+package studio.blacktech.common;
 
 import com.sobte.cqp.jcq.event.JcqApp;
 
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.core.Zwischenspiel;
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
 
 public class LogicX {

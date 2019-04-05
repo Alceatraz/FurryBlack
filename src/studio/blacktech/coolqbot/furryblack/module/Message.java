@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.utility;
+package studio.blacktech.coolqbot.furryblack.module;
 
 /***
  * 消息处理的实用工具类

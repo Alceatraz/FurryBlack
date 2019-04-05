@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.module;
+package studio.blacktech.coolqbot.furryblack.plugins;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -6,16 +6,17 @@ import java.util.List;
 import com.sobte.cqp.jcq.entity.Member;
 import com.sobte.cqp.jcq.event.JcqApp;
 
-import studio.blacktech.coolqbot.furryblack.JavaExtension;
+import studio.blacktech.common.ConfigureX;
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.utility.Message;
+import studio.blacktech.coolqbot.furryblack.module.Message;
+import studio.blacktech.coolqbot.furryblack.module.ModuleLogic;
 
 @SuppressWarnings("unused")
-public class Extension_chou extends JavaExtension {
+public class Command_chou extends ModuleLogic {
 
 	//@formatter:off
 	private final String MODULE_DISPLAYNAME = "随机抽人";
-	private final String MODULE_COMMANDNAME = "chou";
+	private final String MODULE_PACKAGENAME = "chou";
 	private final String MODULE_VERSION = "2.4.0";
 	private final String MODULE_DESCRIPTION = "从群随机抽取一个人";
 	private final String[] MODULE_USAGE = {"//chou ","//chou 理由"};
@@ -27,19 +28,19 @@ public class Extension_chou extends JavaExtension {
 	//@formatter:on	
 
 	@Override
-	public boolean doUserMessage(int typeid, int userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doCommandUserMessage(int typeid, int userid, Message message, int messageid, int messagefont) throws Exception {
 		userWarn(userid, "此功能不支持私聊");
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(int diszid, int userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doCommandDiszMessage(int diszid, int userid, Message message, int messageid, int messagefont) throws Exception {
 		diszInfo(diszid, userid, "此功能不支持讨论组");
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(int gropid, int userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doCommandGropMessage(int gropid, int userid, Message message, int messageid, int messagefont) throws Exception {
 		List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
 		Member member;
 		int size = members.size();
@@ -47,7 +48,7 @@ public class Extension_chou extends JavaExtension {
 		do {
 			member = members.get(random(size));
 			uid = member.getQqId();
-		} while (uid == entry.SELFQQID || uid == userid);
+		} while (uid == ConfigureX.SELFUSERID() || uid == userid);
 		String nickname = member.getCard();
 		if (nickname.length() == 0) {
 			nickname = member.getNick();

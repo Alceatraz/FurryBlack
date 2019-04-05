@@ -1,10 +1,6 @@
 package studio.blacktech.coolqbot.furryblack;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -16,6 +12,9 @@ import com.sobte.cqp.jcq.entity.IRequest;
 import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
+import studio.blacktech.common.LoggerX;
+import studio.blacktech.common.LogicX;
+import studio.blacktech.coolqbot.furryblack.core.EventHandler;
 import studio.blacktech.coolqbot.furryblack.module.Executor_chou;
 import studio.blacktech.coolqbot.furryblack.module.Executor_dice;
 import studio.blacktech.coolqbot.furryblack.module.Executor_echo;
@@ -32,28 +31,18 @@ import studio.blacktech.coolqbot.furryblack.module.FunctionListener;
 import studio.blacktech.coolqbot.furryblack.scheduler.Autobot_DailyDDNS;
 import studio.blacktech.coolqbot.furryblack.scheduler.Autobot_DailyTask;
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
-import studio.blacktech.coolqbot.furryblack.utility.LoggerX;
 
 public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
-	public static final Properties RUNTIME_PROP = System.getProperties();
-
-	public static final int LOG_LEVEL = 5;
-
 	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 
+	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	
-	public static final String PRODUCT_PRODUCTIONAME = "BlackFurry - BOT";
 	public static final String PRODUCT_VERSION = "1.19.0 2019-03-31 (15:00)";
-
-	private static TreeMap<String, Thread> THREAD = new TreeMap<String, Thread>();
 
 	private static String MESSAGE_MODULES = "";
 	private static String MESSAGE_HELPALL = "";
 
-	private static String APIURL_BASE = "";
-	private static String APIKEY_DDNS = "";
 
 	// @formatter:off
 
@@ -247,17 +236,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int privateMsg(final int mesg_type, final int mesg_id, final long user_id, final String message, final int mesg_font) {
-//		if (USER_IGNORE.contains(user_id)) {
-//			return IMsg.MSG_IGNORE;
-//		}
-		if (message.startsWith("//") && (message.length() > 2)) {
-			LogicX.executor(new Workflow(mesg_type, mesg_id, user_id, message, mesg_font));
-//		} else if (ENABLE_LISTENER_USER && LISTENER_USER.containsKey(user_id)) {
-//			LogicX.listener(new Workflow(mesg_type, mesg_id, user_id, message, mesg_font));
-		} else {
-			JcqApp.CQ.sendPrivateMsg(user_id, "为了保障用户隐私\r\n任何非//开头的内容都将被忽略\r\n请使用//help查看帮助");
-		}
-		return IMsg.MSG_IGNORE;
+
+		HandlerFilter
 	}
 
 	/***

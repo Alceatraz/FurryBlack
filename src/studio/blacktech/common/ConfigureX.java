@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack;
+package studio.blacktech.common;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -121,6 +121,10 @@ public class ConfigureX {
 
 	public static boolean ENABLE_GROPIGNORE() {
 		return ENABLE_GROPIGNORE;
+	}
+
+	public static long SELFUSERID() {
+		return 0;
 	}
 
 }
