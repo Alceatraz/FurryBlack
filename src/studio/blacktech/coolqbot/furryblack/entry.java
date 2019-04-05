@@ -1,8 +1,5 @@
 package studio.blacktech.coolqbot.furryblack;
 
-import java.io.FileInputStream;
-import java.util.Properties;
-
 import com.sobte.cqp.jcq.entity.CQDebug;
 import com.sobte.cqp.jcq.entity.ICQVer;
 import com.sobte.cqp.jcq.entity.IMsg;
@@ -12,24 +9,12 @@ import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.common.ConfigureX;
 import studio.blacktech.common.LoggerX;
-import studio.blacktech.coolqbot.furryblack.module.Executor_chou;
-import studio.blacktech.coolqbot.furryblack.module.Executor_dice;
-import studio.blacktech.coolqbot.furryblack.module.Executor_echo;
-import studio.blacktech.coolqbot.furryblack.module.Executor_jrjp;
-import studio.blacktech.coolqbot.furryblack.module.Executor_jrrp;
-import studio.blacktech.coolqbot.furryblack.module.Executor_kong;
-import studio.blacktech.coolqbot.furryblack.module.Executor_mine;
-import studio.blacktech.coolqbot.furryblack.module.Executor_nsfw;
-import studio.blacktech.coolqbot.furryblack.module.Executor_roll;
-import studio.blacktech.coolqbot.furryblack.module.Executor_roulette;
-import studio.blacktech.coolqbot.furryblack.module.Executor_zhan;
-import studio.blacktech.coolqbot.furryblack.scheduler.Autobot_DailyDDNS;
-import studio.blacktech.coolqbot.furryblack.scheduler.Autobot_DailyTask;
 
 public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
-	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
+	public static final boolean DEBUG = true;
 
+	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
 	public static final String PRODUCT_VERSION = "1.19.0 2019-03-31 (15:00)";
@@ -93,44 +78,17 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			// 获取数据目录
 			JcqAppAbstract.appDirectory = JcqApp.CQ.getAppDirectory();
 
-			// 加载配置
-			final Properties property = new Properties();
-			property.load(new FileInputStream(JcqAppAbstract.appDirectory + "/config.properties"));
-			entry.APIURL_BASE = property.getProperty("APIURL_BASE");
-			entry.APIKEY_DDNS = property.getProperty("APIKEY_DDNS");
-			if ((entry.APIURL_BASE == null) || (entry.APIKEY_DDNS == null)) {
-				throw new Exception("DDNS-API加载失败");
-			}
-
-			// 加载屏蔽列表
-
-			// 加载模块
-			entry.register(new Executor_chou());
-			entry.register(new Executor_dice());
-			entry.register(new Executor_echo());
-			entry.register(new Executor_jrjp());
-			entry.register(new Executor_jrrp());
-			entry.register(new Executor_kong());
-			entry.register(new Executor_mine());
-			entry.register(new Executor_nsfw());
-			entry.register(new Executor_roll());
-			entry.register(new Executor_roulette());
-			entry.register(new Executor_zhan());
-
-			// 启动异步服务
-			entry.THREAD.put("DAILYTASK", new Thread(new Autobot_DailyTask()));
-			entry.THREAD.put("DAILYDDNS", new Thread(new Autobot_DailyDDNS()));
-			entry.THREAD.get("DAILYTASK").start();
-			entry.THREAD.get("DAILYDDNS").start();
+			ConfigureX.loadConfigure();
+			MessageHandler.init();
 
 			// 发送启动通知信息
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.ADMIN_UID(), LoggerX.time() + " [FurryBlack] 已启动");
+			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 已启动");
 			JcqAppAbstract.enable = true;
-
 		} catch (final Exception exce) {
 			// 初始化一旦出错立刻停机
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.ADMIN_UID(), "警告初始化失败！");
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.ADMIN_UID(), exce.getStackTrace().toString());
+			exce.printStackTrace();
+			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), "警告初始化失败！");
+			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), exce.getStackTrace().toString());
 			System.exit(1);
 		}
 		return 0;
@@ -166,7 +124,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(message);
 			builder.append("\r\n StackTrace\r\n:");
 			builder.append(exce.getStackTrace().toString());
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.ADMIN_UID(), builder.toString());
+			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -190,7 +148,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(message);
 			builder.append("\r\n StackTrace\r\n:");
 			builder.append(exce.getStackTrace().toString());
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.ADMIN_UID(), builder.toString());
+			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -211,7 +169,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(message);
 			builder.append("\r\n StackTrace\r\n:");
 			builder.append(exce.getStackTrace().toString());
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.ADMIN_UID(), builder.toString());
+			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -223,7 +181,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int requestAddFriend(final int type, final int time, final long qqid, final String message, final String flag) {
-		JcqApp.CQ.sendPrivateMsg(ConfigureX.ADMIN_UID(), LoggerX.time() + " [FurryBlack] 好友申请 " + qqid + " : " + message);
+		JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 好友申请 " + qqid + " : " + message);
 		// 同意好友添加
 		JcqApp.CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, null);
 		return 0;
@@ -238,9 +196,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		// 1 -> 作为管理时收到了用户加入申请
 		// 2 -> 收到好友邀请加入某群的邀请
 		if (subtype == 1) {
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.ADMIN_UID(), LoggerX.time() + " [FurryBlack] 加群申请 - 群号:" + fromGroup + " 申请者:" + fromQQ);
+			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 加群申请 - 群号:" + fromGroup + " 申请者:" + fromQQ);
 		} else if (subtype == 2) {
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.ADMIN_UID(), LoggerX.time() + " [FurryBlack] 加群邀请 - 群号:" + fromGroup + " 邀请者:" + fromQQ);
+			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 加群邀请 - 群号:" + fromGroup + " 邀请者:" + fromQQ);
 			// 同意邀请进群
 			JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
 		}

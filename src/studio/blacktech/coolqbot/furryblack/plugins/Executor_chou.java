@@ -12,7 +12,7 @@ import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
 @SuppressWarnings("unused")
-public class Command_chou extends ModuleExecutor {
+public class Executor_chou extends ModuleExecutor {
 
 	private final String MODULE_DISPLAYNAME = "Ëæ»ú³éÈË";
 	private final String MODULE_PACKAGENAME = "chou";
@@ -46,9 +46,9 @@ public class Command_chou extends ModuleExecutor {
 		final int size = members.size();
 		long uid = 0;
 		do {
-			member = members.get(Command_chou.random(size));
+			member = members.get(Executor_chou.random(size));
 			uid = member.getQqId();
-		} while ((uid == ConfigureX.SELFUSERID()) || (uid == userid));
+		} while ((uid == ConfigureX.MYSELFID()) || (uid == userid));
 		String nickname = member.getCard();
 		if (nickname.length() == 0) {
 			nickname = member.getNick();
