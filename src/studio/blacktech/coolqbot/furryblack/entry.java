@@ -42,22 +42,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 
-	public static final String PRODUCT_STDNAME = entry.AppID;
-	public static final String PRODUCT_DISPLAY = "BlackFurry - BOT";
+	public static final String PRODUCT_PACKAGENANE = entry.AppID;
+	
+	public static final String PRODUCT_PRODUCTIONAME = "BlackFurry - BOT";
 	public static final String PRODUCT_VERSION = "1.19.0 2019-03-31 (15:00)";
 
-	public static final long SELFQQID = 3477852529L;
-	public static final long OPERATOR = 1752384244L;
-
-	protected static TreeMap<String, FunctionExecutor> Executor = new TreeMap<String, FunctionExecutor>();
-	protected static TreeMap<String, FunctionListener> Listener = new TreeMap<String, FunctionListener>();
-
 	private static TreeMap<String, Thread> THREAD = new TreeMap<String, Thread>();
-
-	private static ArrayList<String> BLACKLIST = new ArrayList<String>(100);
-	private static ArrayList<Long> USER_IGNORE = new ArrayList<Long>(100);
-	private static ArrayList<Long> DISC_IGNORE = new ArrayList<Long>(100);
-	private static ArrayList<Long> GROP_IGNORE = new ArrayList<Long>(100);
 
 	private static String MESSAGE_MODULES = "";
 	private static String MESSAGE_HELPALL = "";
@@ -142,32 +132,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			}
 
 			// 加载屏蔽列表
-			String line;
-			BufferedReader reader;
-
-			reader = new BufferedReader(new FileReader(Paths.get(JcqAppAbstract.appDirectory, "USER_IGNORE.txt").toFile()));
-			while ((line = reader.readLine()) != null) {
-				entry.USER_IGNORE.add(Long.parseLong(line));
-			}
-			reader.close();
-
-			reader = new BufferedReader(new FileReader(Paths.get(JcqAppAbstract.appDirectory, "DISC_IGNORE.txt").toFile()));
-			while ((line = reader.readLine()) != null) {
-				entry.DISC_IGNORE.add(Long.parseLong(line));
-			}
-			reader.close();
-
-			reader = new BufferedReader(new FileReader(Paths.get(JcqAppAbstract.appDirectory, "GROP_IGNORE.txt").toFile()));
-			while ((line = reader.readLine()) != null) {
-				entry.GROP_IGNORE.add(Long.parseLong(line));
-			}
-			reader.close();
-
-			reader = new BufferedReader(new FileReader(Paths.get(JcqAppAbstract.appDirectory, "BLACKLIST.txt").toFile()));
-			while ((line = reader.readLine()) != null) {
-				entry.BLACKLIST.add(line);
-			}
-			reader.close();
 
 			// 加载模块
 			entry.register(new Executor_chou());
@@ -317,14 +281,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int groupMsg(final int mesg_type, final int mesg_id, final long group_id, final long user_id, final String anonmessage, final String message, final int mesg_font) {
-//		if (GROP_IGNORE.contains(group_id) || USER_IGNORE.contains(user_id)) {
-//			return IMsg.MSG_IGNORE;
-//		}
-		if (message.startsWith("//") && (message.length() > 2)) {
-			LogicX.executor(new Workflow(mesg_type, mesg_id, user_id, group_id, message, anonmessage, mesg_font));
-//		} else if (ENABLE_LISTENER_GROP && LISTENER_GROP.containsKey(group_id) && LISTENER_GROP.get(group_id).containsKey(user_id)) {
-//			LogicX.listener(new Workflow(mesg_type, mesg_id, user_id, group_id, message, anonmessage, mesg_font));
-		}
+		EventHandler.doGroupMessage(mesg_type, mesg_id, group_id, user_id, anonmessage, message, mesg_font);
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -362,7 +319,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	// ==============================================================================================================================================================
 
 	private static void register(final FunctionExecutor module) {
-		entry.Executor.put(module.MODULE_COMMAND, module);
+
 	}
 
 	public static String getAPIKEY_DDNS() {
