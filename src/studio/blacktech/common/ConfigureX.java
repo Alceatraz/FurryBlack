@@ -11,7 +11,7 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.scheduler.Worker_DDNS;
+import studio.blacktech.coolqbot.furryblack.scheduler.Scheduler_DDNS;
 
 public class ConfigureX {
 
@@ -128,7 +128,7 @@ public class ConfigureX {
 		ConfigureX.DDNSAPI_HOSTNAME = ConfigureX.property.getProperty("ddnsapi_hostname", "");
 		ConfigureX.DDNSAPI_PASSWORD = ConfigureX.property.getProperty("ddnsapi_password", "");
 
-		Worker_DDNS.init(ConfigureX.DDNSAPI_CLIENTUA, ConfigureX.DDNSAPI_HOSTNAME, ConfigureX.DDNSAPI_PASSWORD);
+		Scheduler_DDNS.init(ConfigureX.DDNSAPI_CLIENTUA, ConfigureX.DDNSAPI_HOSTNAME, ConfigureX.DDNSAPI_PASSWORD);
 
 		return true;
 	}

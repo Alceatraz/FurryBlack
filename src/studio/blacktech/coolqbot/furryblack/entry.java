@@ -1,5 +1,7 @@
 package studio.blacktech.coolqbot.furryblack;
 
+import java.util.HashMap;
+
 import com.sobte.cqp.jcq.entity.CQDebug;
 import com.sobte.cqp.jcq.entity.ICQVer;
 import com.sobte.cqp.jcq.entity.IMsg;
@@ -79,7 +81,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			JcqAppAbstract.appDirectory = JcqApp.CQ.getAppDirectory();
 
 			ConfigureX.loadConfigure();
-			MessageHandler.init();
+			SystemHandler.init();
 
 			// 发送启动通知信息
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 已启动");
@@ -111,7 +113,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int privateMsg(final int typeid, final int messageid, final long userid, final String message, final int messagefont) {
 		try {
-			MessageHandler.doUserMessage(typeid, userid, message, messageid, messagefont);
+			SystemHandler.doUserMessage(typeid, userid, message, messageid, messagefont);
 		} catch (final Exception exce) {
 			exce.printStackTrace();
 			final StringBuilder builder = new StringBuilder();
@@ -135,7 +137,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int discussMsg(final int typeid, final int messageid, final long diszid, final long userid, final String message, final int messagefont) {
 		try {
-			MessageHandler.doDiszMessage(diszid, userid, message, messageid, messagefont);
+			SystemHandler.doDiszMessage(diszid, userid, message, messageid, messagefont);
 		} catch (final Exception exce) {
 			exce.printStackTrace();
 			final StringBuilder builder = new StringBuilder();
@@ -156,7 +158,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int groupMsg(final int typeid, final int messageid, final long gropid, final long userid, final String anonymous, final String message, final int messagefont) {
 		try {
-			MessageHandler.doGropMessage(gropid, userid, message, messageid, messagefont);
+			SystemHandler.doGropMessage(gropid, userid, message, messageid, messagefont);
 		} catch (final Exception exce) {
 			exce.printStackTrace();
 			final StringBuilder builder = new StringBuilder();

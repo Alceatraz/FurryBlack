@@ -24,8 +24,10 @@ import studio.blacktech.coolqbot.furryblack.plugins.Executor_jrrp;
 import studio.blacktech.coolqbot.furryblack.plugins.Executor_kong;
 import studio.blacktech.coolqbot.furryblack.plugins.Executor_roll;
 import studio.blacktech.coolqbot.furryblack.plugins.Executor_zhan;
+import studio.blacktech.coolqbot.furryblack.scheduler.Scheduler_DDNS;
+import studio.blacktech.coolqbot.furryblack.scheduler.Scheduler_Task;
 
-public class MessageHandler extends Module {
+public class SystemHandler extends Module {
 
 	private static int COUNT_USER_MESSAGE = 0;
 	private static int COUNT_DISZ_MESSAGE = 0;
@@ -56,6 +58,8 @@ public class MessageHandler extends Module {
 	private static boolean ENABLE_LISENTER_DISZ = false;
 	private static boolean ENABLE_LISENTER_GROP = false;
 
+	private static HashMap<String, Thread> SCHEDULER = new HashMap<String, Thread>();
+
 	private static ArrayList<CharSequence> BLACKLIST = new ArrayList<CharSequence>(100);
 
 	private static ArrayList<Long> USER_IGNORE = new ArrayList<Long>(100);
@@ -76,10 +80,10 @@ public class MessageHandler extends Module {
 
 	protected static boolean init() throws ReInitializationException, NumberFormatException, IOException {
 
-		if (MessageHandler.INITIALIZATIONLOCK) {
+		if (SystemHandler.INITIALIZATIONLOCK) {
 			throw new ReInitializationException();
 		}
-		MessageHandler.INITIALIZATIONLOCK = true;
+		SystemHandler.INITIALIZATIONLOCK = true;
 
 		String line;
 		BufferedReader reader;
@@ -87,59 +91,59 @@ public class MessageHandler extends Module {
 
 		reader = new BufferedReader(new FileReader(ConfigureX.FILE_BLACKLIST));
 		while ((line = reader.readLine()) != null) {
-			MessageHandler.BLACKLIST.add(line);
+			SystemHandler.BLACKLIST.add(line);
 		}
 		reader.close();
 
 		reader = new BufferedReader(new FileReader(ConfigureX.FILE_USERIGNORE));
 		while ((line = reader.readLine()) != null) {
-			MessageHandler.USER_IGNORE.add(Long.parseLong(line));
+			SystemHandler.USER_IGNORE.add(Long.parseLong(line));
 		}
 		reader.close();
 
 		reader = new BufferedReader(new FileReader(ConfigureX.FILE_DISZIGNORE));
 		while ((line = reader.readLine()) != null) {
-			MessageHandler.DISZ_IGNORE.add(Long.parseLong(line));
+			SystemHandler.DISZ_IGNORE.add(Long.parseLong(line));
 		}
 		reader.close();
 
 		reader = new BufferedReader(new FileReader(ConfigureX.FILE_GROPIGNORE));
 		while ((line = reader.readLine()) != null) {
-			MessageHandler.GROP_IGNORE.add(Long.parseLong(line));
+			SystemHandler.GROP_IGNORE.add(Long.parseLong(line));
 		}
 		reader.close();
 
 		// 注册模块
 
-		MessageHandler.EXECUTOR_USER.put("dice", new Executor_chou());
-		MessageHandler.EXECUTOR_USER.put("echo", new Executor_echo());
-		MessageHandler.EXECUTOR_USER.put("jrrp", new Executor_jrrp());
-		MessageHandler.EXECUTOR_USER.put("kong", new Executor_kong());
-		MessageHandler.EXECUTOR_USER.put("roll", new Executor_roll());
-		MessageHandler.EXECUTOR_USER.put("zhan", new Executor_zhan());
+		SystemHandler.EXECUTOR_USER.put("dice", new Executor_chou());
+		SystemHandler.EXECUTOR_USER.put("echo", new Executor_echo());
+		SystemHandler.EXECUTOR_USER.put("jrrp", new Executor_jrrp());
+		SystemHandler.EXECUTOR_USER.put("kong", new Executor_kong());
+		SystemHandler.EXECUTOR_USER.put("roll", new Executor_roll());
+		SystemHandler.EXECUTOR_USER.put("zhan", new Executor_zhan());
 
-		MessageHandler.EXECUTOR_DISZ.put("dice", new Executor_chou());
-		MessageHandler.EXECUTOR_DISZ.put("echo", new Executor_echo());
-		MessageHandler.EXECUTOR_DISZ.put("jrrp", new Executor_jrrp());
-		MessageHandler.EXECUTOR_DISZ.put("kong", new Executor_kong());
-		MessageHandler.EXECUTOR_DISZ.put("kong", new Executor_kong());
-		MessageHandler.EXECUTOR_DISZ.put("roll", new Executor_roll());
-		MessageHandler.EXECUTOR_DISZ.put("zhan", new Executor_zhan());
+		SystemHandler.EXECUTOR_DISZ.put("dice", new Executor_chou());
+		SystemHandler.EXECUTOR_DISZ.put("echo", new Executor_echo());
+		SystemHandler.EXECUTOR_DISZ.put("jrrp", new Executor_jrrp());
+		SystemHandler.EXECUTOR_DISZ.put("kong", new Executor_kong());
+		SystemHandler.EXECUTOR_DISZ.put("kong", new Executor_kong());
+		SystemHandler.EXECUTOR_DISZ.put("roll", new Executor_roll());
+		SystemHandler.EXECUTOR_DISZ.put("zhan", new Executor_zhan());
 
-		MessageHandler.EXECUTOR_GROP.put("dice", new Executor_chou());
-		MessageHandler.EXECUTOR_GROP.put("echo", new Executor_echo());
-		MessageHandler.EXECUTOR_GROP.put("gamb", new Executor_gamb());
-		MessageHandler.EXECUTOR_GROP.put("jrrp", new Executor_jrrp());
-		MessageHandler.EXECUTOR_GROP.put("kong", new Executor_kong());
-		MessageHandler.EXECUTOR_GROP.put("kong", new Executor_kong());
-		MessageHandler.EXECUTOR_GROP.put("roll", new Executor_roll());
-		MessageHandler.EXECUTOR_GROP.put("zhan", new Executor_zhan());
+		SystemHandler.EXECUTOR_GROP.put("dice", new Executor_chou());
+		SystemHandler.EXECUTOR_GROP.put("echo", new Executor_echo());
+		SystemHandler.EXECUTOR_GROP.put("gamb", new Executor_gamb());
+		SystemHandler.EXECUTOR_GROP.put("jrrp", new Executor_jrrp());
+		SystemHandler.EXECUTOR_GROP.put("kong", new Executor_kong());
+		SystemHandler.EXECUTOR_GROP.put("kong", new Executor_kong());
+		SystemHandler.EXECUTOR_GROP.put("roll", new Executor_roll());
+		SystemHandler.EXECUTOR_GROP.put("zhan", new Executor_zhan());
 
 		// 预生成list的内容
 		builder = new StringBuilder("已经安装的插件 - 私聊可用: ");
-		builder.append(MessageHandler.EXECUTOR_USER.size());
-		for (final String temp : MessageHandler.EXECUTOR_USER.keySet()) {
-			final ModuleExecutor module = MessageHandler.EXECUTOR_USER.get(temp);
+		builder.append(SystemHandler.EXECUTOR_USER.size());
+		for (final String temp : SystemHandler.EXECUTOR_USER.keySet()) {
+			final ModuleExecutor module = SystemHandler.EXECUTOR_USER.get(temp);
 			module.genFullHelp();
 			builder.append("\r\n//");
 			builder.append(module.MODULE_PACKAGENAME);
@@ -148,12 +152,12 @@ public class MessageHandler extends Module {
 			builder.append(" : ");
 			builder.append(module.MODULE_DESCRIPTION);
 		}
-		MessageHandler.MESSAGE_LIST_USER = builder.toString();
+		SystemHandler.MESSAGE_LIST_USER = builder.toString();
 
 		builder = new StringBuilder("已经安装的插件 - 讨论组可用: ");
-		builder.append(MessageHandler.EXECUTOR_USER.size());
-		for (final String temp : MessageHandler.EXECUTOR_USER.keySet()) {
-			final ModuleExecutor module = MessageHandler.EXECUTOR_USER.get(temp);
+		builder.append(SystemHandler.EXECUTOR_USER.size());
+		for (final String temp : SystemHandler.EXECUTOR_USER.keySet()) {
+			final ModuleExecutor module = SystemHandler.EXECUTOR_USER.get(temp);
 			module.genFullHelp();
 			builder.append("\r\n//");
 			builder.append(module.MODULE_PACKAGENAME);
@@ -162,12 +166,12 @@ public class MessageHandler extends Module {
 			builder.append(" : ");
 			builder.append(module.MODULE_DESCRIPTION);
 		}
-		MessageHandler.MESSAGE_LIST_DISZ = builder.toString();
+		SystemHandler.MESSAGE_LIST_DISZ = builder.toString();
 
 		builder = new StringBuilder("已经安装的插件 - 群聊可用: ");
-		builder.append(MessageHandler.EXECUTOR_USER.size());
-		for (final String temp : MessageHandler.EXECUTOR_USER.keySet()) {
-			final ModuleExecutor module = MessageHandler.EXECUTOR_USER.get(temp);
+		builder.append(SystemHandler.EXECUTOR_USER.size());
+		for (final String temp : SystemHandler.EXECUTOR_USER.keySet()) {
+			final ModuleExecutor module = SystemHandler.EXECUTOR_USER.get(temp);
 			module.genFullHelp();
 			builder.append("\r\n//");
 			builder.append(module.MODULE_PACKAGENAME);
@@ -176,27 +180,33 @@ public class MessageHandler extends Module {
 			builder.append(" : ");
 			builder.append(module.MODULE_DESCRIPTION);
 		}
-		MessageHandler.MESSAGE_LIST_GROP = builder.toString();
+		SystemHandler.MESSAGE_LIST_GROP = builder.toString();
+
+		SCHEDULER.put("TASK", new Thread(new Scheduler_Task()));
+		SCHEDULER.put("DDNS", new Thread(new Scheduler_DDNS()));
+
+		SCHEDULER.get("TASK").start();
+		SCHEDULER.get("DDNS").start();
 
 		return true;
 	}
 
 	protected static int doUserMessage(final int typeid, final long userid, final String message, final int messageid, final int messagefont) throws Exception {
-		MessageHandler.COUNT_USER_MESSAGE++;
+		SystemHandler.COUNT_USER_MESSAGE++;
 		// 是否启用用户黑名单
-		if (MessageHandler.ENABLE_USER_IGNORE && MessageHandler.USER_IGNORE.contains(userid)) {
+		if (SystemHandler.ENABLE_USER_IGNORE && SystemHandler.USER_IGNORE.contains(userid)) {
 			return IMsg.MSG_IGNORE;
 		}
 		// 是否启用监听器
-		if (MessageHandler.ENABLE_LISENTER_USER) {
-			for (final ModuleListener temp : MessageHandler.LISENTER_USER) {
+		if (SystemHandler.ENABLE_LISENTER_USER) {
+			for (final ModuleListener temp : SystemHandler.LISENTER_USER) {
 				temp.doUserMessage(typeid, userid, new Message(message), messageid, messagefont);
 			}
 		}
 		// 是否启用触发器
-		if (MessageHandler.ENABLE_TRIGGER_USER) {
+		if (SystemHandler.ENABLE_TRIGGER_USER) {
 			boolean intercept = false;
-			for (final ModuleTrigger temp : MessageHandler.TRIGGER_USER) {
+			for (final ModuleTrigger temp : SystemHandler.TRIGGER_USER) {
 				intercept = intercept || temp.doUserMessage(typeid, userid, new Message(message), messageid, messagefont);
 			}
 			if (intercept) {
@@ -204,8 +214,8 @@ public class MessageHandler extends Module {
 			}
 		}
 		// 是否启用包含词过滤
-		if (MessageHandler.ENABLE_BLACKLIST) {
-			for (final CharSequence temp : MessageHandler.BLACKLIST) {
+		if (SystemHandler.ENABLE_BLACKLIST) {
+			for (final CharSequence temp : SystemHandler.BLACKLIST) {
 				if (message.contains(temp)) {
 					return IMsg.MSG_IGNORE;
 				}
@@ -216,22 +226,22 @@ public class MessageHandler extends Module {
 			final Message command = new Message(message);
 			switch (command.prase()) {
 			case "info":
-				JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_INFO);
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_INFO);
 				break;
 			case "eula":
-				JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_EULA);
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_EULA);
 				break;
 			case "list":
-				JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_LIST_USER);
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_LIST_USER);
 				break;
 			case "help":
 				if (command.length == 1) {
-					JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_HELP);
+					JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_HELP);
 				} else if (command.length > 1) {
-					if (MessageHandler.EXECUTOR_USER.containsKey(command.cmd[1])) {
-						Module.userInfo(userid, MessageHandler.EXECUTOR_USER.get(command.cmd[1]).MODULE_FULLHELP);
+					if (SystemHandler.EXECUTOR_USER.containsKey(command.cmd[1])) {
+						Module.userInfo(userid, SystemHandler.EXECUTOR_USER.get(command.cmd[1]).MODULE_FULLHELP);
 					} else {
-						Module.userInfo(userid, "没有此插件\r\n" + MessageHandler.MESSAGE_LIST_USER);
+						Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_USER);
 					}
 				}
 				break;
@@ -241,14 +251,14 @@ public class MessageHandler extends Module {
 				}
 				break;
 			default:
-				if (MessageHandler.EXECUTOR_USER.containsKey(command.cmd[0])) {
+				if (SystemHandler.EXECUTOR_USER.containsKey(command.cmd[0])) {
 					try {
-						MessageHandler.EXECUTOR_USER.get(command.cmd[0]).doUserMessage(typeid, userid, command, messageid, messagefont);
+						SystemHandler.EXECUTOR_USER.get(command.cmd[0]).doUserMessage(typeid, userid, command, messageid, messagefont);
 					} catch (final Exception exception) {
 						exception.printStackTrace();
 					}
 				} else {
-					Module.userInfo(userid, "没有此插件\r\n" + MessageHandler.MESSAGE_LIST_USER);
+					Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_USER);
 				}
 			}
 			return IMsg.MSG_IGNORE;
@@ -258,21 +268,21 @@ public class MessageHandler extends Module {
 	}
 
 	protected static int doDiszMessage(final long diszid, final long userid, final String message, final int messageid, final int messagefont) throws Exception {
-		MessageHandler.COUNT_USER_MESSAGE++;
+		SystemHandler.COUNT_USER_MESSAGE++;
 		// 是否启用用户黑名单
-		if (MessageHandler.ENABLE_DISZ_IGNORE && MessageHandler.DISZ_IGNORE.contains(userid)) {
+		if (SystemHandler.ENABLE_DISZ_IGNORE && SystemHandler.DISZ_IGNORE.contains(userid)) {
 			return IMsg.MSG_IGNORE;
 		}
 		// 是否启用监听器
-		if (MessageHandler.ENABLE_LISENTER_DISZ) {
-			for (final ModuleListener temp : MessageHandler.LISENTER_DISZ) {
+		if (SystemHandler.ENABLE_LISENTER_DISZ) {
+			for (final ModuleListener temp : SystemHandler.LISENTER_DISZ) {
 				temp.doDiszMessage(diszid, userid, new Message(message), messageid, messagefont);
 			}
 		}
 		// 是否启用触发器
-		if (MessageHandler.ENABLE_TRIGGER_DISZ) {
+		if (SystemHandler.ENABLE_TRIGGER_DISZ) {
 			boolean intercept = false;
-			for (final ModuleTrigger temp : MessageHandler.TRIGGER_DISZ) {
+			for (final ModuleTrigger temp : SystemHandler.TRIGGER_DISZ) {
 				intercept = intercept || temp.doDiszMessage(diszid, userid, new Message(message), messageid, messagefont);
 			}
 			if (intercept) {
@@ -280,8 +290,8 @@ public class MessageHandler extends Module {
 			}
 		}
 		// 是否启用包含词过滤
-		if (MessageHandler.ENABLE_BLACKLIST) {
-			for (final CharSequence temp : MessageHandler.BLACKLIST) {
+		if (SystemHandler.ENABLE_BLACKLIST) {
+			for (final CharSequence temp : SystemHandler.BLACKLIST) {
 				if (message.contains(temp)) {
 					return IMsg.MSG_IGNORE;
 				}
@@ -292,22 +302,22 @@ public class MessageHandler extends Module {
 			final Message command = new Message(message);
 			switch (command.prase()) {
 			case "info":
-				JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_INFO);
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_INFO);
 				break;
 			case "eula":
-				JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_EULA);
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_EULA);
 				break;
 			case "list":
-				JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_LIST_DISZ);
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_LIST_DISZ);
 				break;
 			case "help":
 				if (command.length == 1) {
-					JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_HELP);
+					JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_HELP);
 				} else if (command.length > 1) {
-					if (MessageHandler.EXECUTOR_DISZ.containsKey(command.cmd[1])) {
-						Module.userInfo(userid, MessageHandler.EXECUTOR_DISZ.get(command.cmd[1]).MODULE_FULLHELP);
+					if (SystemHandler.EXECUTOR_DISZ.containsKey(command.cmd[1])) {
+						Module.userInfo(userid, SystemHandler.EXECUTOR_DISZ.get(command.cmd[1]).MODULE_FULLHELP);
 					} else {
-						Module.userInfo(userid, "没有此插件\r\n" + MessageHandler.MESSAGE_LIST_DISZ);
+						Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_DISZ);
 					}
 				}
 				break;
@@ -317,14 +327,14 @@ public class MessageHandler extends Module {
 				}
 				break;
 			default:
-				if (MessageHandler.EXECUTOR_DISZ.containsKey(command.cmd[0])) {
+				if (SystemHandler.EXECUTOR_DISZ.containsKey(command.cmd[0])) {
 					try {
-						MessageHandler.EXECUTOR_DISZ.get(command.cmd[0]).doDiszMessage(diszid, userid, command, messageid, messagefont);
+						SystemHandler.EXECUTOR_DISZ.get(command.cmd[0]).doDiszMessage(diszid, userid, command, messageid, messagefont);
 					} catch (final Exception exception) {
 						exception.printStackTrace();
 					}
 				} else {
-					Module.userInfo(userid, "没有此插件\r\n" + MessageHandler.MESSAGE_LIST_DISZ);
+					Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_DISZ);
 				}
 			}
 			return IMsg.MSG_IGNORE;
@@ -334,21 +344,21 @@ public class MessageHandler extends Module {
 	}
 
 	protected static int doGropMessage(final long gropid, final long userid, final String message, final int messageid, final int messagefont) throws Exception {
-		MessageHandler.COUNT_GROP_MESSAGE++;
+		SystemHandler.COUNT_GROP_MESSAGE++;
 		// 是否启用用户黑名单
-		if (MessageHandler.ENABLE_GROP_IGNORE && MessageHandler.GROP_IGNORE.contains(userid)) {
+		if (SystemHandler.ENABLE_GROP_IGNORE && SystemHandler.GROP_IGNORE.contains(userid)) {
 			return IMsg.MSG_IGNORE;
 		}
 		// 是否启用监听器
-		if (MessageHandler.ENABLE_LISENTER_GROP) {
-			for (final ModuleListener temp : MessageHandler.LISENTER_GROP) {
+		if (SystemHandler.ENABLE_LISENTER_GROP) {
+			for (final ModuleListener temp : SystemHandler.LISENTER_GROP) {
 				temp.doGropMessage(gropid, userid, new Message(message), messageid, messagefont);
 			}
 		}
 		// 是否启用触发器
-		if (MessageHandler.ENABLE_TRIGGER_GROP) {
+		if (SystemHandler.ENABLE_TRIGGER_GROP) {
 			boolean intercept = false;
-			for (final ModuleTrigger temp : MessageHandler.TRIGGER_GROP) {
+			for (final ModuleTrigger temp : SystemHandler.TRIGGER_GROP) {
 				intercept = intercept || temp.doGropMessage(gropid, userid, new Message(message), messageid, messagefont);
 			}
 			if (intercept) {
@@ -356,8 +366,8 @@ public class MessageHandler extends Module {
 			}
 		}
 		// 是否启用包含词过滤
-		if (MessageHandler.ENABLE_BLACKLIST) {
-			for (final CharSequence temp : MessageHandler.BLACKLIST) {
+		if (SystemHandler.ENABLE_BLACKLIST) {
+			for (final CharSequence temp : SystemHandler.BLACKLIST) {
 				if (message.contains(temp)) {
 					return IMsg.MSG_IGNORE;
 				}
@@ -368,22 +378,22 @@ public class MessageHandler extends Module {
 			final Message command = new Message(message);
 			switch (command.prase()) {
 			case "info":
-				JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_INFO);
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_INFO);
 				break;
 			case "eula":
-				JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_EULA);
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_EULA);
 				break;
 			case "list":
-				JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_LIST_GROP);
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_LIST_GROP);
 				break;
 			case "help":
 				if (command.length == 1) {
-					JcqApp.CQ.sendPrivateMsg(userid, MessageHandler.MESSAGE_HELP);
+					JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_HELP);
 				} else if (command.length > 1) {
-					if (MessageHandler.EXECUTOR_USER.containsKey(command.cmd[1])) {
-						Module.userInfo(userid, MessageHandler.EXECUTOR_USER.get(command.cmd[1]).MODULE_FULLHELP);
+					if (SystemHandler.EXECUTOR_USER.containsKey(command.cmd[1])) {
+						Module.userInfo(userid, SystemHandler.EXECUTOR_USER.get(command.cmd[1]).MODULE_FULLHELP);
 					} else {
-						Module.userInfo(userid, "没有此插件\r\n" + MessageHandler.MESSAGE_LIST_GROP);
+						Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_GROP);
 					}
 				}
 				break;
@@ -393,14 +403,14 @@ public class MessageHandler extends Module {
 				}
 				break;
 			default:
-				if (MessageHandler.EXECUTOR_GROP.containsKey(command.cmd[0])) {
+				if (SystemHandler.EXECUTOR_GROP.containsKey(command.cmd[0])) {
 					try {
-						MessageHandler.EXECUTOR_GROP.get(command.cmd[0]).doGropMessage(gropid, userid, command, messageid, messagefont);
+						SystemHandler.EXECUTOR_GROP.get(command.cmd[0]).doGropMessage(gropid, userid, command, messageid, messagefont);
 					} catch (final Exception exception) {
 						exception.printStackTrace();
 					}
 				} else {
-					Module.userInfo(userid, "没有此插件\r\n" + MessageHandler.MESSAGE_LIST_GROP);
+					Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_GROP);
 				}
 			}
 			return IMsg.MSG_IGNORE;
@@ -411,7 +421,7 @@ public class MessageHandler extends Module {
 
 	@Override
 	public String getReport() {
-		return MessageHandler.genReport();
+		return SystemHandler.genReport();
 	}
 
 	public static String genReport() {
@@ -419,43 +429,43 @@ public class MessageHandler extends Module {
 		StringBuilder builder = new StringBuilder();
 		builder.append(LoggerX.time());
 		builder.append(" - 状态简报\r\n系统状态:\r\n调用-私聊：");
-		builder.append(MessageHandler.COUNT_USER_MESSAGE);
+		builder.append(SystemHandler.COUNT_USER_MESSAGE);
 		builder.append("\r\n调用-讨论组：");
-		builder.append(MessageHandler.COUNT_DISZ_MESSAGE);
+		builder.append(SystemHandler.COUNT_DISZ_MESSAGE);
 		builder.append("\r\n调用-群聊：");
-		builder.append(MessageHandler.COUNT_GROP_MESSAGE);
+		builder.append(SystemHandler.COUNT_GROP_MESSAGE);
 		builder.append("\r\n\r\n模块状态:\r\n模块-私聊:");
-		for (final String temp : MessageHandler.EXECUTOR_USER.keySet()) {
+		for (final String temp : SystemHandler.EXECUTOR_USER.keySet()) {
 			builder.append("\r\n\r\n模块 ");
 			builder.append(temp);
 			builder.append(": ");
-			builder.append(MessageHandler.EXECUTOR_USER.get(temp).COUNT);
+			builder.append(SystemHandler.EXECUTOR_USER.get(temp).COUNT);
 			builder.append(" 次调用\r\n");
-			report = MessageHandler.EXECUTOR_USER.get(temp).getReport();
+			report = SystemHandler.EXECUTOR_USER.get(temp).getReport();
 			if (report != null) {
 				builder.append(report);
 			}
 		}
 		builder.append("\r\n模块-讨论:");
-		for (final String temp : MessageHandler.EXECUTOR_DISZ.keySet()) {
+		for (final String temp : SystemHandler.EXECUTOR_DISZ.keySet()) {
 			builder.append("\r\n模块 ");
 			builder.append(temp);
 			builder.append(": ");
-			builder.append(MessageHandler.EXECUTOR_DISZ.get(temp).COUNT);
+			builder.append(SystemHandler.EXECUTOR_DISZ.get(temp).COUNT);
 			builder.append(" 次调用\r\n");
-			report = MessageHandler.EXECUTOR_DISZ.get(temp).getReport();
+			report = SystemHandler.EXECUTOR_DISZ.get(temp).getReport();
 			if (report != null) {
 				builder.append(report);
 			}
 		}
 		builder.append("\r\n模块-群聊:");
-		for (final String temp : MessageHandler.EXECUTOR_GROP.keySet()) {
+		for (final String temp : SystemHandler.EXECUTOR_GROP.keySet()) {
 			builder.append("\r\n\r\n模块 ");
 			builder.append(temp);
 			builder.append(": ");
-			builder.append(MessageHandler.EXECUTOR_GROP.get(temp).COUNT);
+			builder.append(SystemHandler.EXECUTOR_GROP.get(temp).COUNT);
 			builder.append(" 次调用\r\n");
-			report = MessageHandler.EXECUTOR_GROP.get(temp).getReport();
+			report = SystemHandler.EXECUTOR_GROP.get(temp).getReport();
 			if (report != null) {
 				builder.append(report);
 			}

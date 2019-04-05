@@ -11,7 +11,7 @@ import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleScheduler;
 
 @SuppressWarnings("deprecation")
-public class Worker_DDNS extends ModuleScheduler {
+public class Scheduler_DDNS extends ModuleScheduler {
 
 	private static boolean INITIALIZATIONLOCK = false;
 
@@ -26,18 +26,18 @@ public class Worker_DDNS extends ModuleScheduler {
 	private static String RESPONCE = null;
 
 	private static final Thread WORKER = new Thread(() -> {
-		Worker_DDNS.RESPONCE = Worker_DDNS.getIPAddress();
+		Scheduler_DDNS.RESPONCE = Scheduler_DDNS.getIPAddress();
 
-		if (Worker_DDNS.RESPONCE == null) {
+		if (Scheduler_DDNS.RESPONCE == null) {
 			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址获取失败");
-		} else if (!Worker_DDNS.RESPONCE.equals(Worker_DDNS.ADDRESS)) {
-			Worker_DDNS.RESPONCE = Worker_DDNS.setDDNSIPAddress(Worker_DDNS.RESPONCE);
-			if (Worker_DDNS.RESPONCE == null) {
+		} else if (!Scheduler_DDNS.RESPONCE.equals(Scheduler_DDNS.ADDRESS)) {
+			Scheduler_DDNS.RESPONCE = Scheduler_DDNS.setDDNSIPAddress(Scheduler_DDNS.RESPONCE);
+			if (Scheduler_DDNS.RESPONCE == null) {
 				Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 域名更新失败");
 			} else {
-				String[] temp = Worker_DDNS.RESPONCE.split(" ");
-				Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址变更 " + temp[0] + "\r\n旧地址： " + Worker_DDNS.ADDRESS + "新地址： " + temp[1]);
-				Worker_DDNS.ADDRESS = Worker_DDNS.RESPONCE;
+				String[] temp = Scheduler_DDNS.RESPONCE.split(" ");
+				Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址变更 " + temp[0] + "\r\n旧地址： " + Scheduler_DDNS.ADDRESS + "新地址： " + temp[1]);
+				Scheduler_DDNS.ADDRESS = Scheduler_DDNS.RESPONCE;
 			}
 		}
 	});
@@ -45,14 +45,14 @@ public class Worker_DDNS extends ModuleScheduler {
 	@Override
 	public void run() {
 
-		Worker_DDNS.ADDRESS = Worker_DDNS.getIPAddress();
-		Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 成功 " + Worker_DDNS.ADDRESS);
-		if (Worker_DDNS.ADDRESS == null) {
-			Worker_DDNS.RESPONCE = Worker_DDNS.updateDDNSIPAddress();
-			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 重试 " + Worker_DDNS.RESPONCE);
+		Scheduler_DDNS.ADDRESS = Scheduler_DDNS.getIPAddress();
+		Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 成功 " + Scheduler_DDNS.ADDRESS);
+		if (Scheduler_DDNS.ADDRESS == null) {
+			Scheduler_DDNS.RESPONCE = Scheduler_DDNS.updateDDNSIPAddress();
+			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 重试 " + Scheduler_DDNS.RESPONCE);
 		} else {
-			Worker_DDNS.RESPONCE = Worker_DDNS.setDDNSIPAddress(Worker_DDNS.ADDRESS);
-			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 重试 " + Worker_DDNS.RESPONCE);
+			Scheduler_DDNS.RESPONCE = Scheduler_DDNS.setDDNSIPAddress(Scheduler_DDNS.ADDRESS);
+			Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 重试 " + Scheduler_DDNS.RESPONCE);
 		}
 
 		Date date = new Date();
@@ -71,7 +71,7 @@ public class Worker_DDNS extends ModuleScheduler {
 		}
 
 		while (true) {
-			Worker_DDNS.WORKER.start();
+			Scheduler_DDNS.WORKER.start();
 			try {
 				Thread.sleep(3600000L);
 			} catch (InterruptedException exce) {
@@ -81,20 +81,20 @@ public class Worker_DDNS extends ModuleScheduler {
 	}
 
 	public static void init(final String clientua, final String hostname, final String password) throws ReInitializationException {
-		if (Worker_DDNS.INITIALIZATIONLOCK) {
+		if (Scheduler_DDNS.INITIALIZATIONLOCK) {
 			throw new ReInitializationException();
 		}
-		Worker_DDNS.INITIALIZATIONLOCK = true;
-		Worker_DDNS.CLIENTUA = clientua;
-		Worker_DDNS.HOSTNAME = hostname;
-		Worker_DDNS.PASSWORD = password;
+		Scheduler_DDNS.INITIALIZATIONLOCK = true;
+		Scheduler_DDNS.CLIENTUA = clientua;
+		Scheduler_DDNS.HOSTNAME = hostname;
+		Scheduler_DDNS.PASSWORD = password;
 	}
 
 	public static String getIPAddress() {
 		try {
-			final URL url = new URL(Worker_DDNS.API_GETADDRESS);
+			final URL url = new URL(Scheduler_DDNS.API_GETADDRESS);
 			final URLConnection connection = url.openConnection();
-			connection.setRequestProperty("User-Agent", Worker_DDNS.CLIENTUA);
+			connection.setRequestProperty("User-Agent", Scheduler_DDNS.CLIENTUA);
 			connection.connect();
 			connection.getContent();
 			final byte[] buffer = new byte[1024];
@@ -109,10 +109,10 @@ public class Worker_DDNS extends ModuleScheduler {
 
 	public static String updateDDNSIPAddress() {
 		try {
-			final URL url = new URL(Worker_DDNS.API_SETADDRESS + "?hostname=" + Worker_DDNS.HOSTNAME);
+			final URL url = new URL(Scheduler_DDNS.API_SETADDRESS + "?hostname=" + Scheduler_DDNS.HOSTNAME);
 			final URLConnection connection = url.openConnection();
-			connection.setRequestProperty("Authorization", Worker_DDNS.PASSWORD);
-			connection.setRequestProperty("User-Agent", Worker_DDNS.CLIENTUA);
+			connection.setRequestProperty("Authorization", Scheduler_DDNS.PASSWORD);
+			connection.setRequestProperty("User-Agent", Scheduler_DDNS.CLIENTUA);
 			connection.connect();
 			connection.getContent();
 			final byte[] buffer = new byte[1024];
@@ -127,10 +127,10 @@ public class Worker_DDNS extends ModuleScheduler {
 
 	public static String setDDNSIPAddress(final String address) {
 		try {
-			final URL url = new URL(Worker_DDNS.API_SETADDRESS + "?hostname=" + Worker_DDNS.HOSTNAME + "&myip=" + address);
+			final URL url = new URL(Scheduler_DDNS.API_SETADDRESS + "?hostname=" + Scheduler_DDNS.HOSTNAME + "&myip=" + address);
 			final URLConnection connection = url.openConnection();
-			connection.setRequestProperty("Authorization", Worker_DDNS.PASSWORD);
-			connection.setRequestProperty("User-Agent", Worker_DDNS.CLIENTUA);
+			connection.setRequestProperty("Authorization", Scheduler_DDNS.PASSWORD);
+			connection.setRequestProperty("User-Agent", Scheduler_DDNS.CLIENTUA);
 			connection.connect();
 			connection.getContent();
 			final byte[] buffer = new byte[1024];
