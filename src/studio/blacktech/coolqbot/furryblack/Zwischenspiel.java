@@ -1,16 +1,11 @@
-package studio.blacktech.coolqbot.furryblack.core;
+package studio.blacktech.coolqbot.furryblack;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Date;
 
 import com.sobte.cqp.jcq.entity.Group;
 import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.common.LoggerX;
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.signal.Workflow;
 
 public class Zwischenspiel {
@@ -81,7 +76,5 @@ public class Zwischenspiel {
 		builder.append("\r\n√Î: " + date.getSeconds());
 		return builder.toString();
 	}
-
-
 
 }

@@ -5,8 +5,8 @@ import java.util.Date;
 import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.Zwischenspiel;
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.core.Zwischenspiel;
 
 public class Autobot_DailyDDNS implements Runnable {
 

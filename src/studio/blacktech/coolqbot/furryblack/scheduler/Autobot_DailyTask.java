@@ -4,8 +4,8 @@ import java.util.Date;
 
 import com.sobte.cqp.jcq.event.JcqApp;
 
+import studio.blacktech.coolqbot.furryblack.Zwischenspiel;
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.core.Zwischenspiel;
 import studio.blacktech.coolqbot.furryblack.module.Executor_jrjp;
 import studio.blacktech.coolqbot.furryblack.module.Executor_jrrp;
 

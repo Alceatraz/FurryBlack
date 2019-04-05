@@ -7,63 +7,63 @@ import com.sobte.cqp.jcq.entity.Member;
 import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.common.ConfigureX;
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.module.Message;
-import studio.blacktech.coolqbot.furryblack.module.ModuleLogic;
+import studio.blacktech.coolqbot.furryblack.module.Module;
+import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
 @SuppressWarnings("unused")
-public class Command_chou extends ModuleLogic {
+public class Command_chou extends ModuleExecutor {
 
-	//@formatter:off
 	private final String MODULE_DISPLAYNAME = "随机抽人";
 	private final String MODULE_PACKAGENAME = "chou";
-	private final String MODULE_VERSION = "2.4.0";
 	private final String MODULE_DESCRIPTION = "从群随机抽取一个人";
-	private final String[] MODULE_USAGE = {"//chou ","//chou 理由"};
+	private final String MODULE_VERSION = "2.4.0";
+	private final String[] MODULE_USAGE = {
+			"//chou ", "//chou 理由"
+	};
 	private final String[] MODULE_PRIVACY_LISTEN = {};
 	private final String[] MODULE_PRIVACY_EVENTS = {};
 	private final String[] MODULE_PRIVACY_STORED = {};
 	private final String[] MODULE_PRIVACY_CACHED = {};
-	private final String[] MODULE_PRIVACY_OBTAIN = {"获取命令发送人","获取群成员列表"};
-	//@formatter:on	
+	private final String[] MODULE_PRIVACY_OBTAIN = {
+			"获取命令发送人", "获取群成员列表"
+	};
 
 	@Override
-	public boolean doCommandUserMessage(int typeid, int userid, Message message, int messageid, int messagefont) throws Exception {
-		userWarn(userid, "此功能不支持私聊");
-		return true;
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+		return false;
 	}
 
 	@Override
-	public boolean doCommandDiszMessage(int diszid, int userid, Message message, int messageid, int messagefont) throws Exception {
-		diszInfo(diszid, userid, "此功能不支持讨论组");
-		return true;
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+		return false;
 	}
 
 	@Override
-	public boolean doCommandGropMessage(int gropid, int userid, Message message, int messageid, int messagefont) throws Exception {
-		List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+		final List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
 		Member member;
-		int size = members.size();
+		final int size = members.size();
 		long uid = 0;
 		do {
-			member = members.get(random(size));
+			member = members.get(Command_chou.random(size));
 			uid = member.getQqId();
-		} while (uid == ConfigureX.SELFUSERID() || uid == userid);
+		} while ((uid == ConfigureX.SELFUSERID()) || (uid == userid));
 		String nickname = member.getCard();
 		if (nickname.length() == 0) {
 			nickname = member.getNick();
 		}
 		message.prase();
 		if (message.length == 1) {
-			gropInfo(gropid, userid, "随机抽到 " + nickname + "(" + member.getQqId() + ")");
+			Module.gropInfo(gropid, userid, "随机抽到 " + nickname + "(" + member.getQqId() + ")");
 		} else {
-			gropInfo(gropid, userid, "随机抽到 " + nickname + "(" + member.getQqId() + ") : " + message.join(1));
+			Module.gropInfo(gropid, userid, "随机抽到 " + nickname + "(" + member.getQqId() + ") : " + message.join(1));
 		}
 		return true;
 	}
 
-	private static int random(int size) {
-		SecureRandom random = new SecureRandom();
+	private static int random(final int size) {
+		final SecureRandom random = new SecureRandom();
 		return random.nextInt(size);
 	}
 
@@ -71,4 +71,5 @@ public class Command_chou extends ModuleLogic {
 	public String getReport() {
 		return null;
 	}
+
 }

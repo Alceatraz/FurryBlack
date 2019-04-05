@@ -2,7 +2,7 @@ package studio.blacktech.coolqbot.furryblack.module;
 
 /***
  * 消息处理的实用工具类
- * 
+ *
  */
 public class Message {
 
@@ -11,7 +11,7 @@ public class Message {
 	public int length;
 	public String[] cmd;
 
-	public Message(String raw) {
+	public Message(final String raw) {
 		this.raw = raw;
 	}
 
