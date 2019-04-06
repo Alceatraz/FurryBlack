@@ -1,9 +1,11 @@
 package studio.blacktech.common;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -85,7 +87,8 @@ public class ConfigureX {
 
 		if (!ConfigureX.FILE_CONFIG.exists()) {
 			ConfigureX.FILE_CONFIG.createNewFile();
-			final FileWriter writer = new FileWriter(ConfigureX.FILE_CONFIG);
+
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(ConfigureX.FILE_CONFIG), "UTF-8"));
 			// @formatter:off
 			writer.write(
 				"operator=\r\n" +
@@ -134,19 +137,19 @@ public class ConfigureX {
 		builder.append("\r\n");
 
 		builder.append("动态域名：");
-		builder.append(ENABLE_DDNSCLIENT);
+		builder.append(ConfigureX.ENABLE_DDNSCLIENT);
 		builder.append("\r\n");
 
 		builder.append("动态域名-标识：");
-		builder.append(DDNSAPI_CLIENTUA);
+		builder.append(ConfigureX.DDNSAPI_CLIENTUA);
 		builder.append("\r\n");
 
 		builder.append("动态域名-域名：");
-		builder.append(DDNSAPI_HOSTNAME);
+		builder.append(ConfigureX.DDNSAPI_HOSTNAME);
 		builder.append("\r\n");
 
 		builder.append("动态域名-密码：");
-		builder.append(DDNSAPI_PASSWORD);
+		builder.append(ConfigureX.DDNSAPI_PASSWORD);
 		builder.append("\r\n");
 
 		return true;

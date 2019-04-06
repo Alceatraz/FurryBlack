@@ -35,7 +35,7 @@ public class Scheduler_Task extends ModuleScheduler {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		return null;
 	}
 }

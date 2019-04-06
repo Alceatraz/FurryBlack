@@ -43,7 +43,7 @@ public class Executor_dice extends ModuleExecutor {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		return null;
 	}
 }

@@ -69,7 +69,7 @@ public class Executor_chou extends ModuleExecutor {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		return null;
 	}
 

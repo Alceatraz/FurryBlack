@@ -32,7 +32,7 @@ public class Executor_mine extends ModuleExecutor {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		// TODO Auto-generated method stub
 		return null;
 	}

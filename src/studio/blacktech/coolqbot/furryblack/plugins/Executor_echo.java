@@ -42,7 +42,7 @@ public class Executor_echo extends ModuleExecutor {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		return null;
 	}
 }

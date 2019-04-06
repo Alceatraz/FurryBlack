@@ -68,7 +68,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		return null;
 	}
 

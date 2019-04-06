@@ -103,7 +103,7 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		if (this.COUNT == 0) {
 			return null;
 		}

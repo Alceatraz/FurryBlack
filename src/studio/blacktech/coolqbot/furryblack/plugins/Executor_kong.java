@@ -58,7 +58,7 @@ public class Executor_kong extends ModuleExecutor {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		return null;
 	}
 

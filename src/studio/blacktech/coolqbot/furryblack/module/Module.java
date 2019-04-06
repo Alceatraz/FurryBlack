@@ -17,7 +17,7 @@ public abstract class Module {
 
 	public String MODULE_FULLHELP;
 
-	public abstract String getReport();
+	public abstract String generateReport();
 
 	public void genFullHelp() {
 		StringBuilder builder = new StringBuilder();

@@ -45,39 +45,35 @@ public class Scheduler_DDNS extends ModuleScheduler {
 
 	@Override
 	public void run() {
-		if (Scheduler_DDNS.ENABLE) {
-			Scheduler_DDNS.ADDRESS = Scheduler_DDNS.getIPAddress();
-			if (Scheduler_DDNS.ADDRESS == null) {
-				Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址初始化失败");
-				Scheduler_DDNS.RESPONCE = Scheduler_DDNS.updateDDNSIPAddress();
-				Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 强制更新响应： " + Scheduler_DDNS.RESPONCE);
-			} else {
-				Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址初始化成功: " + Scheduler_DDNS.ADDRESS);
-				Scheduler_DDNS.RESPONCE = Scheduler_DDNS.setDDNSIPAddress(Scheduler_DDNS.ADDRESS);
-				Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 域名更新响应： " + Scheduler_DDNS.RESPONCE);
-			}
-			Date date = new Date();
-			int time = 3605;
-			time = time - date.getSeconds();
-			time = time - (date.getMinutes() * 60);
-			if (time < 60) {
-				time = time + 3600;
-			}
-			try {
+		try {
+			if (Scheduler_DDNS.ENABLE) {
+				Thread.sleep(3000);
+				Scheduler_DDNS.ADDRESS = Scheduler_DDNS.getIPAddress();
+				if (Scheduler_DDNS.ADDRESS == null) {
+					Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址初始化失败");
+					Scheduler_DDNS.RESPONCE = Scheduler_DDNS.updateDDNSIPAddress();
+					Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 强制更新响应： " + Scheduler_DDNS.RESPONCE);
+				} else {
+					Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 地址初始化成功: " + Scheduler_DDNS.ADDRESS);
+					Scheduler_DDNS.RESPONCE = Scheduler_DDNS.setDDNSIPAddress(Scheduler_DDNS.ADDRESS);
+					Module.userInfo(ConfigureX.OPERATOR(), "[DDNS] 域名更新响应： " + Scheduler_DDNS.RESPONCE);
+				}
+				Date date = new Date();
+				int time = 3605;
+				time = time - date.getSeconds();
+				time = time - (date.getMinutes() * 60);
+				if (time < 60) {
+					time = time + 3600;
+				}
 				Thread.sleep(time * 1000);
-			} catch (InterruptedException exce) {
-				exce.printStackTrace();
-			}
-			while (true) {
-				Scheduler_DDNS.WORKER.start();
-				try {
+				while (true) {
+					Scheduler_DDNS.WORKER.start();
 					Thread.sleep(3600000L);
-				} catch (InterruptedException exce) {
-					exce.printStackTrace();
 				}
 			}
+		} catch (InterruptedException exce) {
+			exce.printStackTrace();
 		}
-
 	}
 
 	public static void init(boolean enable, final String clientua, final String hostname, final String password) throws ReInitializationException {
@@ -152,7 +148,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		return null;
 	}
 }

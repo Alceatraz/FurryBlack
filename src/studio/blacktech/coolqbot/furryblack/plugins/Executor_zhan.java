@@ -156,7 +156,7 @@ public class Executor_zhan extends ModuleExecutor {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		if (this.COUNT == 0) {
 			return null;
 		}

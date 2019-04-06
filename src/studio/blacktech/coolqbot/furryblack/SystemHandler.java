@@ -1,12 +1,16 @@
 package studio.blacktech.coolqbot.furryblack;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.TreeMap;
 
+import com.sobte.cqp.jcq.entity.Group;
 import com.sobte.cqp.jcq.entity.IMsg;
 import com.sobte.cqp.jcq.event.JcqApp;
 
@@ -27,10 +31,13 @@ import studio.blacktech.coolqbot.furryblack.plugins.Executor_jrrp;
 import studio.blacktech.coolqbot.furryblack.plugins.Executor_kong;
 import studio.blacktech.coolqbot.furryblack.plugins.Executor_roll;
 import studio.blacktech.coolqbot.furryblack.plugins.Executor_zhan;
+import studio.blacktech.coolqbot.furryblack.plugins.Listener_WaterCount;
 import studio.blacktech.coolqbot.furryblack.scheduler.Scheduler_DDNS;
 import studio.blacktech.coolqbot.furryblack.scheduler.Scheduler_Task;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({
+		"deprecation", "unused"
+})
 public class SystemHandler extends Module {
 
 	private static int COUNT_USER_MESSAGE = 0;
@@ -128,6 +135,10 @@ public class SystemHandler extends Module {
 	private static ArrayList<Long> DISZ_IGNORE = new ArrayList<Long>(100);
 	private static ArrayList<Long> GROP_IGNORE = new ArrayList<Long>(100);
 
+	private static HashSet<ModuleTrigger> TRIGGER_INSTANCE = new HashSet<ModuleTrigger>();
+	private static HashSet<ModuleListener> LISTENER_INSTANCE = new HashSet<ModuleListener>();
+	private static HashSet<ModuleExecutor> EXECUTOR_INSTANCE = new HashSet<ModuleExecutor>();
+
 	private static ArrayList<ModuleTrigger> TRIGGER_USER = new ArrayList<ModuleTrigger>(100);
 	private static ArrayList<ModuleTrigger> TRIGGER_DISZ = new ArrayList<ModuleTrigger>(100);
 	private static ArrayList<ModuleTrigger> TRIGGER_GROP = new ArrayList<ModuleTrigger>(100);
@@ -140,7 +151,7 @@ public class SystemHandler extends Module {
 	private static TreeMap<String, ModuleExecutor> EXECUTOR_DISZ = new TreeMap<String, ModuleExecutor>();
 	private static TreeMap<String, ModuleExecutor> EXECUTOR_GROP = new TreeMap<String, ModuleExecutor>();
 
-	protected static boolean init(StringBuilder builder2) throws ReInitializationException, NumberFormatException, IOException {
+	protected static boolean init(StringBuilder initbuilder) throws ReInitializationException, NumberFormatException, IOException {
 
 		if (SystemHandler.INITIALIZATIONLOCK) {
 			throw new ReInitializationException();
@@ -148,43 +159,43 @@ public class SystemHandler extends Module {
 
 		SystemHandler.INITIALIZATIONLOCK = true;
 
-		ENABLE_TRIGGER_USER = ConfigureX.ENABLE_TRIGGER_USER();
-		ENABLE_TRIGGER_DISZ = ConfigureX.ENABLE_TRIGGER_DISZ();
-		ENABLE_TRIGGER_GROP = ConfigureX.ENABLE_TRIGGER_GROP();
+		SystemHandler.ENABLE_TRIGGER_USER = ConfigureX.ENABLE_TRIGGER_USER();
+		SystemHandler.ENABLE_TRIGGER_DISZ = ConfigureX.ENABLE_TRIGGER_DISZ();
+		SystemHandler.ENABLE_TRIGGER_GROP = ConfigureX.ENABLE_TRIGGER_GROP();
 
-		ENABLE_LISENTER_USER = ConfigureX.ENABLE_LISENTER_USER();
-		ENABLE_LISENTER_DISZ = ConfigureX.ENABLE_LISENTER_DISZ();
-		ENABLE_LISENTER_GROP = ConfigureX.ENABLE_LISENTER_GROP();
+		SystemHandler.ENABLE_LISENTER_USER = ConfigureX.ENABLE_LISENTER_USER();
+		SystemHandler.ENABLE_LISENTER_DISZ = ConfigureX.ENABLE_LISENTER_DISZ();
+		SystemHandler.ENABLE_LISENTER_GROP = ConfigureX.ENABLE_LISENTER_GROP();
 
-		ENABLE_BLACKLIST = ConfigureX.ENABLE_BLACKLIST();
+		SystemHandler.ENABLE_BLACKLIST = ConfigureX.ENABLE_BLACKLIST();
 
-		ENABLE_USER_IGNORE = ConfigureX.ENABLE_USER_IGNORE();
-		ENABLE_DISZ_IGNORE = ConfigureX.ENABLE_DISZ_IGNORE();
-		ENABLE_GROP_IGNORE = ConfigureX.ENABLE_GROP_IGNORE();
+		SystemHandler.ENABLE_USER_IGNORE = ConfigureX.ENABLE_USER_IGNORE();
+		SystemHandler.ENABLE_DISZ_IGNORE = ConfigureX.ENABLE_DISZ_IGNORE();
+		SystemHandler.ENABLE_GROP_IGNORE = ConfigureX.ENABLE_GROP_IGNORE();
 
 		String line;
 		BufferedReader reader;
 		StringBuilder builder;
 
-		reader = new BufferedReader(new FileReader(ConfigureX.FILE_BLACKLIST));
+		reader = new BufferedReader(new InputStreamReader(new FileInputStream(ConfigureX.FILE_BLACKLIST), "UTF-8"));
 		while ((line = reader.readLine()) != null) {
 			SystemHandler.BLACKLIST.add(line);
 		}
 		reader.close();
 
-		reader = new BufferedReader(new FileReader(ConfigureX.FILE_USERIGNORE));
+		reader = new BufferedReader(new InputStreamReader(new FileInputStream(ConfigureX.FILE_USERIGNORE), "UTF-8"));
 		while ((line = reader.readLine()) != null) {
 			SystemHandler.USER_IGNORE.add(Long.parseLong(line));
 		}
 		reader.close();
 
-		reader = new BufferedReader(new FileReader(ConfigureX.FILE_DISZIGNORE));
+		reader = new BufferedReader(new InputStreamReader(new FileInputStream(ConfigureX.FILE_DISZIGNORE), "UTF-8"));
 		while ((line = reader.readLine()) != null) {
 			SystemHandler.DISZ_IGNORE.add(Long.parseLong(line));
 		}
 		reader.close();
 
-		reader = new BufferedReader(new FileReader(ConfigureX.FILE_GROPIGNORE));
+		reader = new BufferedReader(new InputStreamReader(new FileInputStream(ConfigureX.FILE_GROPIGNORE), "UTF-8"));
 		while ((line = reader.readLine()) != null) {
 			SystemHandler.GROP_IGNORE.add(Long.parseLong(line));
 		}
@@ -199,6 +210,10 @@ public class SystemHandler extends Module {
 		ModuleExecutor kong = new Executor_kong();
 		ModuleExecutor roll = new Executor_roll();
 		ModuleExecutor zhan = new Executor_zhan();
+
+		ModuleListener watercount = new Listener_WaterCount();
+
+		SystemHandler.registerGropListener(watercount);
 
 		SystemHandler.registerUserExecutor(dice);
 		SystemHandler.registerUserExecutor(echo);
@@ -224,7 +239,8 @@ public class SystemHandler extends Module {
 		SystemHandler.registerGropExecutor(roll);
 		SystemHandler.registerGropExecutor(zhan);
 
-		builder = new StringBuilder("已经安装的插件 - 私聊可用: ");
+		builder = new StringBuilder();
+		builder.append("已经安装的插件: ");
 		builder.append(SystemHandler.EXECUTOR_USER.size());
 		for (final String temp : SystemHandler.EXECUTOR_USER.keySet()) {
 			final ModuleExecutor module = SystemHandler.EXECUTOR_USER.get(temp);
@@ -234,35 +250,91 @@ public class SystemHandler extends Module {
 			builder.append(" > ");
 			builder.append(module.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(module.MODULE_DESCRIPTION);
+			builder.append(module.MODULE_FULLHELP);
+		}
+		builder.append("已经安装的触发器: ");
+		for (final ModuleTrigger temp : SystemHandler.TRIGGER_USER) {
+			builder.append("\r\n");
+			builder.append(temp.MODULE_PACKAGENAME);
+			builder.append(" > ");
+			builder.append(temp.MODULE_DISPLAYNAME);
+			builder.append(" : ");
+			builder.append(temp.MODULE_FULLHELP);
+		}
+		builder.append("已经安装的监听器: ");
+		for (final ModuleListener temp : SystemHandler.LISTENER_USER) {
+			builder.append("\r\n");
+			builder.append(temp.MODULE_PACKAGENAME);
+			builder.append(" > ");
+			builder.append(temp.MODULE_DISPLAYNAME);
+			builder.append(" : ");
+			builder.append(temp.MODULE_FULLHELP);
 		}
 		SystemHandler.MESSAGE_LIST_USER = builder.toString();
 
-		builder = new StringBuilder("已经安装的插件 - 讨论组可用: ");
-		builder.append(SystemHandler.EXECUTOR_USER.size());
-		for (final String temp : SystemHandler.EXECUTOR_USER.keySet()) {
-			final ModuleExecutor module = SystemHandler.EXECUTOR_USER.get(temp);
+		builder = new StringBuilder();
+		builder.append("已经安装的插件：");
+		builder.append(SystemHandler.EXECUTOR_DISZ.size());
+		for (final String temp : SystemHandler.EXECUTOR_DISZ.keySet()) {
+			final ModuleExecutor module = SystemHandler.EXECUTOR_DISZ.get(temp);
 			module.genFullHelp();
 			builder.append("\r\n//");
 			builder.append(module.MODULE_PACKAGENAME);
 			builder.append(" > ");
 			builder.append(module.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(module.MODULE_DESCRIPTION);
+			builder.append(module.MODULE_FULLHELP);
+		}
+		builder.append("已经安装的触发器：");
+		for (final ModuleTrigger temp : SystemHandler.TRIGGER_DISZ) {
+			builder.append("\r\n");
+			builder.append(temp.MODULE_PACKAGENAME);
+			builder.append(" > ");
+			builder.append(temp.MODULE_DISPLAYNAME);
+			builder.append(" : ");
+			builder.append(temp.MODULE_FULLHELP);
+		}
+		builder.append("已经安装的监听器: ");
+		for (final ModuleListener temp : SystemHandler.LISTENER_GROP) {
+			builder.append("\r\n");
+			builder.append(temp.MODULE_PACKAGENAME);
+			builder.append(" > ");
+			builder.append(temp.MODULE_DISPLAYNAME);
+			builder.append(" : ");
+			builder.append(temp.MODULE_FULLHELP);
 		}
 		SystemHandler.MESSAGE_LIST_DISZ = builder.toString();
 
-		builder = new StringBuilder("已经安装的插件 - 群聊可用: ");
-		builder.append(SystemHandler.EXECUTOR_USER.size());
-		for (final String temp : SystemHandler.EXECUTOR_USER.keySet()) {
-			final ModuleExecutor module = SystemHandler.EXECUTOR_USER.get(temp);
+		builder = new StringBuilder();
+		builder.append("已经安装的插件：");
+		builder.append(SystemHandler.EXECUTOR_GROP.size());
+		for (final String temp : SystemHandler.EXECUTOR_GROP.keySet()) {
+			final ModuleExecutor module = SystemHandler.EXECUTOR_GROP.get(temp);
 			module.genFullHelp();
 			builder.append("\r\n//");
 			builder.append(module.MODULE_PACKAGENAME);
 			builder.append(" > ");
 			builder.append(module.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(module.MODULE_DESCRIPTION);
+			builder.append(module.MODULE_FULLHELP);
+		}
+		builder.append("已经安装的触发器：");
+		for (final ModuleTrigger temp : SystemHandler.TRIGGER_GROP) {
+			builder.append("\r\n");
+			builder.append(temp.MODULE_PACKAGENAME);
+			builder.append(" > ");
+			builder.append(temp.MODULE_DISPLAYNAME);
+			builder.append(" : ");
+			builder.append(temp.MODULE_FULLHELP);
+		}
+		builder.append("已经安装的监听器：");
+		for (final ModuleListener temp : SystemHandler.LISTENER_GROP) {
+			builder.append("\r\n");
+			builder.append(temp.MODULE_PACKAGENAME);
+			builder.append(" > ");
+			builder.append(temp.MODULE_DISPLAYNAME);
+			builder.append(" : ");
+			builder.append(temp.MODULE_FULLHELP);
 		}
 		SystemHandler.MESSAGE_LIST_GROP = builder.toString();
 
@@ -272,59 +344,59 @@ public class SystemHandler extends Module {
 		SystemHandler.SCHEDULER.get("TASK").start();
 		SystemHandler.SCHEDULER.get("DDNS").start();
 
-		builder.append("触发器-用户：");
-		builder.append(ENABLE_TRIGGER_USER);
-		builder.append("\r\n");
+		initbuilder.append("触发器-用户：");
+		initbuilder.append(SystemHandler.ENABLE_TRIGGER_USER);
+		initbuilder.append("\r\n");
 
-		builder.append("触发器-组聊：");
-		builder.append(ENABLE_TRIGGER_DISZ);
-		builder.append("\r\n");
+		initbuilder.append("触发器-组聊：");
+		initbuilder.append(SystemHandler.ENABLE_TRIGGER_DISZ);
+		initbuilder.append("\r\n");
 
-		builder.append("触发器-群聊：");
-		builder.append(ENABLE_LISENTER_USER);
-		builder.append("\r\n");
+		initbuilder.append("触发器-群聊：");
+		initbuilder.append(SystemHandler.ENABLE_LISENTER_USER);
+		initbuilder.append("\r\n");
 
-		builder.append("监听器-用户：");
-		builder.append(ENABLE_TRIGGER_USER);
-		builder.append("\r\n");
+		initbuilder.append("监听器-用户：");
+		initbuilder.append(SystemHandler.ENABLE_TRIGGER_USER);
+		initbuilder.append("\r\n");
 
-		builder.append("监听器-组聊：");
-		builder.append(ENABLE_LISENTER_DISZ);
-		builder.append("\r\n");
+		initbuilder.append("监听器-组聊：");
+		initbuilder.append(SystemHandler.ENABLE_LISENTER_DISZ);
+		initbuilder.append("\r\n");
 
-		builder.append("触发器-群聊：");
-		builder.append(ENABLE_LISENTER_GROP);
-		builder.append("\r\n");
+		initbuilder.append("触发器-群聊：");
+		initbuilder.append(SystemHandler.ENABLE_LISENTER_GROP);
+		initbuilder.append("\r\n");
 
-		builder.append("黑名单-关键词：");
-		builder.append(ENABLE_LISENTER_GROP);
-		for (CharSequence temp : BLACKLIST) {
-			builder.append("\r\n");
-			builder.append(temp);
+		initbuilder.append("黑名单-关键词：");
+		initbuilder.append(SystemHandler.ENABLE_LISENTER_GROP);
+		for (CharSequence temp : SystemHandler.BLACKLIST) {
+			initbuilder.append("\r\n");
+			initbuilder.append(temp);
 		}
-		builder.append("\r\n");
+		initbuilder.append("\r\n");
 
-		builder.append("黑名单-用户：");
-		builder.append(ENABLE_USER_IGNORE);
-		for (Long temp : USER_IGNORE) {
-			builder.append("\r\n");
-			builder.append(temp);
+		initbuilder.append("黑名单-用户：");
+		initbuilder.append(SystemHandler.ENABLE_USER_IGNORE);
+		for (Long temp : SystemHandler.USER_IGNORE) {
+			initbuilder.append("\r\n");
+			initbuilder.append(temp);
 		}
-		builder.append("\r\n");
+		initbuilder.append("\r\n");
 
-		builder.append("黑名单-组聊：");
-		builder.append(ENABLE_DISZ_IGNORE);
-		for (Long temp : DISZ_IGNORE) {
-			builder.append("\r\n");
-			builder.append(temp);
+		initbuilder.append("黑名单-组聊：");
+		initbuilder.append(SystemHandler.ENABLE_DISZ_IGNORE);
+		for (Long temp : SystemHandler.DISZ_IGNORE) {
+			initbuilder.append("\r\n");
+			initbuilder.append(temp);
 		}
-		builder.append("\r\n");
+		initbuilder.append("\r\n");
 
-		builder.append("黑名单-群聊：");
-		builder.append(ENABLE_GROP_IGNORE);
-		for (Long temp : GROP_IGNORE) {
-			builder.append("\r\n");
-			builder.append(temp);
+		initbuilder.append("黑名单-群聊：");
+		initbuilder.append(SystemHandler.ENABLE_GROP_IGNORE);
+		for (Long temp : SystemHandler.GROP_IGNORE) {
+			initbuilder.append("\r\n");
+			initbuilder.append(temp);
 		}
 
 		return true;
@@ -386,7 +458,51 @@ public class SystemHandler extends Module {
 				break;
 			case "admin":
 				if (userid == ConfigureX.OPERATOR()) {
-					Zwischenspiel.doUserAdmin(command);
+					final Date date = new Date();
+					if (command.length < 2) {
+						String temp = SystemHandler.genReport();
+						for (int i = 0; i < temp.length(); i = i + 3000) {
+							Module.userInfo(ConfigureX.OPERATOR(), temp.substring(i, i + 3000));
+						}
+						return IMsg.MSG_IGNORE;
+					}
+					switch (command.cmd[1]) {
+
+					case "getddns":
+						Module.userInfo(ConfigureX.OPERATOR(), Scheduler_DDNS.getIPAddress());
+						return IMsg.MSG_IGNORE;
+					case "setddns":
+						if (command.length < 3) {
+							Module.userInfo(ConfigureX.OPERATOR(), Scheduler_DDNS.updateDDNSIPAddress());
+						} else {
+							Module.userInfo(ConfigureX.OPERATOR(), Scheduler_DDNS.setDDNSIPAddress(command.cmd[2]));
+						}
+						return IMsg.MSG_IGNORE;
+					case "getdate":
+						StringBuilder builder = new StringBuilder();
+						builder.append("纳秒戳: " + System.nanoTime());
+						builder.append("\r\n毫秒戳: " + date.getTime());
+						builder.append("\r\n时区: " + date.getTimezoneOffset());
+						builder.append("\r\n年: " + date.getYear());
+						builder.append("\r\n月: " + date.getMonth());
+						builder.append("\r\n日: " + date.getDate());
+						builder.append("\r\n时: " + date.getHours());
+						builder.append("\r\n分: " + date.getMinutes());
+						builder.append("\r\n秒: " + date.getSeconds());
+						Module.userInfo(ConfigureX.OPERATOR(), builder.toString());
+						break;
+					case "say":
+						for (Group temp : JcqApp.CQ.getGroupList()) {
+							JcqApp.CQ.sendGroupMsg(temp.getId(), "开发者广播(所有群) : " + command.join(1));
+						}
+						return IMsg.MSG_IGNORE;
+					case "shui":
+						for (ModuleListener temp : SystemHandler.LISTENER_INSTANCE) {
+							Module.userInfo(ConfigureX.OPERATOR(), temp.generateReport());
+						}
+						return IMsg.MSG_IGNORE;
+					}
+
 				}
 				break;
 			default:
@@ -404,6 +520,7 @@ public class SystemHandler extends Module {
 		}
 		JcqApp.CQ.sendPrivateMsg(userid, "请使用//help查看帮助");
 		return IMsg.MSG_IGNORE;
+
 	}
 
 	protected static int doDiszMessage(final long diszid, final long userid, final String message, final int messageid, final int messagefont) throws Exception {
@@ -557,7 +674,7 @@ public class SystemHandler extends Module {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		return SystemHandler.genReport();
 	}
 
@@ -567,99 +684,126 @@ public class SystemHandler extends Module {
 		builder.append(LoggerX.time());
 		builder.append(" - 状态简报");
 		builder.append("\r\n");
+		builder.append("\r\n");
 
 		builder.append("系统状态：");
 		builder.append("\r\n");
 		builder.append("调用-私聊： ");
 		builder.append(SystemHandler.COUNT_USER_MESSAGE);
+		builder.append("次");
 		builder.append("\r\n");
 		builder.append("调用-组聊： ");
 		builder.append(SystemHandler.COUNT_DISZ_MESSAGE);
+		builder.append("次");
 		builder.append("\r\n");
 		builder.append("调用-群聊： ");
+		builder.append("次");
 		builder.append(SystemHandler.COUNT_GROP_MESSAGE);
 		builder.append("\r\n");
+		builder.append("\r\n");
 
-		builder.append("模块状态:");
-		builder.append("\r\n");
-		builder.append("模块-私聊:");
-		for (final String temp : SystemHandler.EXECUTOR_USER.keySet()) {
+		builder.append("触发器状态: ");
+		builder.append(SystemHandler.TRIGGER_INSTANCE.size());
+		builder.append("个");
+		for (final ModuleTrigger temp : SystemHandler.TRIGGER_INSTANCE) {
 			builder.append("\r\n");
 			builder.append("模块 ");
-			builder.append(temp);
+			builder.append(temp.MODULE_PACKAGENAME);
 			builder.append(": ");
-			builder.append(SystemHandler.EXECUTOR_USER.get(temp).COUNT);
-			builder.append(" 次调用");
-			report = SystemHandler.EXECUTOR_USER.get(temp).getReport();
+			builder.append(temp.COUNT);
+			builder.append("次");
+			report = temp.generateReport();
 			if (report != null) {
+				builder.append("\r\n");
 				builder.append(report);
 			}
 		}
 		builder.append("\r\n");
-		builder.append("模块-组聊:");
-		for (final String temp : SystemHandler.EXECUTOR_DISZ.keySet()) {
+		builder.append("\r\n");
+
+		builder.append("监听器状态:");
+		builder.append(SystemHandler.LISTENER_INSTANCE.size());
+		builder.append("个");
+		for (final ModuleListener temp : SystemHandler.LISTENER_INSTANCE) {
 			builder.append("\r\n");
 			builder.append("模块 ");
-			builder.append(temp);
+			builder.append(temp.MODULE_PACKAGENAME);
 			builder.append(": ");
-			builder.append(SystemHandler.EXECUTOR_DISZ.get(temp).COUNT);
-			builder.append(" 次调用");
-			report = SystemHandler.EXECUTOR_DISZ.get(temp).getReport();
+			builder.append(temp.COUNT);
+			builder.append("次");
+			report = temp.generateReport();
 			if (report != null) {
+				builder.append("\r\n");
 				builder.append(report);
 			}
 		}
 		builder.append("\r\n");
-		builder.append("模块-群聊:");
-		for (final String temp : SystemHandler.EXECUTOR_GROP.keySet()) {
+		builder.append("\r\n");
+
+		builder.append("执行器状态: ");
+		builder.append(SystemHandler.EXECUTOR_INSTANCE.size());
+		builder.append("个");
+		for (final ModuleExecutor temp : SystemHandler.EXECUTOR_INSTANCE) {
 			builder.append("\r\n");
 			builder.append("模块 ");
-			builder.append(temp);
+			builder.append(temp.MODULE_PACKAGENAME);
 			builder.append(": ");
-			builder.append(SystemHandler.EXECUTOR_GROP.get(temp).COUNT);
-			builder.append(" 次调用");
-			report = SystemHandler.EXECUTOR_GROP.get(temp).getReport();
+			builder.append(temp.COUNT);
+			builder.append("次");
+			report = temp.generateReport();
 			if (report != null) {
+				builder.append("\r\n");
 				builder.append(report);
 			}
 		}
+
 		return builder.toString();
 	}
 
 	private static void registerUserTrigger(ModuleTrigger trigger) {
 		SystemHandler.TRIGGER_USER.add(trigger);
+		SystemHandler.TRIGGER_INSTANCE.add(trigger);
 	}
 
 	private static void registerDiszTrigger(ModuleTrigger trigger) {
 		SystemHandler.TRIGGER_DISZ.add(trigger);
+		SystemHandler.TRIGGER_INSTANCE.add(trigger);
 	}
 
 	private static void registerGropTrigger(ModuleTrigger trigger) {
 		SystemHandler.TRIGGER_GROP.add(trigger);
+		SystemHandler.TRIGGER_INSTANCE.add(trigger);
 	}
 
 	private static void registerUserListener(ModuleListener listener) {
 		SystemHandler.LISTENER_USER.add(listener);
+		SystemHandler.LISTENER_INSTANCE.add(listener);
 	}
 
 	private static void registerDiszListener(ModuleListener listener) {
 		SystemHandler.LISTENER_DISZ.add(listener);
+		SystemHandler.LISTENER_INSTANCE.add(listener);
 	}
 
 	private static void registerGropListener(ModuleListener listener) {
 		SystemHandler.LISTENER_GROP.add(listener);
+		SystemHandler.LISTENER_INSTANCE.add(listener);
 	}
 
 	private static void registerUserExecutor(ModuleExecutor executor) {
 		SystemHandler.EXECUTOR_USER.put(executor.MODULE_PACKAGENAME, executor);
+		SystemHandler.EXECUTOR_INSTANCE.add(executor);
+
 	}
 
 	private static void registerDiszExecutor(ModuleExecutor executor) {
 		SystemHandler.EXECUTOR_DISZ.put(executor.MODULE_PACKAGENAME, executor);
+		SystemHandler.EXECUTOR_INSTANCE.add(executor);
 	}
 
 	private static void registerGropExecutor(ModuleExecutor executor) {
 		SystemHandler.EXECUTOR_GROP.put(executor.MODULE_PACKAGENAME, executor);
+		SystemHandler.EXECUTOR_INSTANCE.add(executor);
 	}
 
 }

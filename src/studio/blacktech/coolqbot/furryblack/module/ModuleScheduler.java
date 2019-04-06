@@ -15,7 +15,4 @@ public abstract class ModuleScheduler extends Module implements Runnable {
 
 	public String MODULE_FULLHELP = null;
 
-	@Override
-	public abstract String getReport();
-
 }

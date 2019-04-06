@@ -27,7 +27,7 @@ public class Executor_nsfw extends ModuleExecutor {
 	}
 
 	@Override
-	public String getReport() {
+	public String generateReport() {
 		// TODO Auto-generated method stub
 		return null;
 	}

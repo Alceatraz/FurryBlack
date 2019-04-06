@@ -10,6 +10,7 @@ public class Message {
 	public String res;
 	public int length;
 	public String[] cmd;
+	public Long time;
 
 	public Message(final String raw) {
 		this.raw = raw;
