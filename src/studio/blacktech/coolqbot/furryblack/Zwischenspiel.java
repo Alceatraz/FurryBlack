@@ -45,6 +45,7 @@ public class Zwischenspiel extends Module {
 			builder.append("\r\n秒: " + date.getSeconds());
 			Module.userInfo(ConfigureX.OPERATOR(), builder.toString());
 			break;
+
 		case "say":
 			for (Group temp : JcqApp.CQ.getGroupList()) {
 				JcqApp.CQ.sendGroupMsg(temp.getId(), "开发者广播(所有群) : " + message.join(1));

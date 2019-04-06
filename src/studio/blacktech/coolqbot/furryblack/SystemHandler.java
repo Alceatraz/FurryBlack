@@ -140,7 +140,7 @@ public class SystemHandler extends Module {
 	private static TreeMap<String, ModuleExecutor> EXECUTOR_DISZ = new TreeMap<String, ModuleExecutor>();
 	private static TreeMap<String, ModuleExecutor> EXECUTOR_GROP = new TreeMap<String, ModuleExecutor>();
 
-	protected static boolean init() throws ReInitializationException, NumberFormatException, IOException {
+	protected static boolean init(StringBuilder builder2) throws ReInitializationException, NumberFormatException, IOException {
 
 		if (SystemHandler.INITIALIZATIONLOCK) {
 			throw new ReInitializationException();
@@ -158,9 +158,9 @@ public class SystemHandler extends Module {
 
 		ENABLE_BLACKLIST = ConfigureX.ENABLE_BLACKLIST();
 
-		ENABLE_USER_IGNORE = ConfigureX.ENABLE_USERIGNORE();
-		ENABLE_DISZ_IGNORE = ConfigureX.ENABLE_DISZIGNORE();
-		ENABLE_GROP_IGNORE = ConfigureX.ENABLE_GROPIGNORE();
+		ENABLE_USER_IGNORE = ConfigureX.ENABLE_USER_IGNORE();
+		ENABLE_DISZ_IGNORE = ConfigureX.ENABLE_DISZ_IGNORE();
+		ENABLE_GROP_IGNORE = ConfigureX.ENABLE_GROP_IGNORE();
 
 		String line;
 		BufferedReader reader;
@@ -271,6 +271,61 @@ public class SystemHandler extends Module {
 
 		SystemHandler.SCHEDULER.get("TASK").start();
 		SystemHandler.SCHEDULER.get("DDNS").start();
+
+		builder.append("触发器-用户：");
+		builder.append(ENABLE_TRIGGER_USER);
+		builder.append("\r\n");
+
+		builder.append("触发器-组聊：");
+		builder.append(ENABLE_TRIGGER_DISZ);
+		builder.append("\r\n");
+
+		builder.append("触发器-群聊：");
+		builder.append(ENABLE_LISENTER_USER);
+		builder.append("\r\n");
+
+		builder.append("监听器-用户：");
+		builder.append(ENABLE_TRIGGER_USER);
+		builder.append("\r\n");
+
+		builder.append("监听器-组聊：");
+		builder.append(ENABLE_LISENTER_DISZ);
+		builder.append("\r\n");
+
+		builder.append("触发器-群聊：");
+		builder.append(ENABLE_LISENTER_GROP);
+		builder.append("\r\n");
+
+		builder.append("黑名单-关键词：");
+		builder.append(ENABLE_LISENTER_GROP);
+		for (CharSequence temp : BLACKLIST) {
+			builder.append("\r\n");
+			builder.append(temp);
+		}
+		builder.append("\r\n");
+
+		builder.append("黑名单-用户：");
+		builder.append(ENABLE_USER_IGNORE);
+		for (Long temp : USER_IGNORE) {
+			builder.append("\r\n");
+			builder.append(temp);
+		}
+		builder.append("\r\n");
+
+		builder.append("黑名单-组聊：");
+		builder.append(ENABLE_DISZ_IGNORE);
+		for (Long temp : DISZ_IGNORE) {
+			builder.append("\r\n");
+			builder.append(temp);
+		}
+		builder.append("\r\n");
+
+		builder.append("黑名单-群聊：");
+		builder.append(ENABLE_GROP_IGNORE);
+		for (Long temp : GROP_IGNORE) {
+			builder.append("\r\n");
+			builder.append(temp);
+		}
 
 		return true;
 	}

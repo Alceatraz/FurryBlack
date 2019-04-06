@@ -36,9 +36,9 @@ public class ConfigureX {
 
 	private static boolean ENABLE_BLACKLIST = false;
 
-	private static boolean ENABLE_USERIGNORE = false;
-	private static boolean ENABLE_DISZIGNORE = false;
-	private static boolean ENABLE_GROPIGNORE = false;
+	private static boolean ENABLE_USER_IGNORE = false;
+	private static boolean ENABLE_DISZ_IGNORE = false;
+	private static boolean ENABLE_GROP_IGNORE = false;
 
 	private static boolean ENABLE_DDNSCLIENT = false;
 	private static String DDNSAPI_CLIENTUA;
@@ -51,7 +51,7 @@ public class ConfigureX {
 	 * @return true 如果配置文件存在且正确加载
 	 * @throws Exception 任何异常都表示加载失败
 	 */
-	public static boolean loadConfigure() throws Exception {
+	public static boolean loadConfigure(StringBuilder builder) throws Exception {
 
 //		if (entry.DEBUG) {
 //			ConfigureX.MYSELFID = 3477852529L;
@@ -120,15 +120,34 @@ public class ConfigureX {
 		ConfigureX.ENABLE_LISENTER_DISZ = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_listener_disz", "false"));
 		ConfigureX.ENABLE_LISENTER_GROP = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_listener_grop", "false"));
 		ConfigureX.ENABLE_BLACKLIST = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_blacklist", "false"));
-		ConfigureX.ENABLE_USERIGNORE = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_userignore", "false"));
-		ConfigureX.ENABLE_DISZIGNORE = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_diszignore", "false"));
-		ConfigureX.ENABLE_GROPIGNORE = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_gropignore", "false"));
+		ConfigureX.ENABLE_USER_IGNORE = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_userignore", "false"));
+		ConfigureX.ENABLE_DISZ_IGNORE = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_diszignore", "false"));
+		ConfigureX.ENABLE_GROP_IGNORE = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_gropignore", "false"));
 		ConfigureX.ENABLE_DDNSCLIENT = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_ddnsclient", "false"));
 		ConfigureX.DDNSAPI_CLIENTUA = ConfigureX.property.getProperty("ddnsapi_clientua", "BTSCoolQ/1.0");
 		ConfigureX.DDNSAPI_HOSTNAME = ConfigureX.property.getProperty("ddnsapi_hostname", "");
 		ConfigureX.DDNSAPI_PASSWORD = ConfigureX.property.getProperty("ddnsapi_password", "");
 
 		Scheduler_DDNS.init(ConfigureX.ENABLE_DDNSCLIENT, ConfigureX.DDNSAPI_CLIENTUA, ConfigureX.DDNSAPI_HOSTNAME, ConfigureX.DDNSAPI_PASSWORD);
+
+		builder.append("配置文件：");
+		builder.append("\r\n");
+
+		builder.append("动态域名：");
+		builder.append(ENABLE_DDNSCLIENT);
+		builder.append("\r\n");
+
+		builder.append("动态域名-标识：");
+		builder.append(DDNSAPI_CLIENTUA);
+		builder.append("\r\n");
+
+		builder.append("动态域名-域名：");
+		builder.append(DDNSAPI_HOSTNAME);
+		builder.append("\r\n");
+
+		builder.append("动态域名-密码：");
+		builder.append(DDNSAPI_PASSWORD);
+		builder.append("\r\n");
 
 		return true;
 	}
@@ -169,16 +188,15 @@ public class ConfigureX {
 		return ConfigureX.ENABLE_BLACKLIST;
 	}
 
-	public static boolean ENABLE_USERIGNORE() {
-		return ConfigureX.ENABLE_USERIGNORE;
+	public static boolean ENABLE_USER_IGNORE() {
+		return ConfigureX.ENABLE_USER_IGNORE;
 	}
 
-	public static boolean ENABLE_DISZIGNORE() {
-		return ConfigureX.ENABLE_DISZIGNORE;
+	public static boolean ENABLE_DISZ_IGNORE() {
+		return ConfigureX.ENABLE_DISZ_IGNORE;
 	}
 
-	public static boolean ENABLE_GROPIGNORE() {
-		return ConfigureX.ENABLE_GROPIGNORE;
+	public static boolean ENABLE_GROP_IGNORE() {
+		return ConfigureX.ENABLE_GROP_IGNORE;
 	}
-
 }

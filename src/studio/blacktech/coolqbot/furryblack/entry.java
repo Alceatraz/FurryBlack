@@ -75,10 +75,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int enable() {
 		try {
+			StringBuilder builder = new StringBuilder();
 			JcqAppAbstract.appDirectory = JcqApp.CQ.getAppDirectory();
-			ConfigureX.loadConfigure();
-			SystemHandler.init();
+			ConfigureX.loadConfigure(builder);
+			SystemHandler.init(builder);
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 已启动");
+			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
 			JcqAppAbstract.enable = true;
 		} catch (final Exception exce) {
 			exce.printStackTrace();
