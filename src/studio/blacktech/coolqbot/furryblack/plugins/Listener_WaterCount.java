@@ -102,20 +102,20 @@ public class Listener_WaterCount extends ModuleListener {
 
 		builder.append("\r\n\r\n发言数量排名：");
 		for (int temp : jiatelin.keySet()) {
+			builder.append("\r\n");
 			builder.append(temp);
 			builder.append(": ");
 			builder.append(jiatelin.get(temp));
-			builder.append("\r\n");
 		}
 
-		builder.append("\r\n\r\n整句频度排名");
+		builder.append("\r\n\r\n整句频度排名：");
 		for (int temp : freqres.keySet()) {
 			HashSet<String> i = freqres.get(temp);
 			for (String t : i) {
+				builder.append("\r\n");
 				builder.append(temp);
 				builder.append(": ");
 				builder.append(t);
-				builder.append("\r\n");
 			}
 		}
 

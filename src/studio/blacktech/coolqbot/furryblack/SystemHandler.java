@@ -461,12 +461,22 @@ public class SystemHandler extends Module {
 					final Date date = new Date();
 					if (command.length < 2) {
 						String temp = SystemHandler.genReport();
-						for (int i = 0; i < temp.length(); i = i + 3000) {
-							Module.userInfo(ConfigureX.OPERATOR(), temp.substring(i, i + 3000));
+						int length = temp.length();
+						if (length > 3000) {
+							int times = length / 3000;
+							int remin = length % 3000;
+							for (int i = 0; i < times; i++) {
+								Module.userInfo(ConfigureX.OPERATOR(), temp.substring(i * 3000, (i + 1) * 3000));
+							}
+							Module.userInfo(ConfigureX.OPERATOR(), temp.substring(times * 3000));
+						} else {
+							Module.userInfo(ConfigureX.OPERATOR(), temp);
 						}
 						return IMsg.MSG_IGNORE;
 					}
-					switch (command.cmd[1]) {
+					switch (command.cmd[1])
+
+					{
 
 					case "getddns":
 						Module.userInfo(ConfigureX.OPERATOR(), Scheduler_DDNS.getIPAddress());
