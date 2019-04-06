@@ -54,29 +54,30 @@ public class Listener_WaterCount extends ModuleListener {
 
 	@Override
 	public String generateReport() {
+		return genReport(false);
+	}
+
+	public static String genReport(boolean fullreport) {
 		long a = System.nanoTime();
-		StringBuilder builder = new StringBuilder();
 
+		String nickname;
 		int totalmessages = 0;
-
+		StringBuilder builder = new StringBuilder();
 		LinkedList<String> allmessage = new LinkedList<String>();
-
 		TreeMap<Long, Integer> fayanliang = new TreeMap<Long, Integer>();
+		TreeMap<String, Integer> messagefreq = new TreeMap<String, Integer>();
+		TreeMap<Integer, Long> jiatelin = new TreeMap<Integer, Long>((o1, o2) -> o2 - o1);
+		TreeMap<Integer, HashSet<String>> freqres = new TreeMap<Integer, HashSet<String>>((o1, o2) -> o2 - o1);
 
 		for (long userid : Listener_WaterCount.messages.keySet()) {
-
 			LinkedList<Message> temp = Listener_WaterCount.messages.get(userid);
-
 			totalmessages = totalmessages + temp.size();
-
 			fayanliang.put(userid, temp.size());
-
 			for (Message message : temp) {
 				allmessage.add(message.raw);
 			}
 		}
 
-		TreeMap<String, Integer> messagefreq = new TreeMap<String, Integer>();
 		for (String temp : allmessage) {
 			if (messagefreq.containsKey(temp)) {
 				messagefreq.put(temp, messagefreq.get(temp) + 1);
@@ -85,7 +86,6 @@ public class Listener_WaterCount extends ModuleListener {
 			}
 		}
 
-		TreeMap<Integer, HashSet<String>> freqres = new TreeMap<Integer, HashSet<String>>((o1, o2) -> o2 - o1);
 		for (String temp : messagefreq.keySet()) {
 			int i = messagefreq.get(temp);
 			if (!freqres.containsKey(i)) {
@@ -94,19 +94,24 @@ public class Listener_WaterCount extends ModuleListener {
 			freqres.get(i).add(temp);
 		}
 
-		TreeMap<Integer, Long> jiatelin = new TreeMap<Integer, Long>((o1, o2) -> o2 - o1);
-
 		for (long userid : fayanliang.keySet()) {
 			jiatelin.put(fayanliang.get(userid), userid);
 		}
 
+		// =============================================================
 		builder.append("发言总数： ");
 		builder.append(totalmessages);
 
-		builder.append("\r\n\r\n发言数量排名：");
 		long userid;
-		String nickname;
+
+		int limit;
+
+		limit = 0;
+		builder.append("\r\n\r\n发言数量排名：");
 		for (int temp : jiatelin.keySet()) {
+			if (!fullreport && limit > 5) {
+				break;
+			}
 			userid = jiatelin.get(temp);
 			builder.append("\r\n");
 			builder.append(temp);
@@ -120,10 +125,16 @@ public class Listener_WaterCount extends ModuleListener {
 			builder.append("(");
 			builder.append(jiatelin.get(temp));
 			builder.append(")");
+			limit++;
+
 		}
 
+		limit = 0;
 		builder.append("\r\n\r\n整句频度排名：");
 		for (int temp : freqres.keySet()) {
+			if (!fullreport && limit > 5) {
+				break;
+			}
 			if (temp == 1) {
 				continue;
 			}
