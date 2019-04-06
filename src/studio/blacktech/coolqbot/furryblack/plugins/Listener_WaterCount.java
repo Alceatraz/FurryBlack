@@ -121,7 +121,7 @@ public class Listener_WaterCount extends ModuleListener {
 
 		long b = System.nanoTime();
 
-		builder.append("报告生成开销:\r\n");
+		builder.append("\r\n\r\n报告生成开销:\r\n");
 		builder.append(b - a);
 		builder.append("ns\r\n");
 		builder.append((b - a) / 1000000);
