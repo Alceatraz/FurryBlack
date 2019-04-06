@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
+import com.sobte.cqp.jcq.entity.Member;
+import com.sobte.cqp.jcq.event.JcqApp;
+
 import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.ModuleListener;
 
@@ -101,15 +104,29 @@ public class Listener_WaterCount extends ModuleListener {
 		builder.append(totalmessages);
 
 		builder.append("\r\n\r\n发言数量排名：");
+		long userid;
+		String nickname;
 		for (int temp : jiatelin.keySet()) {
+			userid = jiatelin.get(temp);
 			builder.append("\r\n");
 			builder.append(temp);
 			builder.append(": ");
+			Member member = JcqApp.CQ.getGroupMemberInfoV2(805795515, userid);
+			nickname = member.getCard();
+			if (nickname.length() == 0) {
+				nickname = member.getNick();
+			}
+			builder.append(nickname);
+			builder.append("(");
 			builder.append(jiatelin.get(temp));
+			builder.append(")");
 		}
 
 		builder.append("\r\n\r\n整句频度排名：");
 		for (int temp : freqres.keySet()) {
+			if (temp == 1) {
+				continue;
+			}
 			HashSet<String> i = freqres.get(temp);
 			for (String t : i) {
 				builder.append("\r\n");

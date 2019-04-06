@@ -17,7 +17,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "2.2.19 2019-04-06 (14:00)";
+	public static final String PRODUCT_VERSION = "2.3.19 2019-04-06 (20:00)";
 
 	/***
 	 * 此main并非实际执行入口 JcqSDK调用的初始化函数为 startup() enable() disable() exit()

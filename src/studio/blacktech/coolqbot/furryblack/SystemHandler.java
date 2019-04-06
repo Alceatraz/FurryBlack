@@ -245,12 +245,16 @@ public class SystemHandler extends Module {
 		for (final String temp : SystemHandler.EXECUTOR_USER.keySet()) {
 			final ModuleExecutor module = SystemHandler.EXECUTOR_USER.get(temp);
 			module.genFullHelp();
-			builder.append("\r\n//");
+			builder.append("\r\n");
 			builder.append(module.MODULE_PACKAGENAME);
 			builder.append(" > ");
 			builder.append(module.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(module.MODULE_FULLHELP);
+			builder.append(module.MODULE_DESCRIPTION);
+			for (String tmp1 : module.MODULE_USAGE) {
+				builder.append("\r\n");
+				builder.append(tmp1);
+			}
 		}
 		builder.append("已经安装的触发器: ");
 		for (final ModuleTrigger temp : SystemHandler.TRIGGER_USER) {
@@ -259,7 +263,11 @@ public class SystemHandler extends Module {
 			builder.append(" > ");
 			builder.append(temp.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(temp.MODULE_FULLHELP);
+			builder.append(temp.MODULE_DESCRIPTION);
+			for (String tmp1 : temp.MODULE_USAGE) {
+				builder.append("\r\n");
+				builder.append(tmp1);
+			}
 		}
 		builder.append("已经安装的监听器: ");
 		for (final ModuleListener temp : SystemHandler.LISTENER_USER) {
@@ -268,7 +276,11 @@ public class SystemHandler extends Module {
 			builder.append(" > ");
 			builder.append(temp.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(temp.MODULE_FULLHELP);
+			builder.append(temp.MODULE_DESCRIPTION);
+			for (String tmp1 : temp.MODULE_USAGE) {
+				builder.append("\r\n");
+				builder.append(tmp1);
+			}
 		}
 		SystemHandler.MESSAGE_LIST_USER = builder.toString();
 
@@ -278,12 +290,16 @@ public class SystemHandler extends Module {
 		for (final String temp : SystemHandler.EXECUTOR_DISZ.keySet()) {
 			final ModuleExecutor module = SystemHandler.EXECUTOR_DISZ.get(temp);
 			module.genFullHelp();
-			builder.append("\r\n//");
+			builder.append("\r\n");
 			builder.append(module.MODULE_PACKAGENAME);
 			builder.append(" > ");
 			builder.append(module.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(module.MODULE_FULLHELP);
+			builder.append(module.MODULE_DESCRIPTION);
+			for (String tmp1 : module.MODULE_USAGE) {
+				builder.append("\r\n");
+				builder.append(tmp1);
+			}
 		}
 		builder.append("已经安装的触发器：");
 		for (final ModuleTrigger temp : SystemHandler.TRIGGER_DISZ) {
@@ -292,7 +308,11 @@ public class SystemHandler extends Module {
 			builder.append(" > ");
 			builder.append(temp.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(temp.MODULE_FULLHELP);
+			builder.append(temp.MODULE_DESCRIPTION);
+			for (String tmp1 : temp.MODULE_USAGE) {
+				builder.append("\r\n");
+				builder.append(tmp1);
+			}
 		}
 		builder.append("已经安装的监听器: ");
 		for (final ModuleListener temp : SystemHandler.LISTENER_GROP) {
@@ -301,7 +321,11 @@ public class SystemHandler extends Module {
 			builder.append(" > ");
 			builder.append(temp.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(temp.MODULE_FULLHELP);
+			builder.append(temp.MODULE_DESCRIPTION);
+			for (String tmp1 : temp.MODULE_USAGE) {
+				builder.append("\r\n");
+				builder.append(tmp1);
+			}
 		}
 		SystemHandler.MESSAGE_LIST_DISZ = builder.toString();
 
@@ -311,12 +335,16 @@ public class SystemHandler extends Module {
 		for (final String temp : SystemHandler.EXECUTOR_GROP.keySet()) {
 			final ModuleExecutor module = SystemHandler.EXECUTOR_GROP.get(temp);
 			module.genFullHelp();
-			builder.append("\r\n//");
+			builder.append("\r\n");
 			builder.append(module.MODULE_PACKAGENAME);
 			builder.append(" > ");
 			builder.append(module.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(module.MODULE_FULLHELP);
+			builder.append(module.MODULE_DESCRIPTION);
+			for (String tmp1 : module.MODULE_USAGE) {
+				builder.append("\r\n");
+				builder.append(tmp1);
+			}
 		}
 		builder.append("已经安装的触发器：");
 		for (final ModuleTrigger temp : SystemHandler.TRIGGER_GROP) {
@@ -325,7 +353,11 @@ public class SystemHandler extends Module {
 			builder.append(" > ");
 			builder.append(temp.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(temp.MODULE_FULLHELP);
+			builder.append(temp.MODULE_DESCRIPTION);
+			for (String tmp1 : temp.MODULE_USAGE) {
+				builder.append("\r\n");
+				builder.append(tmp1);
+			}
 		}
 		builder.append("已经安装的监听器：");
 		for (final ModuleListener temp : SystemHandler.LISTENER_GROP) {
@@ -334,7 +366,11 @@ public class SystemHandler extends Module {
 			builder.append(" > ");
 			builder.append(temp.MODULE_DISPLAYNAME);
 			builder.append(" : ");
-			builder.append(temp.MODULE_FULLHELP);
+			builder.append(temp.MODULE_DESCRIPTION);
+			for (String tmp1 : temp.MODULE_USAGE) {
+				builder.append("\r\n");
+				builder.append(tmp1);
+			}
 		}
 		SystemHandler.MESSAGE_LIST_GROP = builder.toString();
 
@@ -461,17 +497,7 @@ public class SystemHandler extends Module {
 					final Date date = new Date();
 					if (command.length < 2) {
 						String temp = SystemHandler.genReport();
-						int length = temp.length();
-						if (length > 3000) {
-							int times = length / 3000;
-							int remin = length % 3000;
-							for (int i = 0; i < times; i++) {
-								Module.userInfo(ConfigureX.OPERATOR(), temp.substring(i * 3000, (i + 1) * 3000));
-							}
-							Module.userInfo(ConfigureX.OPERATOR(), temp.substring(times * 3000));
-						} else {
-							Module.userInfo(ConfigureX.OPERATOR(), temp);
-						}
+						Module.userInfo(ConfigureX.OPERATOR(), temp);
 						return IMsg.MSG_IGNORE;
 					}
 					switch (command.cmd[1])
