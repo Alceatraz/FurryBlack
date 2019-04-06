@@ -10,7 +10,6 @@ import java.util.Properties;
 import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.scheduler.Scheduler_DDNS;
 
 public class ConfigureX {
@@ -27,11 +26,21 @@ public class ConfigureX {
 	private static long OPERATOR = 0;
 	private static long MYSELFID = 0;
 
-	private static boolean ENABLE_BLACKLIST = true;
-	private static boolean ENABLE_USERIGNORE = true;
-	private static boolean ENABLE_DISZIGNORE = true;
-	private static boolean ENABLE_GROPIGNORE = true;
+	private static boolean ENABLE_TRIGGER_USER = false;
+	private static boolean ENABLE_TRIGGER_DISZ = false;
+	private static boolean ENABLE_TRIGGER_GROP = false;
 
+	private static boolean ENABLE_LISENTER_USER = false;
+	private static boolean ENABLE_LISENTER_DISZ = false;
+	private static boolean ENABLE_LISENTER_GROP = false;
+
+	private static boolean ENABLE_BLACKLIST = false;
+
+	private static boolean ENABLE_USERIGNORE = false;
+	private static boolean ENABLE_DISZIGNORE = false;
+	private static boolean ENABLE_GROPIGNORE = false;
+
+	private static boolean ENABLE_DDNSCLIENT = false;
 	private static String DDNSAPI_CLIENTUA;
 	private static String DDNSAPI_HOSTNAME;
 	private static String DDNSAPI_PASSWORD;
@@ -44,11 +53,11 @@ public class ConfigureX {
 	 */
 	public static boolean loadConfigure() throws Exception {
 
-		if (entry.DEBUG) {
-			ConfigureX.MYSELFID = 3477852529L;
-		} else {
-			ConfigureX.MYSELFID = JcqApp.CQ.getLoginQQ();
-		}
+//		if (entry.DEBUG) {
+//			ConfigureX.MYSELFID = 3477852529L;
+//		} else {
+		ConfigureX.MYSELFID = JcqApp.CQ.getLoginQQ();
+//		}
 
 		if (!ConfigureX.FOLDER_CONF.exists()) {
 			ConfigureX.FOLDER_CONF.mkdirs();
@@ -79,56 +88,47 @@ public class ConfigureX {
 			final FileWriter writer = new FileWriter(ConfigureX.FILE_CONFIG);
 			// @formatter:off
 			writer.write(
-				"### CoolQ Setting ##############################################################\r\n" +
-				"\r\n" +
-				"# CoolQ Admin UID\r\n" +
 				"operator=\r\n" +
-				"\r\n" +
-				"### Ignore list ################################################################\r\n" +
-				"\r\n" +
-				"# any word contain in this list will ignore\r\n" +
+				"enable_trigger_user=false\r\n" +
+				"enable_trigger_disz=false\r\n" +
+				"enable_trigger_grop=false\r\n" +
+				"enable_listener_user=false\r\n" +
+				"enable_listener_disz=false\r\n" +
+				"enable_listener_grop=false\r\n" +
 				"enable_blacklist=false\r\n" +
-				"\r\n" +
-				"# user id in this list will ignore in private message\r\n" +
 				"enable_userignore=false\r\n" +
-				"\r\n" +
-				"# user id and disz id will ignore user in specific discuss\r\n" +
 				"enable_diszignore=false\r\n" +
-				"\r\n" +
-				"# user id and group id will ignore user in specific groupchat\r\n" +
 				"enable_gropignore=false\r\n" +
-				"\r\n" +
-				"### PubYUN API #################################################################\r\n" +
-				"\r\n" +
-				"# ddns user agent\r\n" +
+				"enable_ddnsclient=false\r\n" +
 				"ddnsapi_clientua=BTSCoolQ/1.0\r\n" +
-				"\r\n" +
-				"# ddns hostname\r\n" +
 				"ddnsapi_hostname=\r\n" +
-				"\r\n" +
-				"# ddns password\r\n" +
 				"ddnsapi_password="
 			);
 			// @formatter:on
 			writer.flush();
 			writer.close();
+			throw new Exception("初次启动，需要填写配置文件");
 		}
 
 		ConfigureX.property.load(new FileInputStream(ConfigureX.FILE_CONFIG));
-
 		ConfigureX.OPERATOR = Long.parseLong(ConfigureX.property.getProperty("operator", "0"));
 
+		ConfigureX.ENABLE_TRIGGER_USER = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_trigger_user", "false"));
+		ConfigureX.ENABLE_TRIGGER_DISZ = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_trigger_disz", "false"));
+		ConfigureX.ENABLE_TRIGGER_GROP = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_trigger_grop", "false"));
+		ConfigureX.ENABLE_LISENTER_USER = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_listener_user", "false"));
+		ConfigureX.ENABLE_LISENTER_DISZ = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_listener_disz", "false"));
+		ConfigureX.ENABLE_LISENTER_GROP = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_listener_grop", "false"));
 		ConfigureX.ENABLE_BLACKLIST = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_blacklist", "false"));
-
 		ConfigureX.ENABLE_USERIGNORE = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_userignore", "false"));
 		ConfigureX.ENABLE_DISZIGNORE = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_diszignore", "false"));
 		ConfigureX.ENABLE_GROPIGNORE = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_gropignore", "false"));
-
+		ConfigureX.ENABLE_DDNSCLIENT = Boolean.parseBoolean(ConfigureX.property.getProperty("enable_ddnsclient", "false"));
 		ConfigureX.DDNSAPI_CLIENTUA = ConfigureX.property.getProperty("ddnsapi_clientua", "BTSCoolQ/1.0");
 		ConfigureX.DDNSAPI_HOSTNAME = ConfigureX.property.getProperty("ddnsapi_hostname", "");
 		ConfigureX.DDNSAPI_PASSWORD = ConfigureX.property.getProperty("ddnsapi_password", "");
 
-		Scheduler_DDNS.init(ConfigureX.DDNSAPI_CLIENTUA, ConfigureX.DDNSAPI_HOSTNAME, ConfigureX.DDNSAPI_PASSWORD);
+		Scheduler_DDNS.init(ConfigureX.ENABLE_DDNSCLIENT, ConfigureX.DDNSAPI_CLIENTUA, ConfigureX.DDNSAPI_HOSTNAME, ConfigureX.DDNSAPI_PASSWORD);
 
 		return true;
 	}
@@ -139,6 +139,30 @@ public class ConfigureX {
 
 	public static long MYSELFID() {
 		return ConfigureX.MYSELFID;
+	}
+
+	public static boolean ENABLE_TRIGGER_USER() {
+		return ConfigureX.ENABLE_TRIGGER_USER;
+	}
+
+	public static boolean ENABLE_TRIGGER_DISZ() {
+		return ConfigureX.ENABLE_TRIGGER_DISZ;
+	}
+
+	public static boolean ENABLE_TRIGGER_GROP() {
+		return ConfigureX.ENABLE_TRIGGER_GROP;
+	}
+
+	public static boolean ENABLE_LISENTER_USER() {
+		return ConfigureX.ENABLE_LISENTER_USER;
+	}
+
+	public static boolean ENABLE_LISENTER_DISZ() {
+		return ConfigureX.ENABLE_LISENTER_DISZ;
+	}
+
+	public static boolean ENABLE_LISENTER_GROP() {
+		return ConfigureX.ENABLE_LISENTER_GROP;
 	}
 
 	public static boolean ENABLE_BLACKLIST() {

@@ -2,8 +2,6 @@ package studio.blacktech.coolqbot.furryblack.module;
 
 public abstract class ModuleExecutor extends Module {
 
-	public int COUNT = 0;
-
 	public abstract boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception;
 
 	public abstract boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception;

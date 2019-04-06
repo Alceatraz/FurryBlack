@@ -17,7 +17,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "2.0.0 2019-04-05 (23:30)";
+	public static final String PRODUCT_VERSION = "2.1.1 2019-04-06 (10:20)";
 
 	/***
 	 * 此main并非实际执行入口 JcqSDK调用的初始化函数为 startup() enable() disable() exit()
@@ -85,6 +85,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), "警告初始化失败！");
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), exce.getMessage());
 			JcqAppAbstract.enable = false;
+			return 1;
 		}
 		return 0;
 	}
