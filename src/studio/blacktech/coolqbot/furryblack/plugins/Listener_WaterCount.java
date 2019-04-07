@@ -13,6 +13,7 @@ import studio.blacktech.coolqbot.furryblack.module.ModuleListener;
 
 public class Listener_WaterCount extends ModuleListener {
 
+	// 主存储 用户-发言
 	private static HashMap<Long, LinkedList<Message>> messages = new HashMap<Long, LinkedList<Message>>(70);
 
 	public Listener_WaterCount() {
@@ -58,93 +59,91 @@ public class Listener_WaterCount extends ModuleListener {
 	}
 
 	public static String genReport(boolean fullreport) {
+		// 主存储
+		// private static HashMap<Long, LinkedList<Message>> messages = new HashMap<Long, LinkedList<Message>>(70);
 		long a = System.nanoTime();
-
-		int totalmessages = 0;
-		StringBuilder builder = new StringBuilder();
-		LinkedList<String> allmessage = new LinkedList<String>();
-		TreeMap<Long, Integer> fayanliang = new TreeMap<Long, Integer>();
-		TreeMap<String, Integer> messagefreq = new TreeMap<String, Integer>();
-		TreeMap<Integer, Long> jiatelin = new TreeMap<Integer, Long>((o1, o2) -> o2 - o1);
-		TreeMap<Integer, HashSet<String>> freqres = new TreeMap<Integer, HashSet<String>>((o1, o2) -> o2 - o1);
-
+		int totalMessageCount = 0;
+		// 所有消息
+		LinkedList<String> allMessageFlat = new LinkedList<String>();
+		// 用户ID - 发言数量
+		TreeMap<Long, Integer> userSpeakCount = new TreeMap<Long, Integer>();
 		for (long userid : Listener_WaterCount.messages.keySet()) {
+			// 从主存储历遍所有List
 			LinkedList<Message> temp = Listener_WaterCount.messages.get(userid);
-			totalmessages = totalmessages + temp.size();
-			fayanliang.put(userid, temp.size());
+			// 计算总消息熟练
+			totalMessageCount = totalMessageCount + temp.size();
+			// 记录每个用户的发言数量
+			userSpeakCount.put(userid, temp.size());
 			for (Message message : temp) {
-				allmessage.add(message.raw);
+				// 历遍List， 取出所有消息存入List
+				allMessageFlat.add(message.raw);
 			}
 		}
-
-		for (String temp : allmessage) {
-			if (messagefreq.containsKey(temp)) {
-				messagefreq.put(temp, messagefreq.get(temp) + 1);
+		TreeMap<String, Integer> messageCount = new TreeMap<String, Integer>();
+		// 统计消息出现次数 保存为 消息 - 次数
+		for (String temp : allMessageFlat) {
+			if (messageCount.containsKey(temp)) {
+				messageCount.put(temp, messageCount.get(temp) + 1);
 			} else {
-				messagefreq.put(temp, 1);
+				messageCount.put(temp, 1);
 			}
 		}
-
-		for (String temp : messagefreq.keySet()) {
-			int i = messagefreq.get(temp);
-			if (!freqres.containsKey(i)) {
-				freqres.put(i, new HashSet<String>());
+		TreeMap<Integer, HashSet<String>> messageRepeatCountResult = new TreeMap<Integer, HashSet<String>>((o1, o2) -> o2 - o1);
+		// 转换为 次数 - 消息 并按TreeMap自动降序
+		for (String temp : messageCount.keySet()) {
+			int i = messageCount.get(temp);
+			if (!messageRepeatCountResult.containsKey(i)) {
+				messageRepeatCountResult.put(i, new HashSet<String>());
 			}
-			freqres.get(i).add(temp);
+			messageRepeatCountResult.get(i).add(temp);
 		}
-
-		for (long userid : fayanliang.keySet()) {
-			jiatelin.put(fayanliang.get(userid), userid);
+		TreeMap<Integer, Long> userSpeakCountInDesOrder = new TreeMap<Integer, Long>((o1, o2) -> o2 - o1);
+		// 用户 - 次数 转换为 次数 - 用户 并用TreeMap自动降序排列
+		for (long userid : userSpeakCount.keySet()) {
+			userSpeakCountInDesOrder.put(userSpeakCount.get(userid), userid);
 		}
-
 		// =============================================================
-		builder.append("发言总数： ");
-		builder.append(totalmessages);
-
-		builder.append("\r\n\r\n发言数量排名：");
-
-		int limit;
-		limit = 0;
-		long useruid = 0;
+		int limit = 0;
 		Member member;
-
-		for (int temp : jiatelin.keySet()) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("发言总数： ");
+		builder.append(totalMessageCount);
+		builder.append("\r\n\r\n发言数量排名：");
+		long useruid = 0;
+		for (int userSpeakCountValue : userSpeakCountInDesOrder.keySet()) {
 			limit++;
-			useruid = jiatelin.get(temp);
+			useruid = userSpeakCountInDesOrder.get(userSpeakCountValue);
 			member = JcqApp.CQ.getGroupMemberInfoV2(805795515, useruid);
 			builder.append("\r\n");
-			builder.append(temp);
+			builder.append(userSpeakCountValue);
 			builder.append(": ");
 			builder.append(member.getCard().length() == 0 ? member.getCard() : member.getNick());
 			builder.append("(");
 			builder.append(useruid);
 			builder.append(")");
-			if (!fullreport && (limit > 5)) {
+			if (!fullreport && (limit > 4)) {
+				limit = 0;
 				break;
 			}
 		}
-
-		limit = 0;
 		builder.append("\r\n\r\n整句频度排名：");
-		for (int temp : freqres.keySet()) {
-			if (temp == 1) {
+		for (int messageRepeatCountValue : messageRepeatCountResult.keySet()) {
+			if (messageRepeatCountValue == 1) {
 				continue;
 			}
-			limit++;
-			HashSet<String> i = freqres.get(temp);
-			for (String t : i) {
+			HashSet<String> messageRepeatCountSentences = messageRepeatCountResult.get(messageRepeatCountValue);
+			for (String sentence : messageRepeatCountSentences) {
+				limit++;
 				builder.append("\r\n");
-				builder.append(temp);
+				builder.append(messageRepeatCountValue);
 				builder.append(": ");
-				builder.append(t);
+				builder.append(sentence);
 			}
-			if (!fullreport && (limit > 5)) {
+			if (!fullreport && (limit > 9)) {
 				break;
 			}
 		}
-
 		long b = System.nanoTime();
-
 		builder.append("\r\n\r\n报告生成开销:\r\n");
 		builder.append(b - a);
 		builder.append("ns\r\n");
