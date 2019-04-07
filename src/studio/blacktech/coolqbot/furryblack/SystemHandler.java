@@ -533,9 +533,7 @@ public class SystemHandler extends Module {
 						}
 						return IMsg.MSG_IGNORE;
 					case "shui":
-						for (ModuleListener temp : SystemHandler.LISTENER_INSTANCE) {
-							Module.userInfo(ConfigureX.OPERATOR(), temp.generateReport());
-						}
+						Module.userInfo(ConfigureX.OPERATOR(), Listener_WaterCount.genReport(true));
 						return IMsg.MSG_IGNORE;
 					}
 
@@ -733,8 +731,8 @@ public class SystemHandler extends Module {
 		builder.append("次");
 		builder.append("\r\n");
 		builder.append("调用-群聊： ");
-		builder.append("次");
 		builder.append(SystemHandler.COUNT_GROP_MESSAGE);
+		builder.append("次");
 		builder.append("\r\n");
 		builder.append("\r\n");
 

@@ -5,9 +5,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
-import com.sobte.cqp.jcq.entity.Member;
-import com.sobte.cqp.jcq.event.JcqApp;
-
 import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.ModuleListener;
 
@@ -54,13 +51,12 @@ public class Listener_WaterCount extends ModuleListener {
 
 	@Override
 	public String generateReport() {
-		return genReport(false);
+		return Listener_WaterCount.genReport(false);
 	}
 
 	public static String genReport(boolean fullreport) {
 		long a = System.nanoTime();
 
-		String nickname;
 		int totalmessages = 0;
 		StringBuilder builder = new StringBuilder();
 		LinkedList<String> allmessage = new LinkedList<String>();
@@ -102,48 +98,37 @@ public class Listener_WaterCount extends ModuleListener {
 		builder.append("发言总数： ");
 		builder.append(totalmessages);
 
-		long userid;
-
 		int limit;
 
 		limit = 0;
 		builder.append("\r\n\r\n发言数量排名：");
 		for (int temp : jiatelin.keySet()) {
-			if (!fullreport && limit > 5) {
-				break;
-			}
-			userid = jiatelin.get(temp);
+			limit++;
 			builder.append("\r\n");
 			builder.append(temp);
 			builder.append(": ");
-			Member member = JcqApp.CQ.getGroupMemberInfoV2(805795515, userid);
-			nickname = member.getCard();
-			if (nickname.length() == 0) {
-				nickname = member.getNick();
-			}
-			builder.append(nickname);
-			builder.append("(");
 			builder.append(jiatelin.get(temp));
-			builder.append(")");
-			limit++;
-
+			if (!fullreport && (limit > 5)) {
+				break;
+			}
 		}
 
 		limit = 0;
 		builder.append("\r\n\r\n整句频度排名：");
 		for (int temp : freqres.keySet()) {
-			if (!fullreport && limit > 5) {
-				break;
-			}
 			if (temp == 1) {
 				continue;
 			}
+			limit++;
 			HashSet<String> i = freqres.get(temp);
 			for (String t : i) {
 				builder.append("\r\n");
 				builder.append(temp);
 				builder.append(": ");
 				builder.append(t);
+			}
+			if (!fullreport && (limit > 5)) {
+				break;
 			}
 		}
 
