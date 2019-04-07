@@ -3,32 +3,29 @@ package studio.blacktech.coolqbot.furryblack.plugins;
 import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
-//
-//import studio.blacktech.coolqbot.furryblack.signal.Workflow;
-//
 public class Executor_nsfw extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	@Override
 	public String generateReport() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -60,9 +57,3 @@ public class Executor_nsfw extends ModuleExecutor {
 //			break;
 //		}
 //	}
-//
-//	@Override
-//	public String genReport() {
-//		return null;
-//	}
-//}

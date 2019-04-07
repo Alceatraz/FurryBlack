@@ -58,48 +58,32 @@ public class Executor_gamb extends ModuleExecutor {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-
 		if (message.length < 2) {
 			Module.gropInfo(gropid, userid, "不下注是8koi的");
 			return true;
 		}
-
 		if (!Executor_gamb.rounds.containsKey(gropid)) {
 			Executor_gamb.rounds.put(gropid, new RouletteRound());
 		}
-
 		final RouletteRound round = Executor_gamb.rounds.get(gropid);
-
-		if (round.lock) {
-			Module.gropInfo(gropid, userid, "本局还miu结束");
-			return true;
-		}
-
 		if ((round.time.getTime() + 600000) < new Date().getTime()) {
 			Executor_gamb.ROUND_EXPIRED++;
 			Executor_gamb.rounds.remove(gropid);
 			Executor_gamb.rounds.put(gropid, new RouletteRound());
 		}
-
 		if (round.join(gropid, userid, message)) {
 			Executor_gamb.ROUND_SUCCESS++;
-			round.lock = true;
 			final SecureRandom random = new SecureRandom();
 			final int bullet = random.nextInt(6);
-			Module.gropInfo(gropid, "名单已凑齐 装填子弹中 ");
+			Module.gropInfo(gropid, "名单已凑齐 装填子弹中");
 			Member member;
-			String nickname;
 			for (int i = 0; i < 6; i++) {
 				member = JcqApp.CQ.getGroupMemberInfoV2(gropid, round.player.get(i));
-				nickname = member.getCard();
-				if (nickname.length() == 0) {
-					nickname = member.getNick();
-				}
 				if (i == bullet) {
 					Executor_gamb.roulette.set(i, Executor_gamb.roulette.get(i) + 1);
-					Module.gropInfo(gropid, nickname + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
+					Module.gropInfo(gropid, (member.getCard().length() == 0 ? member.getCard() : member.getNick()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
 				} else {
-					Module.gropInfo(gropid, nickname + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
+					Module.gropInfo(gropid, (member.getCard().length() == 0 ? member.getCard() : member.getNick()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
 				}
 			}
 			Module.gropInfo(gropid, "目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
@@ -110,7 +94,6 @@ public class Executor_gamb extends ModuleExecutor {
 
 	private class RouletteRound {
 		public ArrayList<String> chip = new ArrayList<String>();
-		public boolean lock = false;
 		public ArrayList<Long> player = new ArrayList<Long>();
 		public int players = 0;
 		public Date time;
@@ -123,6 +106,7 @@ public class Executor_gamb extends ModuleExecutor {
 			if (this.player.contains(userid)) {
 				Module.gropInfo(gropid, "你8koi离开，不准放过");
 			} else {
+				this.time = new Date();
 				this.players++;
 				this.player.add(userid);
 				this.chip.add(message.join(1));

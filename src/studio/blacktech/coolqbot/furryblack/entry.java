@@ -121,7 +121,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n MSG:");
 			builder.append(message);
 			builder.append("\r\n StackTrace\r\n:");
-			builder.append(exce.getMessage());
+			builder.append(exce.getStackTrace());
 			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
 		}
 		return IMsg.MSG_IGNORE;

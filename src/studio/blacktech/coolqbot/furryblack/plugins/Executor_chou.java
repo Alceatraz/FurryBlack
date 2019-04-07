@@ -42,30 +42,22 @@ public class Executor_chou extends ModuleExecutor {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
-		Member member;
-		int size = members.size();
 		long uid = 0;
+		SecureRandom random = new SecureRandom();
+		Member member;
+		List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
+		int size = members.size();
 		do {
-			member = members.get(Executor_chou.random(size));
+			member = members.get(random.nextInt(size));
 			uid = member.getQqId();
 		} while ((uid == ConfigureX.MYSELFID()) || (uid == userid));
-		String nickname = member.getCard();
-		if (nickname.length() == 0) {
-			nickname = member.getNick();
-		}
 		message.prase();
 		if (message.length == 1) {
-			Module.gropInfo(gropid, userid, "随机抽到 " + nickname + "(" + member.getQqId() + ")");
+			Module.gropInfo(gropid, userid, "随机抽到 " + (member.getCard().length() == 0 ? member.getCard() : member.getNick()) + "(" + member.getQqId() + ")");
 		} else {
-			Module.gropInfo(gropid, userid, "随机抽到 " + nickname + "(" + member.getQqId() + ") : " + message.join(1));
+			Module.gropInfo(gropid, userid, "随机抽到 " + (member.getCard().length() == 0 ? member.getCard() : member.getNick()) + "(" + member.getQqId() + ") : " + message.join(1));
 		}
 		return true;
-	}
-
-	private static int random(int size) {
-		SecureRandom random = new SecureRandom();
-		return random.nextInt(size);
 	}
 
 	@Override

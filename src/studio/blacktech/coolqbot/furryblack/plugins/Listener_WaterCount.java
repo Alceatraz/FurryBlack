@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
+import com.sobte.cqp.jcq.entity.Member;
+import com.sobte.cqp.jcq.event.JcqApp;
+
 import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.ModuleListener;
 
@@ -98,16 +101,24 @@ public class Listener_WaterCount extends ModuleListener {
 		builder.append("发言总数： ");
 		builder.append(totalmessages);
 
-		int limit;
-
-		limit = 0;
 		builder.append("\r\n\r\n发言数量排名：");
+
+		int limit;
+		limit = 0;
+		long useruid = 0;
+		Member member;
+
 		for (int temp : jiatelin.keySet()) {
 			limit++;
+			useruid = jiatelin.get(temp);
+			member = JcqApp.CQ.getGroupMemberInfoV2(805795515, useruid);
 			builder.append("\r\n");
 			builder.append(temp);
 			builder.append(": ");
-			builder.append(jiatelin.get(temp));
+			builder.append(member.getCard().length() == 0 ? member.getCard() : member.getNick());
+			builder.append("(");
+			builder.append(useruid);
+			builder.append(")");
 			if (!fullreport && (limit > 5)) {
 				break;
 			}

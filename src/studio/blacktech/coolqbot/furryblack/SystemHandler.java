@@ -8,11 +8,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.TreeMap;
 
 import com.sobte.cqp.jcq.entity.Group;
 import com.sobte.cqp.jcq.entity.IMsg;
+import com.sobte.cqp.jcq.entity.Member;
+import com.sobte.cqp.jcq.entity.QQInfo;
 import com.sobte.cqp.jcq.event.JcqApp;
+import com.sobte.cqp.jcq.message.CoolQCode;
 
 import studio.blacktech.common.ConfigureX;
 import studio.blacktech.common.LoggerX;
@@ -500,10 +504,7 @@ public class SystemHandler extends Module {
 						Module.userInfo(ConfigureX.OPERATOR(), temp);
 						return IMsg.MSG_IGNORE;
 					}
-					switch (command.cmd[1])
-
-					{
-
+					switch (command.cmd[1]) {
 					case "getddns":
 						Module.userInfo(ConfigureX.OPERATOR(), Scheduler_DDNS.getIPAddress());
 						return IMsg.MSG_IGNORE;
@@ -613,7 +614,6 @@ public class SystemHandler extends Module {
 				break;
 			case "admin":
 				if (userid == ConfigureX.OPERATOR()) {
-					Zwischenspiel.doDiszAdmin(command);
 				}
 				break;
 			default:
@@ -688,9 +688,21 @@ public class SystemHandler extends Module {
 				break;
 			case "admin":
 				if (userid == ConfigureX.OPERATOR()) {
-					Zwischenspiel.doGropAdmin(command);
+					final Date date = new Date();
+					if (command.length < 2) {
+						String temp = SystemHandler.genReport();
+						Module.gropInfo(gropid, temp);
+						return IMsg.MSG_IGNORE;
+					}
+					switch (command.cmd[1]) {
+					case "shui":
+						Module.gropInfo(gropid, Listener_WaterCount.genReport(true));
+						return IMsg.MSG_IGNORE;
+					}
+
 				}
 				break;
+
 			default:
 				if (SystemHandler.EXECUTOR_GROP.containsKey(command.cmd[0])) {
 					try {
