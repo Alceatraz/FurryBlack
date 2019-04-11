@@ -9,9 +9,8 @@ import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
-@SuppressWarnings("unused")
 public class Executor_jrrp extends ModuleExecutor {
-	private static HashMap<Long, Integer> jrrp = new HashMap<Long, Integer>();
+	private HashMap<Long, Integer> jrrp = new HashMap<Long, Integer>();
 
 	public Executor_jrrp() {
 		this.MODULE_DISPLAYNAME = "今日运气";
@@ -19,7 +18,7 @@ public class Executor_jrrp extends ModuleExecutor {
 		this.MODULE_DESCRIPTION = "今日运气";
 		this.MODULE_VERSION = "2.6.4";
 		this.MODULE_USAGE = new String[] {
-				"//jrrp"
+				"//jrrp - 随机抽取一个成员和一个视频"
 		};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {};
@@ -34,49 +33,49 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		if (!Executor_jrrp.jrrp.containsKey(userid)) {
+		if (!this.jrrp.containsKey(userid)) {
 			SecureRandom random = new SecureRandom();
-			Executor_jrrp.jrrp.put(userid, random.nextInt(100));
+			this.jrrp.put(userid, random.nextInt(100));
 		}
-		Module.userInfo(userid, "今天的运气是" + Executor_jrrp.jrrp.get(userid) + "%!!!");
+		Module.userInfo(userid, "今天的运气是" + this.jrrp.get(userid) + "%!!!");
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		if (!Executor_jrrp.jrrp.containsKey(userid)) {
+		if (!this.jrrp.containsKey(userid)) {
 			SecureRandom random = new SecureRandom();
-			Executor_jrrp.jrrp.put(userid, random.nextInt(100));
+			this.jrrp.put(userid, random.nextInt(100));
 		}
-		Module.diszInfo(diszid, userid, "今天的运气是" + Executor_jrrp.jrrp.get(userid) + "%!!!");
+		Module.diszInfo(diszid, userid, "今天的运气是" + this.jrrp.get(userid) + "%!!!");
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		if (!Executor_jrrp.jrrp.containsKey(userid)) {
+		if (!this.jrrp.containsKey(userid)) {
 			SecureRandom random = new SecureRandom();
-			Executor_jrrp.jrrp.put(userid, random.nextInt(100));
+			this.jrrp.put(userid, random.nextInt(100));
 		}
-		Module.gropInfo(gropid, userid, "今天的运气是" + Executor_jrrp.jrrp.get(userid) + "%!!!");
+		Module.gropInfo(gropid, userid, "今天的运气是" + this.jrrp.get(userid) + "%!!!");
 		return true;
 	}
 
-	public static void flush() {
-		Executor_jrrp.jrrp.clear();
+	public void flush() {
+		this.jrrp.clear();
 	}
 
 	@Override
-	public String generateReport() {
+	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
 		if (this.COUNT == 0) {
 			return null;
 		}
 		TreeMap<Integer, Integer> frequency = new TreeMap<Integer, Integer>();
-		for (long temp : Executor_jrrp.jrrp.keySet()) {
-			int luck = Executor_jrrp.jrrp.get(temp);
+		for (long temp : this.jrrp.keySet()) {
+			int luck = this.jrrp.get(temp);
 			frequency.put(luck, frequency.containsKey(luck) ? frequency.get(luck) + 1 : 1);
 		}
-		int size = Executor_jrrp.jrrp.size();
+		int size = this.jrrp.size();
 		StringBuilder builder = new StringBuilder();
 		builder.append("共生成了 ");
 		builder.append(size);

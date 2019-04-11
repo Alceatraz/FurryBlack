@@ -8,8 +8,9 @@ public class Message {
 
 	public String raw;
 	public String res;
+	public int segment;
 	public int length;
-	public String[] cmd;
+	public String[] messages;
 	public Long time;
 
 	public Message(final String raw) {
@@ -23,9 +24,9 @@ public class Message {
 	 */
 	public String prase() {
 		this.res = this.raw.trim().substring(2);
-		this.cmd = this.res.split(" ");
-		this.length = this.cmd.length;
-		return this.cmd[0];
+		this.messages = this.res.split(" ");
+		this.segment = this.messages.length;
+		return this.messages[0];
 	}
 
 	/***
@@ -35,16 +36,29 @@ public class Message {
 	 * @return 拼接后的信息
 	 */
 	public String join(int i) {
-		if (this.length == 1) {
+		if (this.segment == 1) {
 			return "";
 		} else {
 			final StringBuilder builder = new StringBuilder();
-			for (; i < this.length; i++) {
+			for (; i < this.segment; i++) {
 				builder.append(" ");
-				builder.append(this.cmd[i]);
+				builder.append(this.messages[i]);
 			}
 			return builder.toString();
 		}
+	}
+
+	/***
+	 * 不是//开头的不是命令 只有//的不是命令
+	 *
+	 * @return
+	 */
+	public boolean isCommand() {
+		return (this.raw.startsWith("//") && (this.raw.length() > 2));
+	}
+
+	public void calculateLength() {
+		this.length = this.raw.length();
 	}
 
 }

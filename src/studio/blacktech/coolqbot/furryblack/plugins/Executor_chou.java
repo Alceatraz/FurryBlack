@@ -6,7 +6,7 @@ import java.util.List;
 import com.sobte.cqp.jcq.entity.Member;
 import com.sobte.cqp.jcq.event.JcqApp;
 
-import studio.blacktech.common.ConfigureX;
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
@@ -19,7 +19,7 @@ public class Executor_chou extends ModuleExecutor {
 		this.MODULE_DESCRIPTION = "从群随机抽取一个人";
 		this.MODULE_VERSION = "2.4.0";
 		this.MODULE_USAGE = new String[] {
-				"//chou ", "//chou 理由"
+				"//chou - 随机抽一个人", "//chou 理由 - 以某个理由抽一个人"
 		};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {};
@@ -50,9 +50,9 @@ public class Executor_chou extends ModuleExecutor {
 		do {
 			member = members.get(random.nextInt(size));
 			uid = member.getQqId();
-		} while ((uid == ConfigureX.MYSELFID()) || (uid == userid));
+		} while ((uid == entry.MYSELFID()) || (uid == userid));
 		message.prase();
-		if (message.length == 1) {
+		if (message.segment == 1) {
 			Module.gropInfo(gropid, userid, "随机抽到 " + (member.getCard().length() == 0 ? member.getCard() : member.getNick()) + "(" + member.getQqId() + ")");
 		} else {
 			Module.gropInfo(gropid, userid, "随机抽到 " + (member.getCard().length() == 0 ? member.getCard() : member.getNick()) + "(" + member.getQqId() + ") : " + message.join(1));
@@ -61,7 +61,7 @@ public class Executor_chou extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport() {
+	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
 		return null;
 	}
 

@@ -7,25 +7,21 @@ public class Executor_nsfw extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
-
 		return false;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
-
 		return false;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-
 		return false;
 	}
 
 	@Override
-	public String generateReport() {
-
+	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
 		return null;
 	}
 

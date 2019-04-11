@@ -12,7 +12,7 @@ public class Executor_echo extends ModuleExecutor {
 		this.MODULE_DESCRIPTION = "回显内容";
 		this.MODULE_VERSION = "2.0.1";
 		this.MODULE_USAGE = new String[] {
-				"//echo 任意内容"
+				"//echo 内容 - stdin>stdout"
 		};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {};
@@ -42,7 +42,7 @@ public class Executor_echo extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport() {
+	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
 		return null;
 	}
 }

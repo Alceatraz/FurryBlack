@@ -4,7 +4,6 @@ import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
-@SuppressWarnings("unused")
 public class Executor_kong extends ModuleExecutor {
 
 	public Executor_kong() {
@@ -14,7 +13,7 @@ public class Executor_kong extends ModuleExecutor {
 		this.MODULE_DESCRIPTION = "给 文 字 加 空 格";
 		this.MODULE_VERSION = "2.0.0";
 		this.MODULE_USAGE = new String[] {
-				"//kong 需要变臭的原句"
+				"//kong 原句 - 给原句添加空格"
 		};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {};
@@ -58,7 +57,7 @@ public class Executor_kong extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport() {
+	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
 		return null;
 	}
 

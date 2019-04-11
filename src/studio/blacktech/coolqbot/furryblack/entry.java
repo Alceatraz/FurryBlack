@@ -1,5 +1,14 @@
 package studio.blacktech.coolqbot.furryblack;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.file.Paths;
+import java.util.Properties;
+
 import com.sobte.cqp.jcq.entity.CQDebug;
 import com.sobte.cqp.jcq.entity.ICQVer;
 import com.sobte.cqp.jcq.entity.IMsg;
@@ -7,94 +16,155 @@ import com.sobte.cqp.jcq.entity.IRequest;
 import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
-import studio.blacktech.common.ConfigureX;
 import studio.blacktech.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.module.Message;
 
 public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
-
-	public static final boolean DEBUG = true;
 
 	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "2.3.19 2019-04-06 (20:00)";
+	public static final String PRODUCT_VERSION = "3.3.19 2019-04-11 (23:45)";
 
-	/***
-	 * 此main并非实际执行入口 JcqSDK调用的初始化函数为 startup() enable() disable() exit()
-	 * main仅用于JcqDebug模式
-	 *
-	 * @param args 启动参数
-	 */
+	private static File FOLDER_CONF;
+	private static File FILE_CONFIG;
+	private static File FILE_BLACKLIST;
+	private static File FILE_USERIGNORE;
+	private static File FILE_DISZIGNORE;
+	private static File FILE_GROPIGNORE;
+
+	private static long MYSELFID = 0;
+	private static long OPERATOR = 0;
+
+	private static Properties config = new Properties();
+
 	public static void main(final String[] args) {
-		// 固定写法
 		JcqApp.CQ = new CQDebug();
 		final entry demo = new entry();
 		demo.startup();
 		demo.enable();
 		// 自定义测试内容 - 开始
-		demo.privateMsg(0, 10005, 12334564L, "123", 0);
+		demo.privateMsg(0, 10005, 12334564L, "123456", 0);
 		demo.privateMsg(0, 10005, 12334564L, "//eula", 0);
 		demo.privateMsg(0, 10005, 12334564L, "//help", 0);
 		demo.privateMsg(0, 10005, 12334564L, "//list", 0);
 		demo.privateMsg(0, 10005, 12334564L, "//info", 0);
 		demo.privateMsg(0, 10005, 12334564L, "//admin", 0);
-		demo.privateMsg(0, 10005, 12334564L, "//helpall", 0);
 		// 自定义测试内容 - 结束
 		demo.disable();
 		demo.exit();
 	}
 
-	/***
-	 * Jcq强制要求函数 勿动
-	 */
 	@Override
 	public String appInfo() {
 		return ICQVer.CQAPIVER + "," + entry.AppID;
 	}
 
-	/***
-	 * CoolQ-Jcq启动时调用
-	 */
 	@Override
 	public int startup() {
 		return 0;
 	}
 
-	/***
-	 * CoolQ-Jcq退出时调用
-	 */
 	@Override
 	public int exit() {
-		System.exit(0);
 		return 0;
 	}
 
-	/***
-	 * JcqApp加载时调用-即插件初始化
-	 */
 	@Override
 	public int enable() {
 		try {
 			StringBuilder builder = new StringBuilder();
 			JcqAppAbstract.appDirectory = JcqApp.CQ.getAppDirectory();
-			ConfigureX.loadConfigure(builder);
-			SystemHandler.init(builder);
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 已启动");
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
+
+			builder.append(LoggerX.time());
+			builder.append(" [FurryBlack] 初始化中\r\n");
+
+			entry.FOLDER_CONF = Paths.get(JcqAppAbstract.appDirectory, "conf").toFile();
+			entry.FILE_CONFIG = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
+			entry.FILE_BLACKLIST = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "blacklist.txt").toFile();
+			entry.FILE_USERIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "user_ignore.txt").toFile();
+			entry.FILE_DISZIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "disz_ignore.txt").toFile();
+			entry.FILE_GROPIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "grop_ignore.txt").toFile();
+
+			if (!entry.FOLDER_CONF.exists()) {
+				builder.append(" [Config] 配置文件夹不存在\r\n");
+				entry.FOLDER_CONF.mkdirs();
+			}
+			if (!entry.FOLDER_CONF.isDirectory()) {
+				builder.append(" [Config] 配置文件夹被文件占位\r\n");
+				throw new IOException(":" + entry.FOLDER_CONF.getAbsolutePath());
+			}
+			if (!entry.FILE_BLACKLIST.exists()) {
+				builder.append(" [Config] 敏感词黑名单文件不存在\r\n");
+				entry.FILE_BLACKLIST.createNewFile();
+			}
+			if (!entry.FILE_USERIGNORE.exists()) {
+				builder.append(" [Config] 私聊黑名单文件不存在\r\n");
+				entry.FILE_USERIGNORE.createNewFile();
+			}
+			if (!entry.FILE_DISZIGNORE.exists()) {
+				builder.append(" [Config] 组聊黑名单文件不存在\r\n");
+				entry.FILE_DISZIGNORE.createNewFile();
+			}
+			if (!entry.FILE_GROPIGNORE.exists()) {
+				builder.append(" [Config] 群聊黑名单文件不存在\r\n");
+				entry.FILE_GROPIGNORE.createNewFile();
+			}
+
+			if (!entry.FILE_CONFIG.exists()) {
+				builder.append(" [Config] 配置文件不存在\r\n");
+				entry.FILE_CONFIG.createNewFile();
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(entry.FILE_CONFIG), "UTF-8"));
+				// @formatter:off
+				writer.write(
+					"summoner=\r\n" +
+					"operator=\r\n" +
+					"enable_trigger_user=false\r\n" +
+					"enable_trigger_disz=false\r\n" +
+					"enable_trigger_grop=false\r\n" +
+					"enable_listener_user=false\r\n" +
+					"enable_listener_disz=false\r\n" +
+					"enable_listener_grop=false\r\n" +
+					"enable_blacklist=false\r\n" +
+					"enable_userignore=false\r\n" +
+					"enable_diszignore=false\r\n" +
+					"enable_gropignore=false\r\n" +
+					"enable_ddnsclient=false\r\n" +
+					"ddnsapi_clientua=BTSCoolQ/1.0\r\n" +
+					"ddnsapi_hostname=\r\n" +
+					"ddnsapi_password="
+				);
+				// @formatter:on
+				writer.flush();
+				writer.close();
+				builder.append(" [Config] 配置文件不存在\r\n");
+				throw new Exception("初次启动，需要填写配置文件");
+			}
+
+			entry.config.load(new FileInputStream(entry.FILE_CONFIG));
+			builder.append(" [Config] 读取配置文件\r\n");
+
+			entry.MYSELFID = Long.parseLong(entry.config.getProperty("summoner", "0"));
+			entry.OPERATOR = Long.parseLong(entry.config.getProperty("operator", "0"));
+
+			builder.append(" [Config] 管理员账户为：");
+			builder.append(entry.OPERATOR);
+			builder.append("\r\n");
+
+			SystemHandler.init(builder, entry.config);
+
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), builder.toString());
+
 			JcqAppAbstract.enable = true;
+
 		} catch (final Exception exce) {
 			exce.printStackTrace();
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), "警告初始化失败！");
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), exce.getMessage());
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), "警告初始化失败！");
 			JcqAppAbstract.enable = false;
-			return 1;
 		}
 		return 0;
 	}
 
-	/***
-	 * JcqApp卸载时调用-即插件关闭
-	 */
 	@Override
 	public int disable() {
 		JcqAppAbstract.enable = false;
@@ -109,20 +179,28 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int privateMsg(final int typeid, final int messageid, final long userid, final String message, final int messagefont) {
 		try {
-			SystemHandler.doUserMessage(typeid, userid, message, messageid, messagefont);
+			SystemHandler.doUserMessage(typeid, userid, new Message(message), messageid, messagefont);
 		} catch (final Exception exce) {
 			exce.printStackTrace();
 			final StringBuilder builder = new StringBuilder();
 			builder.append(LoggerX.time());
 			builder.append(" [私聊消息异常] - ");
 			builder.append(messageid);
-			builder.append("\r\n UID:");
+			builder.append("\r\n 用户:");
 			builder.append(userid);
-			builder.append("\r\n MSG:");
+			builder.append("\r\n 消息:");
 			builder.append(message);
-			builder.append("\r\n StackTrace\r\n:");
-			builder.append(exce.getStackTrace());
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
+			builder.append("\r\n 报错栈\r\n:");
+			for (StackTraceElement i : exce.getStackTrace()) {
+				builder.append("Line: ");
+				builder.append(i.getLineNumber());
+				builder.append(" In - ");
+				builder.append(i.getClassName());
+				builder.append(" >> ");
+				builder.append(i.getMethodName());
+				builder.append("\r\n");
+			}
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -133,20 +211,28 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int discussMsg(final int typeid, final int messageid, final long diszid, final long userid, final String message, final int messagefont) {
 		try {
-			SystemHandler.doDiszMessage(diszid, userid, message, messageid, messagefont);
+			SystemHandler.doDiszMessage(diszid, userid, new Message(message), messageid, messagefont);
 		} catch (final Exception exce) {
 			exce.printStackTrace();
 			final StringBuilder builder = new StringBuilder();
 			builder.append(LoggerX.time());
 			builder.append(" [讨论组消息异常] - ");
 			builder.append(messageid);
-			builder.append("\r\n UID:");
+			builder.append("\r\n 用户:");
 			builder.append(userid);
-			builder.append("\r\n MSG:");
+			builder.append("\r\n 消息:");
 			builder.append(message);
-			builder.append("\r\n StackTrace\r\n:");
-			builder.append(exce.getMessage());
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
+			builder.append("\r\n 报错栈\r\n:");
+			for (StackTraceElement i : exce.getStackTrace()) {
+				builder.append("Line: ");
+				builder.append(i.getLineNumber());
+				builder.append(" In - ");
+				builder.append(i.getClassName());
+				builder.append(" >> ");
+				builder.append(i.getMethodName());
+				builder.append("\r\n");
+			}
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -154,20 +240,28 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int groupMsg(final int typeid, final int messageid, final long gropid, final long userid, final String anonymous, final String message, final int messagefont) {
 		try {
-			SystemHandler.doGropMessage(gropid, userid, message, messageid, messagefont);
+			SystemHandler.doGropMessage(gropid, userid, new Message(message), messageid, messagefont);
 		} catch (final Exception exce) {
 			exce.printStackTrace();
 			final StringBuilder builder = new StringBuilder();
 			builder.append(LoggerX.time());
 			builder.append(" [群聊消息异常] - ");
 			builder.append(messageid);
-			builder.append("\r\n UID:");
+			builder.append("\r\n 用户:");
 			builder.append(userid);
-			builder.append("\r\n MSG:");
+			builder.append("\r\n 消息:");
 			builder.append(message);
-			builder.append("\r\n StackTrace\r\n:");
-			builder.append(exce.getMessage());
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), builder.toString());
+			builder.append("\r\n 报错栈\r\n:");
+			for (StackTraceElement i : exce.getStackTrace()) {
+				builder.append("Line: ");
+				builder.append(i.getLineNumber());
+				builder.append(" In - ");
+				builder.append(i.getClassName());
+				builder.append(" >> ");
+				builder.append(i.getMethodName());
+				builder.append("\r\n");
+			}
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -179,7 +273,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int requestAddFriend(final int type, final int time, final long qqid, final String message, final String flag) {
-		JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 好友申请 " + qqid + " : " + message);
+		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " [FurryBlack] 好友申请 " + qqid + " : " + message);
 		// 同意好友添加
 		JcqApp.CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, null);
 		return 0;
@@ -194,13 +288,39 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		// 1 -> 作为管理时收到了用户加入申请
 		// 2 -> 收到好友邀请加入某群的邀请
 		if (subtype == 1) {
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 加群申请 - 群号:" + fromGroup + " 申请者:" + fromQQ);
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " [FurryBlack] 加群申请 - 群号:" + fromGroup + " 申请者:" + fromQQ);
 		} else if (subtype == 2) {
-			JcqApp.CQ.sendPrivateMsg(ConfigureX.OPERATOR(), LoggerX.time() + " [FurryBlack] 加群邀请 - 群号:" + fromGroup + " 邀请者:" + fromQQ);
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " [FurryBlack] 加群邀请 - 群号:" + fromGroup + " 邀请者:" + fromQQ);
 			// 同意邀请进群
 			JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
 		}
 		return 0;
+	}
+
+	// ==============================================================================================================================================================
+
+	public static long OPERATOR() {
+		return entry.OPERATOR;
+	}
+
+	public static long MYSELFID() {
+		return entry.MYSELFID;
+	}
+
+	public static File FILE_BLACKLIST() {
+		return entry.FILE_BLACKLIST;
+	}
+
+	public static File FILE_USERIGNORE() {
+		return entry.FILE_USERIGNORE;
+	}
+
+	public static File FILE_DISZIGNORE() {
+		return entry.FILE_DISZIGNORE;
+	}
+
+	public static File FILE_GROPIGNORE() {
+		return entry.FILE_GROPIGNORE;
 	}
 
 	// ==============================================================================================================================================================

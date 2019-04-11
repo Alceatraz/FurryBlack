@@ -11,11 +11,10 @@ import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
-@SuppressWarnings("unused")
 public class Executor_jrjp extends ModuleExecutor {
 
-	private static HashMap<Long, Integer> jrav = new HashMap<Long, Integer>();
-	private static HashMap<Long, Member> jrjp = new HashMap<Long, Member>();
+	private HashMap<Long, Integer> jrav = new HashMap<Long, Integer>();
+	private HashMap<Long, Member> jrjp = new HashMap<Long, Member>();
 
 	public Executor_jrjp() {
 		this.MODULE_DISPLAYNAME = "今日祭品";
@@ -23,7 +22,7 @@ public class Executor_jrjp extends ModuleExecutor {
 		this.MODULE_DESCRIPTION = "今日祭品";
 		this.MODULE_VERSION = "2.10.2";
 		this.MODULE_USAGE = new String[] {
-				"//jrjp"
+				"//jrjp - 随机生成今日人品"
 		};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {};
@@ -48,27 +47,27 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		if (!Executor_jrjp.jrjp.containsKey(gropid)) {
+		if (!this.jrjp.containsKey(gropid)) {
 			SecureRandom random = new SecureRandom();
 			List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
-			Executor_jrjp.jrjp.put(gropid, members.get(random.nextInt(members.size() + 1)));
-			Executor_jrjp.jrav.put(gropid, random.nextInt(50000000));
+			this.jrjp.put(gropid, members.get(random.nextInt(members.size() + 1)));
+			this.jrav.put(gropid, random.nextInt(50000000));
 		}
-		String nickname = Executor_jrjp.jrjp.get(gropid).getCard();
+		String nickname = this.jrjp.get(gropid).getCard();
 		if (nickname.length() == 0) {
-			nickname = Executor_jrjp.jrjp.get(gropid).getNick();
+			nickname = this.jrjp.get(gropid).getNick();
 		}
-		Module.gropInfo(gropid, userid, nickname + " (" + userid + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + Executor_jrjp.jrav.get(gropid));
+		Module.gropInfo(gropid, userid, nickname + " (" + userid + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.jrav.get(gropid));
 		return true;
 	}
 
-	public static void flush() {
-		Executor_jrjp.jrjp.clear();
-		Executor_jrjp.jrav.clear();
+	public void flush() {
+		this.jrjp.clear();
+		this.jrav.clear();
 	}
 
 	@Override
-	public String generateReport() {
+	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
 		return null;
 	}
 

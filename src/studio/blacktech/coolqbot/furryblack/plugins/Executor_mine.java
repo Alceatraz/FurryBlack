@@ -15,25 +15,25 @@ public class Executor_mine extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	@Override
-	public String generateReport() {
-		// TODO Auto-generated method stub
+	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
+
 		return null;
 	}
 

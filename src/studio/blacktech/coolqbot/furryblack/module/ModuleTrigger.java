@@ -13,7 +13,7 @@ public abstract class ModuleTrigger extends Module {
 		return this.doUserMessage(typeid, userid, message, messageid, messagefont);
 	}
 
-	public boolean excutDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+	public boolean executeDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		this.COUNT++;
 		return this.doDiszMessage(diszid, userid, message, messageid, messagefont);
 	}
