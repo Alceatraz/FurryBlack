@@ -53,19 +53,47 @@ public class Listener_TopSpeak extends ModuleListener {
 		return true;
 	}
 
+	private class GroupStatus {
+
+		public int TOTAL_GROUP = 0;
+		public int LENGTH_GROUP = 0;
+		public LinkedList<Message> gropMessages = new LinkedList<Message>();
+		public HashMap<Long, UserStatus> userStatus = new HashMap<Long, UserStatus>();
+
+		public void speak(long userid, Message message) {
+			this.TOTAL_GROUP++;
+			this.LENGTH_GROUP = this.LENGTH_GROUP + message.length;
+			if (!this.userStatus.containsKey(userid)) {
+				this.userStatus.put(userid, new UserStatus());
+			}
+			this.gropMessages.add(message);
+			this.userStatus.get(userid).speak(message);
+		}
+	}
+
+	private class UserStatus {
+
+		public int TOTAL_MEMBER = 0;
+		public int LENGTH_MEMBER = 0;
+		public LinkedList<Message> userMessages = new LinkedList<Message>();
+
+		public void speak(Message message) {
+			this.TOTAL_MEMBER++;
+			this.LENGTH_MEMBER = this.LENGTH_MEMBER + message.length;
+			this.userMessages.add(message);
+		}
+	}
+
 	@Override
 	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
 
 		StringBuilder builder = new StringBuilder();
 		TreeMap<Integer, Long> groupRank = new TreeMap<Integer, Long>((a, b) -> a - b);
-
+		GroupStatus status;
 		if (fullreport) {
-
 			int i = 0;
 			int j = 0;
-
 			switch (loglevel) {
-
 			case 1:
 				// 二参数私聊调用 所有群排行和所有成员排行
 				for (long gropid : this.STORAGE.keySet()) {
@@ -88,7 +116,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append("条/");
 					builder.append(this.STORAGE.get(groupRank.get(count)).LENGTH_GROUP);
 					builder.append("字\r\n");
-					GroupStatus status = this.STORAGE.get(groupRank.get(count));
+					status = this.STORAGE.get(groupRank.get(count));
 					for (long temp : status.userStatus.keySet()) {
 						groupRank.put(status.userStatus.get(temp).TOTAL_MEMBER, temp);
 					}
@@ -100,7 +128,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						builder.append(" - ");
 						builder.append(JcqApp.CQ.getGroupMemberInfoV2((long) parameters[0], groupRank.get(temp)).getNick());
 						builder.append("(");
-						groupRank.get(temp);
+						builder.append(groupRank.get(temp));
 						builder.append(")");
 						builder.append(status.userStatus.get(groupRank.get(temp)).TOTAL_MEMBER);
 						builder.append(" 句");
@@ -109,14 +137,9 @@ public class Listener_TopSpeak extends ModuleListener {
 					}
 				}
 				break;
-
 			// 三参数私聊调用
 			case 2:
-				break;
-
-			case 3:
-				// 在群内调用 统计本群最能水的人
-				GroupStatus status = this.STORAGE.get((long) parameters[0]);
+				status = this.STORAGE.get((long) parameters[0]);
 				builder.append("总发言数：");
 				builder.append(status.TOTAL_GROUP);
 				builder.append("\r\n总发字节：");
@@ -133,7 +156,34 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(" - ");
 					builder.append(JcqApp.CQ.getGroupMemberInfoV2((long) parameters[0], groupRank.get(temp)).getNick());
 					builder.append("(");
-					groupRank.get(temp);
+					builder.append(groupRank.get(temp));
+					builder.append(")");
+					builder.append(status.userStatus.get(groupRank.get(temp)).TOTAL_MEMBER);
+					builder.append(" 句");
+					builder.append(status.userStatus.get(groupRank.get(temp)).LENGTH_MEMBER);
+					builder.append(" 字");
+				}
+				break;
+			case 3:
+				// 在群内调用 统计本群最能水的人
+				status = this.STORAGE.get((long) parameters[0]);
+				builder.append("总发言数：");
+				builder.append(status.TOTAL_GROUP);
+				builder.append("\r\n总发字节：");
+				builder.append(status.LENGTH_GROUP);
+				builder.append("\r\n群排行：");
+				for (long temp : status.userStatus.keySet()) {
+					groupRank.put(status.userStatus.get(temp).TOTAL_MEMBER, temp);
+				}
+				for (int temp : groupRank.keySet()) {
+					i++;
+					builder.append("\r\n");
+					builder.append("No.");
+					builder.append(i);
+					builder.append(" - ");
+					builder.append(JcqApp.CQ.getGroupMemberInfoV2((long) parameters[0], groupRank.get(temp)).getNick());
+					builder.append("(");
+					builder.append(groupRank.get(temp));
 					builder.append(")");
 					builder.append(status.userStatus.get(groupRank.get(temp)).TOTAL_MEMBER);
 					builder.append(" 句");
@@ -144,7 +194,6 @@ public class Listener_TopSpeak extends ModuleListener {
 			}
 		} else {
 			// 每日报告 - 所有群排行
-
 			for (long gropid : this.STORAGE.keySet()) {
 				groupRank.put(this.STORAGE.get(gropid).TOTAL_GROUP, gropid);
 			}
@@ -171,35 +220,4 @@ public class Listener_TopSpeak extends ModuleListener {
 		return builder.toString();
 	}
 
-	private class GroupStatus {
-
-		public int TOTAL_GROUP = 0;
-		public int LENGTH_GROUP = 0;
-		public LinkedList<Message> gropMessages = new LinkedList<Message>();
-		public HashMap<Long, UserStatus> userStatus = new HashMap<Long, UserStatus>();
-
-		public void speak(long userid, Message message) {
-			this.TOTAL_GROUP++;
-			this.LENGTH_GROUP = this.LENGTH_GROUP + message.length;
-			if (!this.userStatus.containsKey(userid)) {
-				this.userStatus.put(userid, new UserStatus());
-			}
-			this.gropMessages.add(message);
-			this.userStatus.get(userid).speak(message);
-		}
-
-	}
-
-	private class UserStatus {
-
-		public int TOTAL_MEMBER = 0;
-		public int LENGTH_MEMBER = 0;
-		public LinkedList<Message> userMessages = new LinkedList<Message>();
-
-		public void speak(Message message) {
-			this.TOTAL_MEMBER++;
-			this.LENGTH_MEMBER = this.LENGTH_MEMBER + message.length;
-			this.userMessages.add(message);
-		}
-	}
 }

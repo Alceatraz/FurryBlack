@@ -35,7 +35,20 @@ import studio.blacktech.coolqbot.furryblack.scheduler.Scheduler_TASK;
 
 public class SystemHandler extends Module {
 
+	private static final long BOOTTIME = System.currentTimeMillis();
+
+	private static boolean INITIALIZATIONLOCK = false;
+
+	private static int COUNT_USER_MESSAGE = 0;
+	private static int COUNT_DISZ_MESSAGE = 0;
+	private static int COUNT_GROP_MESSAGE = 0;
+
+	private static String MESSAGE_LIST_USER = "";
+	private static String MESSAGE_LIST_DISZ = "";
+	private static String MESSAGE_LIST_GROP = "";
+
 	// @formatter:off
+
 	private static String MESSAGE_HELP =
 			"FurryBlack - 一个小动物形象的人工智障\r\n" +
 			"\r\n" +
@@ -104,16 +117,6 @@ public class SystemHandler extends Module {
 
 	// @formatter:on
 
-	private static final long BOOTTIME = System.currentTimeMillis();
-
-	private static int COUNT_USER_MESSAGE = 0;
-	private static int COUNT_DISZ_MESSAGE = 0;
-	private static int COUNT_GROP_MESSAGE = 0;
-
-	private static String MESSAGE_LIST_USER = "";
-	private static String MESSAGE_LIST_DISZ = "";
-	private static String MESSAGE_LIST_GROP = "";
-
 	private static Executor_chou executor_chou;
 	private static Executor_dice executor_dice;
 	private static Executor_echo executor_echo;
@@ -124,35 +127,25 @@ public class SystemHandler extends Module {
 	private static Executor_roll executor_roll;
 	private static Executor_zhan executor_zhan;
 	private static Executor_admin executor_admin;
-
 	private static Listener_TopSpeak listener_topspeak;
-
 	private static Trigger_SuidDeny trigger_suiddeny;
 	private static Trigger_WordDeny trigger_worddeny;
-
 	private static Scheduler_TASK scheduler_task;
 	private static Scheduler_DDNS scheduler_ddns;
-
-	private static boolean INITIALIZATIONLOCK = false;
-
-	private static boolean ENABLE_TRIGGER_USER = false;
-	private static boolean ENABLE_TRIGGER_DISZ = false;
-	private static boolean ENABLE_TRIGGER_GROP = false;
 
 	private static boolean ENABLE_LISENTER_USER = false;
 	private static boolean ENABLE_LISENTER_DISZ = false;
 	private static boolean ENABLE_LISENTER_GROP = false;
-
+	private static boolean ENABLE_TRIGGER_USER = false;
+	private static boolean ENABLE_TRIGGER_DISZ = false;
+	private static boolean ENABLE_TRIGGER_GROP = false;
 	private static boolean ENABLE_BLACKLIST = false;
-
 	private static boolean ENABLE_USER_IGNORE = false;
 	private static boolean ENABLE_DISZ_IGNORE = false;
 	private static boolean ENABLE_GROP_IGNORE = false;
 
-	private static HashMap<String, ModuleScheduler> SCHEDULER = new HashMap<String, ModuleScheduler>();
-
-	private static TreeMap<String, ModuleTrigger> TRIGGER_INSTANCE = new TreeMap<String, ModuleTrigger>();
 	private static TreeMap<String, ModuleListener> LISTENER_INSTANCE = new TreeMap<String, ModuleListener>();
+	private static TreeMap<String, ModuleTrigger> TRIGGER_INSTANCE = new TreeMap<String, ModuleTrigger>();
 	private static TreeMap<String, ModuleExecutor> EXECUTOR_INSTANCE = new TreeMap<String, ModuleExecutor>();
 
 	private static ArrayList<ModuleTrigger> TRIGGER_USER = new ArrayList<ModuleTrigger>(100);
@@ -167,7 +160,11 @@ public class SystemHandler extends Module {
 	private static TreeMap<String, ModuleExecutor> EXECUTOR_DISZ = new TreeMap<String, ModuleExecutor>();
 	private static TreeMap<String, ModuleExecutor> EXECUTOR_GROP = new TreeMap<String, ModuleExecutor>();
 
+	private static HashMap<String, ModuleScheduler> SCHEDULER = new HashMap<String, ModuleScheduler>();
+
 	protected static boolean init(StringBuilder initBuilder, Properties config) throws ReInitializationException, NumberFormatException, IOException {
+
+		initBuilder.append("[Core] 初始化核心\r\n");
 
 		if (SystemHandler.INITIALIZATIONLOCK) {
 			throw new ReInitializationException();
@@ -175,10 +172,9 @@ public class SystemHandler extends Module {
 
 		SystemHandler.INITIALIZATIONLOCK = true;
 
-		initBuilder.append(" [Core] 初始化核心\r\n");
-
 		// ==========================================================================================================================
-		initBuilder.append(" [Core] 读取配置文件\r\n");
+
+		initBuilder.append("[Core] 读取配置文件\r\n");
 		SystemHandler.ENABLE_TRIGGER_USER = Boolean.parseBoolean(config.getProperty("enable_trigger_user", "false"));
 		SystemHandler.ENABLE_TRIGGER_DISZ = Boolean.parseBoolean(config.getProperty("enable_trigger_disz", "false"));
 		SystemHandler.ENABLE_TRIGGER_GROP = Boolean.parseBoolean(config.getProperty("enable_trigger_grop", "false"));
@@ -192,7 +188,64 @@ public class SystemHandler extends Module {
 
 		// ==========================================================================================================================
 
-		initBuilder.append(" [Executor] 实例化执行器\r\n");
+		initBuilder.append("[Module] 实例化监听器\r\n");
+		SystemHandler.listener_topspeak = new Listener_TopSpeak();
+
+		initBuilder.append(" [Module] 注册私聊监听器\r\n");
+//		SystemHandler.registerUserListener(SystemHandler.listener_topspeak);
+
+		initBuilder.append(" [Module] 注册组聊监听器\r\n");
+//		SystemHandler.registerDiszListener(SystemHandler.listener_topspeak);
+
+		initBuilder.append(" [Module] 注册群聊监听器\r\n");
+		SystemHandler.registerGropListener(SystemHandler.listener_topspeak);
+
+		initBuilder.append(" [Module] 统计监听器\r\n");
+		SystemHandler.ENABLE_LISENTER_USER = SystemHandler.ENABLE_LISENTER_USER && (SystemHandler.LISTENER_USER.size() > 0);
+		SystemHandler.ENABLE_LISENTER_DISZ = SystemHandler.ENABLE_LISENTER_DISZ && (SystemHandler.LISTENER_DISZ.size() > 0);
+		SystemHandler.ENABLE_LISENTER_GROP = SystemHandler.ENABLE_LISENTER_GROP && (SystemHandler.LISTENER_GROP.size() > 0);
+
+		// ==========================================================================================================================
+
+		initBuilder.append("[Module] 实例化触发器\r\n");
+		SystemHandler.trigger_suiddeny = new Trigger_SuidDeny();
+		SystemHandler.trigger_worddeny = new Trigger_WordDeny();
+
+		initBuilder.append("[Module] 注册私聊触发器\r\n");
+		if (SystemHandler.ENABLE_USER_IGNORE) {
+			SystemHandler.registerUserTrigger(SystemHandler.trigger_suiddeny);
+		}
+
+		if (SystemHandler.ENABLE_BLACKLIST) {
+			SystemHandler.registerUserTrigger(SystemHandler.trigger_worddeny);
+		}
+
+		initBuilder.append("[Module] 注册组聊触发器\r\n");
+		if (SystemHandler.ENABLE_DISZ_IGNORE) {
+			SystemHandler.registerDiszTrigger(SystemHandler.trigger_suiddeny);
+		}
+
+		if (SystemHandler.ENABLE_BLACKLIST) {
+			SystemHandler.registerDiszTrigger(SystemHandler.trigger_worddeny);
+		}
+
+		initBuilder.append("[Module] 注册群聊触发器\r\n");
+		if (SystemHandler.ENABLE_GROP_IGNORE) {
+			SystemHandler.registerGropTrigger(SystemHandler.trigger_suiddeny);
+		}
+
+		if (SystemHandler.ENABLE_BLACKLIST) {
+			SystemHandler.registerGropTrigger(SystemHandler.trigger_worddeny);
+		}
+
+		initBuilder.append("[Module] 统计触发器\r\n");
+		SystemHandler.ENABLE_TRIGGER_USER = SystemHandler.ENABLE_TRIGGER_USER && (SystemHandler.TRIGGER_USER.size() > 0);
+		SystemHandler.ENABLE_TRIGGER_DISZ = SystemHandler.ENABLE_TRIGGER_DISZ && (SystemHandler.TRIGGER_DISZ.size() > 0);
+		SystemHandler.ENABLE_TRIGGER_GROP = SystemHandler.ENABLE_TRIGGER_GROP && (SystemHandler.TRIGGER_GROP.size() > 0);
+
+		// ==========================================================================================================================
+
+		initBuilder.append("[Module] 实例化执行器\r\n");
 		SystemHandler.executor_chou = new Executor_chou();
 		SystemHandler.executor_dice = new Executor_dice();
 		SystemHandler.executor_echo = new Executor_echo();
@@ -204,20 +257,7 @@ public class SystemHandler extends Module {
 		SystemHandler.executor_zhan = new Executor_zhan();
 		SystemHandler.executor_admin = new Executor_admin();
 
-		initBuilder.append(" [Executor] 实例化监听器\r\n");
-		SystemHandler.listener_topspeak = new Listener_TopSpeak();
-
-		initBuilder.append(" [Listener] 实例化监听器\r\n");
-		SystemHandler.trigger_suiddeny = new Trigger_SuidDeny();
-		SystemHandler.trigger_worddeny = new Trigger_WordDeny();
-
-		initBuilder.append(" [Scheduler] 实例化计划任务\r\n");
-		SystemHandler.scheduler_task = new Scheduler_TASK(initBuilder, config);
-		SystemHandler.scheduler_ddns = new Scheduler_DDNS(initBuilder, config);
-
-		// ==========================================================================================================================
-
-		initBuilder.append(" [Executor] 注册私聊执行器\r\n");
+		initBuilder.append("[Module] 注册私聊执行器\r\n");
 		SystemHandler.registerUserExecutor(SystemHandler.executor_dice);
 		SystemHandler.registerUserExecutor(SystemHandler.executor_echo);
 		SystemHandler.registerUserExecutor(SystemHandler.executor_jrrp);
@@ -226,7 +266,7 @@ public class SystemHandler extends Module {
 		SystemHandler.registerUserExecutor(SystemHandler.executor_zhan);
 		SystemHandler.registerUserExecutor(SystemHandler.executor_admin);
 
-		initBuilder.append(" [Executor] 注册组聊执行器\r\n");
+		initBuilder.append("[Module] 注册组聊执行器\r\n");
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_dice);
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_echo);
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_jrrp);
@@ -234,7 +274,7 @@ public class SystemHandler extends Module {
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_roll);
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_zhan);
 
-		initBuilder.append(" [Executor] 注册私聊执行器\r\n");
+		initBuilder.append("[Module] 注册群聊执行器\r\n");
 		SystemHandler.registerGropExecutor(SystemHandler.executor_chou);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_dice);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_echo);
@@ -244,92 +284,36 @@ public class SystemHandler extends Module {
 		SystemHandler.registerGropExecutor(SystemHandler.executor_kong);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_roll);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_zhan);
-		SystemHandler.registerUserExecutor(SystemHandler.executor_admin);
-
-		SystemHandler.registerSchedular(SystemHandler.scheduler_task);
-		SystemHandler.registerSchedular(SystemHandler.scheduler_ddns);
-
-		// ### ==============================================================
-
-		initBuilder.append(" [Trigger] 注册私聊触发器\r\n");
-		if (SystemHandler.ENABLE_USER_IGNORE) {
-			SystemHandler.registerUserTrigger(SystemHandler.trigger_suiddeny);
-		}
-
-		if (SystemHandler.ENABLE_BLACKLIST) {
-			SystemHandler.registerUserTrigger(SystemHandler.trigger_worddeny);
-		}
-
-		// ### ==============================================================
-
-		initBuilder.append(" [Trigger] 注册组聊触发器\r\n");
-		if (SystemHandler.ENABLE_DISZ_IGNORE) {
-			SystemHandler.registerDiszTrigger(SystemHandler.trigger_suiddeny);
-		}
-
-		if (SystemHandler.ENABLE_BLACKLIST) {
-			SystemHandler.registerDiszTrigger(SystemHandler.trigger_worddeny);
-		}
-
-		// ### ==============================================================
-
-		initBuilder.append(" [Trigger] 注册群聊触发器\r\n");
-		if (SystemHandler.ENABLE_GROP_IGNORE) {
-			SystemHandler.registerGropTrigger(SystemHandler.trigger_suiddeny);
-		}
-		if (SystemHandler.ENABLE_BLACKLIST) {
-			SystemHandler.registerGropTrigger(SystemHandler.trigger_worddeny);
-		}
-
-		// ### ==============================================================
-
-		initBuilder.append(" [Listener] 注册私聊监听器\r\n");
-//		SystemHandler.registerUserListener(SystemHandler.listener_topspeak);
-
-		// ### ==============================================================
-
-		initBuilder.append(" [Listener] 注册组聊监听器\r\n");
-//		SystemHandler.registerDiszListener(SystemHandler.listener_topspeak);
-
-		// ### ==============================================================
-
-		initBuilder.append(" [Executor] 注册群聊监听器\r\n");
-		SystemHandler.registerGropListener(SystemHandler.listener_topspeak);
-
-		// ==========================================================================================================================
-
-		initBuilder.append(" [Trigger] 统计执行器\r\n");
-
-		SystemHandler.ENABLE_TRIGGER_USER = SystemHandler.ENABLE_TRIGGER_USER && (SystemHandler.TRIGGER_USER.size() > 0);
-		SystemHandler.ENABLE_TRIGGER_DISZ = SystemHandler.ENABLE_TRIGGER_DISZ && (SystemHandler.TRIGGER_DISZ.size() > 0);
-		SystemHandler.ENABLE_TRIGGER_GROP = SystemHandler.ENABLE_TRIGGER_GROP && (SystemHandler.TRIGGER_GROP.size() > 0);
-
-		initBuilder.append(" [Listener] 统计监听器\r\n");
-
-		SystemHandler.ENABLE_LISENTER_USER = SystemHandler.ENABLE_LISENTER_USER && (SystemHandler.LISTENER_USER.size() > 0);
-		SystemHandler.ENABLE_LISENTER_DISZ = SystemHandler.ENABLE_LISENTER_DISZ && (SystemHandler.LISTENER_DISZ.size() > 0);
-		SystemHandler.ENABLE_LISENTER_GROP = SystemHandler.ENABLE_LISENTER_GROP && (SystemHandler.LISTENER_GROP.size() > 0);
-
-		// ==========================================================================================================================
-
-		initBuilder.append(" [Scheduler] 启动计划任务\r\n");
-		new Thread(SystemHandler.getScheduler("schi")).start();
-		new Thread(SystemHandler.getScheduler("ddns")).start();
+		SystemHandler.registerGropExecutor(SystemHandler.executor_admin);
 
 		// ==========================================================================================================================
 
 		initBuilder.append("触发器： \r\n私聊：");
-		initBuilder.append(SystemHandler.ENABLE_TRIGGER_USER ? "启用" : "禁用");
+		initBuilder.append(SystemHandler.ENABLE_TRIGGER_USER ? "启用 - " + SystemHandler.TRIGGER_USER.size() : "禁用");
 		initBuilder.append("\r\n组聊：");
-		initBuilder.append(SystemHandler.ENABLE_TRIGGER_DISZ ? "启用" : "禁用");
+		initBuilder.append(SystemHandler.ENABLE_TRIGGER_DISZ ? "启用 - " + SystemHandler.TRIGGER_DISZ.size() : "禁用");
 		initBuilder.append("\r\n群聊：");
-		initBuilder.append(SystemHandler.ENABLE_TRIGGER_GROP ? "启用" : "禁用");
-		initBuilder.append("\r\n\r\n监听器： \r\n私聊：");
-		initBuilder.append(SystemHandler.ENABLE_LISENTER_USER ? "启用" : "禁用");
+		initBuilder.append(SystemHandler.ENABLE_TRIGGER_GROP ? "启用 - " + SystemHandler.TRIGGER_GROP.size() : "禁用");
+		initBuilder.append("\r\n监听器： \r\n私聊：");
+		initBuilder.append(SystemHandler.ENABLE_LISENTER_USER ? "启用 - " + SystemHandler.LISTENER_USER.size() : "禁用");
 		initBuilder.append("\r\n组聊：");
-		initBuilder.append(SystemHandler.ENABLE_LISENTER_DISZ ? "启用" : "禁用");
+		initBuilder.append(SystemHandler.ENABLE_LISENTER_DISZ ? "启用 - " + SystemHandler.LISTENER_DISZ.size() : "禁用");
 		initBuilder.append("\r\n群聊：");
-		initBuilder.append(SystemHandler.ENABLE_LISENTER_GROP ? "启用" : "禁用");
+		initBuilder.append(SystemHandler.ENABLE_LISENTER_GROP ? "启用 - " + SystemHandler.LISTENER_GROP.size() : "禁用");
+
+		// ==========================================================================================================================
+
+		initBuilder.append("\r\n[Module] 实例化计划任务\r\n");
+		SystemHandler.scheduler_task = new Scheduler_TASK(initBuilder, config);
+		SystemHandler.scheduler_ddns = new Scheduler_DDNS(initBuilder, config);
+
+		initBuilder.append("[Module] 注册计划任务\r\n");
+		SystemHandler.registerSchedular(SystemHandler.scheduler_task);
+		SystemHandler.registerSchedular(SystemHandler.scheduler_ddns);
+
+		initBuilder.append("[Module] 启动计划任务\r\n");
+		new Thread(SystemHandler.getScheduler("schi")).start();
+		new Thread(SystemHandler.getScheduler("ddns")).start();
 
 		// ==========================================================================================================================
 
@@ -369,8 +353,10 @@ public class SystemHandler extends Module {
 			preBuilder.append(temp.MODULE_DESCRIPTION);
 		}
 		SystemHandler.MESSAGE_LIST_USER = preBuilder.toString();
+		initBuilder.append("\r\n[Message] list 私聊\r\n\r\n");
+		initBuilder.append(SystemHandler.MESSAGE_LIST_USER);
 
-		// ####
+		// ==========================================================================================================================
 
 		preBuilder = new StringBuilder();
 		preBuilder.append("已经安装的执行器：");
@@ -408,8 +394,10 @@ public class SystemHandler extends Module {
 			preBuilder.append(temp.MODULE_DESCRIPTION);
 		}
 		SystemHandler.MESSAGE_LIST_DISZ = preBuilder.toString();
+		initBuilder.append("\r\n[Message] list 组聊\r\n\r\n");
+		initBuilder.append(SystemHandler.MESSAGE_LIST_DISZ);
 
-		// #####
+		// ==========================================================================================================================
 
 		preBuilder = new StringBuilder();
 		preBuilder.append("已经安装的执行器：");
@@ -447,9 +435,198 @@ public class SystemHandler extends Module {
 			preBuilder.append(temp.MODULE_DESCRIPTION);
 		}
 		SystemHandler.MESSAGE_LIST_GROP = preBuilder.toString();
+		initBuilder.append("\r\n[Message] list 群聊\r\n\r\n");
+		initBuilder.append(SystemHandler.MESSAGE_LIST_GROP);
 
 		return true;
 	}
+
+	// ==========================================================================================================================================================
+	//
+	//
+	//
+	// ==========================================================================================================================================================
+
+	protected static int doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+		SystemHandler.COUNT_USER_MESSAGE++;
+
+		if (message.isCommand()) {
+			switch (message.prase()) {
+			case "info":
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_INFO);
+				break;
+			case "eula":
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_EULA);
+				break;
+			case "list":
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_LIST_USER);
+				break;
+			case "help":
+				if (message.segment == 2) {
+					if (SystemHandler.EXECUTOR_USER.containsKey(message.messages[1])) {
+						Module.userInfo(userid, SystemHandler.EXECUTOR_USER.get(message.messages[1]).MODULE_FULLHELP);
+					} else {
+						Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_USER);
+					}
+				} else {
+					JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_HELP);
+				}
+				break;
+
+			default:
+				if (SystemHandler.EXECUTOR_USER.containsKey(message.messages[0])) {
+					try {
+						SystemHandler.EXECUTOR_USER.get(message.messages[0]).excuteUserMessage(typeid, userid, message, messageid, messagefont);
+					} catch (final Exception exception) {
+						exception.printStackTrace();
+					}
+				} else {
+					Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_USER);
+				}
+			}
+		} else {
+			if (SystemHandler.ENABLE_LISENTER_USER) {
+				for (final ModuleListener temp : SystemHandler.LISTENER_USER) {
+					temp.excuteUserMessage(typeid, userid, message, messageid, messagefont);
+				}
+			}
+			if (SystemHandler.ENABLE_TRIGGER_USER) {
+				boolean intercept = false;
+				for (final ModuleTrigger temp : SystemHandler.TRIGGER_USER) {
+					intercept = intercept || temp.excuteUserMessage(typeid, userid, message, messageid, messagefont);
+				}
+				if (intercept) {
+					return IMsg.MSG_IGNORE;
+				}
+			}
+			JcqApp.CQ.sendPrivateMsg(userid, "请使用//help查看帮助");
+		}
+		return IMsg.MSG_IGNORE;
+	}
+
+	// ==========================================================================================================================================================
+	//
+	//
+	//
+	// ==========================================================================================================================================================
+
+	protected static int doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+		SystemHandler.COUNT_DISZ_MESSAGE++;
+		if (SystemHandler.ENABLE_LISENTER_DISZ) {
+			for (final ModuleListener temp : SystemHandler.LISTENER_DISZ) {
+				temp.executeDiszMessage(diszid, userid, message, messageid, messagefont);
+			}
+		}
+		if (SystemHandler.ENABLE_TRIGGER_DISZ) {
+			boolean intercept = false;
+			for (final ModuleTrigger temp : SystemHandler.TRIGGER_DISZ) {
+				intercept = intercept || temp.executeDiszMessage(diszid, userid, message, messageid, messagefont);
+			}
+			if (intercept) {
+				return IMsg.MSG_IGNORE;
+			}
+		}
+		if (message.isCommand()) {
+			switch (message.prase()) {
+			case "info":
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_INFO);
+				break;
+			case "eula":
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_EULA);
+				break;
+			case "list":
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_LIST_DISZ);
+				break;
+			case "help":
+				if (message.segment == 2) {
+					if (SystemHandler.EXECUTOR_USER.containsKey(message.messages[1])) {
+						Module.userInfo(userid, SystemHandler.EXECUTOR_USER.get(message.messages[1]).MODULE_FULLHELP);
+					} else {
+						Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_USER);
+					}
+				} else {
+					JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_HELP);
+				}
+				break;
+			default:
+				if (SystemHandler.EXECUTOR_DISZ.containsKey(message.messages[0])) {
+					try {
+						SystemHandler.EXECUTOR_DISZ.get(message.messages[0]).executeDiszMessage(diszid, userid, message, messageid, messagefont);
+					} catch (final Exception exception) {
+						exception.printStackTrace();
+					}
+				} else {
+					Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_DISZ);
+				}
+			}
+		}
+		return IMsg.MSG_IGNORE;
+	}
+
+	// ==========================================================================================================================================================
+	//
+	//
+	//
+	// ==========================================================================================================================================================
+
+	protected static int doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+		SystemHandler.COUNT_GROP_MESSAGE++;
+		if (SystemHandler.ENABLE_LISENTER_GROP) {
+			for (final ModuleListener temp : SystemHandler.LISTENER_GROP) {
+				temp.executeGropMessage(gropid, userid, message, messageid, messagefont);
+			}
+		}
+		if (SystemHandler.ENABLE_TRIGGER_GROP) {
+			boolean intercept = false;
+			for (final ModuleTrigger temp : SystemHandler.TRIGGER_GROP) {
+				intercept = intercept || temp.executeDiszMessage(gropid, userid, message, messageid, messagefont);
+			}
+			if (intercept) {
+				return IMsg.MSG_IGNORE;
+			}
+		}
+		if (message.isCommand()) {
+			switch (message.prase()) {
+			case "info":
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_INFO);
+				break;
+			case "eula":
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_EULA);
+				break;
+			case "list":
+				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_LIST_GROP);
+				break;
+			case "help":
+				if (message.segment == 2) {
+					if (SystemHandler.EXECUTOR_USER.containsKey(message.messages[1])) {
+						Module.userInfo(userid, SystemHandler.EXECUTOR_USER.get(message.messages[1]).MODULE_FULLHELP);
+					} else {
+						Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_USER);
+					}
+				} else {
+					JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_HELP);
+				}
+				break;
+			default:
+				if (SystemHandler.EXECUTOR_GROP.containsKey(message.messages[0])) {
+					try {
+						SystemHandler.EXECUTOR_GROP.get(message.messages[0]).excuteGropMessage(gropid, userid, message, messageid, messagefont);
+					} catch (final Exception exception) {
+						exception.printStackTrace();
+					}
+				} else {
+					Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_GROP);
+				}
+			}
+		}
+		return IMsg.MSG_IGNORE;
+	}
+
+	// ==========================================================================================================================================================
+	//
+	//
+	//
+	// ==========================================================================================================================================================
 
 	@Override
 	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
@@ -552,168 +729,6 @@ public class SystemHandler extends Module {
 		}
 
 		return builder.toString();
-	}
-
-	protected static int doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-		SystemHandler.COUNT_USER_MESSAGE++;
-		if (SystemHandler.ENABLE_LISENTER_USER) {
-			for (final ModuleListener temp : SystemHandler.LISTENER_USER) {
-				temp.excuteUserMessage(typeid, userid, message, messageid, messagefont);
-			}
-		}
-		if (SystemHandler.ENABLE_TRIGGER_USER) {
-			boolean intercept = false;
-			for (final ModuleTrigger temp : SystemHandler.TRIGGER_USER) {
-				intercept = intercept || temp.excuteUserMessage(typeid, userid, message, messageid, messagefont);
-			}
-			if (intercept) {
-				return IMsg.MSG_IGNORE;
-			}
-		}
-		if (message.isCommand()) {
-			switch (message.prase()) {
-			case "info":
-				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_INFO);
-				break;
-			case "eula":
-				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_EULA);
-				break;
-			case "list":
-				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_LIST_USER);
-				break;
-			case "help":
-				if (message.segment == 2) {
-					if (SystemHandler.EXECUTOR_USER.containsKey(message.messages[1])) {
-						Module.userInfo(userid, SystemHandler.EXECUTOR_USER.get(message.messages[1]).MODULE_FULLHELP);
-					} else {
-						Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_USER);
-					}
-				} else {
-					JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_HELP);
-				}
-				break;
-
-			default:
-				if (SystemHandler.EXECUTOR_USER.containsKey(message.messages[0])) {
-					try {
-						SystemHandler.EXECUTOR_USER.get(message.messages[0]).excuteUserMessage(typeid, userid, message, messageid, messagefont);
-					} catch (final Exception exception) {
-						exception.printStackTrace();
-					}
-				} else {
-					Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_USER);
-				}
-			}
-		} else {
-			JcqApp.CQ.sendPrivateMsg(userid, "请使用//help查看帮助");
-		}
-		return IMsg.MSG_IGNORE;
-	}
-
-	protected static int doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-		SystemHandler.COUNT_DISZ_MESSAGE++;
-		if (SystemHandler.ENABLE_LISENTER_DISZ) {
-			for (final ModuleListener temp : SystemHandler.LISTENER_DISZ) {
-				temp.executeDiszMessage(diszid, userid, message, messageid, messagefont);
-			}
-		}
-		if (SystemHandler.ENABLE_TRIGGER_DISZ) {
-			boolean intercept = false;
-			for (final ModuleTrigger temp : SystemHandler.TRIGGER_DISZ) {
-				intercept = intercept || temp.executeDiszMessage(diszid, userid, message, messageid, messagefont);
-			}
-			if (intercept) {
-				return IMsg.MSG_IGNORE;
-			}
-		}
-		if (message.isCommand()) {
-			switch (message.prase()) {
-			case "info":
-				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_INFO);
-				break;
-			case "eula":
-				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_EULA);
-				break;
-			case "list":
-				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_LIST_DISZ);
-				break;
-			case "help":
-				if (message.segment == 2) {
-					if (SystemHandler.EXECUTOR_USER.containsKey(message.messages[1])) {
-						Module.userInfo(userid, SystemHandler.EXECUTOR_USER.get(message.messages[1]).MODULE_FULLHELP);
-					} else {
-						Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_USER);
-					}
-				} else {
-					JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_HELP);
-				}
-				break;
-			default:
-				if (SystemHandler.EXECUTOR_DISZ.containsKey(message.messages[0])) {
-					try {
-						SystemHandler.EXECUTOR_DISZ.get(message.messages[0]).executeDiszMessage(diszid, userid, message, messageid, messagefont);
-					} catch (final Exception exception) {
-						exception.printStackTrace();
-					}
-				} else {
-					Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_DISZ);
-				}
-			}
-		}
-		return IMsg.MSG_IGNORE;
-	}
-
-	protected static int doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-		SystemHandler.COUNT_GROP_MESSAGE++;
-		if (SystemHandler.ENABLE_LISENTER_GROP) {
-			for (final ModuleListener temp : SystemHandler.LISTENER_GROP) {
-				temp.executeDiszMessage(gropid, userid, message, messageid, messagefont);
-			}
-		}
-		if (SystemHandler.ENABLE_TRIGGER_GROP) {
-			boolean intercept = false;
-			for (final ModuleTrigger temp : SystemHandler.TRIGGER_GROP) {
-				intercept = intercept || temp.executeDiszMessage(gropid, userid, message, messageid, messagefont);
-			}
-			if (intercept) {
-				return IMsg.MSG_IGNORE;
-			}
-		}
-		if (message.isCommand()) {
-			switch (message.prase()) {
-			case "info":
-				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_INFO);
-				break;
-			case "eula":
-				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_EULA);
-				break;
-			case "list":
-				JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_LIST_GROP);
-				break;
-			case "help":
-				if (message.segment == 2) {
-					if (SystemHandler.EXECUTOR_USER.containsKey(message.messages[1])) {
-						Module.userInfo(userid, SystemHandler.EXECUTOR_USER.get(message.messages[1]).MODULE_FULLHELP);
-					} else {
-						Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_USER);
-					}
-				} else {
-					JcqApp.CQ.sendPrivateMsg(userid, SystemHandler.MESSAGE_HELP);
-				}
-				break;
-			default:
-				if (SystemHandler.EXECUTOR_GROP.containsKey(message.messages[0])) {
-					try {
-						SystemHandler.EXECUTOR_GROP.get(message.messages[0]).excuteGropMessage(gropid, userid, message, messageid, messagefont);
-					} catch (final Exception exception) {
-						exception.printStackTrace();
-					}
-				} else {
-					Module.userInfo(userid, "没有此插件\r\n" + SystemHandler.MESSAGE_LIST_GROP);
-				}
-			}
-		}
-		return IMsg.MSG_IGNORE;
 	}
 
 	public static void registerUserTrigger(ModuleTrigger trigger) {
