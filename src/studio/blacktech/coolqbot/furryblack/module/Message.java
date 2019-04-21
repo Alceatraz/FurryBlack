@@ -6,27 +6,25 @@ package studio.blacktech.coolqbot.furryblack.module;
  */
 public class Message {
 
-	public String raw;
-	public String res;
-	public int segment;
-	public int length;
+	public String rawMessage;
+	public String trimedMessage;
 	public String[] messages;
-	public Long time;
+	public Long sendTime;
+	public int length;
+	public int segment;
+	public boolean isCommand = false;
 
 	public Message(final String raw) {
-		this.raw = raw;
-	}
-
-	/***
-	 * 按空格拆解消息
-	 *
-	 * @return 返回0字段 即命令
-	 */
-	public String prase() {
-		this.res = this.raw.trim().substring(2);
-		this.messages = this.res.split(" ");
-		this.segment = this.messages.length;
-		return this.messages[0];
+		this.sendTime = System.currentTimeMillis();
+		this.rawMessage = raw;
+		this.length = this.rawMessage.length();
+		// 此isCommand方法经过实际测试 性能最优
+		this.isCommand = (this.length > 2) && (this.rawMessage.startsWith("//"));
+		if (this.isCommand) {
+			this.trimedMessage = this.rawMessage.trim().substring(2);
+			this.messages = this.trimedMessage.split(" ");
+			this.segment = this.messages.length;
+		}
 	}
 
 	/***
@@ -46,19 +44,6 @@ public class Message {
 			}
 			return builder.toString();
 		}
-	}
-
-	/***
-	 * 不是//开头的不是命令 只有//的不是命令
-	 *
-	 * @return
-	 */
-	public boolean isCommand() {
-		return (this.raw.startsWith("//") && (this.raw.length() > 2));
-	}
-
-	public void calculateLength() {
-		this.length = this.raw.length();
 	}
 
 }

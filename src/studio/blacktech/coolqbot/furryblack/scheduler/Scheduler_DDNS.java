@@ -16,7 +16,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 	private static final String API_GETADDRESS = "http://ip.3322.net/";
 	private static final String API_SETADDRESS = "http://members.3322.net/dyndns/update";
 
-	private boolean INITIALIZATIONLOCK = false;
+	private static boolean INITIALIZATIONLOCK = false;
 
 	private boolean ENABLE = true;
 	private String CLIENTUA;
@@ -26,15 +26,36 @@ public class Scheduler_DDNS extends ModuleScheduler {
 	private String ADDRESS = null;
 
 	public Scheduler_DDNS(StringBuilder initBuilder, Properties config) {
-		if (this.INITIALIZATIONLOCK) {
+		if (Scheduler_DDNS.INITIALIZATIONLOCK) {
 			return;
 		}
-		this.INITIALIZATIONLOCK = true;
+		Scheduler_DDNS.INITIALIZATIONLOCK = true;
+
+		this.MODULE_DISPLAYNAME = "动态域名";
+		this.MODULE_PACKAGENAME = "ddns";
+		this.MODULE_DESCRIPTION = "动态域名";
+		this.MODULE_VERSION = "2.0.8";
+		this.MODULE_USAGE = new String[] {};
+		this.MODULE_PRIVACY_TRIGER = new String[] {};
+		this.MODULE_PRIVACY_LISTEN = new String[] {};
+		this.MODULE_PRIVACY_STORED = new String[] {};
+		this.MODULE_PRIVACY_CACHED = new String[] {};
+		this.MODULE_PRIVACY_OBTAIN = new String[] {};
 
 		this.ENABLE = Boolean.parseBoolean(config.getProperty("enable_ddnsclient", "false"));
 		this.CLIENTUA = config.getProperty("ddnsapi_clientua", "BTSCoolQ/1.0");
 		this.HOSTNAME = config.getProperty("ddnsapi_hostname", "");
 		this.PASSWORD = config.getProperty("ddnsapi_password", "");
+
+		initBuilder.append("[DDNS] 客户端：");
+		initBuilder.append(this.ENABLE ? "启用" : "禁用");
+		initBuilder.append("\r\n[DDNS] 标识：");
+		initBuilder.append(this.CLIENTUA);
+		initBuilder.append("\r\n[DDNS] 域名：");
+		initBuilder.append(this.HOSTNAME);
+		initBuilder.append("\r\n[DDNS] 密码：");
+		initBuilder.append(this.PASSWORD);
+		initBuilder.append("\r\n");
 
 		String temp = this.getIPAddress();
 		if (temp == null) {
@@ -68,42 +89,45 @@ public class Scheduler_DDNS extends ModuleScheduler {
 	public void run() {
 		if (this.ENABLE) {
 			while (true) {
-				this.doLoop();
+				try {
+					this.doLoop();
+				} catch (InterruptedException exce) {
+					exce.printStackTrace();
+					return;
+				}
 			}
 		}
 	}
 
-	private void doLoop() {
-		try {
-			Date date = new Date();
-			int time = 3605;
-			time = time - date.getSeconds();
-			time = time - (date.getMinutes() * 60);
-			if (time < 60) {
-				time = time + 3600;
-			}
-			Thread.sleep(time * 1000);
-			while (true) {
-				// ####### =====================================================
-				new Thread(() -> {
-					String temp = this.getIPAddress();
+	private void doLoop() throws InterruptedException {
+		Date date = new Date();
+		int time = 3605;
+		time = time - date.getSeconds();
+		time = time - (date.getMinutes() * 60);
+		if (time < 60) {
+			time = time + 3600;
+		}
+		System.out.println("DDNS模块启动 - " + time);
+		Thread.sleep(time * 1000);
+		while (true) {
+			// ####### =====================================================
+			new Thread(() -> {
+				String temp = this.getIPAddress();
+				if (temp == null) {
+					temp = this.updateDDNSIPAddress();
 					if (temp == null) {
-						temp = this.updateDDNSIPAddress();
-						if (temp == null) {
-							Module.userInfo(entry.OPERATOR(), "[DDNS] 地址更新失败，需要手动介入！");
-						}
-					} else {
-						if (!temp.equals(this.ADDRESS)) {
-							Module.userInfo(entry.OPERATOR(), "[DDNS] 检测到地址变更\r\n旧地址：" + this.ADDRESS + "\r\n新地址：" + temp + "\r\n设置新地址：" + this.setDDNSIPAddress(temp));
-						}
+						Module.userInfo(entry.OPERATOR(), "[DDNS] 地址更新失败，需要手动介入！");
 					}
-					// ####### =====================================================
-				}).start();
-				Thread.sleep(3600000L);
-			}
-		} catch (InterruptedException exce) {
-			exce.printStackTrace();
-			Module.userInfo(entry.OPERATOR(), "[DDNS] 发生异常，尝试重计划任务！");
+				} else {
+					if (temp.equals(this.ADDRESS)) {
+						System.out.println("DDNS模块更新" + temp);
+					} else {
+						Module.userInfo(entry.OPERATOR(), "[DDNS] 检测到地址变更\r\n旧地址：" + this.ADDRESS + "\r\n新地址：" + temp + "\r\n设置新地址：" + this.setDDNSIPAddress(temp));
+					}
+				}
+				// ####### =====================================================
+			}).start();
+			Thread.sleep(3600000L);
 		}
 	}
 

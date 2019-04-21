@@ -43,7 +43,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		message.calculateLength();
 		this.TOTAL_GLOBAL++;
 		this.LENGTH_GLOBAL = this.LENGTH_GLOBAL + message.length;
 		if (!this.STORAGE.containsKey(gropid)) {
@@ -84,83 +83,48 @@ public class Listener_TopSpeak extends ModuleListener {
 		}
 	}
 
+	/***
+	 *
+	 */
 	@Override
 	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
 
+		long aaa = System.currentTimeMillis();
+
 		StringBuilder builder = new StringBuilder();
-		TreeMap<Integer, Long> groupRank = new TreeMap<Integer, Long>((a, b) -> a - b);
+		TreeMap<Integer, Long> allGroupRank = new TreeMap<Integer, Long>((a, b) -> b - a);
+		TreeMap<Integer, Long> memberRank = new TreeMap<Integer, Long>((a, b) -> b - a);
 		GroupStatus status;
+		int i = 0;
+
 		if (fullreport) {
-			int i = 0;
-			int j = 0;
 			switch (loglevel) {
 			case 1:
-				// 二参数私聊调用 所有群排行和所有成员排行
-				for (long gropid : this.STORAGE.keySet()) {
-					groupRank.put(this.STORAGE.get(gropid).TOTAL_GROUP, gropid);
-				}
-				builder.append("总发言数：");
-				builder.append(this.TOTAL_GLOBAL);
-				builder.append("\r\n总发字节：");
-				builder.append(this.LENGTH_GLOBAL);
-				builder.append("\r\n群排行：");
-				for (int count : groupRank.keySet()) {
-					i++;
-					builder.append("\r\n");
-					builder.append("No.");
-					builder.append(i);
-					builder.append("：");
-					builder.append(groupRank.get(count));
-					builder.append(" - ");
-					builder.append(count);
-					builder.append("条/");
-					builder.append(this.STORAGE.get(groupRank.get(count)).LENGTH_GROUP);
-					builder.append("字\r\n");
-					status = this.STORAGE.get(groupRank.get(count));
-					for (long temp : status.userStatus.keySet()) {
-						groupRank.put(status.userStatus.get(temp).TOTAL_MEMBER, temp);
-					}
-					for (int temp : groupRank.keySet()) {
-						j++;
-						builder.append("\r\n");
-						builder.append("No.");
-						builder.append(j);
-						builder.append(" - ");
-						builder.append(JcqApp.CQ.getGroupMemberInfoV2((long) parameters[0], groupRank.get(temp)).getNick());
-						builder.append("(");
-						builder.append(groupRank.get(temp));
-						builder.append(")");
-						builder.append(status.userStatus.get(groupRank.get(temp)).TOTAL_MEMBER);
-						builder.append(" 句");
-						builder.append(status.userStatus.get(groupRank.get(temp)).LENGTH_MEMBER);
-						builder.append(" 字");
-					}
-				}
-				break;
-			// 三参数私聊调用
+				// 二参数私聊调用
 			case 2:
+				// 三参数私聊调用
 				status = this.STORAGE.get((long) parameters[0]);
-				builder.append("总发言数：");
+				builder.append("全球发言数：");
 				builder.append(status.TOTAL_GROUP);
-				builder.append("\r\n总发字节：");
+				builder.append("\r\n全球发字节：");
 				builder.append(status.LENGTH_GROUP);
-				builder.append("\r\n群排行：");
+				builder.append("\r\n全球群排行：");
 				for (long temp : status.userStatus.keySet()) {
-					groupRank.put(status.userStatus.get(temp).TOTAL_MEMBER, temp);
+					memberRank.put(status.userStatus.get(temp).TOTAL_MEMBER, temp);
 				}
-				for (int temp : groupRank.keySet()) {
+				for (int temp : memberRank.keySet()) {
 					i++;
 					builder.append("\r\n");
 					builder.append("No.");
 					builder.append(i);
 					builder.append(" - ");
-					builder.append(JcqApp.CQ.getGroupMemberInfoV2((long) parameters[0], groupRank.get(temp)).getNick());
+					builder.append(JcqApp.CQ.getGroupMemberInfoV2((long) parameters[0], memberRank.get(temp)).getNick());
 					builder.append("(");
-					builder.append(groupRank.get(temp));
-					builder.append(")");
-					builder.append(status.userStatus.get(groupRank.get(temp)).TOTAL_MEMBER);
-					builder.append(" 句");
-					builder.append(status.userStatus.get(groupRank.get(temp)).LENGTH_MEMBER);
+					builder.append(memberRank.get(temp));
+					builder.append(") ");
+					builder.append(status.userStatus.get(memberRank.get(temp)).TOTAL_MEMBER);
+					builder.append("句/");
+					builder.append(status.userStatus.get(memberRank.get(temp)).LENGTH_MEMBER);
 					builder.append(" 字");
 				}
 				break;
@@ -169,25 +133,25 @@ public class Listener_TopSpeak extends ModuleListener {
 				status = this.STORAGE.get((long) parameters[0]);
 				builder.append("总发言数：");
 				builder.append(status.TOTAL_GROUP);
-				builder.append("\r\n总发字节：");
+				builder.append("\r\n总发言字符：");
 				builder.append(status.LENGTH_GROUP);
-				builder.append("\r\n群排行：");
+				builder.append("\r\n成员排行：");
 				for (long temp : status.userStatus.keySet()) {
-					groupRank.put(status.userStatus.get(temp).TOTAL_MEMBER, temp);
+					allGroupRank.put(status.userStatus.get(temp).TOTAL_MEMBER, temp);
 				}
-				for (int temp : groupRank.keySet()) {
+				for (int temp : allGroupRank.keySet()) {
 					i++;
 					builder.append("\r\n");
 					builder.append("No.");
 					builder.append(i);
 					builder.append(" - ");
-					builder.append(JcqApp.CQ.getGroupMemberInfoV2((long) parameters[0], groupRank.get(temp)).getNick());
+					builder.append(JcqApp.CQ.getGroupMemberInfoV2((long) parameters[0], allGroupRank.get(temp)).getNick());
 					builder.append("(");
-					builder.append(groupRank.get(temp));
-					builder.append(")");
-					builder.append(status.userStatus.get(groupRank.get(temp)).TOTAL_MEMBER);
-					builder.append(" 句");
-					builder.append(status.userStatus.get(groupRank.get(temp)).LENGTH_MEMBER);
+					builder.append(allGroupRank.get(temp));
+					builder.append(") ");
+					builder.append(status.userStatus.get(allGroupRank.get(temp)).TOTAL_MEMBER);
+					builder.append("句/");
+					builder.append(status.userStatus.get(allGroupRank.get(temp)).LENGTH_MEMBER);
 					builder.append(" 字");
 				}
 				break;
@@ -195,28 +159,33 @@ public class Listener_TopSpeak extends ModuleListener {
 		} else {
 			// 每日报告 - 所有群排行
 			for (long gropid : this.STORAGE.keySet()) {
-				groupRank.put(this.STORAGE.get(gropid).TOTAL_GROUP, gropid);
+				allGroupRank.put(this.STORAGE.get(gropid).TOTAL_GROUP, gropid);
 			}
-			builder.append("总发言数：");
+			builder.append("全球总发言数：");
 			builder.append(this.TOTAL_GLOBAL);
-			builder.append("\r\n总发字节：");
+			builder.append("\r\n全球总发字节：");
 			builder.append(this.LENGTH_GLOBAL);
-			builder.append("\r\n群排行：");
-			int i = 0;
-			for (int count : groupRank.keySet()) {
+			builder.append("\r\n全球群排行：");
+			for (int count : allGroupRank.keySet()) {
 				i++;
 				builder.append("\r\n");
 				builder.append("No.");
 				builder.append(i);
 				builder.append("：");
-				builder.append(groupRank.get(count));
+				builder.append(allGroupRank.get(count));
 				builder.append(" - ");
 				builder.append(count);
 				builder.append("条/");
-				builder.append(this.STORAGE.get(groupRank.get(count)).LENGTH_GROUP);
+				builder.append(this.STORAGE.get(allGroupRank.get(count)).LENGTH_GROUP);
 				builder.append("字");
 			}
 		}
+
+		long b = System.currentTimeMillis();
+		builder.append("\r\n\r\n生成报告开销： ");
+		builder.append(b - aaa);
+		builder.append("ms");
+
 		return builder.toString();
 	}
 

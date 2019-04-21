@@ -81,9 +81,9 @@ public class Executor_gamb extends ModuleExecutor {
 				member = JcqApp.CQ.getGroupMemberInfoV2(gropid, round.player.get(i));
 				if (i == bullet) {
 					this.roulette.set(i, this.roulette.get(i) + 1);
-					Module.gropInfo(gropid, (member.getCard().length() == 0 ? member.getCard() : member.getNick()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
+					Module.gropInfo(gropid, member.getNick() + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
 				} else {
-					Module.gropInfo(gropid, (member.getCard().length() == 0 ? member.getCard() : member.getNick()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
+					Module.gropInfo(gropid, member.getNick() + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
 				}
 			}
 			Module.gropInfo(gropid, "Ä¿±êÒÑ»÷±Ð:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));

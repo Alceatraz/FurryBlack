@@ -53,11 +53,7 @@ public class Executor_jrjp extends ModuleExecutor {
 			this.jrjp.put(gropid, members.get(random.nextInt(members.size() + 1)));
 			this.jrav.put(gropid, random.nextInt(50000000));
 		}
-		String nickname = this.jrjp.get(gropid).getCard();
-		if (nickname.length() == 0) {
-			nickname = this.jrjp.get(gropid).getNick();
-		}
-		Module.gropInfo(gropid, userid, nickname + " (" + userid + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.jrav.get(gropid));
+		Module.gropInfo(gropid, userid, this.jrjp.get(gropid).getNick() + " (" + userid + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.jrav.get(gropid));
 		return true;
 	}
 

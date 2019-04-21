@@ -46,7 +46,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		for (final CharSequence temp : this.BLACKLIST) {
-			if (message.raw.contains(temp)) {
+			if (message.rawMessage.contains(temp)) {
 				this.DENY_USER_COUNT++;
 				return true;
 			}
@@ -57,7 +57,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		for (final CharSequence temp : this.BLACKLIST) {
-			if (message.raw.contains(temp)) {
+			if (message.rawMessage.contains(temp)) {
 				this.DENY_DISZ_COUNT++;
 				return true;
 			}
@@ -68,7 +68,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		for (final CharSequence temp : this.BLACKLIST) {
-			if (message.raw.contains(temp)) {
+			if (message.rawMessage.contains(temp)) {
 				this.DENY_GROP_COUNT++;
 				return true;
 			}

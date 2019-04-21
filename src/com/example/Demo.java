@@ -12,14 +12,13 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 /* ===============================================
- *
- *
- *  Comment by Alceatraz : 此文件是JcqSDK的自带Demo
- *
- *
- * ===============================================
- */
-
+*
+*
+*  Comment by Alceatraz : 此文件是JcqSDK的自带Demo
+*
+*
+* ===============================================
+*/
 /**
  * 本文件是JCQ插件的主类<br>
  * <br>
@@ -33,7 +32,6 @@ import com.sobte.cqp.jcq.event.JcqAppAbstract;
  * CC}({@link com.sobte.cqp.jcq.entity.CQCode 酷Q码操作类}), 具体功能可以查看文档
  */
 public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
-
 	/**
 	 * 用main方法调试可以最大化的加快开发效率，检测和定位错误位置<br/>
 	 * 以下就是使用Main方法进行测试的一个简易案例
@@ -41,33 +39,33 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 * @param args 系统参数
 	 */
 	public static void main(final String[] args) {
-		// CQ此变量为特殊变量，在JCQ启动时实例化赋值给每个插件，而在测试中可以用CQDebug类来代替他
+// CQ此变量为特殊变量，在JCQ启动时实例化赋值给每个插件，而在测试中可以用CQDebug类来代替他
 		JcqApp.CQ = new CQDebug();// new CQDebug("应用目录","应用名称") 可以用此构造器初始化应用的目录
 		JcqApp.CQ.logInfo("[JCQ] TEST Demo", "测试启动");// 现在就可以用CQ变量来执行任何想要的操作了
-		// 要测试主类就先实例化一个主类对象
+// 要测试主类就先实例化一个主类对象
 		final Demo demo = new Demo();
-		// 下面对主类进行各方法测试,按照JCQ运行过程，模拟实际情况
+// 下面对主类进行各方法测试,按照JCQ运行过程，模拟实际情况
 		demo.startup();// 程序运行开始 调用应用初始化方法
 		demo.enable();// 程序初始化完成后，启用应用，让应用正常工作
-		// 开始模拟发送消息
-		// 模拟私聊消息
-		// 开始模拟QQ用户发送消息，以下QQ全部编造，请勿添加
+// 开始模拟发送消息
+// 模拟私聊消息
+// 开始模拟QQ用户发送消息，以下QQ全部编造，请勿添加
 		demo.privateMsg(0, 10001, 2234567819L, "小姐姐约吗", 0);
 		demo.privateMsg(0, 10002, 2222222224L, "喵呜喵呜喵呜", 0);
 		demo.privateMsg(0, 10003, 2111111334L, "可以给我你的微信吗", 0);
 		demo.privateMsg(0, 10004, 3111111114L, "今天天气真好", 0);
 		demo.privateMsg(0, 10005, 3333333334L, "你好坏，都不理我QAQ", 0);
-		// 模拟群聊消息
-		// 开始模拟群聊消息
+// 模拟群聊消息
+// 开始模拟群聊消息
 		demo.groupMsg(0, 10006, 3456789012L, 3333333334L, "", "菜单", 0);
 		demo.groupMsg(0, 10008, 3456789012L, 11111111114L, "", "小喵呢，出来玩玩呀", 0);
 		demo.groupMsg(0, 10009, 427984429L, 3333333334L, "", "[CQ:at,qq=2222222224] 来一起玩游戏，开车开车", 0);
 		demo.groupMsg(0, 10010, 427984429L, 3333333334L, "", "好久不见啦 [CQ:at,qq=11111111114]", 0);
 		demo.groupMsg(0, 10011, 427984429L, 11111111114L, "", "qwq 有没有一起开的\n[CQ:at,qq=3333333334]你玩嘛", 0);
-		// ......
-		// 依次类推，可以根据实际情况修改参数，和方法测试效果
-		// 以下是收尾触发函数
-		// demo.disable();// 实际过程中程序结束不会触发disable，只有用户关闭了此插件才会触发
+// ......
+// 依次类推，可以根据实际情况修改参数，和方法测试效果
+// 以下是收尾触发函数
+// demo.disable();// 实际过程中程序结束不会触发disable，只有用户关闭了此插件才会触发
 		demo.exit();// 最后程序运行结束，调用exit方法
 	}
 
@@ -78,7 +76,7 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public String appInfo() {
-		// 应用AppID,规则见 http://d.cqp.me/Pro/开发/基础信息#appid
+// 应用AppID,规则见 http://d.cqp.me/Pro/开发/基础信息#appid
 		final String AppID = "com.example.demo";// 记住编译后的文件和json也要使用appid做文件名
 		/**
 		 * 本函数【禁止】处理其他任何代码，以免发生异常情况。 如需执行初始化代码请在 startup 事件中执行（Type=1001）。
@@ -97,11 +95,10 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	@SuppressWarnings("unused")
 	public int startup() {
-		// 获取应用数据目录(无需储存数据时，请将此行注释)
+// 获取应用数据目录(无需储存数据时，请将此行注释)
 		final String appDirectory = JcqApp.CQ.getAppDirectory();
-		// 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
-		// 应用的所有数据、配置【必须】存放于此目录，避免给用户带来困扰。
-
+// 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
+// 应用的所有数据、配置【必须】存放于此目录，避免给用户带来困扰。
 		return 0;
 	}
 
@@ -163,7 +160,7 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int privateMsg(final int subType, final int msgId, final long fromQQ, final String msg, final int font) {
-		// 这里处理消息
+// 这里处理消息
 		JcqApp.CQ.sendPrivateMsg(fromQQ, "你发送了这样的消息：" + msg + "\n来自Java插件");
 		return IMsg.MSG_IGNORE;
 	}
@@ -184,25 +181,23 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@SuppressWarnings("unused")
 	@Override
 	public int groupMsg(final int subType, final int msgId, final long fromGroup, final long fromQQ, final String fromAnonymous, final String msg, final int font) {
-		// 如果消息来自匿名者
+// 如果消息来自匿名者
 		if ((fromQQ == 80000000L) && !fromAnonymous.equals("")) {
-			// 将匿名用户信息放到 anonymous 变量中
+// 将匿名用户信息放到 anonymous 变量中
 			final Anonymous anonymous = JcqApp.CQ.getAnonymous(fromAnonymous);
 		}
-
-		// 解析CQ码案例 如：[CQ:at,qq=100000]
-		// 解析CQ码 常用变量为 CC(CQCode) 此变量专为CQ码这种特定格式做了解析和封装
-		// CC.analysis();// 此方法将CQ码解析为可直接读取的对象
-		// 解析消息中的QQID
-		// long qqId = CC.getAt(msg);// 此方法为简便方法，获取第一个CQ:at里的QQ号，错误时为：-1000
-		// List<Long> qqIds = CC.getAts(msg); // 此方法为获取消息中所有的CQ码对象，错误时返回 已解析的数据
-		// 解析消息中的图片
-		// CQImage image = CC.getCQImage(msg);//
-		// 此方法为简便方法，获取第一个CQ:image里的图片数据，错误时打印异常到控制台，返回 null
-		// List<CQImage> images = CC.getCQImages(msg);//
-		// 此方法为获取消息中所有的CQ图片数据，错误时打印异常到控制台，返回 已解析的数据
-
-		// 这里处理消息
+// 解析CQ码案例 如：[CQ:at,qq=100000]
+// 解析CQ码 常用变量为 CC(CQCode) 此变量专为CQ码这种特定格式做了解析和封装
+// CC.analysis();// 此方法将CQ码解析为可直接读取的对象
+// 解析消息中的QQID
+// long qqId = CC.getAt(msg);// 此方法为简便方法，获取第一个CQ:at里的QQ号，错误时为：-1000
+// List<Long> qqIds = CC.getAts(msg); // 此方法为获取消息中所有的CQ码对象，错误时返回 已解析的数据
+// 解析消息中的图片
+// CQImage image = CC.getCQImage(msg);//
+// 此方法为简便方法，获取第一个CQ:image里的图片数据，错误时打印异常到控制台，返回 null
+// List<CQImage> images = CC.getCQImages(msg);//
+// 此方法为获取消息中所有的CQ图片数据，错误时打印异常到控制台，返回 已解析的数据
+// 这里处理消息
 		JcqApp.CQ.sendGroupMsg(fromGroup, JcqApp.CC.at(fromQQ) + "你发送了这样的消息：" + msg + "\n来自Java插件");
 		return IMsg.MSG_IGNORE;
 	}
@@ -221,8 +216,7 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int discussMsg(final int subtype, final int msgId, final long fromDiscuss, final long fromQQ, final String msg, final int font) {
-		// 这里处理消息
-
+// 这里处理消息
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -243,7 +237,7 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		if (groupFile == null) { // 解析群文件信息，如果失败直接忽略该消息
 			return IMsg.MSG_IGNORE;
 		}
-		// 这里处理消息
+// 这里处理消息
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -259,8 +253,7 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int groupAdmin(final int subtype, final int sendTime, final long fromGroup, final long beingOperateQQ) {
-		// 这里处理消息
-
+// 这里处理消息
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -277,8 +270,7 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int groupMemberDecrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
-		// 这里处理消息
-
+// 这里处理消息
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -295,8 +287,7 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int groupMemberIncrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
-		// 这里处理消息
-
+// 这里处理消息
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -311,8 +302,7 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int friendAdd(final int subtype, final int sendTime, final long fromQQ) {
-		// 这里处理消息
-
+// 这里处理消息
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -329,8 +319,7 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int requestAddFriend(final int subtype, final int sendTime, final long fromQQ, final String msg, final String responseFlag) {
-
-		// REQUEST_ADOPT 通过 REQUEST_REFUSE 拒绝
+// REQUEST_ADOPT 通过 REQUEST_REFUSE 拒绝
 		JcqApp.CQ.setFriendAddRequest(responseFlag, IRequest.REQUEST_ADOPT, null); // 同意好友添加请求
 		return IMsg.MSG_IGNORE;
 	}
@@ -349,20 +338,17 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int requestAddGroup(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final String msg, final String responseFlag) {
-		// 这里处理消息
-
-		// REQUEST_ADOPT 通过
-		// REQUEST_REFUSE 拒绝
-		// REQUEST_GROUP_ADD 群添加
-		// REQUEST_GROUP_INVITE 群邀请
-
+// 这里处理消息
+// REQUEST_ADOPT 通过
+// REQUEST_REFUSE 拒绝
+// REQUEST_GROUP_ADD 群添加
+// REQUEST_GROUP_INVITE 群邀请
 		if (subtype == 1) {
 			JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_ADD, IRequest.REQUEST_ADOPT, null);
 		}
 		if (subtype == 2) {
 			JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
 		}
-
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -385,5 +371,4 @@ public class Demo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		JOptionPane.showMessageDialog(null, "这是测试菜单B，可以在这里加载窗口");
 		return 0;
 	}
-
 }

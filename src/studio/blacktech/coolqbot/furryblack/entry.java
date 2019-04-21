@@ -22,9 +22,10 @@ import studio.blacktech.coolqbot.furryblack.module.Message;
 public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
+
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "3.3.2 2019-04-12 (12:00)";
+	public static final String PRODUCT_VERSION = "3.4.1 2019-04-20 (15:00)";
 
 	private static File FOLDER_CONF;
 	private static File FILE_CONFIG;
@@ -87,32 +88,32 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			entry.FILE_GROPIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "grop_ignore.txt").toFile();
 
 			if (!entry.FOLDER_CONF.exists()) {
-				builder.append("[Config] 配置文件夹不存在\r\n");
+				builder.append("[System] 配置文件夹不存在\r\n");
 				entry.FOLDER_CONF.mkdirs();
 			}
 			if (!entry.FOLDER_CONF.isDirectory()) {
-				builder.append("[Config] 配置文件夹被文件占位\r\n");
+				builder.append("[System] 配置文件夹被文件占位\r\n");
 				throw new IOException(":" + entry.FOLDER_CONF.getAbsolutePath());
 			}
 			if (!entry.FILE_BLACKLIST.exists()) {
-				builder.append("[Config] 敏感词黑名单文件不存在\r\n");
+				builder.append("[System] 敏感词黑名单文件不存在\r\n");
 				entry.FILE_BLACKLIST.createNewFile();
 			}
 			if (!entry.FILE_USERIGNORE.exists()) {
-				builder.append("[Config] 私聊黑名单文件不存在\r\n");
+				builder.append("[System] 私聊黑名单文件不存在\r\n");
 				entry.FILE_USERIGNORE.createNewFile();
 			}
 			if (!entry.FILE_DISZIGNORE.exists()) {
-				builder.append("[Config] 组聊黑名单文件不存在\r\n");
+				builder.append("[System] 组聊黑名单文件不存在\r\n");
 				entry.FILE_DISZIGNORE.createNewFile();
 			}
 			if (!entry.FILE_GROPIGNORE.exists()) {
-				builder.append("[Config] 群聊黑名单文件不存在\r\n");
+				builder.append("[System] 群聊黑名单文件不存在\r\n");
 				entry.FILE_GROPIGNORE.createNewFile();
 			}
 
 			if (!entry.FILE_CONFIG.exists()) {
-				builder.append("[Config] 配置文件不存在\r\n");
+				builder.append("[System] 配置文件不存在\r\n");
 				entry.FILE_CONFIG.createNewFile();
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(entry.FILE_CONFIG), "UTF-8"));
 				// @formatter:off
@@ -125,11 +126,11 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 					"enable_listener_user=false\r\n" +
 					"enable_listener_disz=false\r\n" +
 					"enable_listener_grop=false\r\n" +
-					"enable_blacklist=false\r\n" +
-					"enable_userignore=false\r\n" +
-					"enable_diszignore=false\r\n" +
-					"enable_gropignore=false\r\n" +
-					"enable_ddnsclient=false\r\n" +
+					"enable_blacklist=true\r\n" +
+					"enable_userignore=true\r\n" +
+					"enable_diszignore=true\r\n" +
+					"enable_gropignore=true\r\n" +
+					"enable_ddnsclient=true\r\n" +
 					"ddnsapi_clientua=BTSCoolQ/1.0\r\n" +
 					"ddnsapi_hostname=\r\n" +
 					"ddnsapi_password="
@@ -137,21 +138,27 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 				// @formatter:on
 				writer.flush();
 				writer.close();
-				builder.append("[Config] 配置文件不存在\r\n");
+				builder.append("[System] 配置文件不存在\r\n");
 				throw new Exception("初次启动，需要填写配置文件");
 			}
 
 			entry.config.load(new FileInputStream(entry.FILE_CONFIG));
-			builder.append("[Config] 读取配置文件\r\n");
+			builder.append("[System] 读取配置文件\r\n");
 
 			entry.MYSELFID = Long.parseLong(entry.config.getProperty("summoner", "0"));
 			entry.OPERATOR = Long.parseLong(entry.config.getProperty("operator", "0"));
 
-			builder.append("[Config] 管理员账户为：");
+			entry.MYSELFID = JcqApp.CQ.getLoginQQ();
+
+			builder.append("[System] 管理员账户为：");
 			builder.append(entry.OPERATOR);
+			builder.append("\r\n[System] 机器人账户为：");
+			builder.append(entry.MYSELFID);
 			builder.append("\r\n");
 
 			SystemHandler.init(builder, entry.config);
+
+			builder.append("\r\n[System] 初始化完成");
 
 			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), builder.toString());
 
@@ -165,8 +172,13 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return 0;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public int disable() {
+		SystemHandler.getSchedulerThread("task").interrupt();
+		SystemHandler.getSchedulerThread("ddns").interrupt();
+		SystemHandler.getSchedulerThread("task").destroy();
+		SystemHandler.getSchedulerThread("ddns").destroy();
 		JcqAppAbstract.enable = false;
 		return 0;
 	}

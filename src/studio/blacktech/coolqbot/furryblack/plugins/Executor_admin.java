@@ -14,7 +14,7 @@ public class Executor_admin extends ModuleExecutor {
 		this.MODULE_DISPLAYNAME = "管理员后台";
 		this.MODULE_PACKAGENAME = "admin";
 		this.MODULE_DESCRIPTION = "管理员后台";
-		this.MODULE_VERSION = "1.0.0";
+		this.MODULE_VERSION = "3.1.7";
 		this.MODULE_USAGE = new String[] {};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {};
@@ -76,7 +76,7 @@ public class Executor_admin extends ModuleExecutor {
 		}
 		if (message.segment < 2) {
 			String temp = SystemHandler.genReport(false, 0, null);
-			Module.userInfo(entry.OPERATOR(), temp);
+			Module.gropInfo(gropid, temp);
 			return true;
 		} else {
 			switch (message.messages[1]) {

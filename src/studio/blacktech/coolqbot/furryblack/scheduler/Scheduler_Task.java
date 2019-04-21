@@ -14,8 +14,14 @@ import studio.blacktech.coolqbot.furryblack.plugins.Executor_jrrp;
 public class Scheduler_TASK extends ModuleScheduler {
 
 	private static Date date;
+	private static boolean INITIALIZATIONLOCK = false;
 
 	public Scheduler_TASK(StringBuilder initBuilder, Properties config) {
+		if (Scheduler_TASK.INITIALIZATIONLOCK) {
+			return;
+		}
+		Scheduler_TASK.INITIALIZATIONLOCK = true;
+
 		this.MODULE_DISPLAYNAME = "每日任务";
 		this.MODULE_PACKAGENAME = "task";
 		this.MODULE_DESCRIPTION = "每日任务";
@@ -35,6 +41,7 @@ public class Scheduler_TASK extends ModuleScheduler {
 		time = time - Scheduler_TASK.date.getSeconds();
 		time = time - (Scheduler_TASK.date.getMinutes() * 60);
 		time = time - (Scheduler_TASK.date.getHours() * 3600);
+		System.out.println("TASK模块启动 - " + time);
 		try {
 			Thread.sleep(time * 1000);
 			while (true) {
@@ -45,6 +52,7 @@ public class Scheduler_TASK extends ModuleScheduler {
 			}
 		} catch (final InterruptedException exception) {
 			exception.printStackTrace();
+			return;
 		}
 	}
 

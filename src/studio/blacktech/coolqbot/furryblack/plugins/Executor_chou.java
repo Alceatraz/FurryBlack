@@ -42,20 +42,19 @@ public class Executor_chou extends ModuleExecutor {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		long uid = 0;
 		SecureRandom random = new SecureRandom();
 		Member member;
 		List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
 		int size = members.size();
+		long uid = 0;
 		do {
 			member = members.get(random.nextInt(size));
 			uid = member.getQqId();
 		} while ((uid == entry.MYSELFID()) || (uid == userid));
-		message.prase();
 		if (message.segment == 1) {
-			Module.gropInfo(gropid, userid, "随机抽到 " + (member.getCard().length() == 0 ? member.getCard() : member.getNick()) + "(" + member.getQqId() + ")");
+			Module.gropInfo(gropid, userid, "随机抽到 " + member.getNick() + "(" + uid + ")");
 		} else {
-			Module.gropInfo(gropid, userid, "随机抽到 " + (member.getCard().length() == 0 ? member.getCard() : member.getNick()) + "(" + member.getQqId() + ") : " + message.join(1));
+			Module.gropInfo(gropid, userid, "随机抽到 " + member.getNick() + "(" + uid + ")： " + message.join(1));
 		}
 		return true;
 	}
