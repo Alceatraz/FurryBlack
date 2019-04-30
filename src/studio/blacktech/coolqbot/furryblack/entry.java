@@ -25,9 +25,10 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "3.4.1 2019-04-20 (15:00)";
+	public static final String PRODUCT_VERSION = "3.5.1 2019-04-30 (23:00)";
 
 	private static File FOLDER_CONF;
+	private static File FOLDER_DATA;
 	private static File FILE_CONFIG;
 	private static File FILE_BLACKLIST;
 	private static File FILE_USERIGNORE;
@@ -81,6 +82,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n[FurryBlack] 初始化中\r\n");
 
 			entry.FOLDER_CONF = Paths.get(JcqAppAbstract.appDirectory, "conf").toFile();
+			entry.FOLDER_DATA = Paths.get(JcqAppAbstract.appDirectory, "data").toFile();
 			entry.FILE_CONFIG = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
 			entry.FILE_BLACKLIST = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "blacklist.txt").toFile();
 			entry.FILE_USERIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "user_ignore.txt").toFile();
@@ -94,6 +96,14 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			if (!entry.FOLDER_CONF.isDirectory()) {
 				builder.append("[System] 配置文件夹被文件占位\r\n");
 				throw new IOException(":" + entry.FOLDER_CONF.getAbsolutePath());
+			}
+			if (!entry.FOLDER_DATA.exists()) {
+				builder.append("[System] 数据文件夹不存在\r\n");
+				entry.FOLDER_DATA.mkdirs();
+			}
+			if (!entry.FOLDER_DATA.isDirectory()) {
+				builder.append("[System] 数据文件夹被文件占位\r\n");
+				throw new IOException(":" + entry.FOLDER_DATA.getAbsolutePath());
 			}
 			if (!entry.FILE_BLACKLIST.exists()) {
 				builder.append("[System] 敏感词黑名单文件不存在\r\n");
@@ -285,7 +295,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int requestAddFriend(final int type, final int time, final long qqid, final String message, final String flag) {
-		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " [FurryBlack] 好友申请 " + qqid + " : " + message);
+		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + "[FurryBlack] 好友申请 " + qqid + " : " + message);
 		// 同意好友添加
 		JcqApp.CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, null);
 		return 0;
@@ -300,9 +310,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		// 1 -> 作为管理时收到了用户加入申请
 		// 2 -> 收到好友邀请加入某群的邀请
 		if (subtype == 1) {
-			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " [FurryBlack] 加群申请 - 群号:" + fromGroup + " 申请者:" + fromQQ);
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + "[FurryBlack] 加群申请 - 群号:" + fromGroup + " 申请者:" + fromQQ);
 		} else if (subtype == 2) {
-			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " [FurryBlack] 加群邀请 - 群号:" + fromGroup + " 邀请者:" + fromQQ);
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + "[FurryBlack] 加群邀请 - 群号:" + fromGroup + " 邀请者:" + fromQQ);
 			// 同意邀请进群
 			JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
 		}
@@ -317,6 +327,14 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static long MYSELFID() {
 		return entry.MYSELFID;
+	}
+
+	public static File FOLDER_CONF() {
+		return entry.FOLDER_CONF;
+	}
+
+	public static File FOLDER_DATA() {
+		return entry.FOLDER_DATA;
 	}
 
 	public static File FILE_BLACKLIST() {
@@ -339,6 +357,21 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	// 未注册 未使用
 
 	@Override
+	public int groupMemberDecrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
+		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + "[新人]群：" + fromGroup + " 用户：" + fromQQ);
+		return 0;
+	}
+
+	@Override
+	public int groupMemberIncrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
+		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + "[退群]群：" + fromGroup + " 用户：" + fromQQ);
+		return 0;
+	}
+
+	// ==============================================================================================================================================================
+	// 未注册 未使用
+
+	@Override
 	public int friendAdd(final int subtype, final int sendTime, final long fromQQ) {
 		return 0;
 	}
@@ -350,16 +383,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	@Override
 	public int groupUpload(final int subType, final int sendTime, final long fromGroup, final long fromQQ, final String file) {
-		return 0;
-	}
-
-	@Override
-	public int groupMemberDecrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
-		return 0;
-	}
-
-	@Override
-	public int groupMemberIncrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
 		return 0;
 	}
 

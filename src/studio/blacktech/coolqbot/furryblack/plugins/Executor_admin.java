@@ -51,9 +51,13 @@ public class Executor_admin extends ModuleExecutor {
 				if (message.segment == 2) {
 					Module.userInfo(entry.OPERATOR(), SystemHandler.getListener("shui").generateReport(true, 1, null));
 				} else {
-					Module.userInfo(entry.OPERATOR(), SystemHandler.getListener("shui").generateReport(true, 2, new Object[] {
-							Long.parseLong(message.messages[2])
-					}));
+					if (message.messages[2].equals("dump")) {
+						Module.userInfo(entry.OPERATOR(), SystemHandler.getListener("shui").generateReport(true, 10, null));
+					} else {
+						Module.userInfo(entry.OPERATOR(), SystemHandler.getListener("shui").generateReport(true, 2, new Object[] {
+								Long.parseLong(message.messages[2])
+						}));
+					}
 				}
 				break;
 			}

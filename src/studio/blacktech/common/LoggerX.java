@@ -19,6 +19,16 @@ public class LoggerX {
 		return formater.format(date);
 	}
 
+	public static String time(String formate) {
+		final SimpleDateFormat formater = new SimpleDateFormat(formate);
+		return formater.format(new Date());
+	}
+
+	public static String time(String formate, Date date) {
+		final SimpleDateFormat formater = new SimpleDateFormat(formate);
+		return formater.format(date);
+	}
+
 	public long clock(final int name, final boolean isReset) {
 		final long time = System.nanoTime();
 
