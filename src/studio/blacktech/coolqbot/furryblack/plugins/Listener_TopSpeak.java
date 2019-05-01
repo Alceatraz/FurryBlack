@@ -1,9 +1,11 @@
 package studio.blacktech.coolqbot.furryblack.plugins;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.TreeMap;
@@ -103,41 +105,39 @@ public class Listener_TopSpeak extends ModuleListener {
 		TreeMap<Integer, Long> allGroupRank = new TreeMap<Integer, Long>((a, b) -> b - a);
 		TreeMap<Integer, Long> memberRank = new TreeMap<Integer, Long>((a, b) -> b - a);
 		GroupStatus status;
+		Member member;
 		int i = 0;
 		try {
 			if (fullreport) {
 				switch (loglevel) {
 				case 1:
-					// 二参数私聊调用
-				case 2:
-					// 三参数私聊调用
-					status = this.STORAGE.get((long) parameters[0]);
-					builder.append("全球发言条数：");
-					builder.append(status.TOTAL_GROUP);
-					builder.append("\r\n全球发言字数：");
-					builder.append(status.LENGTH_GROUP);
-					builder.append("\r\n全球群排行：");
-					for (long temp : status.userStatus.keySet()) {
-						memberRank.put(status.userStatus.get(temp).TOTAL_MEMBER, temp);
+					// 二参数私聊调用 - 所有群排行
+					for (long gropid : this.STORAGE.keySet()) {
+						allGroupRank.put(this.STORAGE.get(gropid).TOTAL_GROUP, gropid);
 					}
-					for (int temp : memberRank.keySet()) {
+					builder.append("全球总发言条数：");
+					builder.append(this.TOTAL_GLOBAL);
+					builder.append("\r\n全球总发言字数：");
+					builder.append(this.LENGTH_GLOBAL);
+					builder.append("\r\n全球群排行：");
+					for (int count : allGroupRank.keySet()) {
 						i++;
 						builder.append("\r\n");
 						builder.append("No.");
 						builder.append(i);
+						builder.append("：");
+						builder.append(allGroupRank.get(count));
 						builder.append(" - ");
-						builder.append(JcqApp.CQ.getGroupMemberInfoV2((long) parameters[0], memberRank.get(temp)).getNick());
-						builder.append("(");
-						builder.append(memberRank.get(temp));
-						builder.append(") ");
-						builder.append(status.userStatus.get(memberRank.get(temp)).TOTAL_MEMBER);
-						builder.append("句/");
-						builder.append(status.userStatus.get(memberRank.get(temp)).LENGTH_MEMBER);
-						builder.append(" 字");
+						builder.append(count);
+						builder.append("条/");
+						builder.append(this.STORAGE.get(allGroupRank.get(count)).LENGTH_GROUP);
+						builder.append("字");
 					}
 					break;
+				case 2:
+					// 三参数私聊
 				case 3:
-					// 在群内调用 统计本群最能水的人
+					// 在群内调用
 					status = this.STORAGE.get((long) parameters[0]);
 					builder.append("总发言条数：");
 					builder.append(status.TOTAL_GROUP);
@@ -149,83 +149,87 @@ public class Listener_TopSpeak extends ModuleListener {
 					}
 					for (int temp : allGroupRank.keySet()) {
 						i++;
-						builder.append("\r\n");
-						builder.append("No.");
+						builder.append("\r\nNo.");
 						builder.append(i);
 						builder.append(" - ");
-
-						// 未知Runtime BUG ====================================================
-						long temp_gpid = (long) parameters[0];
-						long temp_qqid = allGroupRank.get(temp);
-						Member temp_info = JcqApp.CQ.getGroupMemberInfoV2(temp_gpid, temp_qqid);
-						String temp_nick = temp_info.getNick();
-						builder.append(temp_nick);
-
-						// 未知Runtime BUG ====================================================
-
-						/*
-						 * builder.append(JcqApp.CQ.getGroupMemberInfoV2((long)
-						 * parameters[0],allGroupRank.get(temp)).getNick());
-						 */
-
+						long tempGpid = (long) parameters[0];
+						long tempQqid = allGroupRank.get(temp);
+						member = JcqApp.CQ.getGroupMemberInfoV2(tempGpid, tempQqid);
+						String tempName = member.getNick();
+						builder.append(tempName);
 						builder.append("(");
 						builder.append(allGroupRank.get(temp));
 						builder.append(") ");
 						builder.append(status.userStatus.get(allGroupRank.get(temp)).TOTAL_MEMBER);
 						builder.append("句/");
 						builder.append(status.userStatus.get(allGroupRank.get(temp)).LENGTH_MEMBER);
-						builder.append(" 字");
+						builder.append("字");
 					}
 					break;
 				case 10:
 					// 私聊调用，dump
-
-					String dumpFileName = "Dump." + LoggerX.time("yyyy_MM_dd.HH_mm_ss") + ".yml";
-
-					File dumpFile = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), dumpFileName).toFile();
+					String dumpFileName = LoggerX.time("yyyy.MM.dd-HH.mm.ss");
+					File dumpFile = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "TopSpeak_Dump_" + dumpFileName + ".txt").toFile();
 					dumpFile.createNewFile();
-					FileWriter writer = new FileWriter(dumpFile);
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpFile), "UTF-8"));
+					writer.write("完整镜像 - " + dumpFileName);
 
-					writer.write("全球总发言数：");
-					writer.write(this.TOTAL_GLOBAL);
-					writer.write("\r\n全球总发字节：");
-					writer.write(this.LENGTH_GLOBAL);
 					writer.write("\r\n\r\n\r\n");
-
-					i = 0;
+					writer.write("\r\n=================================================================================================================================");
+					writer.write("\r\n=================================================================================================================================");
+					writer.write("\r\n=================================================================================================================================");
+					writer.write("按群时间线");
 
 					for (long gropid : this.STORAGE.keySet()) {
-
 						GroupStatus tempGroup = this.STORAGE.get(gropid);
-
 						writer.write("\r\n\r\n\r\n");
-						writer.write("\r\n=================================================================================================================================================");
-						writer.write("\r\n=================================================================================================================================================");
-
-						writer.write("\r\n群：" + gropid);
+						writer.write("\r\n=================================================================================================================================");
+						writer.write("\r\n群号：" + gropid);
 						writer.write("\r\n发言条数：" + tempGroup.TOTAL_GROUP);
 						writer.write("\r\n发言字数：" + tempGroup.TOTAL_GROUP);
+						writer.flush();
+						for (Message tempMessage : tempGroup.gropMessages) {
+							writer.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + "：" + tempMessage.rawMessage);
+						}
+					}
+
+					writer.write("\r\n\r\n\r\n");
+					writer.write("\r\n=================================================================================================================================");
+					writer.write("\r\n=================================================================================================================================");
+					writer.write("\r\n=================================================================================================================================");
+					writer.write("按群员分组");
+
+					for (long gropid : this.STORAGE.keySet()) {
+						GroupStatus tempGroup = this.STORAGE.get(gropid);
+						writer.write("\r\n\r\n\r\n");
+						writer.write("\r\n=================================================================================================================================");
+						writer.write("\r\n群号：" + gropid);
+						writer.write("\r\n发言条数：" + tempGroup.TOTAL_GROUP);
+						writer.write("\r\n发言字数：" + tempGroup.TOTAL_GROUP);
+						writer.flush();
 						for (Long qqid : tempGroup.userStatus.keySet()) {
 							UserStatus tempUser = tempGroup.userStatus.get(qqid);
-							writer.write("\r\n    -----------------------------------------------------------------------------------------------------------------------------------------");
-							writer.write("\r\n    用户：  " + qqid);
-							writer.write("\r\n      发言条数：  " + tempUser.TOTAL_MEMBER);
-							writer.write("\r\n      发言条数：  " + tempUser.LENGTH_MEMBER);
+							writer.write("\r\n    --------------------------------------------------------------------------------------------------------------------------");
+							member = JcqApp.CQ.getGroupMemberInfoV2(gropid, qqid);
+							writer.write("\r\n    用户： " + member.getQqId());
+							writer.write("\r\n    昵称： " + member.getNick());
+							writer.write("\r\n    名片： " + member.getCard());
+							writer.write("\r\n    发言条数： " + tempUser.TOTAL_MEMBER);
+							writer.write("\r\n    发言条数： " + tempUser.LENGTH_MEMBER);
 							for (Message tempMessage : tempUser.userMessages) {
-								writer.write("\r\n        " + tempMessage.rawMessage);
+								writer.write("\r\n      " + LoggerX.time(new Date(tempMessage.sendTime)) + "：" + tempMessage.rawMessage);
 							}
 							writer.flush();
 						}
-						writer.flush();
+
 					}
-					writer.flush();
 					writer.close();
 					builder.append("完整内存镜像已保存至：");
 					builder.append(dumpFileName);
 					break;
 				}
 			} else {
-				// 每日报告 - 所有群排行
+				// 默认报告 - 所有群排行
 				for (long gropid : this.STORAGE.keySet()) {
 					allGroupRank.put(this.STORAGE.get(gropid).TOTAL_GROUP, gropid);
 				}
@@ -249,7 +253,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				}
 			}
 
-		} catch (IOException exce) {
+		} catch (Exception exce) {
 			exce.printStackTrace();
 			builder.append("报告生成出错");
 			for (StackTraceElement stack : exce.getStackTrace()) {

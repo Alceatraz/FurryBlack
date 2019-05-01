@@ -25,7 +25,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "3.5.1 2019-04-30 (23:00)";
+	public static final String PRODUCT_VERSION = "3.5.1 2019-05-01 (13:00)";
 
 	private static File FOLDER_CONF;
 	private static File FOLDER_DATA;
@@ -67,8 +67,13 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return 0;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public int exit() {
+		SystemHandler.getSchedulerThread("task").interrupt();
+		SystemHandler.getSchedulerThread("ddns").interrupt();
+		SystemHandler.getSchedulerThread("task").destroy();
+		SystemHandler.getSchedulerThread("ddns").destroy();
 		return 0;
 	}
 
