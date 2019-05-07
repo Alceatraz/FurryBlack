@@ -1,10 +1,13 @@
 package studio.blacktech.coolqbot.furryblack.plugins;
 
+import com.sobte.cqp.jcq.event.JcqApp;
+
 import studio.blacktech.coolqbot.furryblack.SystemHandler;
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.module.ModuleListener;
 import studio.blacktech.coolqbot.furryblack.scheduler.Scheduler_DDNS;
 
 public class Executor_admin extends ModuleExecutor {
@@ -26,14 +29,20 @@ public class Executor_admin extends ModuleExecutor {
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		if (userid != entry.OPERATOR()) {
+			Module.userInfo(userid, "你不是我的管理员");
 			return false;
 		}
 		if (message.segment < 2) {
-			String temp = SystemHandler.genReport(false, 0, null);
+			String temp = SystemHandler.generateFullReport(0, 0, null, null);
 			Module.userInfo(entry.OPERATOR(), temp);
 			return true;
 		} else {
 			switch (message.messages[1]) {
+			case "getcsrf":
+				Module.userInfo(entry.OPERATOR(), "JQCCOOKIE: " + JcqApp.CQ.getCookies());
+				Module.userInfo(entry.OPERATOR(), "CSRFTOKEN: " + JcqApp.CQ.getCsrfToken());
+				break;
+
 			// 获取地址
 			case "getddns":
 				Module.userInfo(entry.OPERATOR(), ((Scheduler_DDNS) SystemHandler.getScheduler("ddns")).getIPAddress());
@@ -48,16 +57,69 @@ public class Executor_admin extends ModuleExecutor {
 				break;
 			//
 			case "shui":
-				if (message.segment == 2) {
-					Module.userInfo(entry.OPERATOR(), SystemHandler.getListener("shui").generateReport(true, 1, null));
-				} else {
-					if (message.messages[2].equals("dump")) {
-						Module.userInfo(entry.OPERATOR(), SystemHandler.getListener("shui").generateReport(true, 10, null));
-					} else {
-						Module.userInfo(entry.OPERATOR(), SystemHandler.getListener("shui").generateReport(true, 2, new Object[] {
-								Long.parseLong(message.messages[2])
+				ModuleListener instance = SystemHandler.getListener("shui");
+				switch (message.messages[2]) {
+				case "dump":
+					Module.userInfo(entry.OPERATOR(), instance.generateReport(100, 0, null, null));
+					break;
+				case "rank":
+					// admin shui rank 123123123
+					if (message.segment == 4) {
+						String temp = message.messages[3];
+						long gropid = Long.parseLong(temp);
+						Module.userInfo(entry.OPERATOR(), instance.generateReport(1, 0, null, new Object[] {
+								gropid
 						}));
+					} else {
+						Module.userInfo(entry.OPERATOR(), instance.generateReport(0, 0, null, null));
 					}
+					break;
+				}
+				break;
+			default:
+				Module.userInfo(entry.OPERATOR(), "找不到命令");
+				break;
+			}
+		}
+		return true;
+
+	}
+
+	@Override
+	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+		if (userid != entry.OPERATOR()) {
+			Module.diszInfo(diszid, userid, "你不是我的管理员");
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+		if (userid != entry.OPERATOR()) {
+			Module.gropInfo(gropid, userid, "你不是我的管理员");
+			return false;
+		}
+		if (message.segment < 2) {
+			Module.gropInfo(gropid, SystemHandler.generateFullReport(0, 0, null, null));
+			return true;
+		} else {
+			switch (message.messages[1]) {
+			case "shui":
+				ModuleListener instance = SystemHandler.getListener("shui");
+				switch (message.segment) {
+				case 2:
+				default:
+					Module.gropInfo(gropid, entry.OPERATOR(), instance.generateReport(0, 0, null, null));
+				case 3:
+					switch (message.messages[2]) {
+					case "rank":
+						Module.gropInfo(gropid, entry.OPERATOR(), instance.generateReport(1, 0, null, new Object[] {
+								gropid
+						}));
+						break;
+					}
+					break;
 				}
 				break;
 			}
@@ -66,36 +128,7 @@ public class Executor_admin extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		if (userid == entry.OPERATOR()) {
-
-		}
-		return true;
-	}
-
-	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		if (userid != entry.OPERATOR()) {
-			return false;
-		}
-		if (message.segment < 2) {
-			String temp = SystemHandler.genReport(false, 0, null);
-			Module.gropInfo(gropid, temp);
-			return true;
-		} else {
-			switch (message.messages[1]) {
-			case "shui":
-				Module.gropInfo(gropid, SystemHandler.getListener("shui").generateReport(true, 3, new Object[] {
-						gropid
-				}));
-				break;
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
 		return null;
 	}
 }

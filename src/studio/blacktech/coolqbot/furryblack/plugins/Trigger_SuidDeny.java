@@ -88,7 +88,7 @@ public class Trigger_SuidDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("À¹½ØË½ÁÄ£º");
 		builder.append(this.DENY_USER_COUNT);

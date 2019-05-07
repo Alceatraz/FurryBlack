@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleScheduler;
 
@@ -119,9 +120,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 						Module.userInfo(entry.OPERATOR(), "[DDNS] 地址更新失败，需要手动介入！");
 					}
 				} else {
-					if (temp.equals(this.ADDRESS)) {
-						System.out.println("DDNS模块更新" + temp);
-					} else {
+					if (!temp.equals(this.ADDRESS)) {
 						Module.userInfo(entry.OPERATOR(), "[DDNS] 检测到地址变更\r\n旧地址：" + this.ADDRESS + "\r\n新地址：" + temp + "\r\n设置新地址：" + this.setDDNSIPAddress(temp));
 					}
 				}
@@ -192,7 +191,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 	}
 
 	@Override
-	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
 		return null;
 	}
 

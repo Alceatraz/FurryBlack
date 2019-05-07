@@ -632,11 +632,11 @@ public class SystemHandler extends Module {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
 		return null;
 	}
 
-	public static String genReport(boolean fullreport, int loglevel, Object[] parameters) {
+	public static String generateFullReport(int logLevel, int logMode, Message message, Object[] parameters) {
 
 		long uptime = System.currentTimeMillis() - SystemHandler.BOOTTIME;
 		long uptimedd = uptime / 86400000;
@@ -688,7 +688,7 @@ public class SystemHandler extends Module {
 			builder.append(": ");
 			builder.append(temp.COUNT);
 			builder.append("´Î");
-			report = temp.generateReport(fullreport, loglevel, null);
+			report = temp.generateReport(0, 0, null, null);
 			if (report != null) {
 				builder.append("\r\n");
 				builder.append(report);
@@ -706,7 +706,7 @@ public class SystemHandler extends Module {
 			builder.append(": ");
 			builder.append(temp.COUNT);
 			builder.append("´Î");
-			report = temp.generateReport(fullreport, loglevel, null);
+			report = temp.generateReport(0, 0, null, null);
 			if (report != null) {
 				builder.append("\r\n");
 				builder.append(report);
@@ -724,7 +724,7 @@ public class SystemHandler extends Module {
 			builder.append(": ");
 			builder.append(temp.COUNT);
 			builder.append("´Î");
-			report = temp.generateReport(fullreport, loglevel, null);
+			report = temp.generateReport(0, 0, null, null);
 			if (report != null) {
 				builder.append("\r\n");
 				builder.append(report);

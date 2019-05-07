@@ -218,14 +218,18 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n 消息:");
 			builder.append(message);
 			builder.append("\r\n 报错栈\r\n:");
-			for (StackTraceElement i : exce.getStackTrace()) {
-				builder.append("Line: ");
-				builder.append(i.getLineNumber());
-				builder.append(" In - ");
-				builder.append(i.getClassName());
-				builder.append(" >> ");
-				builder.append(i.getMethodName());
+			for (StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
+				builder.append(stack.getClassName());
+				builder.append(".");
+				builder.append(stack.getMethodName());
+				builder.append("(");
+				builder.append(stack.getClass().getSimpleName());
+				builder.append(".");
+				builder.append(stack.getMethodName());
+				builder.append(":");
+				builder.append(stack.getLineNumber());
+				builder.append(")");
 			}
 			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), builder.toString());
 		}
@@ -250,14 +254,18 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n 消息:");
 			builder.append(message);
 			builder.append("\r\n 报错栈\r\n:");
-			for (StackTraceElement i : exce.getStackTrace()) {
-				builder.append("Line: ");
-				builder.append(i.getLineNumber());
-				builder.append(" In - ");
-				builder.append(i.getClassName());
-				builder.append(" >> ");
-				builder.append(i.getMethodName());
+			for (StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
+				builder.append(stack.getClassName());
+				builder.append(".");
+				builder.append(stack.getMethodName());
+				builder.append("(");
+				builder.append(stack.getClass().getSimpleName());
+				builder.append(".");
+				builder.append(stack.getMethodName());
+				builder.append(":");
+				builder.append(stack.getLineNumber());
+				builder.append(")");
 			}
 			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), builder.toString());
 		}
@@ -278,15 +286,19 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(userid);
 			builder.append("\r\n 消息:");
 			builder.append(message);
-			builder.append("\r\n 报错栈\r\n:");
-			for (StackTraceElement i : exce.getStackTrace()) {
-				builder.append("Line: ");
-				builder.append(i.getLineNumber());
-				builder.append(" In - ");
-				builder.append(i.getClassName());
-				builder.append(" >> ");
-				builder.append(i.getMethodName());
+			builder.append("\r\n 报错栈:");
+			for (StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
+				builder.append(stack.getClassName());
+				builder.append(".");
+				builder.append(stack.getMethodName());
+				builder.append("(");
+				builder.append(stack.getClass().getSimpleName());
+				builder.append(".");
+				builder.append(stack.getMethodName());
+				builder.append(":");
+				builder.append(stack.getLineNumber());
+				builder.append(")");
 			}
 			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), builder.toString());
 		}
@@ -324,6 +336,17 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return 0;
 	}
 
+	@Override
+	public int groupMemberIncrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
+		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + "[成员加入]群：" + fromGroup + " 用户：" + fromQQ);
+		return 0;
+	}
+
+	@Override
+	public int groupMemberDecrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
+		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + "[成员退群]群：" + fromGroup + " 用户：" + fromQQ);
+		return 0;
+	}
 	// ==============================================================================================================================================================
 
 	public static long OPERATOR() {
@@ -356,21 +379,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static File FILE_GROPIGNORE() {
 		return entry.FILE_GROPIGNORE;
-	}
-
-	// ==============================================================================================================================================================
-	// 未注册 未使用
-
-	@Override
-	public int groupMemberDecrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
-		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + "[新人]群：" + fromGroup + " 用户：" + fromQQ);
-		return 0;
-	}
-
-	@Override
-	public int groupMemberIncrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
-		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + "[退群]群：" + fromGroup + " 用户：" + fromQQ);
-		return 0;
 	}
 
 	// ==============================================================================================================================================================

@@ -103,7 +103,7 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
 		if (this.COUNT == 0) {
 			return null;
 		}

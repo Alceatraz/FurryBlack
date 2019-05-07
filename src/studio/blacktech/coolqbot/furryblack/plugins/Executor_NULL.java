@@ -38,7 +38,7 @@ public class Executor_NULL extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(boolean fullreport, int loglevel, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
 		return null;
 	}
 

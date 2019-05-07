@@ -17,7 +17,7 @@ public abstract class Module {
 
 	public String MODULE_FULLHELP;
 
-	public abstract String generateReport(boolean fullreport, int loglevel, Object[] parameters);
+	public abstract String generateReport(int logLevel, int logMode, Message message, Object[] parameters);
 
 	public void genFullHelp() {
 		StringBuilder builder = new StringBuilder();
