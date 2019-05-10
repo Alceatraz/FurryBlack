@@ -239,80 +239,79 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	private void generateDumpFile(StringBuilder builder) throws IOException {
 
-		String dumpFileName = LoggerX.time("yyyy.MM.dd-HH.mm.ss");
-		File dumpFile = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "TopSpeak_Dump_" + dumpFileName + ".txt").toFile();
-		dumpFile.createNewFile();
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpFile), "UTF-8"));
+		// DUMP时刻
+		String dumpTime = LoggerX.time("yyyy.MM.dd-HH.mm.ss");
 
-		writer.write("完整镜像 - " + dumpFileName);
+		GroupStatus tempGroup;
+		UserStatus tempUser;
 
-		writer.write("\r\n\r\n\r\n");
-		writer.write("\r\n================================================================================");
-		writer.write("\r\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-		writer.write("\r\n================================================================================");
-		writer.write("按群时间线");
+		BufferedWriter writer;
+
+		// 创建主目录
+		File dumpFolder = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "TopSpeak_Dump_" + dumpTime).toFile();
+		dumpFolder.mkdirs();
+
+		// 创建主目录 存放 按群时间线
+		File dumpGroupsFolder = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "main").toFile();
+
+		// 为每个群创建一个目录 存放 按成员划分
+		File dumpGroupByTimeline;
 
 		for (long gropid : this.STORAGE.keySet()) {
 
-			GroupStatus tempGroup = this.STORAGE.get(gropid);
+			tempGroup = this.STORAGE.get(gropid);
 
-			writer.write("\r\n\r\n\r\n");
-			writer.write("\r\n================================================================================");
-			writer.write("\r\n群号：" + gropid);
+			dumpGroupByTimeline = Paths.get(dumpGroupsFolder.getAbsolutePath(), Long.toString(gropid) + ".txt").toFile();
+			dumpGroupByTimeline.createNewFile();
+
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpGroupByTimeline), "UTF-8"));
+
+			writer.write("群号：" + gropid);
 			writer.write("\r\n发言条数：" + tempGroup.TOTAL_GROUP);
-			writer.write("\r\n发言字数：" + tempGroup.TOTAL_GROUP);
-
-			writer.flush();
+			writer.write("\r\n发言字数：" + tempGroup.LENGTH_GROUP);
+			writer.write("\r\n");
 
 			for (Message tempMessage : tempGroup.gropMessages) {
-				writer.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + "：" + tempMessage.rawMessage);
+				writer.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + ":" + tempMessage.rawMessage);
 			}
 
+			writer.flush();
+			writer.close();
 		}
 
-		writer.write("\r\n\r\n\r\n");
-		writer.write("\r\n================================================================================");
-		writer.write("\r\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-		writer.write("\r\n================================================================================");
-		writer.write("按群员分组");
-
-		Member member;
+		// 再次循环保存成员分类，分开写减少异常造成的影响范围
+		File dumpGroupByUserFolder;
+		File dumpGroupByUser;
 
 		for (long gropid : this.STORAGE.keySet()) {
 
-			GroupStatus tempGroup = this.STORAGE.get(gropid);
+			tempGroup = this.STORAGE.get(gropid);
 
-			writer.write("\r\n\r\n\r\n");
-			writer.write("\r\n================================================================================");
-			writer.write("\r\n群号：" + gropid);
-			writer.write("\r\n发言条数：" + tempGroup.TOTAL_GROUP);
-			writer.write("\r\n发言字数：" + tempGroup.TOTAL_GROUP);
-			writer.flush();
+			dumpGroupByUserFolder = Paths.get(dumpFolder.getAbsolutePath(), Long.toString(gropid)).toFile();
 
-			for (Long qqid : tempGroup.userStatus.keySet()) {
+			dumpGroupByUserFolder.mkdirs();
 
-				UserStatus tempUser = tempGroup.userStatus.get(qqid);
+			for (long qqid : tempGroup.userStatus.keySet()) {
 
-				writer.write("\r\n    ----------------------------------------------------------------------------");
+				tempUser = tempGroup.userStatus.get(qqid);
 
-				member = JcqApp.CQ.getGroupMemberInfoV2(gropid, qqid);
+				dumpGroupByUser = Paths.get(dumpGroupByUserFolder.getAbsolutePath(), Long.toString(qqid) + ".txt").toFile();
+				dumpGroupByUser.createNewFile();
 
-				writer.write("\r\n    用户： " + member.getQqId());
-				writer.write("\r\n    昵称： " + member.getNick());
-				writer.write("\r\n    名片： " + member.getCard());
-				writer.write("\r\n    发言条数： " + tempUser.TOTAL_MEMBER);
-				writer.write("\r\n    发言条数： " + tempUser.LENGTH_MEMBER);
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpGroupByUser), "UTF-8"));
+
+				writer.write("成员：" + qqid);
+				writer.write("\r\n发言条数：" + tempUser.TOTAL_MEMBER);
+				writer.write("\r\n发言字数：" + tempUser.LENGTH_MEMBER);
+
+				writer.write("\r\n");
 
 				for (Message tempMessage : tempUser.userMessages) {
-					writer.write("\r\n      " + LoggerX.time(new Date(tempMessage.sendTime)) + "：" + tempMessage.rawMessage);
+
+					writer.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + ":" + tempMessage.rawMessage);
 				}
-				writer.flush();
 			}
-
 		}
-		writer.close();
-		builder.append("完整内存镜像已保存至：");
-		builder.append(dumpFileName);
+		builder.append("完整内存镜像已保存");
 	}
-
 }

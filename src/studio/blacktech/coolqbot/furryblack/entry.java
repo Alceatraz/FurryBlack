@@ -72,6 +72,11 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@SuppressWarnings("deprecation")
 	@Override
 	public int exit() {
+		try {
+			SystemHandler.doUserMessage(1, OPERATOR, new Message("//admin shui dump"), 0, 0);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
 		SystemHandler.getSchedulerThread("task").interrupt();
 		SystemHandler.getSchedulerThread("ddns").interrupt();
 		SystemHandler.getSchedulerThread("task").destroy();
