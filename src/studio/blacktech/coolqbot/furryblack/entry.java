@@ -23,9 +23,11 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 
+	public static boolean INIT_VERBOSE = false;
+
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "3.5.1 2019-05-01 (13:00)";
+	public static final String PRODUCT_VERSION = "3.7.1 2019-05-08 (21:05)";
 
 	private static File FOLDER_CONF;
 	private static File FOLDER_DATA;
@@ -83,8 +85,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			StringBuilder builder = new StringBuilder();
 			JcqAppAbstract.appDirectory = JcqApp.CQ.getAppDirectory();
 
+			builder.append("[FurryBlack]初始化 ");
 			builder.append(LoggerX.time());
-			builder.append("\r\n[FurryBlack] 初始化中\r\n");
 
 			entry.FOLDER_CONF = Paths.get(JcqAppAbstract.appDirectory, "conf").toFile();
 			entry.FOLDER_DATA = Paths.get(JcqAppAbstract.appDirectory, "data").toFile();
@@ -95,46 +97,47 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			entry.FILE_GROPIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "grop_ignore.txt").toFile();
 
 			if (!entry.FOLDER_CONF.exists()) {
-				builder.append("[System] 配置文件夹不存在\r\n");
+				builder.append("\r\n[System] 配置文件夹不存在");
 				entry.FOLDER_CONF.mkdirs();
 			}
 			if (!entry.FOLDER_CONF.isDirectory()) {
-				builder.append("[System] 配置文件夹被文件占位\r\n");
+				builder.append("\r\n[System] 配置文件夹被文件占位");
 				throw new IOException(":" + entry.FOLDER_CONF.getAbsolutePath());
 			}
 			if (!entry.FOLDER_DATA.exists()) {
-				builder.append("[System] 数据文件夹不存在\r\n");
+				builder.append("\r\n[System] 数据文件夹不存在");
 				entry.FOLDER_DATA.mkdirs();
 			}
 			if (!entry.FOLDER_DATA.isDirectory()) {
-				builder.append("[System] 数据文件夹被文件占位\r\n");
+				builder.append("\r\n[System] 数据文件夹被文件占位");
 				throw new IOException(":" + entry.FOLDER_DATA.getAbsolutePath());
 			}
 			if (!entry.FILE_BLACKLIST.exists()) {
-				builder.append("[System] 敏感词黑名单文件不存在\r\n");
+				builder.append("\r\n[System] 敏感词黑名单文件不存在");
 				entry.FILE_BLACKLIST.createNewFile();
 			}
 			if (!entry.FILE_USERIGNORE.exists()) {
-				builder.append("[System] 私聊黑名单文件不存在\r\n");
+				builder.append("\r\n[System] 私聊黑名单文件不存在");
 				entry.FILE_USERIGNORE.createNewFile();
 			}
 			if (!entry.FILE_DISZIGNORE.exists()) {
-				builder.append("[System] 组聊黑名单文件不存在\r\n");
+				builder.append("\r\n[System] 组聊黑名单文件不存在");
 				entry.FILE_DISZIGNORE.createNewFile();
 			}
 			if (!entry.FILE_GROPIGNORE.exists()) {
-				builder.append("[System] 群聊黑名单文件不存在\r\n");
+				builder.append("\r\n[System] 群聊黑名单文件不存在");
 				entry.FILE_GROPIGNORE.createNewFile();
 			}
 
 			if (!entry.FILE_CONFIG.exists()) {
-				builder.append("[System] 配置文件不存在\r\n");
+				builder.append("\r\n[System] 配置文件不存在");
 				entry.FILE_CONFIG.createNewFile();
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(entry.FILE_CONFIG), "UTF-8"));
 				// @formatter:off
 				writer.write(
 					"summoner=\r\n" +
 					"operator=\r\n" +
+					"verbose=true\r\n" +
 					"enable_trigger_user=false\r\n" +
 					"enable_trigger_disz=false\r\n" +
 					"enable_trigger_grop=false\r\n" +
@@ -153,23 +156,28 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 				// @formatter:on
 				writer.flush();
 				writer.close();
-				builder.append("[System] 配置文件不存在\r\n");
-				throw new Exception("初次启动，需要填写配置文件");
+				builder.append("\r\n[System] 生成新的配置文件，自动退出");
+
+				throw new Exception("配置文件不存在，创建新的配置文件，自动退出");
 			}
 
+			builder.append("\r\n[System] 读取配置文件");
+
 			entry.config.load(new FileInputStream(entry.FILE_CONFIG));
-			builder.append("[System] 读取配置文件\r\n");
+
+			entry.INIT_VERBOSE = Boolean.parseBoolean(entry.config.getProperty("verbose", "true"));
 
 			entry.MYSELFID = Long.parseLong(entry.config.getProperty("summoner", "0"));
 			entry.OPERATOR = Long.parseLong(entry.config.getProperty("operator", "0"));
-
 			entry.MYSELFID = JcqApp.CQ.getLoginQQ();
 
-			builder.append("[System] 管理员账户为：");
-			builder.append(entry.OPERATOR);
-			builder.append("\r\n[System] 机器人账户为：");
-			builder.append(entry.MYSELFID);
-			builder.append("\r\n");
+			if (entry.INIT_VERBOSE) {
+				builder.append("\r\n[System] 管理员账户为：");
+				builder.append(entry.OPERATOR);
+				builder.append("\r\n[System] 机器人账户为：");
+				builder.append(entry.MYSELFID);
+				builder.append("\r\n");
+			}
 
 			SystemHandler.init(builder, entry.config);
 

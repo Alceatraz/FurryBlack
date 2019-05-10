@@ -168,8 +168,6 @@ public class SystemHandler extends Module {
 
 	protected static boolean init(StringBuilder initBuilder, Properties config) throws ReInitializationException, NumberFormatException, IOException {
 
-		initBuilder.append("[System] 初始化核心\r\n");
-
 		if (SystemHandler.INITIALIZATIONLOCK) {
 			throw new ReInitializationException();
 		}
@@ -178,7 +176,10 @@ public class SystemHandler extends Module {
 
 		// ==========================================================================================================================
 
-		initBuilder.append("[System] 读取配置\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[System] 读取配置");
+		}
+
 		SystemHandler.ENABLE_TRIGGER_USER = Boolean.parseBoolean(config.getProperty("enable_trigger_user", "false"));
 		SystemHandler.ENABLE_TRIGGER_DISZ = Boolean.parseBoolean(config.getProperty("enable_trigger_disz", "false"));
 		SystemHandler.ENABLE_TRIGGER_GROP = Boolean.parseBoolean(config.getProperty("enable_trigger_grop", "false"));
@@ -192,30 +193,44 @@ public class SystemHandler extends Module {
 
 		// ==========================================================================================================================
 
-		initBuilder.append("[Module] 实例化监听器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 实例化监听器");
+		}
 		SystemHandler.listener_topspeak = new Listener_TopSpeak();
 
-		initBuilder.append("[Module] 注册私聊监听器\r\n");
-//		SystemHandler.registerUserListener(SystemHandler.listener_topspeak);
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 注册私聊监听器");
+		}
+		SystemHandler.registerUserListener(SystemHandler.listener_topspeak);
 
-		initBuilder.append("[Module] 注册组聊监听器\r\n");
-//		SystemHandler.registerDiszListener(SystemHandler.listener_topspeak);
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 注册组聊监听器");
+		}
+		SystemHandler.registerDiszListener(SystemHandler.listener_topspeak);
 
-		initBuilder.append("[Module] 注册群聊监听器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 注册群聊监听器");
+		}
 		SystemHandler.registerGropListener(SystemHandler.listener_topspeak);
 
-		initBuilder.append("[Module] 统计监听器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 统计监听器");
+		}
 		SystemHandler.ENABLE_LISENTER_USER = SystemHandler.ENABLE_LISENTER_USER && (SystemHandler.LISTENER_USER.size() > 0);
 		SystemHandler.ENABLE_LISENTER_DISZ = SystemHandler.ENABLE_LISENTER_DISZ && (SystemHandler.LISTENER_DISZ.size() > 0);
 		SystemHandler.ENABLE_LISENTER_GROP = SystemHandler.ENABLE_LISENTER_GROP && (SystemHandler.LISTENER_GROP.size() > 0);
 
 		// ==========================================================================================================================
 
-		initBuilder.append("[Module] 实例化触发器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 实例化触发器");
+		}
 		SystemHandler.trigger_suiddeny = new Trigger_SuidDeny();
 		SystemHandler.trigger_worddeny = new Trigger_WordDeny();
 
-		initBuilder.append("[Module] 注册私聊触发器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 注册私聊触发器");
+		}
 		if (SystemHandler.ENABLE_USER_IGNORE) {
 			SystemHandler.registerUserTrigger(SystemHandler.trigger_suiddeny);
 		}
@@ -224,7 +239,9 @@ public class SystemHandler extends Module {
 			SystemHandler.registerUserTrigger(SystemHandler.trigger_worddeny);
 		}
 
-		initBuilder.append("[Module] 注册组聊触发器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 注册组聊触发器");
+		}
 		if (SystemHandler.ENABLE_DISZ_IGNORE) {
 			SystemHandler.registerDiszTrigger(SystemHandler.trigger_suiddeny);
 		}
@@ -233,7 +250,9 @@ public class SystemHandler extends Module {
 			SystemHandler.registerDiszTrigger(SystemHandler.trigger_worddeny);
 		}
 
-		initBuilder.append("[Module] 注册群聊触发器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 注册群聊触发器");
+		}
 		if (SystemHandler.ENABLE_GROP_IGNORE) {
 			SystemHandler.registerGropTrigger(SystemHandler.trigger_suiddeny);
 		}
@@ -242,14 +261,18 @@ public class SystemHandler extends Module {
 			SystemHandler.registerGropTrigger(SystemHandler.trigger_worddeny);
 		}
 
-		initBuilder.append("[Module] 统计触发器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 统计触发器");
+		}
 		SystemHandler.ENABLE_TRIGGER_USER = SystemHandler.ENABLE_TRIGGER_USER && (SystemHandler.TRIGGER_USER.size() > 0);
 		SystemHandler.ENABLE_TRIGGER_DISZ = SystemHandler.ENABLE_TRIGGER_DISZ && (SystemHandler.TRIGGER_DISZ.size() > 0);
 		SystemHandler.ENABLE_TRIGGER_GROP = SystemHandler.ENABLE_TRIGGER_GROP && (SystemHandler.TRIGGER_GROP.size() > 0);
 
 		// ==========================================================================================================================
 
-		initBuilder.append("[Module] 实例化执行器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 实例化执行器");
+		}
 		SystemHandler.executor_chou = new Executor_chou();
 		SystemHandler.executor_dice = new Executor_dice();
 		SystemHandler.executor_echo = new Executor_echo();
@@ -261,7 +284,9 @@ public class SystemHandler extends Module {
 		SystemHandler.executor_zhan = new Executor_zhan();
 		SystemHandler.executor_admin = new Executor_admin();
 
-		initBuilder.append("[Module] 注册私聊执行器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 注册私聊执行器");
+		}
 		SystemHandler.registerUserExecutor(SystemHandler.executor_dice);
 		SystemHandler.registerUserExecutor(SystemHandler.executor_echo);
 		SystemHandler.registerUserExecutor(SystemHandler.executor_jrrp);
@@ -270,7 +295,9 @@ public class SystemHandler extends Module {
 		SystemHandler.registerUserExecutor(SystemHandler.executor_zhan);
 		SystemHandler.registerUserExecutor(SystemHandler.executor_admin);
 
-		initBuilder.append("[Module] 注册组聊执行器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 注册组聊执行器");
+		}
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_dice);
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_echo);
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_jrrp);
@@ -278,7 +305,9 @@ public class SystemHandler extends Module {
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_roll);
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_zhan);
 
-		initBuilder.append("[Module] 注册群聊执行器\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 注册群聊执行器");
+		}
 		SystemHandler.registerGropExecutor(SystemHandler.executor_chou);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_dice);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_echo);
@@ -292,32 +321,20 @@ public class SystemHandler extends Module {
 
 		// ==========================================================================================================================
 
-		initBuilder.append("[Module] 触发器： \r\n  私聊：");
-		initBuilder.append(SystemHandler.ENABLE_TRIGGER_USER ? "启用 - " + SystemHandler.TRIGGER_USER.size() + "个" : "禁用");
-		initBuilder.append("\r\n  组聊：");
-		initBuilder.append(SystemHandler.ENABLE_TRIGGER_DISZ ? "启用 - " + SystemHandler.TRIGGER_DISZ.size() + "个" : "禁用");
-		initBuilder.append("\r\n  群聊：");
-		initBuilder.append(SystemHandler.ENABLE_TRIGGER_GROP ? "启用 - " + SystemHandler.TRIGGER_GROP.size() + "个" : "禁用");
-		initBuilder.append("\r\n[Module] 监听器： \r\n  私聊：");
-		initBuilder.append(SystemHandler.ENABLE_LISENTER_USER ? "启用 - " + SystemHandler.LISTENER_USER.size() + "个" : "禁用");
-		initBuilder.append("\r\n  组聊：");
-		initBuilder.append(SystemHandler.ENABLE_LISENTER_DISZ ? "启用 - " + SystemHandler.LISTENER_DISZ.size() + "个" : "禁用");
-		initBuilder.append("\r\n  群聊：");
-		initBuilder.append(SystemHandler.ENABLE_LISENTER_GROP ? "启用 - " + SystemHandler.LISTENER_GROP.size() + "个" : "禁用");
-
-		// ==========================================================================================================================
-
-		initBuilder.append("\r\n[Module] 实例化计划任务\r\n");
-		SystemHandler.scheduler_task = new Scheduler_TASK(initBuilder, config);
-		SystemHandler.scheduler_ddns = new Scheduler_DDNS(initBuilder, config);
-
-		initBuilder.append("[Module] 注册计划任务\r\n");
-		SystemHandler.registerSchedular(SystemHandler.scheduler_task);
-		SystemHandler.registerSchedular(SystemHandler.scheduler_ddns);
-
-		initBuilder.append("[Module] 启动计划任务\r\n");
-		SystemHandler.getSchedulerThread("task").start();
-		SystemHandler.getSchedulerThread("ddns").start();
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 触发器： \r\n  私聊：");
+			initBuilder.append(SystemHandler.ENABLE_TRIGGER_USER ? "启用 - " + SystemHandler.TRIGGER_USER.size() + "个" : "禁用");
+			initBuilder.append("\r\n  组聊：");
+			initBuilder.append(SystemHandler.ENABLE_TRIGGER_DISZ ? "启用 - " + SystemHandler.TRIGGER_DISZ.size() + "个" : "禁用");
+			initBuilder.append("\r\n  群聊：");
+			initBuilder.append(SystemHandler.ENABLE_TRIGGER_GROP ? "启用 - " + SystemHandler.TRIGGER_GROP.size() + "个" : "禁用");
+			initBuilder.append("\r\n[Module] 监听器： \r\n  私聊：");
+			initBuilder.append(SystemHandler.ENABLE_LISENTER_USER ? "启用 - " + SystemHandler.LISTENER_USER.size() + "个" : "禁用");
+			initBuilder.append("\r\n  组聊：");
+			initBuilder.append(SystemHandler.ENABLE_LISENTER_DISZ ? "启用 - " + SystemHandler.LISTENER_DISZ.size() + "个" : "禁用");
+			initBuilder.append("\r\n  群聊：");
+			initBuilder.append(SystemHandler.ENABLE_LISENTER_GROP ? "启用 - " + SystemHandler.LISTENER_GROP.size() + "个" : "禁用");
+		}
 
 		// ==========================================================================================================================
 
@@ -334,8 +351,7 @@ public class SystemHandler extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(module.MODULE_DESCRIPTION);
 		}
-		preBuilder.append("\r\n");
-		preBuilder.append("已经安装的触发器: ");
+		preBuilder.append("\r\n已经安装的触发器: ");
 		preBuilder.append(SystemHandler.TRIGGER_USER.size());
 		for (final ModuleTrigger temp : SystemHandler.TRIGGER_USER) {
 			preBuilder.append("\r\n");
@@ -345,8 +361,7 @@ public class SystemHandler extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(temp.MODULE_DESCRIPTION);
 		}
-		preBuilder.append("\r\n");
-		preBuilder.append("已经安装的监听器: ");
+		preBuilder.append("\r\n已经安装的监听器: ");
 		preBuilder.append(SystemHandler.LISTENER_USER.size());
 		for (final ModuleListener temp : SystemHandler.LISTENER_USER) {
 			preBuilder.append("\r\n");
@@ -357,8 +372,10 @@ public class SystemHandler extends Module {
 			preBuilder.append(temp.MODULE_DESCRIPTION);
 		}
 		SystemHandler.MESSAGE_LIST_USER = preBuilder.toString();
-		initBuilder.append("[Message] list 私聊\r\n");
-		initBuilder.append(SystemHandler.MESSAGE_LIST_USER);
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Message] list 私聊\r\n");
+			initBuilder.append(SystemHandler.MESSAGE_LIST_USER);
+		}
 
 		// ==========================================================================================================================
 
@@ -375,8 +392,7 @@ public class SystemHandler extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(module.MODULE_DESCRIPTION);
 		}
-		preBuilder.append("\r\n");
-		preBuilder.append("已经安装的触发器：");
+		preBuilder.append("\r\n已经安装的触发器：");
 		preBuilder.append(SystemHandler.TRIGGER_DISZ.size());
 		for (final ModuleTrigger temp : SystemHandler.TRIGGER_DISZ) {
 			preBuilder.append("\r\n");
@@ -386,8 +402,7 @@ public class SystemHandler extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(temp.MODULE_DESCRIPTION);
 		}
-		preBuilder.append("\r\n");
-		preBuilder.append("已经安装的监听器: ");
+		preBuilder.append("\r\n已经安装的监听器: ");
 		preBuilder.append(SystemHandler.LISTENER_DISZ.size());
 		for (final ModuleListener temp : SystemHandler.LISTENER_DISZ) {
 			preBuilder.append("\r\n");
@@ -398,8 +413,10 @@ public class SystemHandler extends Module {
 			preBuilder.append(temp.MODULE_DESCRIPTION);
 		}
 		SystemHandler.MESSAGE_LIST_DISZ = preBuilder.toString();
-		initBuilder.append("\r\n[Message] list 组聊\r\n");
-		initBuilder.append(SystemHandler.MESSAGE_LIST_DISZ);
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Message] list 组聊\r\n");
+			initBuilder.append(SystemHandler.MESSAGE_LIST_DISZ);
+		}
 
 		// ==========================================================================================================================
 
@@ -416,8 +433,7 @@ public class SystemHandler extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(module.MODULE_DESCRIPTION);
 		}
-		preBuilder.append("\r\n");
-		preBuilder.append("已经安装的触发器：");
+		preBuilder.append("\r\n已经安装的触发器：");
 		preBuilder.append(SystemHandler.TRIGGER_GROP.size());
 		for (final ModuleTrigger temp : SystemHandler.TRIGGER_GROP) {
 			preBuilder.append("\r\n");
@@ -427,8 +443,7 @@ public class SystemHandler extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(temp.MODULE_DESCRIPTION);
 		}
-		preBuilder.append("\r\n");
-		preBuilder.append("已经安装的监听器：");
+		preBuilder.append("\r\n已经安装的监听器：");
 		preBuilder.append(SystemHandler.LISTENER_GROP.size());
 		for (final ModuleListener temp : SystemHandler.LISTENER_GROP) {
 			preBuilder.append("\r\n");
@@ -439,8 +454,30 @@ public class SystemHandler extends Module {
 			preBuilder.append(temp.MODULE_DESCRIPTION);
 		}
 		SystemHandler.MESSAGE_LIST_GROP = preBuilder.toString();
-		initBuilder.append("\r\n[Message] list 群聊\r\n");
-		initBuilder.append(SystemHandler.MESSAGE_LIST_GROP);
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Message] list 群聊\r\n");
+			initBuilder.append(SystemHandler.MESSAGE_LIST_GROP);
+		}
+
+		// ==========================================================================================================================
+
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 实例化计划任务");
+		}
+		SystemHandler.scheduler_task = new Scheduler_TASK(initBuilder, config);
+		SystemHandler.scheduler_ddns = new Scheduler_DDNS(initBuilder, config);
+
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 注册计划任务");
+		}
+		SystemHandler.registerSchedular(SystemHandler.scheduler_task);
+		SystemHandler.registerSchedular(SystemHandler.scheduler_ddns);
+
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[Module] 启动计划任务");
+		}
+		SystemHandler.getSchedulerThread("task").start();
+		SystemHandler.getSchedulerThread("ddns").start();
 
 		return true;
 	}
@@ -663,7 +700,7 @@ public class SystemHandler extends Module {
 		builder.append(uptimemm);
 		builder.append(":");
 		builder.append(uptimess);
-		builder.append("\r\n分配内存: ");
+		builder.append("\r\n内存消耗: ");
 		builder.append(totalMemory - freeMemory);
 		builder.append("MB /");
 		builder.append(totalMemory);

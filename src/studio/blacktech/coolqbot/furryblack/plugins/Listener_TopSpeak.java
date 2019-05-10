@@ -103,7 +103,6 @@ public class Listener_TopSpeak extends ModuleListener {
 		long timeStart = System.currentTimeMillis();
 
 		StringBuilder builder = new StringBuilder();
-		builder.append("尝试生成报告： " + logLevel + " " + logMode + "\r\n" + message.toString());
 
 		try {
 			switch (logLevel) {
@@ -201,9 +200,6 @@ public class Listener_TopSpeak extends ModuleListener {
 	private void generateMembersRank(StringBuilder builder, Object[] parameters) {
 
 		long gropid = (long) parameters[0];
-
-		builder.append("DEBUG：(long) parameters[0]" + gropid);
-
 		GroupStatus groupStatus = this.STORAGE.get(gropid);
 		Member member;
 		int i = 0;

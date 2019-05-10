@@ -42,7 +42,6 @@ public class Scheduler_TASK extends ModuleScheduler {
 		time = time - Scheduler_TASK.date.getSeconds();
 		time = time - (Scheduler_TASK.date.getMinutes() * 60);
 		time = time - (Scheduler_TASK.date.getHours() * 3600);
-		System.out.println("TASKÄ£¿éÆô¶¯ - " + time);
 		try {
 			Thread.sleep(time * 1000);
 			while (true) {

@@ -29,11 +29,11 @@ public class Executor_admin extends ModuleExecutor {
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		if (userid != entry.OPERATOR()) {
-			Module.userInfo(userid, "你不是我的管理员");
+			Module.userInfo(userid, "");
 			return false;
 		}
 		if (message.segment < 2) {
-			String temp = SystemHandler.generateFullReport(0, 0, null, null);
+			String temp = SystemHandler.generateFullReport(0, 0, message, null);
 			Module.userInfo(entry.OPERATOR(), temp);
 			return true;
 		} else {
@@ -60,18 +60,18 @@ public class Executor_admin extends ModuleExecutor {
 				ModuleListener instance = SystemHandler.getListener("shui");
 				switch (message.messages[2]) {
 				case "dump":
-					Module.userInfo(entry.OPERATOR(), instance.generateReport(100, 0, null, null));
+					Module.userInfo(entry.OPERATOR(), instance.generateReport(100, 0, message, null));
 					break;
 				case "rank":
 					// admin shui rank 123123123
 					if (message.segment == 4) {
 						String temp = message.messages[3];
 						long gropid = Long.parseLong(temp);
-						Module.userInfo(entry.OPERATOR(), instance.generateReport(1, 0, null, new Object[] {
+						Module.userInfo(entry.OPERATOR(), instance.generateReport(1, 0, message, new Object[] {
 								gropid
 						}));
 					} else {
-						Module.userInfo(entry.OPERATOR(), instance.generateReport(0, 0, null, null));
+						Module.userInfo(entry.OPERATOR(), instance.generateReport(0, 0, message, null));
 					}
 					break;
 				}
@@ -97,31 +97,30 @@ public class Executor_admin extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		if (userid != entry.OPERATOR()) {
-			Module.gropInfo(gropid, userid, "你不是我的管理员");
+//			Module.gropInfo(gropid, userid, "你不是我的管理员");
 			return false;
 		}
 		if (message.segment < 2) {
-			Module.gropInfo(gropid, SystemHandler.generateFullReport(0, 0, null, null));
+			Module.gropInfo(gropid, SystemHandler.generateFullReport(0, 0, message, null));
 			return true;
 		} else {
 			switch (message.messages[1]) {
 			case "shui":
 				ModuleListener instance = SystemHandler.getListener("shui");
-				switch (message.segment) {
-				case 2:
-				default:
-					Module.gropInfo(gropid, entry.OPERATOR(), instance.generateReport(0, 0, null, null));
-				case 3:
-					switch (message.messages[2]) {
-					case "rank":
-						Module.gropInfo(gropid, entry.OPERATOR(), instance.generateReport(1, 0, null, new Object[] {
+				switch (message.messages[2]) {
+				case "dump":
+					Module.userInfo(entry.OPERATOR(), instance.generateReport(100, 0, message, null));
+					break;
+				case "rank":
+					if (message.segment == 4) {
+						Module.gropInfo(gropid,instance.generateReport(1, 0, message, new Object[] {
 								gropid
 						}));
-						break;
+					} else {
+						Module.gropInfo(gropid,instance.generateReport(0, 0, message, null));
 					}
 					break;
 				}
-				break;
 			}
 		}
 		return true;

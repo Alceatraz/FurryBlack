@@ -48,40 +48,37 @@ public class Scheduler_DDNS extends ModuleScheduler {
 		this.HOSTNAME = config.getProperty("ddnsapi_hostname", "");
 		this.PASSWORD = config.getProperty("ddnsapi_password", "");
 
-		initBuilder.append("[DDNS] 客户端：");
-		initBuilder.append(this.ENABLE ? "启用" : "禁用");
-		initBuilder.append("\r\n[DDNS] 标识：");
-		initBuilder.append(this.CLIENTUA);
-		initBuilder.append("\r\n[DDNS] 域名：");
-		initBuilder.append(this.HOSTNAME);
-		initBuilder.append("\r\n[DDNS] 密码：");
-		initBuilder.append(this.PASSWORD);
-		initBuilder.append("\r\n");
+		if (entry.INIT_VERBOSE) {
+			initBuilder.append("\r\n[DDNS] 客户端：");
+			initBuilder.append(this.ENABLE ? "启用" : "禁用");
+			initBuilder.append("\r\n[DDNS] 标识：");
+			initBuilder.append(this.CLIENTUA);
+			initBuilder.append("\r\n[DDNS] 域名：");
+			initBuilder.append(this.HOSTNAME);
+			initBuilder.append("\r\n[DDNS] 密码：");
+			initBuilder.append(this.PASSWORD);
+		}
 
 		String temp = this.getIPAddress();
 		if (temp == null) {
-			initBuilder.append("[DDNS] 地址获取失败\r\n");
+			initBuilder.append("\r\n[DDNS] 地址获取失败");
 			temp = this.updateDDNSIPAddress();
 			if (temp == null) {
-				initBuilder.append("[DDNS] 更新地址失败\r\n");
-				Module.userInfo(entry.OPERATOR(), "[DDNS] 需要手动介入！");
+				initBuilder.append("\r\n[DDNS] 更新地址失败，需要手动介入");
 			} else {
-				initBuilder.append("[DDNS] 更新地址成功：");
+				initBuilder.append("\r\b[DDNS] 更新地址成功： ");
 				initBuilder.append(temp);
-				initBuilder.append("\r\n");
 			}
 		} else {
-			initBuilder.append("[DDNS] 地址获取成功：");
+			initBuilder.append("\r\n[DDNS] 地址获取成功： ");
 			initBuilder.append(temp);
-			initBuilder.append("\r\n");
 			this.ADDRESS = temp;
 			temp = this.setDDNSIPAddress(temp);
 			if (temp == null) {
-				initBuilder.append("[DDNS] 设置地址失败\r\n");
+				initBuilder.append("\r\n[DDNS] 设置地址失败");
 			} else {
-				initBuilder.append("[DDNS] 设置地址成功：");
+				initBuilder.append("\r\n[DDNS] 设置地址成功： ");
 				initBuilder.append(temp);
-				initBuilder.append("\r\n");
 			}
 		}
 	}
@@ -102,14 +99,18 @@ public class Scheduler_DDNS extends ModuleScheduler {
 
 	private void doLoop() throws InterruptedException {
 		Date date = new Date();
-		int time = 3605;
+
+		int time = 605;
+
 		time = time - date.getSeconds();
-		time = time - (date.getMinutes() * 60);
+		time = time - (date.getMinutes() * 5);
+
 		if (time < 60) {
-			time = time + 3600;
+			time = time + 600;
 		}
-		System.out.println("DDNS模块启动 - " + time);
+
 		Thread.sleep(time * 1000);
+
 		while (true) {
 			// ####### =====================================================
 			new Thread(() -> {
@@ -126,7 +127,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 				}
 				// ####### =====================================================
 			}).start();
-			Thread.sleep(3600000L);
+			Thread.sleep(600000L);
 		}
 	}
 
