@@ -33,9 +33,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		this.MODULE_VERSION = "3.2.2";
 		this.MODULE_USAGE = new String[] {};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
-		this.MODULE_PRIVACY_LISTEN = new String[] {
-				"获取消息发送人", "获取消息信息"
-		};
+		this.MODULE_PRIVACY_LISTEN = new String[] { "获取消息发送人", "获取消息信息" };
 		this.MODULE_PRIVACY_STORED = new String[] {};
 		this.MODULE_PRIVACY_CACHED = new String[] {};
 		this.MODULE_PRIVACY_OBTAIN = new String[] {};
@@ -43,17 +41,20 @@ public class Listener_TopSpeak extends ModuleListener {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont)
+			throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont)
+			throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont)
+			throws Exception {
 		this.TOTAL_GLOBAL++;
 		this.LENGTH_GLOBAL = this.LENGTH_GLOBAL + message.length;
 		if (!this.STORAGE.containsKey(gropid)) {
@@ -82,7 +83,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	}
 
 	private class UserStatus {
-
+System.
 		public int TOTAL_MEMBER = 0;
 		public int LENGTH_MEMBER = 0;
 		public LinkedList<Message> userMessages = new LinkedList<Message>();
@@ -242,29 +243,33 @@ public class Listener_TopSpeak extends ModuleListener {
 		// DUMP时刻
 		String dumpTime = LoggerX.time("yyyy.MM.dd-HH.mm.ss");
 
-		GroupStatus tempGroup;
-		UserStatus tempUser;
-
-		BufferedWriter writer;
-
 		// 创建主目录
-		File dumpFolder = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "TopSpeak_Dump_" + dumpTime).toFile();
+		File dumpFolder = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "TopSpeakDump_" + dumpTime).toFile();
 		dumpFolder.mkdirs();
 
 		// 创建主目录 存放 按群时间线
-		File dumpGroupsFolder = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "main").toFile();
 
-		// 为每个群创建一个目录 存放 按成员划分
+		GroupStatus tempGroup;
+		UserStatus tempUser;
+		BufferedWriter writer;
+
+		File dumpGroupFolder;
 		File dumpGroupByTimeline;
+		File dumpGroupByUserFolder;
+		File dumpGroupByUser;
 
 		for (long gropid : this.STORAGE.keySet()) {
 
-			tempGroup = this.STORAGE.get(gropid);
+			dumpGroupFolder = Paths.get(dumpFolder.getAbsolutePath(), "Group_" + gropid).toFile();
+			dumpGroupFolder.mkdirs();
 
-			dumpGroupByTimeline = Paths.get(dumpGroupsFolder.getAbsolutePath(), Long.toString(gropid) + ".txt").toFile();
+			// 按群创建时间线文件
+			dumpGroupByTimeline = Paths.get(dumpFolder.getAbsolutePath(), "Group_" + gropid + ".txt").toFile();
 			dumpGroupByTimeline.createNewFile();
 
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpGroupByTimeline), "UTF-8"));
+
+			tempGroup = this.STORAGE.get(gropid);
 
 			writer.write("群号：" + gropid);
 			writer.write("\r\n发言条数：" + tempGroup.TOTAL_GROUP);
@@ -272,34 +277,22 @@ public class Listener_TopSpeak extends ModuleListener {
 			writer.write("\r\n");
 
 			for (Message tempMessage : tempGroup.gropMessages) {
-				writer.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + ":" + tempMessage.rawMessage);
+				writer.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + "： " + tempMessage.rawMessage);
 			}
 
-			writer.flush();
-			writer.close();
-		}
-
-		// 再次循环保存成员分类，分开写减少异常造成的影响范围
-		File dumpGroupByUserFolder;
-		File dumpGroupByUser;
-
-		for (long gropid : this.STORAGE.keySet()) {
-
-			tempGroup = this.STORAGE.get(gropid);
-
+			// 按用户创建文件
 			dumpGroupByUserFolder = Paths.get(dumpFolder.getAbsolutePath(), Long.toString(gropid)).toFile();
-
 			dumpGroupByUserFolder.mkdirs();
 
 			for (long qqid : tempGroup.userStatus.keySet()) {
 
-				tempUser = tempGroup.userStatus.get(qqid);
-
-				dumpGroupByUser = Paths.get(dumpGroupByUserFolder.getAbsolutePath(), Long.toString(qqid) + ".txt").toFile();
+				dumpGroupByUser = Paths
+						.get(dumpGroupByUserFolder.getAbsolutePath(), "User_" + Long.toString(qqid) + ".txt").toFile();
 				dumpGroupByUser.createNewFile();
 
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpGroupByUser), "UTF-8"));
 
+				tempUser = tempGroup.userStatus.get(qqid);
 				writer.write("成员：" + qqid);
 				writer.write("\r\n发言条数：" + tempUser.TOTAL_MEMBER);
 				writer.write("\r\n发言字数：" + tempUser.LENGTH_MEMBER);
@@ -308,10 +301,16 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				for (Message tempMessage : tempUser.userMessages) {
 
-					writer.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + ":" + tempMessage.rawMessage);
+					writer.write(
+							"\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + ":" + tempMessage.rawMessage);
 				}
 			}
+
+			writer.flush();
+			writer.close();
+
 		}
+
 		builder.append("完整内存镜像已保存");
 	}
 }

@@ -56,6 +56,14 @@ public class Executor_admin extends ModuleExecutor {
 				}
 				break;
 			//
+			case "say":
+				if (message.segment == 2) {
+					Module.userInfo(entry.OPERATOR(), "//admin say <GroupID> XXX XXX XXX");
+				} else {
+					Module.userInfo(Long.parseLong(message.messages[2]), message.join(3));
+				}
+				break;
+			//
 			case "shui":
 				ModuleListener instance = SystemHandler.getListener("shui");
 				switch (message.messages[2]) {
@@ -113,11 +121,11 @@ public class Executor_admin extends ModuleExecutor {
 					break;
 				case "rank":
 					if (message.segment == 4) {
-						Module.gropInfo(gropid,instance.generateReport(1, 0, message, new Object[] {
+						Module.gropInfo(gropid, instance.generateReport(1, 0, message, new Object[] {
 								gropid
 						}));
 					} else {
-						Module.gropInfo(gropid,instance.generateReport(0, 0, message, null));
+						Module.gropInfo(gropid, instance.generateReport(0, 0, message, null));
 					}
 					break;
 				}
