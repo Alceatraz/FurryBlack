@@ -32,10 +32,12 @@ public class Executor_gamb extends ModuleExecutor {
 		this.MODULE_PRIVACY_LISTEN = new String[] {};
 		this.MODULE_PRIVACY_STORED = new String[] {};
 		this.MODULE_PRIVACY_CACHED = new String[] {
-				"群号-回合对应表 - 回合结束后删除", "回合-QQ号对应表 - 回合结束后删除"
+				"群号-回合对应表 - 回合结束后删除",
+				"回合-QQ号对应表 - 回合结束后删除"
 		};
 		this.MODULE_PRIVACY_OBTAIN = new String[] {
-				"获取命令发送人", "用户的昵称和群昵称"
+				"获取命令发送人",
+				"用户的昵称和群昵称"
 		};
 
 		this.roulette.add(0);

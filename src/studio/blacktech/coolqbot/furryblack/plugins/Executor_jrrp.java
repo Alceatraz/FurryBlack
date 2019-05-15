@@ -10,6 +10,7 @@ import studio.blacktech.coolqbot.furryblack.module.Module;
 import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
 
 public class Executor_jrrp extends ModuleExecutor {
+
 	private HashMap<Long, Integer> jrrp = new HashMap<Long, Integer>();
 
 	public Executor_jrrp() {

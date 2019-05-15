@@ -3,6 +3,7 @@ package studio.blacktech.coolqbot.furryblack.module;
 import com.sobte.cqp.jcq.event.JcqApp;
 
 public abstract class Module {
+
 	public int COUNT = 0;
 	public String MODULE_DISPLAYNAME;
 	public String MODULE_PACKAGENAME;

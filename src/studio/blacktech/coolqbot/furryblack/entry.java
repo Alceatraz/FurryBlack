@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack;
+﻿package studio.blacktech.coolqbot.furryblack;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,7 +16,6 @@ import com.sobte.cqp.jcq.entity.IRequest;
 import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
-import studio.blacktech.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.module.Message;
 
 public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {

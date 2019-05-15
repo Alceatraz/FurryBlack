@@ -19,14 +19,16 @@ public class Executor_chou extends ModuleExecutor {
 		this.MODULE_DESCRIPTION = "从群随机抽取一个人";
 		this.MODULE_VERSION = "2.4.0";
 		this.MODULE_USAGE = new String[] {
-				"//chou - 随机抽一个人", "//chou 理由 - 以某个理由抽一个人"
+				"//chou - 随机抽一个人",
+				"//chou 理由 - 以某个理由抽一个人"
 		};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {};
 		this.MODULE_PRIVACY_STORED = new String[] {};
 		this.MODULE_PRIVACY_CACHED = new String[] {};
 		this.MODULE_PRIVACY_OBTAIN = new String[] {
-				"获取命令发送人", "获取群成员列表"
+				"获取命令发送人",
+				"获取群成员列表"
 		};
 	}
 

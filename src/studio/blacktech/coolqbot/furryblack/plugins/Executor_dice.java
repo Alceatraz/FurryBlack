@@ -13,7 +13,8 @@ public class Executor_dice extends ModuleExecutor {
 		this.MODULE_DESCRIPTION = "发送一个骰子表情";
 		this.MODULE_VERSION = "2.0.3";
 		this.MODULE_USAGE = new String[] {
-				"//dice - 发送一个魔法表情", "//dice 理由 - 为某事投掷一枚骰子"
+				"//dice - 发送一个魔法表情",
+				"//dice 理由 - 为某事投掷一枚骰子"
 		};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {};

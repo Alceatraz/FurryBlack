@@ -21,7 +21,9 @@ public class Executor_roll extends ModuleExecutor {
 		this.MODULE_DESCRIPTION = "生成随机数或者真假";
 		this.MODULE_VERSION = "2.1.4";
 		this.MODULE_USAGE = new String[] {
-				"//roll - 抽取真假", "//roll 数字 - 从零到给定数字任选一个数字", "//roll 数字 数字 - 从给定两个数字中间抽取一个"
+				"//roll - 抽取真假",
+				"//roll 数字 - 从零到给定数字任选一个数字",
+				"//roll 数字 数字 - 从给定两个数字中间抽取一个"
 		};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {};

@@ -76,16 +76,52 @@ public class Executor_zhan extends ModuleExecutor {
 		this.CARD.put(44, "XXI. THE WORLD 世界逆位\r\n惯性 固执 停滞 持久");
 		// 为什么不写循环？ 因为运行快
 
-		// @formatter:off
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);
-		// @formatter:on
+	// @formatter:off
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	this.FREQ.add(0);
+	// @formatter:on
 	}
 
 	@Override

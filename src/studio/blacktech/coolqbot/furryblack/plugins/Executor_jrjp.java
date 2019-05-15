@@ -28,10 +28,12 @@ public class Executor_jrjp extends ModuleExecutor {
 		this.MODULE_PRIVACY_LISTEN = new String[] {};
 		this.MODULE_PRIVACY_STORED = new String[] {};
 		this.MODULE_PRIVACY_CACHED = new String[] {
-				"群号-QQ号对应表 - 每日UTC+8 00:00 清空", "群号-AV号对应表 - 每日UTC+8 00:00 清空"
+				"群号-QQ号对应表 - 每日UTC+8 00:00 清空",
+				"群号-AV号对应表 - 每日UTC+8 00:00 清空"
 		};
 		this.MODULE_PRIVACY_OBTAIN = new String[] {
-				"获取命令发送人", "被抽到成员的昵称和群昵称"
+				"获取命令发送人",
+				"被抽到成员的昵称和群昵称"
 		};
 	}
 

@@ -14,7 +14,7 @@ import java.util.TreeMap;
 import com.sobte.cqp.jcq.entity.Member;
 import com.sobte.cqp.jcq.event.JcqApp;
 
-import studio.blacktech.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.LoggerX;
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.module.Message;
 import studio.blacktech.coolqbot.furryblack.module.ModuleListener;
@@ -33,7 +33,10 @@ public class Listener_TopSpeak extends ModuleListener {
 		this.MODULE_VERSION = "3.2.2";
 		this.MODULE_USAGE = new String[] {};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
-		this.MODULE_PRIVACY_LISTEN = new String[] { "获取消息发送人", "获取消息信息" };
+		this.MODULE_PRIVACY_LISTEN = new String[] {
+				"获取消息发送人",
+				"获取消息信息"
+		};
 		this.MODULE_PRIVACY_STORED = new String[] {};
 		this.MODULE_PRIVACY_CACHED = new String[] {};
 		this.MODULE_PRIVACY_OBTAIN = new String[] {};
@@ -41,20 +44,17 @@ public class Listener_TopSpeak extends ModuleListener {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
 		this.TOTAL_GLOBAL++;
 		this.LENGTH_GLOBAL = this.LENGTH_GLOBAL + message.length;
 		if (!this.STORAGE.containsKey(gropid)) {
@@ -83,7 +83,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	}
 
 	private class UserStatus {
-System.
+
 		public int TOTAL_MEMBER = 0;
 		public int LENGTH_MEMBER = 0;
 		public LinkedList<Message> userMessages = new LinkedList<Message>();
@@ -286,8 +286,7 @@ System.
 
 			for (long qqid : tempGroup.userStatus.keySet()) {
 
-				dumpGroupByUser = Paths
-						.get(dumpGroupByUserFolder.getAbsolutePath(), "User_" + Long.toString(qqid) + ".txt").toFile();
+				dumpGroupByUser = Paths.get(dumpGroupByUserFolder.getAbsolutePath(), "User_" + Long.toString(qqid) + ".txt").toFile();
 				dumpGroupByUser.createNewFile();
 
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpGroupByUser), "UTF-8"));
@@ -301,8 +300,7 @@ System.
 
 				for (Message tempMessage : tempUser.userMessages) {
 
-					writer.write(
-							"\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + ":" + tempMessage.rawMessage);
+					writer.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + ":" + tempMessage.rawMessage);
 				}
 			}
 
