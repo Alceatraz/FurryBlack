@@ -350,14 +350,56 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	@Override
 	public int groupMemberIncrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
-		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " - [加群] " + ((subtype == 1) ? "自主申请" : "管理邀请") + "\r\n群号：" + fromGroup + "\r\n管理：" + fromQQ + "\r\n成员：" + beingOperateQQ);
-		return 0;
+		try {
+			SystemHandler.doGroupMemberIncrease(subtype, sendTime, fromGroup, fromQQ, beingOperateQQ);
+		} catch (final Exception exce) {
+			exce.printStackTrace();
+			final StringBuilder builder = new StringBuilder();
+			builder.append(LoggerX.time());
+			builder.append(" [成员增加异常]");
+			for (StackTraceElement stack : exce.getStackTrace()) {
+				builder.append("\r\n");
+				builder.append(stack.getClassName());
+				builder.append(".");
+				builder.append(stack.getMethodName());
+				builder.append("(");
+				builder.append(stack.getClass().getSimpleName());
+				builder.append(".");
+				builder.append(stack.getMethodName());
+				builder.append(":");
+				builder.append(stack.getLineNumber());
+				builder.append(")");
+			}
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), builder.toString());
+		}
+		return IMsg.MSG_IGNORE;
 	}
 
 	@Override
 	public int groupMemberDecrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
-		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " - [退群] " + (subtype == 1 ? "自主退群" : "管理踢出") + "\r\n群号：" + fromGroup + "\r\n管理：" + fromQQ + "\r\n成员：" + beingOperateQQ);
-		return 0;
+		try {
+			SystemHandler.doGroupMemberDecrease(subtype, sendTime, fromGroup, fromQQ, beingOperateQQ);
+		} catch (final Exception exce) {
+			exce.printStackTrace();
+			final StringBuilder builder = new StringBuilder();
+			builder.append(LoggerX.time());
+			builder.append(" [成员减少异常]");
+			for (StackTraceElement stack : exce.getStackTrace()) {
+				builder.append("\r\n");
+				builder.append(stack.getClassName());
+				builder.append(".");
+				builder.append(stack.getMethodName());
+				builder.append("(");
+				builder.append(stack.getClass().getSimpleName());
+				builder.append(".");
+				builder.append(stack.getMethodName());
+				builder.append(":");
+				builder.append(stack.getLineNumber());
+				builder.append(")");
+			}
+			JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), builder.toString());
+		}
+		return IMsg.MSG_IGNORE;
 	}
 	// ==============================================================================================================================================================
 

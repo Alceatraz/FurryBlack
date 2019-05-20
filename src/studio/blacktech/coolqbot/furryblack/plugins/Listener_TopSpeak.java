@@ -95,6 +95,16 @@ public class Listener_TopSpeak extends ModuleListener {
 		}
 	}
 
+	// 退群要移除掉 否则将在 report 时因成员不在群内报错
+	public void memberExit(long gropid, long userid) {
+		if (this.STORAGE.containsKey(gropid)) {
+			GroupStatus temp = this.STORAGE.get(gropid);
+			if (temp.userStatus.containsKey(userid)) {
+				temp.userStatus.remove(userid);
+			}
+		}
+	}
+
 	/***
 	 *
 	 */
@@ -247,68 +257,53 @@ public class Listener_TopSpeak extends ModuleListener {
 		File dumpFolder = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "TopSpeakDump_" + dumpTime).toFile();
 		dumpFolder.mkdirs();
 
-		// 创建主目录 存放 按群时间线
+		for (long tempGropid : this.STORAGE.keySet()) {
 
-		GroupStatus tempGroup;
-		UserStatus tempUser;
-		BufferedWriter writer;
+			// 为每个组创建目录
+			File groupContainerFolder = Paths.get(dumpFolder.getAbsolutePath(), "Group_" + tempGropid).toFile();
+			groupContainerFolder.mkdir();
 
-		File dumpGroupFolder;
-		File dumpGroupByTimeline;
-		File dumpGroupByUserFolder;
-		File dumpGroupByUser;
+			File dumpByTimeline = Paths.get(groupContainerFolder.getAbsolutePath(), "main_" + tempGropid + ".txt").toFile();
+			dumpByTimeline.createNewFile();
 
-		for (long gropid : this.STORAGE.keySet()) {
+			BufferedWriter groupTimelineWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpByTimeline), "UTF-8"));
 
-			dumpGroupFolder = Paths.get(dumpFolder.getAbsolutePath(), "Group_" + gropid).toFile();
-			dumpGroupFolder.mkdirs();
+			GroupStatus tempGroupStatus = this.STORAGE.get(tempGropid);
 
-			// 按群创建时间线文件
-			dumpGroupByTimeline = Paths.get(dumpFolder.getAbsolutePath(), "Group_" + gropid + ".txt").toFile();
-			dumpGroupByTimeline.createNewFile();
+			groupTimelineWriter.write("群号：" + tempGropid);
+			groupTimelineWriter.write("\r\n发言条数：" + tempGroupStatus.TOTAL_GROUP);
+			groupTimelineWriter.write("\r\n发言字数：" + tempGroupStatus.LENGTH_GROUP);
+			groupTimelineWriter.write("\r\n");
 
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpGroupByTimeline), "UTF-8"));
-
-			tempGroup = this.STORAGE.get(gropid);
-
-			writer.write("群号：" + gropid);
-			writer.write("\r\n发言条数：" + tempGroup.TOTAL_GROUP);
-			writer.write("\r\n发言字数：" + tempGroup.LENGTH_GROUP);
-			writer.write("\r\n");
-
-			for (Message tempMessage : tempGroup.gropMessages) {
-				writer.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + "： " + tempMessage.rawMessage);
+			for (Message tempMessage : tempGroupStatus.gropMessages) {
+				groupTimelineWriter.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + "： " + tempMessage.rawMessage);
 			}
 
-			// 按用户创建文件
-			dumpGroupByUserFolder = Paths.get(dumpFolder.getAbsolutePath(), Long.toString(gropid)).toFile();
-			dumpGroupByUserFolder.mkdirs();
+			groupTimelineWriter.flush();
+			groupTimelineWriter.close();
 
-			for (long qqid : tempGroup.userStatus.keySet()) {
+			for (long tempUserid : tempGroupStatus.userStatus.keySet()) {
 
-				dumpGroupByUser = Paths.get(dumpGroupByUserFolder.getAbsolutePath(), "User_" + Long.toString(qqid) + ".txt").toFile();
-				dumpGroupByUser.createNewFile();
+				File dumpByUseid = Paths.get(groupContainerFolder.getAbsolutePath(), "user_" + tempGropid + ".txt").toFile();
+				dumpByUseid.createNewFile();
 
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpGroupByUser), "UTF-8"));
+				BufferedWriter useridWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpByTimeline), "UTF-8"));
 
-				tempUser = tempGroup.userStatus.get(qqid);
-				writer.write("成员：" + qqid);
-				writer.write("\r\n发言条数：" + tempUser.TOTAL_MEMBER);
-				writer.write("\r\n发言字数：" + tempUser.LENGTH_MEMBER);
+				UserStatus tempUserStatus = tempGroupStatus.userStatus.get(tempUserid);
 
-				writer.write("\r\n");
+				useridWriter.write("成员：" + tempUserid);
+				useridWriter.write("\r\n发言条数：" + tempUserStatus.TOTAL_MEMBER);
+				useridWriter.write("\r\n发言字数：" + tempUserStatus.LENGTH_MEMBER);
+				useridWriter.write("\r\n");
 
-				for (Message tempMessage : tempUser.userMessages) {
+				useridWriter.flush();
+				useridWriter.close();
 
-					writer.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + ":" + tempMessage.rawMessage);
+				for (Message tempMessage : tempUserStatus.userMessages) {
+					useridWriter.write("\r\n  " + LoggerX.time(new Date(tempMessage.sendTime)) + ":" + tempMessage.rawMessage);
 				}
 			}
-
-			writer.flush();
-			writer.close();
-
 		}
-
-		builder.append("完整内存镜像已保存");
+		builder.append("已保存 - " + dumpTime);
 	}
 }

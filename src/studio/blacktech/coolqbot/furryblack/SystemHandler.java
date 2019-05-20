@@ -49,70 +49,70 @@ public class SystemHandler extends Module {
 
 	private static String MESSAGE_HELP =
 
-			"FurryBlack - 一个小动物形象的人工智障\r\n" + 
-			"\r\n" + 
-			"使用即表明同意最终用户许可协议\r\n" + 
-			"\r\n" + "无需添加好友也可使用\r\n" + 
-			"添加好友将自动同意\r\n" + 
-			"邀请至群将自动同意\r\n" + 
-			"\r\n" + 
-			"命令均以双斜线//开头\r\n" + 
-			"//eula - 查看用户使用协议\r\n" + 
-			"//info - 版本版权信息\r\n" + 
-			"//list - 列出功能模块\r\n" + 
+			"FurryBlack - 一个小动物形象的人工智障\r\n" +
+			"\r\n" +
+			"使用即表明同意最终用户许可协议\r\n" +
+			"\r\n" + "无需添加好友也可使用\r\n" +
+			"添加好友将自动同意\r\n" +
+			"邀请至群将自动同意\r\n" +
+			"\r\n" +
+			"命令均以双斜线//开头\r\n" +
+			"//eula - 查看用户使用协议\r\n" +
+			"//info - 版本版权信息\r\n" +
+			"//list - 列出功能模块\r\n" +
 			"//help <命令> - 显示指定模块帮助";
 
 	private static String MESSAGE_INFO =
 
-			"FurryBlack - 一个小动物形象的人工智障\r\n" + 
-			"\r\n" + 
-			"使用即表明同意最终用户许可协议(//eula查看)\r\n" + 
-			"\r\n" + 
-			"版本信息: REPLACE_VERSION\r\n" + 
-			"\r\n" + 
-			"隐私声明(框架级隐私):\r\n" + 
-			"私聊模式 - 用户消息 → 监听器 → 触发器 → 过滤器(//开头的消息) → 命令插件\r\n" + 
-			"群聊模式 - 用户消息 → 监听器 → 触发器 → 过滤器(//开头的消息) → 命令插件\r\n" + 
-			"\r\n" + 
-			"隐私声明(模块级隐私):\r\n" + 
-			"每个模块都有属于自己的隐私级别，可由//help <name>查看\r\n"	+ 
-			"触发 - 指可直接获取用户输入信息并且可以在解析命令前拦截但不能修改任何内容的插件\r\n" + 
-			"监听 - 指可直接获取用户输入信息但不能拦截消息也不可修改任何内容的的插件\r\n" + 
-			"普通 - 如未注明触发或者监听则为仅在//开头的信息被唤起且只唤起对应PACKNAME的插件\r\n" + 
-			"\r\n" + 
-			"存储 - 指将含有用户信息的数据存储到持久化/数据库/文件中\r\n" + 
-			"缓存 - 指将含有用户信息的数据存储到内存数据结构/容器中，在特定情况下释放\r\n" + 
-			"获取 - 指将含有用户信息的数据提取并用于内存仅用于单次处理，处理完成后立即释放\r\n" + 
-			"\r\n" + 
-			"版权信息(逻辑部分): 版权属于BlackTechStudio\r\n" + 
-			"由 Team BTSNUVO 开发\r\n" + 
-			"由 Team BTSNODE 运营\r\n" + 
-			"项目地址 https://git.blacktech.studio/blacktechstudio/furryblack\r\n" + 
-			"\r\n" + 
-			"版权信息(虚拟形象): 版权属于FPDG,授权使用\r\n" + 
-			"https://twitter.com/flappydoggy/status/877582553762283520\r\n" + 
+			"FurryBlack - 一个小动物形象的人工智障\r\n" +
+			"\r\n" +
+			"使用即表明同意最终用户许可协议(//eula查看)\r\n" +
+			"\r\n" +
+			"版本信息: REPLACE_VERSION\r\n" +
+			"\r\n" +
+			"隐私声明(框架级隐私):\r\n" +
+			"私聊模式 - 用户消息 → 监听器 → 触发器 → 过滤器(//开头的消息) → 命令插件\r\n" +
+			"群聊模式 - 用户消息 → 监听器 → 触发器 → 过滤器(//开头的消息) → 命令插件\r\n" +
+			"\r\n" +
+			"隐私声明(模块级隐私):\r\n" +
+			"每个模块都有属于自己的隐私级别，可由//help <name>查看\r\n"	+
+			"触发 - 指可直接获取用户输入信息并且可以在解析命令前拦截但不能修改任何内容的插件\r\n" +
+			"监听 - 指可直接获取用户输入信息但不能拦截消息也不可修改任何内容的的插件\r\n" +
+			"普通 - 如未注明触发或者监听则为仅在//开头的信息被唤起且只唤起对应PACKNAME的插件\r\n" +
+			"\r\n" +
+			"存储 - 指将含有用户信息的数据存储到持久化/数据库/文件中\r\n" +
+			"缓存 - 指将含有用户信息的数据存储到内存数据结构/容器中，在特定情况下释放\r\n" +
+			"获取 - 指将含有用户信息的数据提取并用于内存仅用于单次处理，处理完成后立即释放\r\n" +
+			"\r\n" +
+			"版权信息(逻辑部分): 版权属于BlackTechStudio\r\n" +
+			"由 Team BTSNUVO 开发\r\n" +
+			"由 Team BTSNODE 运营\r\n" +
+			"项目地址 https://git.blacktech.studio/blacktechstudio/furryblack\r\n" +
+			"\r\n" +
+			"版权信息(虚拟形象): 版权属于FPDG,授权使用\r\n" +
+			"https://twitter.com/flappydoggy/status/877582553762283520\r\n" +
 			"https://twitter.com/flappydoggy/status/875026125038080000\r\n"
 			.replaceAll("REPLACE_VERSION", entry.PRODUCT_VERSION);
 
 	private static String MESSAGE_EULA =
 
-			"FurryBlack - 一个小动物形象的人工智障\r\n" + 
-			"\r\n" + 
-			"最终用户许可协议（以下简称EULA）：\r\n" + 
-			"\r\n" + 
-			"甲方：Blacktechstudio（以下简称BTS）\r\n" + 
-			"乙方：阁下\r\n" + 
-			"\r\n" + 
-			"1：除//help //eula //info之外，使用本人格任何功能即表示乙方同意本EULA；\r\n" + 
-			"2：甲方不对乙方的任何行为明示或者默示的任何赞许或反对；\r\n" + 
-			"3：乙方如违反本EULA，甲方有权利取消乙方的使用权；\r\n" + 
-			"4：乙方不得以任何形式散播任与法律或道德冲违背的不良信息；\r\n" + 
-			"5：乙方不得在未授权的情况下将本人格以任何形式用于任何形式的商业用途；\r\n"	+ 
-			"6：甲方以及所有涉及的开发维护保障人员不承担由于乙方使用导致的任何损失；\r\n" + 
-			"7：甲方以及所有涉及的开发维护保障人员不承担由于程序或机组故障引起的任何损失；\r\n" + 
-			"最终解释权归BTS所有" + 
-			"\r\n" + 
-			"\r\n" + 
+			"FurryBlack - 一个小动物形象的人工智障\r\n" +
+			"\r\n" +
+			"最终用户许可协议（以下简称EULA）：\r\n" +
+			"\r\n" +
+			"甲方：Blacktechstudio（以下简称BTS）\r\n" +
+			"乙方：阁下\r\n" +
+			"\r\n" +
+			"1：除//help //eula //info之外，使用本人格任何功能即表示乙方同意本EULA；\r\n" +
+			"2：甲方不对乙方的任何行为明示或者默示的任何赞许或反对；\r\n" +
+			"3：乙方如违反本EULA，甲方有权利取消乙方的使用权；\r\n" +
+			"4：乙方不得以任何形式散播任与法律或道德冲违背的不良信息；\r\n" +
+			"5：乙方不得在未授权的情况下将本人格以任何形式用于任何形式的商业用途；\r\n"	+
+			"6：甲方以及所有涉及的开发维护保障人员不承担由于乙方使用导致的任何损失；\r\n" +
+			"7：甲方以及所有涉及的开发维护保障人员不承担由于程序或机组故障引起的任何损失；\r\n" +
+			"最终解释权归BTS所有" +
+			"\r\n" +
+			"\r\n" +
 			"BTS，2019-02-22 敬上";
 
 	// @formatter:on
@@ -477,6 +477,21 @@ public class SystemHandler extends Module {
 		SystemHandler.getSchedulerThread("ddns").start();
 
 		return true;
+	}
+	// ==========================================================================================================================================================
+	//
+	//
+	//
+	// ==========================================================================================================================================================
+
+	public static void doGroupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
+		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " - [加群] " + ((subtype == 1) ? "自主申请" : "管理邀请") + "\r\n群号：" + fromGroup + "\r\n管理：" + fromQQ + "\r\n成员：" + beingOperateQQ);
+
+	}
+
+	public static void doGroupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
+		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " - [退群] " + (subtype == 1 ? "自主退群" : "管理踢出") + "\r\n群号：" + fromGroup + "\r\n管理：" + fromQQ + "\r\n成员：" + beingOperateQQ);
+		listener_topspeak.memberExit(fromGroup, beingOperateQQ);
 	}
 
 	// ==========================================================================================================================================================
@@ -857,4 +872,5 @@ public class SystemHandler extends Module {
 			return null;
 		}
 	}
+
 }
