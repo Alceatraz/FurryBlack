@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack;
+package studio.blacktech.coolqbot.furryblack.common;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

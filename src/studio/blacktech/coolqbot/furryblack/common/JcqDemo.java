@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack;
+package studio.blacktech.coolqbot.furryblack.common;
 
 import javax.swing.JOptionPane;
 

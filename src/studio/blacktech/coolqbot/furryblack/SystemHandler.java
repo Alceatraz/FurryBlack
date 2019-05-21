@@ -9,27 +9,29 @@ import java.util.TreeMap;
 import com.sobte.cqp.jcq.entity.IMsg;
 import com.sobte.cqp.jcq.event.JcqApp;
 
-import studio.blacktech.coolqbot.furryblack.module.Message;
-import studio.blacktech.coolqbot.furryblack.module.Module;
-import studio.blacktech.coolqbot.furryblack.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.module.ModuleListener;
-import studio.blacktech.coolqbot.furryblack.module.ModuleScheduler;
-import studio.blacktech.coolqbot.furryblack.module.ModuleTrigger;
-import studio.blacktech.coolqbot.furryblack.plugins.Executor_admin;
-import studio.blacktech.coolqbot.furryblack.plugins.Executor_chou;
-import studio.blacktech.coolqbot.furryblack.plugins.Executor_dice;
-import studio.blacktech.coolqbot.furryblack.plugins.Executor_echo;
-import studio.blacktech.coolqbot.furryblack.plugins.Executor_gamb;
-import studio.blacktech.coolqbot.furryblack.plugins.Executor_jrjp;
-import studio.blacktech.coolqbot.furryblack.plugins.Executor_jrrp;
-import studio.blacktech.coolqbot.furryblack.plugins.Executor_kong;
-import studio.blacktech.coolqbot.furryblack.plugins.Executor_roll;
-import studio.blacktech.coolqbot.furryblack.plugins.Executor_zhan;
-import studio.blacktech.coolqbot.furryblack.plugins.Listener_TopSpeak;
-import studio.blacktech.coolqbot.furryblack.plugins.Trigger_SuidDeny;
-import studio.blacktech.coolqbot.furryblack.plugins.Trigger_WordDeny;
-import studio.blacktech.coolqbot.furryblack.scheduler.Scheduler_DDNS;
-import studio.blacktech.coolqbot.furryblack.scheduler.Scheduler_TASK;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.Message;
+import studio.blacktech.coolqbot.furryblack.common.Module;
+import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.common.ModuleListener;
+import studio.blacktech.coolqbot.furryblack.common.ModuleScheduler;
+import studio.blacktech.coolqbot.furryblack.common.ModuleTrigger;
+import studio.blacktech.coolqbot.furryblack.common.ReInitializationException;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_admin;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_chou;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_dice;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_echo;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_gamb;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_jrjp;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_jrrp;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_kong;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_roll;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_zhan;
+import studio.blacktech.coolqbot.furryblack.modules.Listener_TopSpeak;
+import studio.blacktech.coolqbot.furryblack.modules.Scheduler_DDNS;
+import studio.blacktech.coolqbot.furryblack.modules.Scheduler_TASK;
+import studio.blacktech.coolqbot.furryblack.modules.Trigger_SuidDeny;
+import studio.blacktech.coolqbot.furryblack.modules.Trigger_WordDeny;
 
 public class SystemHandler extends Module {
 
@@ -698,7 +700,6 @@ public class SystemHandler extends Module {
 
 		long totalMemory = Runtime.getRuntime().totalMemory() / 1024;
 		long freeMemory = Runtime.getRuntime().freeMemory() / 1024;
-		long maxMemory = Runtime.getRuntime().maxMemory() / 1024;
 
 		String report;
 		StringBuilder builder = new StringBuilder();
@@ -712,15 +713,11 @@ public class SystemHandler extends Module {
 		builder.append(uptimemm);
 		builder.append(":");
 		builder.append(uptimess);
-		builder.append("\r\n内存消耗: ");
+		builder.append("\r\n系统内存: ");
 		builder.append(totalMemory - freeMemory);
 		builder.append("KB /");
 		builder.append(totalMemory);
-		builder.append("KB\r\n消耗内存: ");
-		builder.append(totalMemory);
-		builder.append("KB /");
-		builder.append(maxMemory);
-		builder.append("MB\r\n\r\n调用-私聊： ");
+		builder.append("KB\r\n\r\n调用-私聊： ");
 		builder.append(SystemHandler.COUNT_USER_MESSAGE);
 		builder.append("次\r\n调用-组聊： ");
 		builder.append(SystemHandler.COUNT_DISZ_MESSAGE);

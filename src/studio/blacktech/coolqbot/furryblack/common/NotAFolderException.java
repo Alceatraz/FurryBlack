@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack;
+package studio.blacktech.coolqbot.furryblack.common;
 
 public class NotAFolderException extends Exception {
 
