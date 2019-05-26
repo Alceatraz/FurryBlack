@@ -21,7 +21,9 @@ public abstract class Module {
 	public abstract String generateReport(int logLevel, int logMode, Message message, Object[] parameters);
 
 	public void genFullHelp() {
+
 		StringBuilder builder = new StringBuilder();
+
 		builder.append(this.MODULE_PACKAGENAME);
 		builder.append(" > ");
 		builder.append(this.MODULE_DISPLAYNAME);
@@ -30,6 +32,7 @@ public abstract class Module {
 		builder.append(" - ");
 		builder.append(this.MODULE_DESCRIPTION);
 		builder.append("\r\n命令用法：");
+
 		if (this.MODULE_USAGE.length == 0) {
 			builder.append("无");
 		} else {
@@ -38,43 +41,62 @@ public abstract class Module {
 				builder.append(temp);
 			}
 		}
-		builder.append("\r\n隐私声明：\r\n  触发:");
-		builder.append(this.MODULE_PRIVACY_TRIGER.length);
-		for (String temp : this.MODULE_PRIVACY_TRIGER) {
-			builder.append("\r\n  ");
-			builder.append(temp);
+
+		builder.append("\r\n隐私声明：");
+
+		builder.append("\r\n触发器：");
+		if (this.MODULE_PRIVACY_TRIGER.length == 0) {
+			builder.append("无");
+		} else {
+			builder.append(this.MODULE_PRIVACY_TRIGER.length);
+			for (String temp : this.MODULE_PRIVACY_TRIGER) {
+				builder.append("\r\n  ");
+				builder.append(temp);
+			}
 		}
 
-		builder.append("\r\n监听:");
-		builder.append(this.MODULE_PRIVACY_LISTEN.length);
-		builder.append("\r\n");
-		for (String temp : this.MODULE_PRIVACY_LISTEN) {
-			builder.append(temp);
-			builder.append("\r\n");
+		builder.append("\r\n监听器：");
+		if (this.MODULE_PRIVACY_LISTEN.length == 0) {
+			builder.append("无");
+		} else {
+			builder.append(this.MODULE_PRIVACY_LISTEN.length);
+			for (String temp : this.MODULE_PRIVACY_LISTEN) {
+				builder.append("\r\n  ");
+				builder.append(temp);
+			}
 		}
 
-		builder.append("\r\n存储:");
-		builder.append(this.MODULE_PRIVACY_STORED.length);
-		builder.append("\r\n");
-		for (String temp : this.MODULE_PRIVACY_STORED) {
-			builder.append("\r\n");
-			builder.append(temp);
+		builder.append("\r\n存储：");
+		if (this.MODULE_PRIVACY_STORED.length == 0) {
+			builder.append("无");
+		} else {
+			builder.append(this.MODULE_PRIVACY_STORED.length);
+			for (String temp : this.MODULE_PRIVACY_STORED) {
+				builder.append("\r\n  ");
+				builder.append(temp);
+			}
 		}
 
-		builder.append("\r\n缓存:");
-		builder.append(this.MODULE_PRIVACY_CACHED.length);
-		builder.append("\r\n");
-		for (String temp : this.MODULE_PRIVACY_CACHED) {
-			builder.append("\r\n");
-			builder.append(temp);
+		builder.append("\r\n缓存：");
+		if (this.MODULE_PRIVACY_TRIGER.length == 0) {
+			builder.append("无");
+		} else {
+			builder.append(this.MODULE_PRIVACY_CACHED.length);
+			for (String temp : this.MODULE_PRIVACY_CACHED) {
+				builder.append("\r\n  ");
+				builder.append(temp);
+			}
 		}
 
-		builder.append("\r\n获取:");
-		builder.append(this.MODULE_PRIVACY_OBTAIN.length);
-		builder.append("\r\n");
-		for (String temp : this.MODULE_PRIVACY_OBTAIN) {
-			builder.append("\r\n");
-			builder.append(temp);
+		builder.append("\r\n获取：");
+		if (this.MODULE_PRIVACY_TRIGER.length == 0) {
+			builder.append("无");
+		} else {
+			builder.append(this.MODULE_PRIVACY_OBTAIN.length);
+			for (String temp : this.MODULE_PRIVACY_OBTAIN) {
+				builder.append("\r\n  ");
+				builder.append(temp);
+			}
 		}
 
 		this.MODULE_FULLHELP = builder.toString();

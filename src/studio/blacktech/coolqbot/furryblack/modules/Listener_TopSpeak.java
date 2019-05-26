@@ -30,15 +30,20 @@ public class Listener_TopSpeak extends ModuleListener {
 		this.MODULE_DISPLAYNAME = "水群统计";
 		this.MODULE_PACKAGENAME = "shui";
 		this.MODULE_DESCRIPTION = "水群统计";
-		this.MODULE_VERSION = "3.2.2";
+		this.MODULE_VERSION = "12.3.8";
 		this.MODULE_USAGE = new String[] {};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {
-				"获取消息发送人",
-				"获取消息信息"
+				"缓存所有群聊消息由计数器统计"
 		};
-		this.MODULE_PRIVACY_STORED = new String[] {};
-		this.MODULE_PRIVACY_CACHED = new String[] {};
+		this.MODULE_PRIVACY_STORED = new String[] {
+				"保存所有聊天内容至文件而不分析"
+		};
+		this.MODULE_PRIVACY_CACHED = new String[] {
+				"获取消息发送群",
+				"获取消息发送人",
+				"获取消息而不分析"
+		};
 		this.MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	}
@@ -192,11 +197,13 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		for (int count : allGroupRank.keySet()) {
 			i++;
+			String groupID = String.valueOf(allGroupRank.get(count));
+
 			builder.append("\r\n");
 			builder.append("No.");
 			builder.append(i);
 			builder.append("：");
-			builder.append(allGroupRank.get(count));
+			builder.append(groupID.substring(1, 4) + "**" + groupID.substring(6));
 			builder.append(" - ");
 			builder.append(count);
 			builder.append("条/");

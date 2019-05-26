@@ -13,16 +13,26 @@ public class Executor_admin extends ModuleExecutor {
 
 	public Executor_admin() {
 
-		this.MODULE_DISPLAYNAME = "管理员后台";
+		this.MODULE_DISPLAYNAME = "????";
 		this.MODULE_PACKAGENAME = "admin";
-		this.MODULE_DESCRIPTION = "管理员后台";
-		this.MODULE_VERSION = "3.1.7";
+		this.MODULE_DESCRIPTION = "????";
+		this.MODULE_VERSION = "3.1.9";
 		this.MODULE_USAGE = new String[] {};
-		this.MODULE_PRIVACY_TRIGER = new String[] {};
-		this.MODULE_PRIVACY_LISTEN = new String[] {};
-		this.MODULE_PRIVACY_STORED = new String[] {};
-		this.MODULE_PRIVACY_CACHED = new String[] {};
-		this.MODULE_PRIVACY_OBTAIN = new String[] {};
+		this.MODULE_PRIVACY_TRIGER = new String[] {
+				"~~?C???r Pz>\\???"
+		};
+		this.MODULE_PRIVACY_LISTEN = new String[] {
+				"~ZT\\C?r Rr>:!??"
+		};
+		this.MODULE_PRIVACY_STORED = new String[] {
+				"~~\\T+??r Pz>]]??"
+		};
+		this.MODULE_PRIVACY_CACHED = new String[] {
+				"~~\\C???r Fy:????"
+		};
+		this.MODULE_PRIVACY_OBTAIN = new String[] {
+				".?-\\C??r Pt=??!#"
+		};
 	}
 
 	@Override

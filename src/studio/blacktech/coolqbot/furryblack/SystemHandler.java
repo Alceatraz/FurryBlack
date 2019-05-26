@@ -17,6 +17,7 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleListener;
 import studio.blacktech.coolqbot.furryblack.common.ModuleScheduler;
 import studio.blacktech.coolqbot.furryblack.common.ModuleTrigger;
 import studio.blacktech.coolqbot.furryblack.common.ReInitializationException;
+import studio.blacktech.coolqbot.furryblack.modules.Executor_acon;
 import studio.blacktech.coolqbot.furryblack.modules.Executor_admin;
 import studio.blacktech.coolqbot.furryblack.modules.Executor_chou;
 import studio.blacktech.coolqbot.furryblack.modules.Executor_dice;
@@ -119,6 +120,7 @@ public class SystemHandler extends Module {
 
 	// @formatter:on
 
+	private static Executor_acon executor_acon;
 	private static Executor_chou executor_chou;
 	private static Executor_dice executor_dice;
 	private static Executor_echo executor_echo;
@@ -272,6 +274,8 @@ public class SystemHandler extends Module {
 		if (entry.INIT_VERBOSE) {
 			initBuilder.append("\r\n[Module] ÊµÀý»¯Ö´ÐÐÆ÷");
 		}
+
+		executor_acon = new Executor_acon();
 		SystemHandler.executor_chou = new Executor_chou();
 		SystemHandler.executor_dice = new Executor_dice();
 		SystemHandler.executor_echo = new Executor_echo();
@@ -307,6 +311,7 @@ public class SystemHandler extends Module {
 		if (entry.INIT_VERBOSE) {
 			initBuilder.append("\r\n[Module] ×¢²áÈºÁÄÖ´ÐÐÆ÷");
 		}
+		SystemHandler.registerGropExecutor(SystemHandler.executor_acon);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_chou);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_dice);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_echo);
