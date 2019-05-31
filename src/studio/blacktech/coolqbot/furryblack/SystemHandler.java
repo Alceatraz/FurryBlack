@@ -94,8 +94,7 @@ public class SystemHandler extends Module {
 			"\r\n" +
 			"版权信息(虚拟形象): 版权属于FPDG,授权使用\r\n" +
 			"https://twitter.com/flappydoggy/status/877582553762283520\r\n" +
-			"https://twitter.com/flappydoggy/status/875026125038080000\r\n"
-			.replaceAll("REPLACE_VERSION", entry.PRODUCT_VERSION);
+			"https://twitter.com/flappydoggy/status/875026125038080000\r\n" ;
 
 	private static String MESSAGE_EULA =
 
@@ -174,6 +173,10 @@ public class SystemHandler extends Module {
 		}
 
 		SystemHandler.INITIALIZATIONLOCK = true;
+
+		// ==========================================================================================================================
+
+		MESSAGE_INFO = MESSAGE_INFO.replaceAll("REPLACE_VERSION", entry.PRODUCT_VERSION);
 
 		// ==========================================================================================================================
 

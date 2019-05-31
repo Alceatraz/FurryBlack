@@ -203,7 +203,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			builder.append("No.");
 			builder.append(i);
 			builder.append("£º");
-			builder.append(groupID.substring(1, 4) + "**" + groupID.substring(6));
+			builder.append(groupID.substring(0, 4) + "**" + groupID.substring(6));
 			builder.append(" - ");
 			builder.append(count);
 			builder.append("Ìõ/");

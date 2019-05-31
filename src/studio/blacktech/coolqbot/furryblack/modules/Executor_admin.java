@@ -69,7 +69,7 @@ public class Executor_admin extends ModuleExecutor {
 				if (message.segment == 2) {
 					Module.userInfo(entry.OPERATOR(), "//admin say <GroupID> XXX XXX XXX");
 				} else {
-					Module.userInfo(Long.parseLong(message.messages[2]), message.join(3));
+					Module.gropInfo(Long.parseLong(message.messages[2]), message.join(3));
 				}
 				break;
 			//
