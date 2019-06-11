@@ -6,13 +6,15 @@ package studio.blacktech.coolqbot.furryblack.common;
  */
 public class Message {
 
-	public String rawMessage;
+	private String rawMessage;
 	public String trimedMessage;
 	public String[] messages;
 	public Long sendTime;
+
 	public int length;
 	public int segment;
 	public boolean isCommand = false;
+	public boolean isPicture = false;
 
 	public Message(final String raw) {
 		this.sendTime = System.currentTimeMillis();
@@ -24,6 +26,8 @@ public class Message {
 			this.trimedMessage = this.rawMessage.trim().substring(2);
 			this.messages = this.trimedMessage.split(" ");
 			this.segment = this.messages.length;
+		} else {
+			this.isPicture = (this.length == 52) && (this.rawMessage.startsWith("[CQ:image,file="));
 		}
 	}
 
@@ -48,6 +52,10 @@ public class Message {
 
 	@Override
 	public String toString() {
+		return this.rawMessage;
+	}
+
+	public String rawMessage() {
 		return this.rawMessage;
 	}
 }

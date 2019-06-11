@@ -8,33 +8,40 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeMap;
 
+import com.sobte.cqp.jcq.entity.Group;
 import com.sobte.cqp.jcq.entity.Member;
 import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.Message;
+import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleListener;
 
 @SuppressWarnings("unused")
 public class Listener_TopSpeak extends ModuleListener {
 
-	private int TOTAL_GLOBAL = 0;
-	private int LENGTH_GLOBAL = 0;
-	private HashMap<Long, GroupStatus> STORAGE = new HashMap<Long, GroupStatus>();
+	private int GLOBAL_PICTURE = 0;
+	private int GLOBAL_SENTENCE = 0;
+	private int GLOBAL_CHARACTER = 0;
+
+	public LinkedList<Message> RAW_MESSAGE = new LinkedList<>();
+	private HashMap<Long, GroupStatus> GROUP_STATUS = new HashMap<>();
 
 	public Listener_TopSpeak() {
-		this.MODULE_DISPLAYNAME = "水群统计";
 		this.MODULE_PACKAGENAME = "shui";
+		this.MODULE_DISPLAYNAME = "水群统计";
 		this.MODULE_DESCRIPTION = "水群统计";
-		this.MODULE_VERSION = "12.3.8";
+		this.MODULE_VERSION = "14.2.1";
 		this.MODULE_USAGE = new String[] {};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {
-				"缓存所有群聊消息由计数器统计"
+				"缓存所有群聊消息"
 		};
 		this.MODULE_PRIVACY_STORED = new String[] {
 				"保存所有聊天内容至文件而不分析"
@@ -45,8 +52,21 @@ public class Listener_TopSpeak extends ModuleListener {
 				"获取消息而不分析"
 		};
 		this.MODULE_PRIVACY_OBTAIN = new String[] {};
-
+		List<Group> groups = JcqApp.CQ.getGroupList();
+		for (Group group : groups) {
+			GroupStatus groupStatus = new GroupStatus();
+			for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
+				groupStatus.USER_STATUS.put(member.getQqId(), new UserStatus());
+			}
+			this.GROUP_STATUS.put(group.getId(), groupStatus);
+		}
 	}
+
+	// ==========================================================================================================================================================
+	//
+	//
+	//
+	// ==========================================================================================================================================================
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
@@ -60,63 +80,96 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		this.TOTAL_GLOBAL++;
-		this.LENGTH_GLOBAL = this.LENGTH_GLOBAL + message.length;
-		if (!this.STORAGE.containsKey(gropid)) {
-			this.STORAGE.put(gropid, new GroupStatus());
+		if (message.isCommand) { return false; }
+		if (message.isPicture) {
+			this.GLOBAL_PICTURE++;
+			this.GROUP_STATUS.get(gropid).pic(userid, message);
+		} else {
+			this.GLOBAL_SENTENCE++;
+			this.GLOBAL_CHARACTER = this.GLOBAL_CHARACTER + message.length;
+			this.GROUP_STATUS.get(gropid).say(userid, message);
 		}
-		this.STORAGE.get(gropid).speak(userid, message);
 		return true;
 	}
 
+	// ==========================================================================================================================================================
+	//
+	//
+	//
+	// ==========================================================================================================================================================
+
 	private class GroupStatus {
 
-		public int TOTAL_GROUP = 0;
-		public int LENGTH_GROUP = 0;
-		public LinkedList<Message> gropMessages = new LinkedList<Message>();
-		public LinkedList<Long> gropMessageSender = new LinkedList<Long>();
-		public HashMap<Long, UserStatus> userStatus = new HashMap<Long, UserStatus>();
+		public int GROUP_PICTURE = 0;
+		public int GROUP_SENTENCE = 0;
+		public int GROUP_CHARACTER = 0;
 
-		public void speak(long userid, Message message) {
-			this.TOTAL_GROUP++;
-			this.LENGTH_GROUP = this.LENGTH_GROUP + message.length;
-			if (!this.userStatus.containsKey(userid)) {
-				this.userStatus.put(userid, new UserStatus());
-			}
-			this.gropMessages.add(message);
-			this.gropMessageSender.add(userid);
-			this.userStatus.get(userid).speak(message);
+		public LinkedList<Long> USER_MESSAGES = new LinkedList<>();
+		public LinkedList<Long> USER_PURETEXT = new LinkedList<>();
+		public LinkedList<Long> USER_PICTURES = new LinkedList<>();
+		public LinkedList<Message> MESG_MESSAGES = new LinkedList<>();
+		public LinkedList<Message> MESG_PURETEXT = new LinkedList<>();
+		public LinkedList<Message> MESG_PICTURES = new LinkedList<>();
+
+		public HashMap<Long, UserStatus> USER_STATUS = new HashMap<>();
+
+		public void pic(long userid, Message message) {
+			this.GROUP_PICTURE++;
+			this.USER_STATUS.get(userid).pic(userid, message);
+			this.USER_MESSAGES.add(userid);
+			this.USER_PICTURES.add(userid);
+			this.MESG_MESSAGES.add(message);
+			this.MESG_PICTURES.add(message);
+		}
+
+		public void say(long userid, Message message) {
+			this.GROUP_SENTENCE++;
+			this.GROUP_CHARACTER += message.length;
+			this.USER_STATUS.get(userid).say(userid, message);
+			this.USER_MESSAGES.add(userid);
+			this.USER_PURETEXT.add(userid);
+			this.MESG_PURETEXT.add(message);
+			this.MESG_PURETEXT.add(message);
 		}
 	}
+
+	// ==========================================================================================================================
 
 	private class UserStatus {
 
-		public int TOTAL_MEMBER = 0;
-		public int LENGTH_MEMBER = 0;
-		public LinkedList<Message> userMessages = new LinkedList<Message>();
+		public int USER_PICTURE = 0;
+		public int USER_SENTENCE = 0;
+		public int USER_CHARACTER = 0;
 
-		public void speak(Message message) {
-			this.TOTAL_MEMBER++;
-			this.LENGTH_MEMBER = this.LENGTH_MEMBER + message.length;
-			this.userMessages.add(message);
+		public LinkedList<Message> USER_MESSAGES = new LinkedList<>();
+		public LinkedList<Message> USER_PCITURES = new LinkedList<>();
+
+		public void pic(long userid, Message message) {
+			this.USER_PICTURE++;
+			this.USER_PCITURES.add(message);
 		}
+
+		public void say(long userid, Message message) {
+			this.USER_SENTENCE++;
+			this.USER_CHARACTER += message.length;
+			this.USER_MESSAGES.add(message);
+		}
+
 	}
 
-	// 退群要移除掉 否则将在 report 时因成员不在群内报错
+	// ==========================================================================================================================
+
 	public void memberExit(long gropid, long userid) {
-		if (this.STORAGE.containsKey(gropid)) {
-			GroupStatus temp = this.STORAGE.get(gropid);
-			if (temp.userStatus.containsKey(userid)) {
-				temp.userStatus.remove(userid);
-			}
-		}
+		this.GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
 	}
+
+	// ==========================================================================================================================
 
 	/***
-	 *
+	 * logLevel 选择模式 logMode 发送到群聊还是私聊（管理员）
 	 */
 	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
 
 		long timeStart = System.currentTimeMillis();
 
@@ -125,26 +178,18 @@ public class Listener_TopSpeak extends ModuleListener {
 		try {
 			switch (logLevel) {
 			case 0:
-				// 0 = 按照群总发言数对群排序
-				this.generateGroupsRank(builder);
+				// 0 = 全局按照群总发言数排序
+				this.generateGroupsRank();
 				break;
 			case 1:
 				// 1 = 群内按照成员发言数排序
-				this.generateMembersRank(builder, parameters);
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			case 4:
+				this.generateMembersRank(logMode, gropid);
 				break;
 			case 100:
-				// 100 = 生成dump文件
-				this.generateDumpFile(builder);
+				// 100 = 生成dump
+				this.generateDumpFile();
 				break;
-
 			}
-
 		} catch (Exception exce) {
 			exce.printStackTrace();
 			builder.append("报告生成出错");
@@ -163,42 +208,32 @@ public class Listener_TopSpeak extends ModuleListener {
 			}
 			return builder.toString();
 		}
-
 		long timeFinsh = System.currentTimeMillis();
-
 		builder.append("\r\n\r\n生成报告开销： ");
 		builder.append(timeFinsh - timeStart);
 		builder.append("ms");
-
 		return builder.toString();
 	}
 
-	/***
-	 * 所有群按总发言数排名
-	 *
-	 * @param builder
-	 */
-	private void generateGroupsRank(StringBuilder builder) {
+	// ==========================================================================================================================
 
-		int i = 0;
-
-		TreeMap<Integer, Long> allGroupRank = new TreeMap<Integer, Long>((a, b) -> b - a);
-
-		// 利用红黑树按群的总发言条数降序
-		for (long gropid : this.STORAGE.keySet()) {
-			allGroupRank.put(this.STORAGE.get(gropid).TOTAL_GROUP, gropid);
+	private void generateGroupsRank() {
+		StringBuilder builder = new StringBuilder();
+		TreeMap<Integer, Long> allGroupRank = new TreeMap<>((a, b) -> b - a);
+		for (long gropid : this.GROUP_STATUS.keySet()) {
+			int tempSentence = this.GROUP_STATUS.get(gropid).GROUP_SENTENCE;
+			if (tempSentence > 0) { allGroupRank.put(this.GROUP_STATUS.get(gropid).GROUP_SENTENCE, gropid); }
 		}
-
-		builder.append("全球总发言条数：");
-		builder.append(this.TOTAL_GLOBAL);
-		builder.append("\r\n全球总发言字数：");
-		builder.append(this.LENGTH_GLOBAL);
-		builder.append("\r\n全球群排行：");
-
+		builder.append("发言条数：");
+		builder.append(this.GLOBAL_SENTENCE);
+		builder.append("\r\n发言字数：");
+		builder.append(this.GLOBAL_CHARACTER);
+		builder.append("\r\n发言图数：");
+		builder.append(this.GLOBAL_PICTURE);
+		builder.append("\r\n总排行：");
+		int i = 1;
 		for (int count : allGroupRank.keySet()) {
-			i++;
 			String groupID = String.valueOf(allGroupRank.get(count));
-
 			builder.append("\r\n");
 			builder.append("No.");
 			builder.append(i);
@@ -207,111 +242,199 @@ public class Listener_TopSpeak extends ModuleListener {
 			builder.append(" - ");
 			builder.append(count);
 			builder.append("条/");
-			builder.append(this.STORAGE.get(allGroupRank.get(count)).LENGTH_GROUP);
-			builder.append("字");
+			builder.append(this.GROUP_STATUS.get(allGroupRank.get(count)).GROUP_CHARACTER);
+			builder.append("字/");
+			builder.append(this.GROUP_STATUS.get(allGroupRank.get(count)).GROUP_PICTURE);
+			builder.append("图");
+			i++;
 		}
+		Module.userInfo(entry.OPERATOR(), builder.toString());
 	}
 
-	/***
-	 * 指定群按发言数成员排名
-	 *
-	 * @param builder
-	 */
-	private void generateMembersRank(StringBuilder builder, Object[] parameters) {
+	// ==========================================================================================================================
 
-		long gropid = (long) parameters[0];
-		GroupStatus groupStatus = this.STORAGE.get(gropid);
-		Member member;
-		int i = 0;
+	private void generateMembersRank(int logMode, long gropid) {
+		StringBuilder builder1 = new StringBuilder();
+		StringBuilder builder2 = new StringBuilder();
+		StringBuilder builder3 = new StringBuilder();
+		StringBuilder builder4 = new StringBuilder();
+		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid);
+		builder1.append("（1/1）水群统计\r\n发言条数：");
+		builder1.append(groupStatus.GROUP_SENTENCE);
+		builder1.append("\r\n发言字数：");
+		builder1.append(groupStatus.GROUP_CHARACTER);
+		builder1.append("\r\n发言图数：");
+		builder1.append(groupStatus.GROUP_PICTURE);
 
-		TreeMap<Integer, Long> allMemberRank = new TreeMap<Integer, Long>((a, b) -> b - a);
-
-		builder.append("总发言条数：");
-		builder.append(groupStatus.TOTAL_GROUP);
-		builder.append("\r\n总发言字数：");
-		builder.append(groupStatus.LENGTH_GROUP);
-		builder.append("\r\n成员排行：");
-
-		// 利用红黑树按成员的发言条数降序
-		for (long userid : groupStatus.userStatus.keySet()) {
-			allMemberRank.put(groupStatus.userStatus.get(userid).TOTAL_MEMBER, userid);
+		// ================================================================================
+		builder2.append("（2/4）成员排行：");
+		TreeMap<Integer, HashSet<Long>> allMemberRank = new TreeMap<>((a, b) -> b - a);
+		for (long userid : groupStatus.USER_STATUS.keySet()) {
+			int userSentence = groupStatus.USER_STATUS.get(userid).USER_SENTENCE;
+			if (userSentence > 0) {
+				if (allMemberRank.containsKey(userSentence)) {
+					allMemberRank.get(userSentence).add(userid);
+				} else {
+					HashSet<Long> tempSet = new HashSet<>();
+					tempSet.add(userid);
+					allMemberRank.put(userSentence, tempSet);
+				}
+			}
 		}
 
-		Long userid;
+		int i = 1;
 		UserStatus userStatus;
 		for (int userRank : allMemberRank.keySet()) {
-			i++;
-			userid = allMemberRank.get(userRank);
-			userStatus = groupStatus.userStatus.get(userid);
-			builder.append("\r\nNo.");
-			builder.append(i);
-			builder.append(" - ");
-			builder.append(JcqApp.CQ.getGroupMemberInfoV2(gropid, userid).getNick());
-			builder.append("(");
-			builder.append(userid);
-			builder.append(") ");
-			builder.append(userStatus.TOTAL_MEMBER);
-			builder.append("句/");
-			builder.append(userStatus.LENGTH_MEMBER);
-			builder.append("字");
+			HashSet<Long> tempSet = allMemberRank.get(userRank);
+			for (Long userid : tempSet) {
+				userStatus = groupStatus.USER_STATUS.get(userid);
+				builder2.append("\r\nNo.");
+				builder2.append(i);
+				builder2.append(" - ");
+				builder2.append(JcqApp.CQ.getGroupMemberInfoV2(gropid, userid).getNick());
+				builder2.append("(");
+				builder2.append(userid);
+				builder2.append(") ");
+				builder2.append(userStatus.USER_SENTENCE);
+				builder2.append("句/");
+				builder2.append(userStatus.USER_CHARACTER);
+				builder2.append("字/");
+				builder2.append(userStatus.USER_PICTURE);
+				builder2.append("图");
+			}
+			i = i + tempSet.size();
 		}
+		// ================================================================================
+		builder3 = new StringBuilder();
+		builder3.append("(3/4)最多说的话：");
+		HashMap<String, Integer> allMessageRankTemp = new HashMap<>();
+		for (Message message : groupStatus.MESG_PURETEXT) {
+			String raw = message.rawMessage();
+			if (allMessageRankTemp.containsKey(raw)) {
+				allMessageRankTemp.put(raw, allMessageRankTemp.get(raw) + 1);
+			} else {
+				allMessageRankTemp.put(raw, 1);
+			}
+		}
+		TreeMap<Integer, HashSet<String>> allMessageRank = new TreeMap<>((a, b) -> b - a);
+		for (String raw : allMessageRankTemp.keySet()) {
+			int tempCount = allMessageRankTemp.get(raw);
+			if (allMessageRank.containsKey(tempCount)) {
+				allMessageRank.get(tempCount).add(raw);
+			} else {
+				HashSet<String> tempSet = new HashSet<>();
+				tempSet.add(raw);
+				allMessageRank.put(tempCount, tempSet);
+			}
+		}
+		i = 1;
+		for (int messageRank : allMessageRank.keySet()) {
+			HashSet<String> tempSet = allMessageRank.get(messageRank);
+			for (String message : tempSet) {
+				builder3.append("\r\nNo.");
+				builder3.append(i);
+				builder3.append(" - ");
+				builder4.append(messageRank);
+				builder4.append("次：");
+				builder3.append(message);
+			}
+			i = i + tempSet.size();
+			if (i > 25) { break; }
+		}
+		// ================================================================================
+		builder4 = new StringBuilder();
+		builder4.append("最多发的图：");
+		HashMap<String, Integer> allPictureRankTemp = new HashMap<>();
+		for (Message message : groupStatus.MESG_PICTURES) {
+			String raw = message.rawMessage();
+			if (allPictureRankTemp.containsKey(raw)) {
+				allPictureRankTemp.put(raw, allPictureRankTemp.get(raw) + 1);
+			} else {
+				allPictureRankTemp.put(raw, 1);
+			}
+		}
+		TreeMap<Integer, HashSet<String>> allPictureRank = new TreeMap<>((a, b) -> b - a);
+		for (String raw : allPictureRankTemp.keySet()) {
+			int tempCount = allPictureRankTemp.get(raw);
+			if (allPictureRank.containsKey(tempCount)) {
+				allPictureRank.get(tempCount).add(raw);
+			} else {
+				HashSet<String> tempSet = new HashSet<>();
+				tempSet.add(raw);
+				allPictureRank.put(tempCount, tempSet);
+			}
+		}
+		i = 1;
+		for (int pictureRank : allPictureRank.keySet()) {
+			HashSet<String> tempSet = allPictureRank.get(pictureRank);
+			for (String picture : tempSet) {
+				builder4.append("\r\nNo.");
+				builder4.append(i);
+				builder4.append(" - ");
+				builder4.append(pictureRank);
+				builder4.append("次：");
+				builder4.append(JcqApp.CC.getCQImage(picture).getUrl());
+			}
+			i = i + tempSet.size();
+			if (i > 3) { break; }
+		}
+
+		if (logMode == 0) {
+			Module.userInfo(entry.OPERATOR(), builder1.toString());
+			Module.userInfo(entry.OPERATOR(), builder2.toString());
+			Module.userInfo(entry.OPERATOR(), builder3.toString());
+			Module.userInfo(entry.OPERATOR(), builder4.toString());
+		} else {
+			Module.gropInfo(gropid, builder1.toString());
+			Module.gropInfo(gropid, builder2.toString());
+			Module.gropInfo(gropid, builder3.toString());
+			Module.gropInfo(gropid, builder4.toString());
+		}
+
 	}
 
-	private void generateDumpFile(StringBuilder builder) throws IOException {
+	// ==========================================================================================================================
 
+	private void generateDumpFile() throws IOException {
 		String dumpTime = LoggerX.time("yyyy.MM.dd-HH.mm.ss");
-
 		File dumpFolder = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "TopSpeakDump_" + dumpTime).toFile();
 		dumpFolder.mkdirs();
-
-		for (long tempGropid : this.STORAGE.keySet()) {
-
+		for (long tempGropid : this.GROUP_STATUS.keySet()) {
 			File groupContainerFolder = Paths.get(dumpFolder.getAbsolutePath(), "Group_" + tempGropid).toFile();
 			groupContainerFolder.mkdir();
-
 			File dumpByTimeline = Paths.get(groupContainerFolder.getAbsolutePath(), "Main.txt").toFile();
 			dumpByTimeline.createNewFile();
-
 			BufferedWriter groupTimelineWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpByTimeline), "UTF-8"));
-
-			GroupStatus tempGroupStatus = this.STORAGE.get(tempGropid);
+			GroupStatus tempGroupStatus = this.GROUP_STATUS.get(tempGropid);
 			groupTimelineWriter.write("群号：" + tempGropid);
-			groupTimelineWriter.write("\r\n发言条数：" + tempGroupStatus.TOTAL_GROUP);
-			groupTimelineWriter.write("\r\n发言字数：" + tempGroupStatus.LENGTH_GROUP);
+			groupTimelineWriter.write("\r\n发言条数：" + tempGroupStatus.GROUP_SENTENCE);
+			groupTimelineWriter.write("\r\n发言字数：" + tempGroupStatus.GROUP_CHARACTER);
+			groupTimelineWriter.write("\r\n发言图数：" + tempGroupStatus.GROUP_PICTURE);
 			groupTimelineWriter.write("\r\n");
-
-			for (int i = 0; i < tempGroupStatus.TOTAL_GROUP; i++) {
-				Message tempMessage = tempGroupStatus.gropMessages.get(i);
-				long tempSender = tempGroupStatus.gropMessageSender.get(i);
-				groupTimelineWriter.write("\r\n[" + LoggerX.time(new Date(tempMessage.sendTime)) + "]" + JcqApp.CQ.getStrangerInfo(tempSender).getNick() + "(" + tempSender + "): " + tempMessage.rawMessage);
+			for (int i = 0; i < tempGroupStatus.GROUP_SENTENCE; i++) {
+				long tempSender = tempGroupStatus.USER_MESSAGES.get(i);
+				Message tempMessage = tempGroupStatus.MESG_MESSAGES.get(i);
+				groupTimelineWriter.write("\r\n[" + LoggerX.time(new Date(tempMessage.sendTime)) + "]" + JcqApp.CQ.getStrangerInfo(tempSender).getNick() + "(" + tempSender + "): " + tempMessage.rawMessage());
 			}
-
 			groupTimelineWriter.flush();
 			groupTimelineWriter.close();
-
-			for (long tempUserid : tempGroupStatus.userStatus.keySet()) {
-
+			for (long tempUserid : tempGroupStatus.USER_STATUS.keySet()) {
 				File dumpByUseid = Paths.get(groupContainerFolder.getAbsolutePath(), "User_" + tempUserid + ".txt").toFile();
 				dumpByUseid.createNewFile();
-
 				BufferedWriter useridWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpByUseid), "UTF-8"));
-
-				UserStatus tempUserStatus = tempGroupStatus.userStatus.get(tempUserid);
+				UserStatus tempUserStatus = tempGroupStatus.USER_STATUS.get(tempUserid);
 				useridWriter.write("成员：" + tempUserid);
 				useridWriter.write("\r\n昵称：" + JcqApp.CQ.getStrangerInfo(tempUserid).getNick());
-				useridWriter.write("\r\n发言条数：" + tempUserStatus.TOTAL_MEMBER);
-				useridWriter.write("\r\n发言字数：" + tempUserStatus.LENGTH_MEMBER);
+				useridWriter.write("\r\n发言条数：" + tempUserStatus.USER_SENTENCE);
+				useridWriter.write("\r\n发言字数：" + tempUserStatus.USER_CHARACTER);
+				useridWriter.write("\r\n发言图数：" + tempGroupStatus.USER_PICTURES);
 				useridWriter.write("\r\n");
-
-				for (Message tempMessage : tempUserStatus.userMessages) {
-					useridWriter.write("\r\n[" + LoggerX.time(new Date(tempMessage.sendTime)) + "]: " + tempMessage.rawMessage);
+				for (Message tempMessage : tempUserStatus.USER_MESSAGES) {
+					useridWriter.write("\r\n[" + LoggerX.time(new Date(tempMessage.sendTime)) + "]: " + tempMessage.rawMessage());
 				}
-
 				useridWriter.flush();
 				useridWriter.close();
-
 			}
 		}
-		builder.append("已保存 - " + dumpTime);
 	}
 }

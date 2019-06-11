@@ -20,6 +20,11 @@ public class Executor_NULL extends ModuleExecutor {
 	}
 
 	@Override
+	public boolean initialization() {
+		return false;
+	}
+
+	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
 
 		return true;
@@ -38,7 +43,7 @@ public class Executor_NULL extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
 		return null;
 	}
 

@@ -16,8 +16,8 @@ public class Executor_roll extends ModuleExecutor {
 	private int mode_fucker = 0;
 
 	public Executor_roll() {
-		this.MODULE_DISPLAYNAME = "随机数";
 		this.MODULE_PACKAGENAME = "roll";
+		this.MODULE_DISPLAYNAME = "随机数";
 		this.MODULE_DESCRIPTION = "生成随机数或者真假";
 		this.MODULE_VERSION = "2.1.4";
 		this.MODULE_USAGE = new String[] {
@@ -94,9 +94,7 @@ public class Executor_roll extends ModuleExecutor {
 				return "参数必须是罗马数字";
 			}
 			int temp = random.nextInt(max);
-			if (temp < min) {
-				temp = ((temp / max) * (max - min)) + min;
-			}
+			if (temp < min) { temp = ((temp / max) * (max - min)) + min; }
 			res = Integer.toString(temp);
 			this.mode_3++;
 			break;
@@ -105,10 +103,8 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		if (this.COUNT == 0) {
-			return null;
-		}
+	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+		if (this.COUNT == 0) { return null; }
 		final StringBuilder builder = new StringBuilder();
 		builder.append("模式1 - 真假: ");
 		builder.append(this.mode_1);

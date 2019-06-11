@@ -13,10 +13,10 @@ public class Executor_admin extends ModuleExecutor {
 
 	public Executor_admin() {
 
-		this.MODULE_DISPLAYNAME = "????";
 		this.MODULE_PACKAGENAME = "admin";
-		this.MODULE_DESCRIPTION = "????";
-		this.MODULE_VERSION = "3.1.9";
+		this.MODULE_DISPLAYNAME = "Sakurga";
+		this.MODULE_DESCRIPTION = "Lv:80";
+		this.MODULE_VERSION = "??rZVxx";
 		this.MODULE_USAGE = new String[] {};
 		this.MODULE_PRIVACY_TRIGER = new String[] {
 				"~~?C???r Pz>\\???"
@@ -42,16 +42,16 @@ public class Executor_admin extends ModuleExecutor {
 			return false;
 		}
 		if (message.segment < 2) {
-			String temp = SystemHandler.generateFullReport(0, 0, message, null);
+			String temp = SystemHandler.generateFullReport(0, 0, 0, 0, 0, 0, message, null);
 			Module.userInfo(entry.OPERATOR(), temp);
 			return true;
 		} else {
 			switch (message.messages[1]) {
+			// 获取Cookie和Token
 			case "getcsrf":
 				Module.userInfo(entry.OPERATOR(), "JQCCOOKIE: " + JcqApp.CQ.getCookies());
 				Module.userInfo(entry.OPERATOR(), "CSRFTOKEN: " + JcqApp.CQ.getCsrfToken());
 				break;
-
 			// 获取地址
 			case "getddns":
 				Module.userInfo(entry.OPERATOR(), ((Scheduler_DDNS) SystemHandler.getScheduler("ddns")).getIPAddress());
@@ -73,22 +73,22 @@ public class Executor_admin extends ModuleExecutor {
 				}
 				break;
 			//
+			case "gc":
+				System.gc();
+				break;
+			//
 			case "shui":
 				ModuleListener instance = SystemHandler.getListener("shui");
 				switch (message.messages[2]) {
 				case "dump":
-					Module.userInfo(entry.OPERATOR(), instance.generateReport(100, 0, message, null));
+					instance.generateReport(100, 0, 0, 0, 0, 0, message, null);
 					break;
 				case "rank":
-					// admin shui rank 123123123
 					if (message.segment == 4) {
 						String temp = message.messages[3];
-						long gropid = Long.parseLong(temp);
-						Module.userInfo(entry.OPERATOR(), instance.generateReport(1, 0, message, new Object[] {
-								gropid
-						}));
+						instance.generateReport(1, 0, 0, 0, 0, Long.parseLong(temp), message, null);
 					} else {
-						Module.userInfo(entry.OPERATOR(), instance.generateReport(0, 0, message, null));
+						instance.generateReport(0, 0, 0, 0, 0, 0, message, null);
 					}
 					break;
 				}
@@ -113,38 +113,18 @@ public class Executor_admin extends ModuleExecutor {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		if (userid != entry.OPERATOR()) {
-//			Module.gropInfo(gropid, userid, "你不是我的管理员");
-			return false;
-		}
+		if (userid != entry.OPERATOR()) { return false; }
 		if (message.segment < 2) {
-			Module.gropInfo(gropid, SystemHandler.generateFullReport(0, 0, message, null));
+			Module.gropInfo(gropid, SystemHandler.generateFullReport(0, 0, 0, 0, 0, 0, message, null));
 			return true;
 		} else {
 			switch (message.messages[1]) {
 			case "shui":
 				ModuleListener instance = SystemHandler.getListener("shui");
-				switch (message.messages[2]) {
-				case "dump":
-					Module.userInfo(entry.OPERATOR(), instance.generateReport(100, 0, message, null));
-					break;
-				case "rank":
-					if (message.segment == 4) {
-						Module.gropInfo(gropid, instance.generateReport(1, 0, message, new Object[] {
-								gropid
-						}));
-					} else {
-						Module.gropInfo(gropid, instance.generateReport(0, 0, message, null));
-					}
-					break;
-				}
+				instance.generateReport(1, 1, 0, 0, 0, gropid, message, null);
 			}
 		}
 		return true;
 	}
 
-	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		return null;
-	}
 }

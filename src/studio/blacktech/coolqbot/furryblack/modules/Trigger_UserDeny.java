@@ -9,19 +9,19 @@ import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.ModuleTrigger;
 
-public class Trigger_SuidDeny extends ModuleTrigger {
+public class Trigger_UserDeny extends ModuleTrigger {
 
-	private ArrayList<Long> USER_IGNORE = new ArrayList<Long>(100);
-	private ArrayList<Long> DISZ_IGNORE = new ArrayList<Long>(100);
-	private ArrayList<Long> GROP_IGNORE = new ArrayList<Long>(100);
+	private ArrayList<Long> USER_IGNORE = new ArrayList<>(100);
+	private ArrayList<Long> DISZ_IGNORE = new ArrayList<>(100);
+	private ArrayList<Long> GROP_IGNORE = new ArrayList<>(100);
 
 	private int DENY_USER_COUNT = 0;
 	private int DENY_DISZ_COUNT = 0;
 	private int DENY_GROP_COUNT = 0;
 
-	public Trigger_SuidDeny() {
-		this.MODULE_DISPLAYNAME = "过滤器";
+	public Trigger_UserDeny() {
 		this.MODULE_PACKAGENAME = "userdeny";
+		this.MODULE_DISPLAYNAME = "过滤器";
 		this.MODULE_DESCRIPTION = "用户与群组过滤器";
 		this.MODULE_VERSION = "1.0.0";
 		this.MODULE_USAGE = new String[] {};
@@ -32,6 +32,7 @@ public class Trigger_SuidDeny extends ModuleTrigger {
 		this.MODULE_PRIVACY_STORED = new String[] {};
 		this.MODULE_PRIVACY_CACHED = new String[] {};
 		this.MODULE_PRIVACY_OBTAIN = new String[] {};
+
 		String line;
 		BufferedReader reader;
 		try {
@@ -52,6 +53,11 @@ public class Trigger_SuidDeny extends ModuleTrigger {
 				this.GROP_IGNORE.add(Long.parseLong(line));
 			}
 			reader.close();
+
+			this.ENABLE_USER = this.USER_IGNORE.size() > 0;
+			this.ENABLE_DISZ = this.DISZ_IGNORE.size() > 0;
+			this.ENABLE_GROP = this.GROP_IGNORE.size() > 0;
+
 		} catch (Exception exce) {
 			exce.printStackTrace();
 		}
@@ -69,7 +75,7 @@ public class Trigger_SuidDeny extends ModuleTrigger {
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		if (this.USER_IGNORE.contains(userid)) {
+		if (this.DISZ_IGNORE.contains(userid) || this.USER_IGNORE.contains(userid)) {
 			this.DENY_DISZ_COUNT++;
 			return true;
 		} else {
@@ -79,7 +85,7 @@ public class Trigger_SuidDeny extends ModuleTrigger {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		if (this.USER_IGNORE.contains(userid)) {
+		if (this.USER_IGNORE.contains(userid) || this.USER_IGNORE.contains(userid)) {
 			this.DENY_GROP_COUNT++;
 			return true;
 		} else {
@@ -88,7 +94,7 @@ public class Trigger_SuidDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("拦截私聊：");
 		builder.append(this.DENY_USER_COUNT);

@@ -14,8 +14,8 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 public class Executor_chou extends ModuleExecutor {
 
 	public Executor_chou() {
-		this.MODULE_DISPLAYNAME = "随机抽人";
 		this.MODULE_PACKAGENAME = "chou";
+		this.MODULE_DISPLAYNAME = "随机抽人";
 		this.MODULE_DESCRIPTION = "从群随机抽取一个人";
 		this.MODULE_VERSION = "2.4.1";
 		this.MODULE_USAGE = new String[] {
@@ -63,11 +63,6 @@ public class Executor_chou extends ModuleExecutor {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		return null;
 	}
 
 }

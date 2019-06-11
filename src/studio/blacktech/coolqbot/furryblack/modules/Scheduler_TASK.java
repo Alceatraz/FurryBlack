@@ -5,7 +5,6 @@ import java.util.Properties;
 
 import studio.blacktech.coolqbot.furryblack.SystemHandler;
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleScheduler;
 
@@ -16,9 +15,7 @@ public class Scheduler_TASK extends ModuleScheduler {
 	private static boolean INITIALIZATIONLOCK = false;
 
 	public Scheduler_TASK(StringBuilder initBuilder, Properties config) {
-		if (Scheduler_TASK.INITIALIZATIONLOCK) {
-			return;
-		}
+		if (Scheduler_TASK.INITIALIZATIONLOCK) { return; }
 		Scheduler_TASK.INITIALIZATIONLOCK = true;
 
 		this.MODULE_DISPLAYNAME = "每日任务";
@@ -43,7 +40,7 @@ public class Scheduler_TASK extends ModuleScheduler {
 		try {
 			Thread.sleep(time * 1000);
 			while (true) {
-				Module.userInfo(entry.OPERATOR(), SystemHandler.generateFullReport(0, 0, null, null));
+				Module.userInfo(entry.OPERATOR(), SystemHandler.generateFullReport(0, 0, 0, 0, 0, 0, null, null));
 				((Executor_jrjp) SystemHandler.getExecutor("jrjp")).flush();
 				((Executor_jrrp) SystemHandler.getExecutor("jrrp")).flush();
 				Thread.sleep(86400000L);
@@ -54,8 +51,4 @@ public class Scheduler_TASK extends ModuleScheduler {
 		}
 	}
 
-	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		return null;
-	}
 }

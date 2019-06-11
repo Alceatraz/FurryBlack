@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Properties;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleScheduler;
 
@@ -27,9 +26,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 	private String ADDRESS = null;
 
 	public Scheduler_DDNS(StringBuilder initBuilder, Properties config) {
-		if (Scheduler_DDNS.INITIALIZATIONLOCK) {
-			return;
-		}
+		if (Scheduler_DDNS.INITIALIZATIONLOCK) { return; }
 		Scheduler_DDNS.INITIALIZATIONLOCK = true;
 
 		this.MODULE_DISPLAYNAME = "动态域名";
@@ -105,9 +102,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 		time = time - date.getSeconds();
 		time = time - (date.getMinutes() * 5);
 
-		if (time < 60) {
-			time = time + 600;
-		}
+		if (time < 60) { time = time + 600; }
 
 		Thread.sleep(time * 1000);
 
@@ -117,13 +112,9 @@ public class Scheduler_DDNS extends ModuleScheduler {
 				String temp = this.getIPAddress();
 				if (temp == null) {
 					temp = this.updateDDNSIPAddress();
-					if (temp == null) {
-						Module.userInfo(entry.OPERATOR(), "[DDNS] 地址更新失败，需要手动介入！");
-					}
+					if (temp == null) { Module.userInfo(entry.OPERATOR(), "[DDNS] 地址更新失败，需要手动介入！"); }
 				} else {
-					if (!temp.equals(this.ADDRESS)) {
-						Module.userInfo(entry.OPERATOR(), "[DDNS] 检测到地址变更\r\n旧地址：" + this.ADDRESS + "\r\n新地址：" + temp + "\r\n设置新地址：" + this.setDDNSIPAddress(temp));
-					}
+					if (!temp.equals(this.ADDRESS)) { Module.userInfo(entry.OPERATOR(), "[DDNS] 检测到地址变更\r\n旧地址：" + this.ADDRESS + "\r\n新地址：" + temp + "\r\n设置新地址：" + this.setDDNSIPAddress(temp)); }
 				}
 				// ####### =====================================================
 			}).start();
@@ -189,11 +180,6 @@ public class Scheduler_DDNS extends ModuleScheduler {
 			exce.printStackTrace();
 			return null;
 		}
-	}
-
-	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		return null;
 	}
 
 }

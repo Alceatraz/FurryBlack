@@ -32,7 +32,7 @@ public class Executor_mine extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
 
 		return null;
 	}

@@ -13,8 +13,8 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 
 public class Executor_jrjp extends ModuleExecutor {
 
-	private HashMap<Long, Integer> jrav = new HashMap<Long, Integer>();
-	private HashMap<Long, Member> jrjp = new HashMap<Long, Member>();
+	private HashMap<Long, Integer> jrav = new HashMap<>();
+	private HashMap<Long, Member> jrjp = new HashMap<>();
 
 	public Executor_jrjp() {
 		this.MODULE_DISPLAYNAME = "ΩÒ»’º¿∆∑";
@@ -63,11 +63,6 @@ public class Executor_jrjp extends ModuleExecutor {
 	public void flush() {
 		this.jrjp.clear();
 		this.jrav.clear();
-	}
-
-	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		return null;
 	}
 
 }

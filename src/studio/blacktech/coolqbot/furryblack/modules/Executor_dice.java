@@ -42,9 +42,4 @@ public class Executor_dice extends ModuleExecutor {
 		Module.gropInfo(gropid, userid, message.length == 1 ? "[CQ:dice]" : message.join(1) + "[CQ:dice]");
 		return true;
 	}
-
-	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		return null;
-	}
 }

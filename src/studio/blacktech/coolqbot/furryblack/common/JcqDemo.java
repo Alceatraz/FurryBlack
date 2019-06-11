@@ -2,7 +2,6 @@ package studio.blacktech.coolqbot.furryblack.common;
 
 import javax.swing.JOptionPane;
 
-import com.sobte.cqp.jcq.entity.Anonymous;
 import com.sobte.cqp.jcq.entity.CQDebug;
 import com.sobte.cqp.jcq.entity.GroupFile;
 import com.sobte.cqp.jcq.entity.ICQVer;
@@ -97,8 +96,7 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	@SuppressWarnings("unused")
 	public int startup() {
-// 获取应用数据目录(无需储存数据时，请将此行注释)
-		final String appDirectory = JcqApp.CQ.getAppDirectory();
+		JcqApp.CQ.getAppDirectory();
 // 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
 // 应用的所有数据、配置【必须】存放于此目录，避免给用户带来困扰。
 		return 0;
@@ -183,23 +181,23 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@SuppressWarnings("unused")
 	@Override
 	public int groupMsg(final int subType, final int msgId, final long fromGroup, final long fromQQ, final String fromAnonymous, final String msg, final int font) {
-// 如果消息来自匿名者
-		if ((fromQQ == 80000000L) && !fromAnonymous.equals("")) {
-// 将匿名用户信息放到 anonymous 变量中
-			final Anonymous anonymous = JcqApp.CQ.getAnonymous(fromAnonymous);
-		}
-// 解析CQ码案例 如：[CQ:at,qq=100000]
-// 解析CQ码 常用变量为 CC(CQCode) 此变量专为CQ码这种特定格式做了解析和封装
-// CC.analysis();// 此方法将CQ码解析为可直接读取的对象
-// 解析消息中的QQID
-// long qqId = CC.getAt(msg);// 此方法为简便方法，获取第一个CQ:at里的QQ号，错误时为：-1000
-// List<Long> qqIds = CC.getAts(msg); // 此方法为获取消息中所有的CQ码对象，错误时返回 已解析的数据
-// 解析消息中的图片
-// CQImage image = CC.getCQImage(msg);//
-// 此方法为简便方法，获取第一个CQ:image里的图片数据，错误时打印异常到控制台，返回 null
-// List<CQImage> images = CC.getCQImages(msg);//
-// 此方法为获取消息中所有的CQ图片数据，错误时打印异常到控制台，返回 已解析的数据
-// 这里处理消息
+		// 如果消息来自匿名者
+		if ((fromQQ == 80000000L) && !fromAnonymous.equals("")) { JcqApp.CQ.getAnonymous(fromAnonymous); }
+		// 解析CQ码案例 如：[CQ:at,qq=100000]
+		// 解析CQ码 常用变量为 CC(CQCode) 此变量专为CQ码这种特定格式做了解析和封装
+		// CC.analysis();
+		// 此方法将CQ码解析为可直接读取的对象
+		// 解析消息中的QQID
+		// long qqId = CC.getAt(msg);
+		// 此方法为简便方法，获取第一个CQ:at里的QQ号，错误时为：-1000
+		// List<Long> qqIds = CC.getAts(msg);
+		// 此方法为获取消息中所有的CQ码对象，错误时返回 已解析的数据
+		// 解析消息中的图片
+		// CQImage image = CC.getCQImage(msg);
+		// 此方法为简便方法，获取第一个CQ:image里的图片数据，错误时打印异常到控制台，返回 null
+		// List<CQImage> images = CC.getCQImages(msg);
+		// 此方法为获取消息中所有的CQ图片数据，错误时打印异常到控制台，返回 已解析的数据
+		// 这里处理消息
 		JcqApp.CQ.sendGroupMsg(fromGroup, JcqApp.CC.at(fromQQ) + "你发送了这样的消息：" + msg + "\n来自Java插件");
 		return IMsg.MSG_IGNORE;
 	}
@@ -236,9 +234,7 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int groupUpload(final int subType, final int sendTime, final long fromGroup, final long fromQQ, final String file) {
 		final GroupFile groupFile = JcqApp.CQ.getGroupFile(file);
-		if (groupFile == null) { // 解析群文件信息，如果失败直接忽略该消息
-			return IMsg.MSG_IGNORE;
-		}
+		if (groupFile == null) { return IMsg.MSG_IGNORE; }
 // 这里处理消息
 		return IMsg.MSG_IGNORE;
 	}
@@ -255,7 +251,7 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int groupAdmin(final int subtype, final int sendTime, final long fromGroup, final long beingOperateQQ) {
-// 这里处理消息
+		// 这里处理消息
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -289,7 +285,7 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int groupMemberIncrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
-// 这里处理消息
+		// 这里处理消息
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -304,7 +300,7 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int friendAdd(final int subtype, final int sendTime, final long fromQQ) {
-// 这里处理消息
+		// 这里处理消息
 		return IMsg.MSG_IGNORE;
 	}
 
@@ -321,7 +317,7 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int requestAddFriend(final int subtype, final int sendTime, final long fromQQ, final String msg, final String responseFlag) {
-// REQUEST_ADOPT 通过 REQUEST_REFUSE 拒绝
+		// REQUEST_ADOPT 通过 REQUEST_REFUSE 拒绝
 		JcqApp.CQ.setFriendAddRequest(responseFlag, IRequest.REQUEST_ADOPT, null); // 同意好友添加请求
 		return IMsg.MSG_IGNORE;
 	}
@@ -340,17 +336,13 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int requestAddGroup(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final String msg, final String responseFlag) {
-// 这里处理消息
-// REQUEST_ADOPT 通过
-// REQUEST_REFUSE 拒绝
-// REQUEST_GROUP_ADD 群添加
-// REQUEST_GROUP_INVITE 群邀请
-		if (subtype == 1) {
-			JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_ADD, IRequest.REQUEST_ADOPT, null);
-		}
-		if (subtype == 2) {
-			JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
-		}
+		// 这里处理消息
+		// REQUEST_ADOPT 通过
+		// REQUEST_REFUSE 拒绝
+		// REQUEST_GROUP_ADD 群添加
+		// REQUEST_GROUP_INVITE 群邀请
+		if (subtype == 1) { JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_ADD, IRequest.REQUEST_ADOPT, null); }
+		if (subtype == 2) { JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null); }
 		return IMsg.MSG_IGNORE;
 	}
 

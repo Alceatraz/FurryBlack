@@ -7,8 +7,8 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 public class Executor_echo extends ModuleExecutor {
 
 	public Executor_echo() {
-		this.MODULE_DISPLAYNAME = "回显";
 		this.MODULE_PACKAGENAME = "echo";
+		this.MODULE_DISPLAYNAME = "回显";
 		this.MODULE_DESCRIPTION = "回显内容";
 		this.MODULE_VERSION = "2.0.1";
 		this.MODULE_USAGE = new String[] {
@@ -41,8 +41,4 @@ public class Executor_echo extends ModuleExecutor {
 		return true;
 	}
 
-	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		return null;
-	}
 }

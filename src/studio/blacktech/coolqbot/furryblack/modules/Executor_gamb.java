@@ -14,8 +14,8 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 
 public class Executor_gamb extends ModuleExecutor {
 
-	private HashMap<Long, RouletteRound> rounds = new HashMap<Long, RouletteRound>();
-	private ArrayList<Integer> roulette = new ArrayList<Integer>();
+	private HashMap<Long, RouletteRound> rounds = new HashMap<>();
+	private ArrayList<Integer> roulette = new ArrayList<>();
 	private int ROUND_EXPIRED = 0;
 	private int ROUND_SUCCESS = 0;
 
@@ -64,9 +64,7 @@ public class Executor_gamb extends ModuleExecutor {
 			Module.gropInfo(gropid, userid, "不下注是8koi的");
 			return true;
 		}
-		if (!this.rounds.containsKey(gropid)) {
-			this.rounds.put(gropid, new RouletteRound());
-		}
+		if (!this.rounds.containsKey(gropid)) { this.rounds.put(gropid, new RouletteRound()); }
 		final RouletteRound round = this.rounds.get(gropid);
 		if ((round.time.getTime() + 600000) < new Date().getTime()) {
 			this.ROUND_EXPIRED++;
@@ -96,8 +94,8 @@ public class Executor_gamb extends ModuleExecutor {
 
 	private class RouletteRound {
 
-		public ArrayList<String> chip = new ArrayList<String>();
-		public ArrayList<Long> player = new ArrayList<Long>();
+		public ArrayList<String> chip = new ArrayList<>();
+		public ArrayList<Long> player = new ArrayList<>();
 		public int players = 0;
 		public Date time;
 
@@ -139,10 +137,8 @@ public class Executor_gamb extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		if (this.COUNT == 0) {
-			return null;
-		}
+	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+		if (this.COUNT == 0) { return null; }
 		final StringBuilder builder = new StringBuilder();
 		builder.append("成功回合 : ");
 		builder.append(this.ROUND_SUCCESS);

@@ -5,8 +5,8 @@ import com.sobte.cqp.jcq.event.JcqApp;
 public abstract class Module {
 
 	public int COUNT = 0;
-	public String MODULE_DISPLAYNAME;
 	public String MODULE_PACKAGENAME;
+	public String MODULE_DISPLAYNAME;
 	public String MODULE_DESCRIPTION;
 	public String MODULE_VERSION;
 	public String[] MODULE_USAGE;
@@ -18,7 +18,13 @@ public abstract class Module {
 
 	public String MODULE_FULLHELP;
 
-	public abstract String generateReport(int logLevel, int logMode, Message message, Object[] parameters);
+	public boolean initialization() {
+		return true;
+	}
+
+	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+		return null;
+	}
 
 	public void genFullHelp() {
 
@@ -78,7 +84,7 @@ public abstract class Module {
 		}
 
 		builder.append("\r\n缓存：");
-		if (this.MODULE_PRIVACY_TRIGER.length == 0) {
+		if (this.MODULE_PRIVACY_CACHED.length == 0) {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_CACHED.length);
@@ -89,7 +95,7 @@ public abstract class Module {
 		}
 
 		builder.append("\r\n获取：");
-		if (this.MODULE_PRIVACY_TRIGER.length == 0) {
+		if (this.MODULE_PRIVACY_OBTAIN.length == 0) {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_OBTAIN.length);

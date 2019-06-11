@@ -10,8 +10,8 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 
 public class Executor_zhan extends ModuleExecutor {
 
-	private TreeMap<Integer, String> CARD = new TreeMap<Integer, String>();
-	private ArrayList<Integer> FREQ = new ArrayList<Integer>();
+	private TreeMap<Integer, String> CARD = new TreeMap<>();
+	private ArrayList<Integer> FREQ = new ArrayList<>();
 
 	public Executor_zhan() {
 
@@ -74,54 +74,25 @@ public class Executor_zhan extends ModuleExecutor {
 		this.CARD.put(42, "XX. THE LAST JUDGMENT 审判逆位\r\n弱点 胆怯 天真 决定 熟虑");
 		this.CARD.put(43, "XXI. THE WORLD 世界正位\r\n成功 道路 航程 换位");
 		this.CARD.put(44, "XXI. THE WORLD 世界逆位\r\n惯性 固执 停滞 持久");
-		// 为什么不写循环？ 因为运行快
 
-	// @formatter:off
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	this.FREQ.add(0);
-	// @formatter:on
+		// 为什么不写循环？ 因为运行快
+		// @formatter:off
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
+		this.FREQ.add(0);this.FREQ.add(0);
+		// @formatter:on
 	}
 
 	@Override
@@ -159,22 +130,16 @@ public class Executor_zhan extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		if (this.COUNT == 0) {
-			return null;
-		}
+	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+		if (this.COUNT == 0) { return null; }
 		final StringBuilder builder = new StringBuilder();
 		int coverage = 0;
 		for (int i = 0; i < 44; i++) {
-			if (this.FREQ.get(i) == 0) {
-				coverage++;
-			}
+			if (this.FREQ.get(i) == 0) { coverage++; }
 		}
 		coverage = 44 - coverage;
 		for (int i = 0; i < 44; i++) {
-			if (this.FREQ.get(i) == 0) {
-				continue;
-			}
+			if (this.FREQ.get(i) == 0) { continue; }
 			builder.append("\r\n第 ");
 			builder.append(i + 1);
 			builder.append(" 张 : ");

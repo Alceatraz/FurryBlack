@@ -56,9 +56,4 @@ public class Executor_kong extends ModuleExecutor {
 		return builder.toString();
 	}
 
-	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		return null;
-	}
-
 }

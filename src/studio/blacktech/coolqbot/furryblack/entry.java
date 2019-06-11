@@ -27,18 +27,19 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "3.8.2 2019-05-26 (19:50)";
+	public static final String PRODUCT_VERSION = "4.8.2 2019-06-12 (00:00)";
 
 	private static File FOLDER_CONF;
 	private static File FOLDER_DATA;
 	private static File FILE_CONFIG;
+	private static File FILE_GANNOUNCE;
 	private static File FILE_BLACKLIST;
 	private static File FILE_USERIGNORE;
 	private static File FILE_DISZIGNORE;
 	private static File FILE_GROPIGNORE;
 
-	private static long MYSELFID = 0;
-	private static long OPERATOR = 0;
+	private static long USERID_COOLQ = 0;
+	private static long USERID_ADMIN = 0;
 
 	private static Properties config = new Properties();
 
@@ -66,6 +67,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	@Override
 	public int startup() {
+
 		return 0;
 	}
 
@@ -81,85 +83,129 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	@Override
 	public int enable() {
-		try {
-			StringBuilder builder = new StringBuilder();
-			JcqAppAbstract.appDirectory = JcqApp.CQ.getAppDirectory();
 
+		try {
+
+			// ==========================================================================================================================
+
+			StringBuilder builder = new StringBuilder();
 			builder.append("[FurryBlack]初始化 ");
 			builder.append(LoggerX.time());
+
+			// ==========================================================================================================================
+
+			JcqAppAbstract.appDirectory = JcqApp.CQ.getAppDirectory();
 
 			entry.FOLDER_CONF = Paths.get(JcqAppAbstract.appDirectory, "conf").toFile();
 			entry.FOLDER_DATA = Paths.get(JcqAppAbstract.appDirectory, "data").toFile();
 			entry.FILE_CONFIG = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
+			entry.FILE_GANNOUNCE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "groups.properties").toFile();
 			entry.FILE_BLACKLIST = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "blacklist.txt").toFile();
-			entry.FILE_USERIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "user_ignore.txt").toFile();
-			entry.FILE_DISZIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "disz_ignore.txt").toFile();
-			entry.FILE_GROPIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "grop_ignore.txt").toFile();
+			entry.FILE_USERIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
+			entry.FILE_DISZIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_disz.txt").toFile();
+			entry.FILE_GROPIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_grop.txt").toFile();
+
+			// ==========================================================================================================================
 
 			if (!entry.FOLDER_CONF.exists()) {
 				builder.append("\r\n[System] 配置文件夹不存在");
 				entry.FOLDER_CONF.mkdirs();
 			}
+
 			if (!entry.FOLDER_CONF.isDirectory()) {
 				builder.append("\r\n[System] 配置文件夹被文件占位");
 				throw new IOException(":" + entry.FOLDER_CONF.getAbsolutePath());
 			}
+
 			if (!entry.FOLDER_DATA.exists()) {
 				builder.append("\r\n[System] 数据文件夹不存在");
 				entry.FOLDER_DATA.mkdirs();
 			}
+
 			if (!entry.FOLDER_DATA.isDirectory()) {
 				builder.append("\r\n[System] 数据文件夹被文件占位");
 				throw new IOException(":" + entry.FOLDER_DATA.getAbsolutePath());
 			}
+
 			if (!entry.FILE_BLACKLIST.exists()) {
 				builder.append("\r\n[System] 敏感词黑名单文件不存在");
 				entry.FILE_BLACKLIST.createNewFile();
 			}
+
 			if (!entry.FILE_USERIGNORE.exists()) {
 				builder.append("\r\n[System] 私聊黑名单文件不存在");
 				entry.FILE_USERIGNORE.createNewFile();
 			}
+
 			if (!entry.FILE_DISZIGNORE.exists()) {
 				builder.append("\r\n[System] 组聊黑名单文件不存在");
 				entry.FILE_DISZIGNORE.createNewFile();
 			}
+
 			if (!entry.FILE_GROPIGNORE.exists()) {
 				builder.append("\r\n[System] 群聊黑名单文件不存在");
 				entry.FILE_GROPIGNORE.createNewFile();
 			}
 
 			if (!entry.FILE_CONFIG.exists()) {
+
 				builder.append("\r\n[System] 配置文件不存在");
+
 				entry.FILE_CONFIG.createNewFile();
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(entry.FILE_CONFIG), "UTF-8"));
+
 				// @formatter:off
 				writer.write(
-					"summoner=\r\n" +
-					"operator=\r\n" +
 					"verbose=true\r\n" +
+					"operator=\r\n" +
 					"enable_trigger_user=false\r\n" +
 					"enable_trigger_disz=false\r\n" +
 					"enable_trigger_grop=false\r\n" +
 					"enable_listener_user=false\r\n" +
 					"enable_listener_disz=false\r\n" +
 					"enable_listener_grop=false\r\n" +
-					"enable_blacklist=true\r\n" +
-					"enable_userignore=true\r\n" +
-					"enable_diszignore=true\r\n" +
-					"enable_gropignore=true\r\n" +
+					"enable_executor_user=false\r\n" +
+					"enable_executor_disz=false\r\n" +
+					"enable_executor_grop=false\r\n" +
 					"enable_ddnsclient=true\r\n" +
 					"ddnsapi_clientua=BTSCoolQ/1.0\r\n" +
 					"ddnsapi_hostname=\r\n" +
 					"ddnsapi_password="
 				);
 				// @formatter:on
+
 				writer.flush();
 				writer.close();
+
 				builder.append("\r\n[System] 生成新的配置文件，自动退出");
 
 				throw new Exception("配置文件不存在，创建新的配置文件，自动退出");
 			}
+
+			if (!entry.FILE_GANNOUNCE.exists()) {
+
+				builder.append("\r\n[System] 组公告配置文件不存在");
+
+				entry.FILE_GANNOUNCE.createNewFile();
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(entry.FILE_GANNOUNCE), "UTF-8"));
+
+				// @formatter:off
+				writer.write(
+					"#群组号码:接受信息的号码1,接受信息的号码2\r\n" +
+					"#*:1001000888,1002000888\r\n" +
+					"#100100100:1003000888:1004000888\r\n"
+				);
+				// @formatter:on
+
+				writer.flush();
+				writer.close();
+
+				builder.append("\r\n[System] 生成新的群变动配置文件，自动退出");
+
+				throw new Exception("配置文件不存在，创建新的配置文件，自动退出");
+			}
+
+			// ==========================================================================================================================
 
 			builder.append("\r\n[System] 读取配置文件");
 
@@ -167,16 +213,18 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			entry.INIT_VERBOSE = Boolean.parseBoolean(entry.config.getProperty("verbose", "true"));
 
-			entry.MYSELFID = Long.parseLong(entry.config.getProperty("summoner", "0"));
-			entry.OPERATOR = Long.parseLong(entry.config.getProperty("operator", "0"));
-			entry.MYSELFID = JcqApp.CQ.getLoginQQ();
+			entry.USERID_COOLQ = JcqApp.CQ.getLoginQQ();
+
+			if (entry.INIT_VERBOSE) {
+				builder.append("\r\n[System] 机器人账户为：");
+				builder.append(entry.USERID_COOLQ);
+			}
+
+			entry.USERID_ADMIN = Long.parseLong(entry.config.getProperty("operator", "0"));
 
 			if (entry.INIT_VERBOSE) {
 				builder.append("\r\n[System] 管理员账户为：");
-				builder.append(entry.OPERATOR);
-				builder.append("\r\n[System] 机器人账户为：");
-				builder.append(entry.MYSELFID);
-				builder.append("\r\n");
+				builder.append(entry.USERID_ADMIN);
 			}
 
 			SystemHandler.init(builder, entry.config);
@@ -208,9 +256,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	// ==============================================================================================================================================================
 
-	/***
-	 * 收到私聊时由JcqSDK调用
-	 */
 	@Override
 	public int privateMsg(final int typeid, final int messageid, final long userid, final String message, final int messagefont) {
 		try {
@@ -244,9 +289,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return IMsg.MSG_IGNORE;
 	}
 
-	/***
-	 * 收到讨论组消息时由JcqSDK调用
-	 */
 	@Override
 	public int discussMsg(final int typeid, final int messageid, final long diszid, final long userid, final String message, final int messagefont) {
 		try {
@@ -316,6 +358,15 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	// ==============================================================================================================================================================
 
 	/***
+	 * 添加好友成功时由JcqSDK调用
+	 */
+	@Override
+	public int friendAdd(final int subtype, final int sendTime, final long fromQQ) {
+		JcqApp.CQ.sendPrivateMsg(fromQQ, "在下人工智障，如有疑问请发送//help获取帮助。");
+		return 0;
+	}
+
+	/***
 	 * 收到添加好友请求时由JcqSDK调用
 	 */
 	@Override
@@ -343,6 +394,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		}
 		return 0;
 	}
+
+	// ==============================================================================================================================================================
 
 	@Override
 	public int groupMemberIncrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
@@ -400,11 +453,11 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	// ==============================================================================================================================================================
 
 	public static long OPERATOR() {
-		return entry.OPERATOR;
+		return entry.USERID_ADMIN;
 	}
 
 	public static long MYSELFID() {
-		return entry.MYSELFID;
+		return entry.USERID_COOLQ;
 	}
 
 	public static File FOLDER_CONF() {
@@ -413,6 +466,10 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static File FOLDER_DATA() {
 		return entry.FOLDER_DATA;
+	}
+
+	public static File FILE_GANNOUNCE() {
+		return entry.FILE_GANNOUNCE;
 	}
 
 	public static File FILE_BLACKLIST() {
@@ -432,12 +489,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	}
 
 	// ==============================================================================================================================================================
-	// 未注册 未使用
-
-	@Override
-	public int friendAdd(final int subtype, final int sendTime, final long fromQQ) {
-		return 0;
-	}
 
 	@Override
 	public int groupAdmin(final int subtype, final int sendTime, final long fromGroup, final long beingOperateQQ) {

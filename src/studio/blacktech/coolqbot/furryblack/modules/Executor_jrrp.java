@@ -11,7 +11,7 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 
 public class Executor_jrrp extends ModuleExecutor {
 
-	private HashMap<Long, Integer> jrrp = new HashMap<Long, Integer>();
+	private HashMap<Long, Integer> jrrp = new HashMap<>();
 
 	public Executor_jrrp() {
 		this.MODULE_DISPLAYNAME = "今日运气";
@@ -67,11 +67,9 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
-		if (this.COUNT == 0) {
-			return null;
-		}
-		TreeMap<Integer, Integer> frequency = new TreeMap<Integer, Integer>();
+	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+		if (this.COUNT == 0) { return null; }
+		TreeMap<Integer, Integer> frequency = new TreeMap<>();
 		for (long temp : this.jrrp.keySet()) {
 			int luck = this.jrrp.get(temp);
 			frequency.put(luck, frequency.containsKey(luck) ? frequency.get(luck) + 1 : 1);

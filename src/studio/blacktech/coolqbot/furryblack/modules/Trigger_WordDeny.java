@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.Message;
@@ -11,17 +12,19 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleTrigger;
 
 public class Trigger_WordDeny extends ModuleTrigger {
 
-	private ArrayList<CharSequence> BLACKLIST = new ArrayList<CharSequence>(100);
+	public boolean ENABLE = false;
+
+	private ArrayList<String> BLACKLIST = new ArrayList<>(100);
 
 	private int DENY_USER_COUNT = 0;
 	private int DENY_DISZ_COUNT = 0;
 	private int DENY_GROP_COUNT = 0;
 
 	public Trigger_WordDeny() {
-		this.MODULE_DISPLAYNAME = "过滤器";
 		this.MODULE_PACKAGENAME = "worddeny";
+		this.MODULE_DISPLAYNAME = "过滤器";
 		this.MODULE_DESCRIPTION = "正则过滤器";
-		this.MODULE_VERSION = "1.0.0";
+		this.MODULE_VERSION = "2.1.0";
 		this.MODULE_USAGE = new String[] {};
 		this.MODULE_PRIVACY_TRIGER = new String[] {
 				"获取消息内容 - 用于正则判断"
@@ -30,6 +33,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		this.MODULE_PRIVACY_STORED = new String[] {};
 		this.MODULE_PRIVACY_CACHED = new String[] {};
 		this.MODULE_PRIVACY_OBTAIN = new String[] {};
+
 		String line;
 		BufferedReader reader;
 		try {
@@ -38,6 +42,10 @@ public class Trigger_WordDeny extends ModuleTrigger {
 				this.BLACKLIST.add(line);
 			}
 			reader.close();
+			boolean temp = this.BLACKLIST.size() > 0;
+			this.ENABLE_USER = temp;
+			this.ENABLE_DISZ = temp;
+			this.ENABLE_GROP = temp;
 		} catch (Exception exce) {
 			exce.printStackTrace();
 		}
@@ -45,8 +53,8 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		for (final CharSequence temp : this.BLACKLIST) {
-			if (message.rawMessage.contains(temp)) {
+		for (final String temp : this.BLACKLIST) {
+			if (Pattern.matches(temp, message.rawMessage())) {
 				this.DENY_USER_COUNT++;
 				return true;
 			}
@@ -56,8 +64,8 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		for (final CharSequence temp : this.BLACKLIST) {
-			if (message.rawMessage.contains(temp)) {
+		for (final String temp : this.BLACKLIST) {
+			if (Pattern.matches(temp, message.rawMessage())) {
 				this.DENY_DISZ_COUNT++;
 				return true;
 			}
@@ -67,8 +75,8 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-		for (final CharSequence temp : this.BLACKLIST) {
-			if (message.rawMessage.contains(temp)) {
+		for (final String temp : this.BLACKLIST) {
+			if (Pattern.matches(temp, message.rawMessage())) {
 				this.DENY_GROP_COUNT++;
 				return true;
 			}
@@ -77,7 +85,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, Message message, Object[] parameters) {
+	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("拦截私聊：");
 		builder.append(this.DENY_USER_COUNT);
