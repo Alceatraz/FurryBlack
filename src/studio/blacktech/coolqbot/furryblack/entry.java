@@ -27,7 +27,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "4.8.2 2019-06-12 (00:00)";
+	public static final String PRODUCT_VERSION = "4.8.3 2019-06-12 (15:30)";
 
 	private static File FOLDER_CONF;
 	private static File FOLDER_DATA;
@@ -270,6 +270,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(userid);
 			builder.append("\r\n 消息:");
 			builder.append(message);
+			builder.append("\r\n 消息:");
+			builder.append(message.length());
 			builder.append("\r\n 报错栈\r\n:");
 			for (StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
@@ -299,10 +301,14 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(LoggerX.time());
 			builder.append(" [讨论组消息异常] - ");
 			builder.append(messageid);
+			builder.append("\r\n 组号:");
+			builder.append(diszid);
 			builder.append("\r\n 用户:");
 			builder.append(userid);
 			builder.append("\r\n 消息:");
 			builder.append(message);
+			builder.append("\r\n 消息:");
+			builder.append(message.length());
 			builder.append("\r\n 报错栈\r\n:");
 			for (StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
@@ -332,10 +338,14 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(LoggerX.time());
 			builder.append(" [群聊消息异常] - ");
 			builder.append(messageid);
+			builder.append("\r\n 群号:");
+			builder.append(gropid);
 			builder.append("\r\n 用户:");
 			builder.append(userid);
 			builder.append("\r\n 消息:");
 			builder.append(message);
+			builder.append("\r\n 消息:");
+			builder.append(message.length());
 			builder.append("\r\n 报错栈:");
 			for (StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
