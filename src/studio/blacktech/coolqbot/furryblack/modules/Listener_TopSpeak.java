@@ -163,6 +163,10 @@ public class Listener_TopSpeak extends ModuleListener {
 		this.GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
 	}
 
+	public void memberJoin(long gropid, long userid) {
+		this.GROUP_STATUS.get(gropid).USER_STATUS.put(userid, new UserStatus());
+	}
+
 	// ==========================================================================================================================
 
 	/***
