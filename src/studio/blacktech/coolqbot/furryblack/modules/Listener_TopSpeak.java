@@ -37,7 +37,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		this.MODULE_PACKAGENAME = "shui";
 		this.MODULE_DISPLAYNAME = "水群统计";
 		this.MODULE_DESCRIPTION = "水群统计";
-		this.MODULE_VERSION = "14.2.1";
+		this.MODULE_VERSION = "14.2.2";
 		this.MODULE_USAGE = new String[] {};
 		this.MODULE_PRIVACY_TRIGER = new String[] {};
 		this.MODULE_PRIVACY_LISTEN = new String[] {

@@ -53,7 +53,6 @@ public class SystemHandler extends Module {
 	// @formatter:off
 
 	private static String MESSAGE_HELP =
-
 			"FurryBlack - 一个小动物形象的人工智障\r\n" +
 			"\r\n" +
 			"使用即表明同意最终用户许可协议\r\n" +
@@ -66,9 +65,7 @@ public class SystemHandler extends Module {
 			"//info - 版本版权信息\r\n" +
 			"//list - 列出功能模块\r\n" +
 			"//help <命令> - 显示指定模块帮助";
-
 	private static String MESSAGE_INFO =
-
 			"FurryBlack - 一个小动物形象的人工智障\r\n" +
 			"\r\n" +
 			"使用即表明同意最终用户许可协议(//eula查看)\r\n" +
@@ -78,13 +75,12 @@ public class SystemHandler extends Module {
 			"隐私声明(框架级隐私):\r\n" +
 			"框架执行流程的三种可能：\r\n" +
 			"用户消息 → 触发器（拦截）→ 结束" +
-			"用户消息 → 触发器 (不拦截）→ 以//开头（是）→ 执行器 → 结束" +
-			"用户消息 → 触发器 (不拦截）→ 以//开头（否）→ 监听器 → 结束" +
+			"用户消息 → 触发器（不拦截）→ 以//开头（是）→ 执行器 → 结束" +
+			"用户消息 → 触发器（不拦截）→ 以//开头（否）→ 监听器 → 结束" +
 			"\r\n" +
-			"触发器（又名筛选器）可决定是否将消息拦截，用于过滤消息" +
-			"执行器 是本BOT的核心功能，实现各种功能" +
-			"监听器 用于增强命令的" +
-			"" +
+			"触发器 可决定是否将消息拦截，用于过滤消息" +
+			"监听器 可监听所有消息，用于扩展执行器的功能" +
+			"执行器 命令模块，用于实现各种互动功能" +
 			"\r\n" +
 			"隐私声明(模块级隐私):\r\n" +
 			"每个模块都有属于自己的隐私级别，可由//help <name>查看\r\n"	+
@@ -103,10 +99,8 @@ public class SystemHandler extends Module {
 			"\r\n" +
 			"版权信息(虚拟形象): 版权属于FPDG,授权使用\r\n" +
 			"https://twitter.com/flappydoggy/status/877582553762283520\r\n" +
-			"https://twitter.com/flappydoggy/status/875026125038080000\r\n" ;
-
+			"https://twitter.com/flappydoggy/status/875026125038080000" ;
 	private static String MESSAGE_EULA =
-
 			"FurryBlack - 一个小动物形象的人工智障\r\n" +
 			"\r\n" +
 			"最终用户许可协议（以下简称EULA）：\r\n" +

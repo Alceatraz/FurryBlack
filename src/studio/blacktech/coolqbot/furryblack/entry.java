@@ -27,7 +27,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "4.8.3 2019-06-12 (15:30)";
+	public static final String PRODUCT_VERSION = "4.8.4 2019-06-14 (22:50)";
 
 	private static File FOLDER_CONF;
 	private static File FOLDER_DATA;
