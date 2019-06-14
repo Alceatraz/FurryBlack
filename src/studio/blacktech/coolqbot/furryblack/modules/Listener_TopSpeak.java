@@ -263,6 +263,9 @@ public class Listener_TopSpeak extends ModuleListener {
 		StringBuilder builder3 = new StringBuilder();
 		StringBuilder builder4 = new StringBuilder();
 		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid);
+
+		int REDPACK = 0;
+		int SNAPPIC = 0;
 		builder1.append("（1/1）水群统计\r\n发言条数：");
 		builder1.append(groupStatus.GROUP_SENTENCE);
 		builder1.append("\r\n发言字数：");
@@ -314,10 +317,16 @@ public class Listener_TopSpeak extends ModuleListener {
 		HashMap<String, Integer> allMessageRankTemp = new HashMap<>();
 		for (Message message : groupStatus.MESG_PURETEXT) {
 			String raw = message.rawMessage();
-			if (allMessageRankTemp.containsKey(raw)) {
-				allMessageRankTemp.put(raw, allMessageRankTemp.get(raw) + 1);
+			if (raw.startsWith("[闪照]")) {
+				REDPACK++;
+			} else if (raw.startsWith("[QQ红包]")) {
+				SNAPPIC++;
 			} else {
-				allMessageRankTemp.put(raw, 1);
+				if (allMessageRankTemp.containsKey(raw)) {
+					allMessageRankTemp.put(raw, allMessageRankTemp.get(raw) + 1);
+				} else {
+					allMessageRankTemp.put(raw, 1);
+				}
 			}
 		}
 		TreeMap<Integer, HashSet<String>> allMessageRank = new TreeMap<>((a, b) -> b - a);
@@ -338,14 +347,22 @@ public class Listener_TopSpeak extends ModuleListener {
 				builder3.append("\r\nNo.");
 				builder3.append(i);
 				builder3.append(" - ");
-				builder4.append(messageRank);
-				builder4.append("次：");
+				builder3.append(messageRank);
+				builder3.append("次：");
 				builder3.append(message);
+				if (i++ > 25) { break; }
 			}
-			i = i + tempSet.size();
-			if (i > 25) { break; }
 		}
+
 		// ================================================================================
+
+		builder1.append("\r\n闪照数：");
+		builder1.append(SNAPPIC);
+		builder1.append("\r\n红包数：");
+		builder1.append(REDPACK);
+
+		// ================================================================================
+
 		builder4 = new StringBuilder();
 		builder4.append("最多发的图：");
 		HashMap<String, Integer> allPictureRankTemp = new HashMap<>();
@@ -378,9 +395,8 @@ public class Listener_TopSpeak extends ModuleListener {
 				builder4.append(pictureRank);
 				builder4.append("次：");
 				builder4.append(JcqApp.CC.getCQImage(picture).getUrl());
+				if (i++ > 5) { break; }
 			}
-			i = i + tempSet.size();
-			if (i > 3) { break; }
 		}
 
 		if (logMode == 0) {
