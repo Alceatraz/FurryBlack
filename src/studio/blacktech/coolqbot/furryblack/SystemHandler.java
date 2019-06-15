@@ -18,6 +18,7 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 import studio.blacktech.coolqbot.furryblack.common.ModuleListener;
 import studio.blacktech.coolqbot.furryblack.common.ModuleScheduler;
 import studio.blacktech.coolqbot.furryblack.common.ModuleTrigger;
+import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
 import studio.blacktech.coolqbot.furryblack.common.ReInitializationException;
 import studio.blacktech.coolqbot.furryblack.modules.Executor_acon;
 import studio.blacktech.coolqbot.furryblack.modules.Executor_admin;
@@ -520,7 +521,7 @@ public class SystemHandler extends Module {
 	public static void doGroupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
 		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " - [加群] " + ((subtype == 1) ? "自主申请" : "管理邀请") + "\r\n群号：" + fromGroup + "\r\n管理：" + fromQQ + "\r\n成员：" + beingOperateQQ);
 		SystemHandler.listener_topspeak.memberJoin(fromGroup, beingOperateQQ);
-
+		NickNameMap.addMember(fromQQ);
 	}
 
 	public static void doGroupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {

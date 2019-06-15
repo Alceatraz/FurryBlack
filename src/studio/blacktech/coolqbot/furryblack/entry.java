@@ -18,6 +18,7 @@ import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.Message;
+import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
 
 public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
@@ -34,6 +35,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	private static File FILE_CONFIG;
 	private static File FILE_GANNOUNCE;
 	private static File FILE_BLACKLIST;
+	private static File FILE_NICKNAMES;
 	private static File FILE_USERIGNORE;
 	private static File FILE_DISZIGNORE;
 	private static File FILE_GROPIGNORE;
@@ -99,8 +101,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			entry.FOLDER_CONF = Paths.get(JcqAppAbstract.appDirectory, "conf").toFile();
 			entry.FOLDER_DATA = Paths.get(JcqAppAbstract.appDirectory, "data").toFile();
 			entry.FILE_CONFIG = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
-			entry.FILE_GANNOUNCE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "groups.properties").toFile();
 			entry.FILE_BLACKLIST = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "blacklist.txt").toFile();
+			entry.FILE_GANNOUNCE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "groups.properties").toFile();
+			entry.FILE_NICKNAMES = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "nicknames.txt").toFile();
 			entry.FILE_USERIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 			entry.FILE_DISZIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_disz.txt").toFile();
 			entry.FILE_GROPIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_grop.txt").toFile();
@@ -132,6 +135,11 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 				entry.FILE_BLACKLIST.createNewFile();
 			}
 
+			if (!entry.FILE_NICKNAMES.exists()) {
+				builder.append("\r\n[System] 用户昵称映射表文件不存在");
+				entry.FILE_NICKNAMES.createNewFile();
+			}
+
 			if (!entry.FILE_USERIGNORE.exists()) {
 				builder.append("\r\n[System] 私聊黑名单文件不存在");
 				entry.FILE_USERIGNORE.createNewFile();
@@ -158,6 +166,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 				writer.write(
 					"verbose=true\r\n" +
 					"operator=\r\n" +
+					"enable_nickname_map=true\r\n" +
 					"enable_trigger_user=false\r\n" +
 					"enable_trigger_disz=false\r\n" +
 					"enable_trigger_grop=false\r\n" +
@@ -228,6 +237,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			}
 
 			SystemHandler.init(builder, entry.config);
+			NickNameMap.init(builder, entry.config);
 
 			builder.append("\r\n[System] 初始化完成");
 
@@ -484,6 +494,10 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static File FILE_BLACKLIST() {
 		return entry.FILE_BLACKLIST;
+	}
+
+	public static File FILE_NICKNAMES() {
+		return entry.FILE_NICKNAMES;
 	}
 
 	public static File FILE_USERIGNORE() {

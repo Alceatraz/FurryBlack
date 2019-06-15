@@ -10,6 +10,7 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
 
 public class Executor_jrjp extends ModuleExecutor {
 
@@ -55,8 +56,8 @@ public class Executor_jrjp extends ModuleExecutor {
 			this.jrjp.put(gropid, members.get(random.nextInt(members.size() + 1)));
 			this.jrav.put(gropid, random.nextInt(50000000));
 		}
-		Member sacrificeid = this.jrjp.get(gropid);
-		Module.gropInfo(gropid, userid, sacrificeid.getNick() + " (" + sacrificeid.getQqId() + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.jrav.get(gropid));
+		Long sacrificeid = this.jrjp.get(gropid).getQqId();
+		Module.gropInfo(gropid, userid, NickNameMap.getNickname(sacrificeid) + " (" + sacrificeid + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.jrav.get(gropid));
 		return true;
 	}
 

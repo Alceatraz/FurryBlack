@@ -22,6 +22,7 @@ import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleListener;
+import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
 
 @SuppressWarnings("unused")
 public class Listener_TopSpeak extends ModuleListener {
@@ -258,14 +259,19 @@ public class Listener_TopSpeak extends ModuleListener {
 	// ==========================================================================================================================
 
 	private void generateMembersRank(int logMode, long gropid) {
+
 		StringBuilder builder1 = new StringBuilder();
 		StringBuilder builder2 = new StringBuilder();
 		StringBuilder builder3 = new StringBuilder();
 		StringBuilder builder4 = new StringBuilder();
+
 		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid);
 
 		int REDPACK = 0;
 		int SNAPPIC = 0;
+
+		// ================================================================================
+
 		builder1.append("（1/1）水群统计\r\n发言条数：");
 		builder1.append(groupStatus.GROUP_SENTENCE);
 		builder1.append("\r\n发言字数：");
@@ -274,6 +280,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		builder1.append(groupStatus.GROUP_PICTURE);
 
 		// ================================================================================
+
 		builder2.append("（2/4）成员排行：");
 		TreeMap<Integer, HashSet<Long>> allMemberRank = new TreeMap<>((a, b) -> b - a);
 		for (long userid : groupStatus.USER_STATUS.keySet()) {
@@ -298,7 +305,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				builder2.append("\r\nNo.");
 				builder2.append(i);
 				builder2.append(" - ");
-				builder2.append(JcqApp.CQ.getGroupMemberInfoV2(gropid, userid).getNick());
+				builder2.append(NickNameMap.getNickname(userid));
 				builder2.append("(");
 				builder2.append(userid);
 				builder2.append(") ");
@@ -312,7 +319,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			i = i + tempSet.size();
 		}
 		// ================================================================================
-		builder3 = new StringBuilder();
+
 		builder3.append("(3/4)最多说的话：");
 		HashMap<String, Integer> allMessageRankTemp = new HashMap<>();
 		for (Message message : groupStatus.MESG_PURETEXT) {
@@ -352,6 +359,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				builder3.append(message);
 				if (i++ > 25) { break; }
 			}
+			if (i++ > 25) { break; }
 		}
 
 		// ================================================================================
@@ -363,8 +371,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		// ================================================================================
 
-		builder4 = new StringBuilder();
-		builder4.append("最多发的图：");
+		builder4.append("（4/4）最多发的图：");
 		HashMap<String, Integer> allPictureRankTemp = new HashMap<>();
 		for (Message message : groupStatus.MESG_PICTURES) {
 			String raw = message.rawMessage();
@@ -395,8 +402,9 @@ public class Listener_TopSpeak extends ModuleListener {
 				builder4.append(pictureRank);
 				builder4.append("次：");
 				builder4.append(JcqApp.CC.getCQImage(picture).getUrl());
-				if (i++ > 5) { break; }
+				if (i++ > 3) { break; }
 			}
+			if (i++ > 3) { break; }
 		}
 
 		if (logMode == 0) {

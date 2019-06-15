@@ -10,6 +10,7 @@ import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
 
 public class Executor_chou extends ModuleExecutor {
 
@@ -57,9 +58,9 @@ public class Executor_chou extends ModuleExecutor {
 				uid = member.getQqId();
 			} while ((uid == entry.MYSELFID()) || (uid == userid));
 			if (message.segment == 1) {
-				Module.gropInfo(gropid, userid, "随机抽到 " + member.getNick() + "(" + uid + ")");
+				Module.gropInfo(gropid, userid, "随机抽到 " + NickNameMap.getNickname(member.getQqId()) + "(" + uid + ")");
 			} else {
-				Module.gropInfo(gropid, userid, "随机抽到 " + member.getNick() + "(" + uid + ")： " + message.join(1));
+				Module.gropInfo(gropid, userid, "随机抽到 " + NickNameMap.getNickname(member.getQqId()) + "(" + uid + ")： " + message.join(1));
 			}
 		}
 		return true;

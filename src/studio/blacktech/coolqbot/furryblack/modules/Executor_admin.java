@@ -8,6 +8,7 @@ import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 import studio.blacktech.coolqbot.furryblack.common.ModuleListener;
+import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
 
 public class Executor_admin extends ModuleExecutor {
 
