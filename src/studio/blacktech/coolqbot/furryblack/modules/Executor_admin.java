@@ -70,12 +70,26 @@ public class Executor_admin extends ModuleExecutor {
 				if (message.segment == 2) {
 					Module.userInfo(entry.OPERATOR(), "//admin say <GroupID> XXX XXX XXX");
 				} else {
-					Module.gropInfo(Long.parseLong(message.messages[2]), message.join(3));
+					Module.gropInfo(Long.parseLong(message.messages[3]), message.join(4));
 				}
 				break;
 			//
 			case "gc":
 				System.gc();
+				break;
+			//
+			case "nick":
+				switch (message.messages[2]) {
+				case "load":
+					NickNameMap.loadMember();
+					break;
+				case "dump":
+					NickNameMap.dumpMember();
+					break;
+				case "add":
+					NickNameMap.addMember(message.messages[3], message.messages[4]);
+					break;
+				}
 				break;
 			//
 			case "shui":

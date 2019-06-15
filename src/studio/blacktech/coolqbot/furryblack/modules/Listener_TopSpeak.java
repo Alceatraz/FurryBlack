@@ -176,8 +176,6 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
 
-		long timeStart = System.currentTimeMillis();
-
 		StringBuilder builder = new StringBuilder();
 
 		try {
@@ -213,11 +211,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			}
 			return builder.toString();
 		}
-		long timeFinsh = System.currentTimeMillis();
-		builder.append("\r\n\r\n生成报告开销： ");
-		builder.append(timeFinsh - timeStart);
-		builder.append("ms");
-		return builder.toString();
+		return null;
 	}
 
 	// ==========================================================================================================================

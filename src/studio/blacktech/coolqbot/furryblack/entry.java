@@ -28,7 +28,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static final String PRODUCT_NAME = "FurryBlack - BOT";
 	public static final String PRODUCT_PACKAGENANE = entry.AppID;
-	public static final String PRODUCT_VERSION = "4.8.4 2019-06-14 (22:50)";
+	public static final String PRODUCT_VERSION = "4.8.5 2019-06-15 (23:00)";
 
 	private static File FOLDER_CONF;
 	private static File FOLDER_DATA;
@@ -101,8 +101,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			entry.FOLDER_CONF = Paths.get(JcqAppAbstract.appDirectory, "conf").toFile();
 			entry.FOLDER_DATA = Paths.get(JcqAppAbstract.appDirectory, "data").toFile();
 			entry.FILE_CONFIG = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
+			entry.FILE_GANNOUNCE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "admins.properties").toFile();
 			entry.FILE_BLACKLIST = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "blacklist.txt").toFile();
-			entry.FILE_GANNOUNCE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "groups.properties").toFile();
 			entry.FILE_NICKNAMES = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "nicknames.txt").toFile();
 			entry.FILE_USERIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 			entry.FILE_DISZIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_disz.txt").toFile();
@@ -200,9 +200,10 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 				// @formatter:off
 				writer.write(
-					"#群组号码:接受信息的号码1,接受信息的号码2\r\n" +
-					"#*:1001000888,1002000888\r\n" +
-					"#100100100:1003000888:1004000888\r\n"
+					"#管理员等级:管理员号码\r\n" +
+					"#1,1002000888\r\n" +
+					"#2:1003000888\r\n" +
+					"#3:1004000888"
 				);
 				// @formatter:on
 
