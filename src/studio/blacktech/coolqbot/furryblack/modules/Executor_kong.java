@@ -25,29 +25,42 @@ public class Executor_kong extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public void memberExit(long gropid, long userid) {
+	}
+
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	@Override
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
+		return null;
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		Module.userInfo(userid, message.length == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		Module.diszInfo(diszid, userid, message.length == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		Module.gropInfo(gropid, userid, message.length == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 	}
 
-	private static String kong(Message message) {
+	private static String kong(final Message message) {
 		String temp;
 		temp = message.join(1);
 		temp = temp.replaceAll(" ", "");
 		temp = temp.trim();
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < temp.length(); i++) {
 			builder.append(temp.charAt(i));
 			builder.append(" ");

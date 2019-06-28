@@ -18,17 +18,15 @@ public abstract class Module {
 
 	public String MODULE_FULLHELP;
 
-	public boolean initialization() {
-		return true;
-	}
+	public abstract void memberExit(final long gropid, final long userid);
 
-	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
-		return null;
-	}
+	public abstract void memberJoin(final long gropid, final long userid);
+
+	public abstract String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters);
 
 	public void genFullHelp() {
 
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 
 		builder.append(this.MODULE_PACKAGENAME);
 		builder.append(" > ");
@@ -42,7 +40,7 @@ public abstract class Module {
 		if (this.MODULE_USAGE.length == 0) {
 			builder.append("无");
 		} else {
-			for (String temp : this.MODULE_USAGE) {
+			for (final String temp : this.MODULE_USAGE) {
 				builder.append("\r\n");
 				builder.append(temp);
 			}
@@ -55,7 +53,7 @@ public abstract class Module {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_TRIGER.length);
-			for (String temp : this.MODULE_PRIVACY_TRIGER) {
+			for (final String temp : this.MODULE_PRIVACY_TRIGER) {
 				builder.append("\r\n  ");
 				builder.append(temp);
 			}
@@ -66,7 +64,7 @@ public abstract class Module {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_LISTEN.length);
-			for (String temp : this.MODULE_PRIVACY_LISTEN) {
+			for (final String temp : this.MODULE_PRIVACY_LISTEN) {
 				builder.append("\r\n  ");
 				builder.append(temp);
 			}
@@ -77,7 +75,7 @@ public abstract class Module {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_STORED.length);
-			for (String temp : this.MODULE_PRIVACY_STORED) {
+			for (final String temp : this.MODULE_PRIVACY_STORED) {
 				builder.append("\r\n  ");
 				builder.append(temp);
 			}
@@ -88,7 +86,7 @@ public abstract class Module {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_CACHED.length);
-			for (String temp : this.MODULE_PRIVACY_CACHED) {
+			for (final String temp : this.MODULE_PRIVACY_CACHED) {
 				builder.append("\r\n  ");
 				builder.append(temp);
 			}
@@ -99,7 +97,7 @@ public abstract class Module {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_OBTAIN.length);
-			for (String temp : this.MODULE_PRIVACY_OBTAIN) {
+			for (final String temp : this.MODULE_PRIVACY_OBTAIN) {
 				builder.append("\r\n  ");
 				builder.append(temp);
 			}

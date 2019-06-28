@@ -10,12 +10,11 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
 
 public class Executor_jrjp extends ModuleExecutor {
 
-	private HashMap<Long, Integer> jrav = new HashMap<>();
-	private HashMap<Long, Member> jrjp = new HashMap<>();
+	private final HashMap<Long, Integer> jrav = new HashMap<>();
+	private final HashMap<Long, Member> jrjp = new HashMap<>();
 
 	public Executor_jrjp() {
 		this.MODULE_DISPLAYNAME = "今日祭品";
@@ -39,25 +38,38 @@ public class Executor_jrjp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public void memberExit(long gropid, long userid) {
+	}
+
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	@Override
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
+		return null;
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		if (!this.jrjp.containsKey(gropid)) {
-			SecureRandom random = new SecureRandom();
-			List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
+			final SecureRandom random = new SecureRandom();
+			final List<Member> members = JcqApp.CQ.getGroupMemberList(gropid);
 			this.jrjp.put(gropid, members.get(random.nextInt(members.size() + 1)));
 			this.jrav.put(gropid, random.nextInt(50000000));
 		}
-		Long sacrificeid = this.jrjp.get(gropid).getQqId();
-		Module.gropInfo(gropid, userid, NickNameMap.getNickname(sacrificeid) + " (" + sacrificeid + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.jrav.get(gropid));
+		final Long sacrificeid = this.jrjp.get(gropid).getQqId();
+		Module.gropInfo(gropid, userid, Module_Nick.getNickname(sacrificeid) + " (" + sacrificeid + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.jrav.get(gropid));
 		return true;
 	}
 

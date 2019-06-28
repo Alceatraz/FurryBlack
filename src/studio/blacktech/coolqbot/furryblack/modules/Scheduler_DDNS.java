@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleScheduler;
 
@@ -25,7 +26,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 
 	private String ADDRESS = null;
 
-	public Scheduler_DDNS(StringBuilder initBuilder, Properties config) {
+	public Scheduler_DDNS(final StringBuilder initBuilder, final Properties config) {
 		if (Scheduler_DDNS.INITIALIZATIONLOCK) { return; }
 		Scheduler_DDNS.INITIALIZATIONLOCK = true;
 
@@ -86,7 +87,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 			while (true) {
 				try {
 					this.doLoop();
-				} catch (InterruptedException exce) {
+				} catch (final InterruptedException exce) {
 					exce.printStackTrace();
 					return;
 				}
@@ -95,7 +96,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 	}
 
 	private void doLoop() throws InterruptedException {
-		Date date = new Date();
+		final Date date = new Date();
 
 		int time = 605;
 
@@ -135,7 +136,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 			final InputStream rx = connection.getInputStream();
 			rx.read(buffer);
 			return new String(buffer, "UTF-8").trim();
-		} catch (Exception exce) {
+		} catch (final Exception exce) {
 			exce.printStackTrace();
 			return null;
 		}
@@ -155,7 +156,7 @@ public class Scheduler_DDNS extends ModuleScheduler {
 			final InputStream rx = connection.getInputStream();
 			rx.read(buffer);
 			return new String(buffer, "UTF-8").trim();
-		} catch (Exception exce) {
+		} catch (final Exception exce) {
 			exce.printStackTrace();
 			return null;
 		}
@@ -176,10 +177,23 @@ public class Scheduler_DDNS extends ModuleScheduler {
 			final InputStream rx = connection.getInputStream();
 			rx.read(buffer);
 			return new String(buffer, "UTF-8").trim();
-		} catch (Exception exce) {
+		} catch (final Exception exce) {
 			exce.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public void memberExit(long gropid, long userid) {
+	}
+
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	@Override
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
+		return null;
 	}
 
 }

@@ -18,7 +18,6 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 import studio.blacktech.coolqbot.furryblack.common.ModuleListener;
 import studio.blacktech.coolqbot.furryblack.common.ModuleScheduler;
 import studio.blacktech.coolqbot.furryblack.common.ModuleTrigger;
-import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
 import studio.blacktech.coolqbot.furryblack.common.ReInitializationException;
 import studio.blacktech.coolqbot.furryblack.modules.Executor_acon;
 import studio.blacktech.coolqbot.furryblack.modules.Executor_admin;
@@ -32,6 +31,7 @@ import studio.blacktech.coolqbot.furryblack.modules.Executor_kong;
 import studio.blacktech.coolqbot.furryblack.modules.Executor_roll;
 import studio.blacktech.coolqbot.furryblack.modules.Executor_zhan;
 import studio.blacktech.coolqbot.furryblack.modules.Listener_TopSpeak;
+import studio.blacktech.coolqbot.furryblack.modules.Module_Nick;
 import studio.blacktech.coolqbot.furryblack.modules.Scheduler_DDNS;
 import studio.blacktech.coolqbot.furryblack.modules.Scheduler_TASK;
 import studio.blacktech.coolqbot.furryblack.modules.Trigger_UserDeny;
@@ -173,7 +173,7 @@ public class SystemHandler extends Module {
 
 //	private static HashMap<Long, HashSet<Long>> GANNOUNCE = new HashMap<>();
 
-	protected static boolean init(StringBuilder initBuilder, Properties config) throws ReInitializationException, NumberFormatException, IOException {
+	protected static boolean init(final StringBuilder initBuilder, final Properties config) throws ReInitializationException, NumberFormatException, IOException {
 
 		if (SystemHandler.INITIALIZATIONLOCK) { throw new ReInitializationException(); }
 
@@ -203,7 +203,7 @@ public class SystemHandler extends Module {
 
 		if (entry.INIT_VERBOSE) { initBuilder.append("\r\n[System] 读取组公告配置"); }
 
-		BufferedReader reader = new BufferedReader(new FileReader(entry.FILE_GANNOUNCE()));
+		final BufferedReader reader = new BufferedReader(new FileReader(entry.FILE_GANNOUNCE()));
 
 		String line;
 
@@ -316,7 +316,7 @@ public class SystemHandler extends Module {
 		// =======================================================================
 
 		if (entry.INIT_VERBOSE) { initBuilder.append("\r\n[Module] 注册私聊执行器"); }
-		SystemHandler.registerUserExecutor(SystemHandler.executor_dice);
+//		SystemHandler.registerUserExecutor(SystemHandler.executor_dice);
 		SystemHandler.registerUserExecutor(SystemHandler.executor_echo);
 		SystemHandler.registerUserExecutor(SystemHandler.executor_jrrp);
 		SystemHandler.registerUserExecutor(SystemHandler.executor_kong);
@@ -327,7 +327,7 @@ public class SystemHandler extends Module {
 		// =======================================================================
 
 		if (entry.INIT_VERBOSE) { initBuilder.append("\r\n[Module] 注册组聊执行器"); }
-		SystemHandler.registerDiszExecutor(SystemHandler.executor_dice);
+//		SystemHandler.registerDiszExecutor(SystemHandler.executor_dice);
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_echo);
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_jrrp);
 		SystemHandler.registerDiszExecutor(SystemHandler.executor_jrjp);
@@ -339,7 +339,7 @@ public class SystemHandler extends Module {
 		if (entry.INIT_VERBOSE) { initBuilder.append("\r\n[Module] 注册群聊执行器"); }
 		SystemHandler.registerGropExecutor(SystemHandler.executor_acon);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_chou);
-		SystemHandler.registerGropExecutor(SystemHandler.executor_dice);
+//		SystemHandler.registerGropExecutor(SystemHandler.executor_dice);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_echo);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_gamb);
 		SystemHandler.registerGropExecutor(SystemHandler.executor_jrjp);
@@ -518,13 +518,21 @@ public class SystemHandler extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	public static void doGroupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " - [加群] " + ((subtype == 1) ? "自主申请" : "管理邀请") + "\r\n群号：" + fromGroup + "\r\n管理：" + fromQQ + "\r\n成员：" + beingOperateQQ);
-		SystemHandler.listener_topspeak.memberJoin(fromGroup, beingOperateQQ);
-		NickNameMap.addMember(fromQQ);
+	@Override
+	public void memberExit(long gropid, long userid) {
 	}
 
-	public static void doGroupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	public static void doGroupMemberIncrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
+		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " - [加群] " + ((subtype == 1) ? "自主申请" : "管理邀请") + "\r\n群号：" + fromGroup + "\r\n管理：" + fromQQ + "\r\n成员：" + beingOperateQQ);
+		SystemHandler.listener_topspeak.memberJoin(fromGroup, beingOperateQQ);
+		Module_Nick.addMember(fromQQ);
+	}
+
+	public static void doGroupMemberDecrease(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final long beingOperateQQ) {
 		JcqApp.CQ.sendPrivateMsg(entry.OPERATOR(), LoggerX.time() + " - [退群] " + (subtype == 1 ? "自主退群" : "管理踢出") + "\r\n群号：" + fromGroup + "\r\n管理：" + fromQQ + "\r\n成员：" + beingOperateQQ);
 		SystemHandler.listener_topspeak.memberExit(fromGroup, beingOperateQQ);
 	}
@@ -692,22 +700,27 @@ public class SystemHandler extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	public static String generateFullReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+	@Override
+	public String[] generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object... parameters) {
+		return null;
+	}
 
-		String report;
-		StringBuilder builder = new StringBuilder();
+	public static String generateFullReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object[] parameters) {
+
+		String[] report;
+		final StringBuilder builder = new StringBuilder();
 
 		long uptime = System.currentTimeMillis() - SystemHandler.BOOTTIME;
-		long uptimedd = uptime / 86400000;
+		final long uptimedd = uptime / 86400000;
 		uptime = uptime % 86400000;
-		long uptimehh = uptime / 3600000;
+		final long uptimehh = uptime / 3600000;
 		uptime = uptime % 3600000;
-		long uptimemm = uptime / 60000;
+		final long uptimemm = uptime / 60000;
 		uptime = uptime % 60000;
-		long uptimess = uptime / 1000;
+		final long uptimess = uptime / 1000;
 
-		long totalMemory = Runtime.getRuntime().totalMemory() / 1024;
-		long freeMemory = Runtime.getRuntime().freeMemory() / 1024;
+		final long totalMemory = Runtime.getRuntime().totalMemory() / 1024;
+		final long freeMemory = Runtime.getRuntime().freeMemory() / 1024;
 
 		// ===============================================================================
 
@@ -745,7 +758,7 @@ public class SystemHandler extends Module {
 		builder.append("个");
 
 		for (final String name : SystemHandler.TRIGGER_INSTANCE.keySet()) {
-			ModuleTrigger temp = SystemHandler.TRIGGER_INSTANCE.get(name);
+			final ModuleTrigger temp = SystemHandler.TRIGGER_INSTANCE.get(name);
 			builder.append("\r\n模块 ");
 			builder.append(temp.MODULE_PACKAGENAME);
 			builder.append(": ");
@@ -753,8 +766,12 @@ public class SystemHandler extends Module {
 			builder.append("次");
 			report = temp.generateReport(0, 0, 0, 0, 0, 0, null, null);
 			if (report != null) {
-				builder.append("\r\n");
-				builder.append(report);
+				String line ;
+				for (int i = 0; i < report.length; i++) {
+					line = report[i];
+					builder.append("\r\n");
+					builder.append(report);
+				}
 			}
 		}
 
@@ -765,7 +782,7 @@ public class SystemHandler extends Module {
 		builder.append("个");
 
 		for (final String name : SystemHandler.LISTENER_INSTANCE.keySet()) {
-			ModuleListener temp = SystemHandler.LISTENER_INSTANCE.get(name);
+			final ModuleListener temp = SystemHandler.LISTENER_INSTANCE.get(name);
 			builder.append("\r\n模块 ");
 			builder.append(temp.MODULE_PACKAGENAME);
 			builder.append(": ");
@@ -785,7 +802,7 @@ public class SystemHandler extends Module {
 		builder.append("个");
 
 		for (final String name : SystemHandler.EXECUTOR_INSTANCE.keySet()) {
-			ModuleExecutor temp = SystemHandler.EXECUTOR_INSTANCE.get(name);
+			final ModuleExecutor temp = SystemHandler.EXECUTOR_INSTANCE.get(name);
 			builder.append("\r\n模块 ");
 			builder.append(temp.MODULE_PACKAGENAME);
 			builder.append(": ");
@@ -809,20 +826,20 @@ public class SystemHandler extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	public static void registerUserTrigger(ModuleTrigger trigger) {
+	public static void registerUserTrigger(final ModuleTrigger trigger) {
 		if (!trigger.ENABLE_USER) { return; }
 		SystemHandler.TRIGGER_USER.add(trigger);
 		SystemHandler.TRIGGER_INSTANCE.put(trigger.MODULE_PACKAGENAME, trigger);
 
 	}
 
-	public static void registerDiszTrigger(ModuleTrigger trigger) {
+	public static void registerDiszTrigger(final ModuleTrigger trigger) {
 		if (!trigger.ENABLE_DISZ) { return; }
 		SystemHandler.TRIGGER_DISZ.add(trigger);
 		SystemHandler.TRIGGER_INSTANCE.put(trigger.MODULE_PACKAGENAME, trigger);
 	}
 
-	private static void registerGropTrigger(ModuleTrigger trigger) {
+	private static void registerGropTrigger(final ModuleTrigger trigger) {
 		if (!trigger.ENABLE_GROP) { return; }
 		SystemHandler.TRIGGER_GROP.add(trigger);
 		SystemHandler.TRIGGER_INSTANCE.put(trigger.MODULE_PACKAGENAME, trigger);
@@ -830,19 +847,19 @@ public class SystemHandler extends Module {
 
 	// ==========================================================================================================================
 
-	public static void registerUserListener(ModuleListener listener) {
+	public static void registerUserListener(final ModuleListener listener) {
 		if (!listener.ENABLE_USER) { return; }
 		SystemHandler.LISTENER_USER.add(listener);
 		SystemHandler.LISTENER_INSTANCE.put(listener.MODULE_PACKAGENAME, listener);
 	}
 
-	public static void registerDiszListener(ModuleListener listener) {
+	public static void registerDiszListener(final ModuleListener listener) {
 		if (!listener.ENABLE_DISZ) { return; }
 		SystemHandler.LISTENER_DISZ.add(listener);
 		SystemHandler.LISTENER_INSTANCE.put(listener.MODULE_PACKAGENAME, listener);
 	}
 
-	public static void registerGropListener(ModuleListener listener) {
+	public static void registerGropListener(final ModuleListener listener) {
 		if (!listener.ENABLE_GROP) { return; }
 		SystemHandler.LISTENER_GROP.add(listener);
 		SystemHandler.LISTENER_INSTANCE.put(listener.MODULE_PACKAGENAME, listener);
@@ -850,31 +867,31 @@ public class SystemHandler extends Module {
 
 	// ==========================================================================================================================
 
-	public static void registerUserExecutor(ModuleExecutor executor) {
+	public static void registerUserExecutor(final ModuleExecutor executor) {
 		SystemHandler.EXECUTOR_USER.put(executor.MODULE_PACKAGENAME, executor);
 		SystemHandler.EXECUTOR_INSTANCE.put(executor.MODULE_PACKAGENAME, executor);
 	}
 
-	public static void registerDiszExecutor(ModuleExecutor executor) {
+	public static void registerDiszExecutor(final ModuleExecutor executor) {
 		SystemHandler.EXECUTOR_DISZ.put(executor.MODULE_PACKAGENAME, executor);
 		SystemHandler.EXECUTOR_INSTANCE.put(executor.MODULE_PACKAGENAME, executor);
 	}
 
-	public static void registerGropExecutor(ModuleExecutor executor) {
+	public static void registerGropExecutor(final ModuleExecutor executor) {
 		SystemHandler.EXECUTOR_GROP.put(executor.MODULE_PACKAGENAME, executor);
 		SystemHandler.EXECUTOR_INSTANCE.put(executor.MODULE_PACKAGENAME, executor);
 	}
 
 	// ==========================================================================================================================
 
-	public static void registerSchedular(ModuleScheduler schulder) {
+	public static void registerSchedular(final ModuleScheduler schulder) {
 		SystemHandler.SCHEDULER.put(schulder.MODULE_PACKAGENAME, schulder);
 		SystemHandler.SCHEDULER_INSTANCE.put(schulder.MODULE_PACKAGENAME, new Thread(schulder));
 	}
 
 	// ==========================================================================================================================
 
-	public static ModuleTrigger getTrigger(String name) {
+	public static ModuleTrigger getTrigger(final String name) {
 		if (SystemHandler.TRIGGER_INSTANCE.containsKey(name)) {
 			return SystemHandler.TRIGGER_INSTANCE.get(name);
 		} else {
@@ -882,7 +899,7 @@ public class SystemHandler extends Module {
 		}
 	}
 
-	public static ModuleListener getListener(String name) {
+	public static ModuleListener getListener(final String name) {
 		if (SystemHandler.LISTENER_INSTANCE.containsKey(name)) {
 			return SystemHandler.LISTENER_INSTANCE.get(name);
 		} else {
@@ -890,7 +907,7 @@ public class SystemHandler extends Module {
 		}
 	}
 
-	public static ModuleExecutor getExecutor(String name) {
+	public static ModuleExecutor getExecutor(final String name) {
 		if (SystemHandler.EXECUTOR_INSTANCE.containsKey(name)) {
 			return SystemHandler.EXECUTOR_INSTANCE.get(name);
 		} else {
@@ -898,7 +915,7 @@ public class SystemHandler extends Module {
 		}
 	}
 
-	public static ModuleScheduler getScheduler(String name) {
+	public static ModuleScheduler getScheduler(final String name) {
 		if (SystemHandler.SCHEDULER.containsKey(name)) {
 			return SystemHandler.SCHEDULER.get(name);
 		} else {
@@ -906,7 +923,7 @@ public class SystemHandler extends Module {
 		}
 	}
 
-	public static Thread getSchedulerThread(String name) {
+	public static Thread getSchedulerThread(final String name) {
 		if (SystemHandler.SCHEDULER_INSTANCE.containsKey(name)) {
 			return SystemHandler.SCHEDULER_INSTANCE.get(name);
 		} else {

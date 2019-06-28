@@ -10,8 +10,8 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 
 public class Executor_zhan extends ModuleExecutor {
 
-	private TreeMap<Integer, String> CARD = new TreeMap<>();
-	private ArrayList<Integer> FREQ = new ArrayList<>();
+	private final TreeMap<Integer, String> CARD = new TreeMap<>();
+	private final ArrayList<Integer> FREQ = new ArrayList<>();
 
 	public Executor_zhan() {
 
@@ -96,30 +96,38 @@ public class Executor_zhan extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public void memberExit(long gropid, long userid) {
+	}
+
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		Module.userInfo(userid, this.zhan(message));
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		Module.diszInfo(diszid, userid, this.zhan(message));
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		Module.gropInfo(gropid, userid, this.zhan(message));
 		return true;
 	}
 
-	public String zhan(Message message) {
+	public String zhan(final Message message) {
 		if (message.segment == 1) {
 			return "你不能占卜空气";
 		} else {
-			SecureRandom random = new SecureRandom();
-			int urandom = random.nextInt(43) + 1;
-			StringBuilder builder = new StringBuilder();
+			final SecureRandom random = new SecureRandom();
+			final int urandom = random.nextInt(43) + 1;
+			final StringBuilder builder = new StringBuilder();
 			builder.append("你因为 ");
 			builder.append(message.join(1));
 			builder.append(" 抽到了：\r\n");
@@ -130,7 +138,7 @@ public class Executor_zhan extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
 		if (this.COUNT == 0) { return null; }
 		final StringBuilder builder = new StringBuilder();
 		int coverage = 0;
@@ -148,6 +156,8 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append((this.FREQ.get(i) * 100) / coverage);
 			builder.append("%");
 		}
-		return builder.toString();
+		String res[] = new String[1];
+		res[0] = builder.toString();
+		return res;
 	}
 }

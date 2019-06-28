@@ -20,31 +20,34 @@ public class Executor_NULL extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean initialization() {
-		return false;
+	public void memberExit(long gropid, long userid) {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
-
-		return true;
+	public void memberJoin(long gropid, long userid) {
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
-
-		return true;
-	}
-
-	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
-
-		return true;
-	}
-
-	@Override
-	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
 		return null;
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+
+		return true;
+	}
+
+	@Override
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+
+		return true;
+	}
+
+	@Override
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+
+		return true;
 	}
 
 }

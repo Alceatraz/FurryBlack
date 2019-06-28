@@ -8,9 +8,9 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 
 public class Executor_acon extends ModuleExecutor {
 
-	private HashMap<Long, Long> CONSUMPTION;
-	private HashMap<Long, Long> WORKINGMODE;
-	private HashMap<Long, Long> LASTCHANGED;
+	private final HashMap<Long, Long> CONSUMPTION;
+	private final HashMap<Long, Long> WORKINGMODE;
+	private final HashMap<Long, Long> LASTCHANGED;
 
 	public Executor_acon() {
 		this.MODULE_PACKAGENAME = "acon";
@@ -41,19 +41,32 @@ public class Executor_acon extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public void memberExit(long gropid, long userid) {
+	}
+
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	@Override
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
+		return null;
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 
-		long current = System.currentTimeMillis() / 1000;
+		final long current = System.currentTimeMillis() / 1000;
 		long elapse = 0L;
 
 		if (!this.CONSUMPTION.containsKey(gropid)) {
@@ -70,8 +83,8 @@ public class Executor_acon extends ModuleExecutor {
 		} else {
 
 			long consumption = this.CONSUMPTION.get(gropid);
-			long workingmode = this.WORKINGMODE.get(gropid);
-			long lastchanged = this.LASTCHANGED.get(gropid);
+			final long workingmode = this.WORKINGMODE.get(gropid);
+			final long lastchanged = this.LASTCHANGED.get(gropid);
 
 			elapse = current - lastchanged;
 
@@ -93,7 +106,7 @@ public class Executor_acon extends ModuleExecutor {
 				if (workingmode == 5880L) {
 					Module.gropInfo(gropid, "已经处于除湿模式");
 				} else {
-					Module.gropInfo(gropid, "本群冷气已开放：除湿模式");
+					Module.gropInfo(gropid, "切换至除湿模式");
 					consumption = consumption + (elapse * workingmode);
 					this.CONSUMPTION.put(gropid, consumption);
 					this.LASTCHANGED.put(gropid, current);
@@ -101,11 +114,59 @@ public class Executor_acon extends ModuleExecutor {
 				}
 				break;
 
+			case "wet":
+				if (workingmode == 5880L) {
+					Module.gropInfo(gropid, "已经处于加湿模式");
+				} else {
+					Module.gropInfo(gropid, "切换至加湿模式");
+					consumption = consumption + (elapse * workingmode);
+					this.CONSUMPTION.put(gropid, consumption);
+					this.LASTCHANGED.put(gropid, current);
+					this.WORKINGMODE.put(gropid, 5880L);
+				}
+				break;
+
+			case "bake":
+				if (workingmode == 114700L) {
+					Module.gropInfo(gropid, "已经处于烧烤模式");
+				} else {
+					Module.gropInfo(gropid, "切换至烧烤模式");
+					consumption = consumption + (elapse * workingmode);
+					this.CONSUMPTION.put(gropid, consumption);
+					this.LASTCHANGED.put(gropid, current);
+					this.WORKINGMODE.put(gropid, 7350L);
+				}
+				break;
+
+			case "cold":
+				if (workingmode == 14700L) {
+					Module.gropInfo(gropid, "已经处于制冰模式");
+				} else {
+					Module.gropInfo(gropid, "切换至制冰模式");
+					consumption = consumption + (elapse * workingmode);
+					this.CONSUMPTION.put(gropid, consumption);
+					this.LASTCHANGED.put(gropid, current);
+					this.WORKINGMODE.put(gropid, 7350L);
+				}
+				break;
+
+			case "warn":
+				if (workingmode == 7350L) {
+					Module.gropInfo(gropid, "已经处于制热模式");
+				} else {
+					Module.gropInfo(gropid, "切换至制热模式");
+					consumption = consumption + (elapse * workingmode);
+					this.CONSUMPTION.put(gropid, consumption);
+					this.LASTCHANGED.put(gropid, current);
+					this.WORKINGMODE.put(gropid, 7350L);
+				}
+				break;
+
 			case "cool":
 				if (workingmode == 7350L) {
 					Module.gropInfo(gropid, "已经处于制冷模式");
 				} else {
-					Module.gropInfo(gropid, "本群冷气已开放：制冷模式");
+					Module.gropInfo(gropid, "切换至制冷模式");
 					consumption = consumption + (elapse * workingmode);
 					this.CONSUMPTION.put(gropid, consumption);
 					this.LASTCHANGED.put(gropid, current);
@@ -129,4 +190,5 @@ public class Executor_acon extends ModuleExecutor {
 
 		return true;
 	}
+
 }

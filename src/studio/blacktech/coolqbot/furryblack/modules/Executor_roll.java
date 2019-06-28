@@ -35,26 +35,34 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public void memberExit(long gropid, long userid) {
+	}
+
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		Module.userInfo(userid, this.roll(message));
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		Module.diszInfo(diszid, userid, this.roll(message));
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		Module.gropInfo(gropid, userid, this.roll(message));
 		return true;
 	}
 
-	public String roll(Message message) {
+	public String roll(final Message message) {
 		String res = null;
-		SecureRandom random = new SecureRandom();
+		final SecureRandom random = new SecureRandom();
 		switch (message.segment) {
 		case 1:
 			if (random.nextBoolean()) {
@@ -103,7 +111,7 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
 		if (this.COUNT == 0) { return null; }
 		final StringBuilder builder = new StringBuilder();
 		builder.append("模式1 - 真假: ");
@@ -116,7 +124,9 @@ public class Executor_roll extends ModuleExecutor {
 		builder.append(this.mode_2);
 		builder.append("\r\n模式3 - 双限: ");
 		builder.append(this.mode_3);
-		return builder.toString();
+		String res[] = new String[1];
+		res[0] = builder.toString();
+		return res;
 	}
 
 }

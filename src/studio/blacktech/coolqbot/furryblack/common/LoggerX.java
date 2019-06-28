@@ -19,12 +19,12 @@ public class LoggerX {
 		return formater.format(date);
 	}
 
-	public static String time(String formate) {
+	public static String time(final String formate) {
 		final SimpleDateFormat formater = new SimpleDateFormat(formate);
 		return formater.format(new Date());
 	}
 
-	public static String time(String formate, Date date) {
+	public static String time(final String formate, final Date date) {
 		final SimpleDateFormat formater = new SimpleDateFormat(formate);
 		return formater.format(date);
 	}

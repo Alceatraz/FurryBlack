@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import studio.blacktech.coolqbot.furryblack.SystemHandler;
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleScheduler;
 
@@ -14,7 +15,7 @@ public class Scheduler_TASK extends ModuleScheduler {
 	private static Date date;
 	private static boolean INITIALIZATIONLOCK = false;
 
-	public Scheduler_TASK(StringBuilder initBuilder, Properties config) {
+	public Scheduler_TASK(final StringBuilder initBuilder, final Properties config) {
 		if (Scheduler_TASK.INITIALIZATIONLOCK) { return; }
 		Scheduler_TASK.INITIALIZATIONLOCK = true;
 
@@ -49,6 +50,19 @@ public class Scheduler_TASK extends ModuleScheduler {
 			exception.printStackTrace();
 			return;
 		}
+	}
+
+	@Override
+	public void memberExit(long gropid, long userid) {
+	}
+
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	@Override
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
+		return null;
 	}
 
 }

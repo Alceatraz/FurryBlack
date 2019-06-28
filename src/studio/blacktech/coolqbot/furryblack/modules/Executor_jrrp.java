@@ -11,7 +11,7 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 
 public class Executor_jrrp extends ModuleExecutor {
 
-	private HashMap<Long, Integer> jrrp = new HashMap<>();
+	private final HashMap<Long, Integer> jrrp = new HashMap<>();
 
 	public Executor_jrrp() {
 		this.MODULE_DISPLAYNAME = "今日运气";
@@ -33,9 +33,17 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public void memberExit(long gropid, long userid) {
+	}
+
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		if (!this.jrrp.containsKey(userid)) {
-			SecureRandom random = new SecureRandom();
+			final SecureRandom random = new SecureRandom();
 			this.jrrp.put(userid, random.nextInt(100));
 		}
 		Module.userInfo(userid, "今天的运气是" + this.jrrp.get(userid) + "%!!!");
@@ -43,9 +51,9 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		if (!this.jrrp.containsKey(userid)) {
-			SecureRandom random = new SecureRandom();
+			final SecureRandom random = new SecureRandom();
 			this.jrrp.put(userid, random.nextInt(100));
 		}
 		Module.diszInfo(diszid, userid, "今天的运气是" + this.jrrp.get(userid) + "%!!!");
@@ -53,9 +61,9 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		if (!this.jrrp.containsKey(userid)) {
-			SecureRandom random = new SecureRandom();
+			final SecureRandom random = new SecureRandom();
 			this.jrrp.put(userid, random.nextInt(100));
 		}
 		Module.gropInfo(gropid, userid, "今天的运气是" + this.jrrp.get(userid) + "%!!!");
@@ -67,25 +75,27 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
 		if (this.COUNT == 0) { return null; }
-		TreeMap<Integer, Integer> frequency = new TreeMap<>();
-		for (long temp : this.jrrp.keySet()) {
-			int luck = this.jrrp.get(temp);
+		final TreeMap<Integer, Integer> frequency = new TreeMap<>();
+		for (final long temp : this.jrrp.keySet()) {
+			final int luck = this.jrrp.get(temp);
 			frequency.put(luck, frequency.containsKey(luck) ? frequency.get(luck) + 1 : 1);
 		}
-		int size = this.jrrp.size();
-		StringBuilder builder = new StringBuilder();
+		final int size = this.jrrp.size();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("共生成了 ");
 		builder.append(size);
 		builder.append("次");
-		for (Entry<Integer, Integer> temp : frequency.entrySet()) {
+		for (final Entry<Integer, Integer> temp : frequency.entrySet()) {
 			builder.append("\r\n");
 			builder.append(temp.getKey());
 			builder.append(" : ");
 			builder.append((temp.getValue() * 100) / size);
 			builder.append("%");
 		}
-		return builder.toString();
+		String res[] = new String[1];
+		res[0] = builder.toString();
+		return res;
 	}
 }

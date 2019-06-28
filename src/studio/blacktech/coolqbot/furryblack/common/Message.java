@@ -6,7 +6,7 @@ package studio.blacktech.coolqbot.furryblack.common;
  */
 public class Message {
 
-	private String rawMessage;
+	private final String rawMessage;
 	public String trimedMessage;
 	public String[] messages;
 	public Long sendTime;

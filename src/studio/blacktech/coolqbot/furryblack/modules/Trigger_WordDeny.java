@@ -14,7 +14,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	public boolean ENABLE = false;
 
-	private ArrayList<String> BLACKLIST = new ArrayList<>(100);
+	private final ArrayList<String> BLACKLIST = new ArrayList<>(100);
 
 	private int DENY_USER_COUNT = 0;
 	private int DENY_DISZ_COUNT = 0;
@@ -42,17 +42,25 @@ public class Trigger_WordDeny extends ModuleTrigger {
 				this.BLACKLIST.add(line);
 			}
 			reader.close();
-			boolean temp = this.BLACKLIST.size() > 0;
+			final boolean temp = this.BLACKLIST.size() > 0;
 			this.ENABLE_USER = temp;
 			this.ENABLE_DISZ = temp;
 			this.ENABLE_GROP = temp;
-		} catch (Exception exce) {
+		} catch (final Exception exce) {
 			exce.printStackTrace();
 		}
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public void memberExit(long gropid, long userid) {
+	}
+
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		for (final String temp : this.BLACKLIST) {
 			if (Pattern.matches(temp, message.rawMessage())) {
 				this.DENY_USER_COUNT++;
@@ -63,7 +71,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		for (final String temp : this.BLACKLIST) {
 			if (Pattern.matches(temp, message.rawMessage())) {
 				this.DENY_DISZ_COUNT++;
@@ -74,7 +82,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		for (final String temp : this.BLACKLIST) {
 			if (Pattern.matches(temp, message.rawMessage())) {
 				this.DENY_GROP_COUNT++;
@@ -85,14 +93,16 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
-		StringBuilder builder = new StringBuilder();
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
+		final StringBuilder builder = new StringBuilder();
 		builder.append("À¹½ØË½ÁÄ£º");
 		builder.append(this.DENY_USER_COUNT);
 		builder.append("\r\nÀ¹½Ø×éÁÄ£º");
 		builder.append(this.DENY_DISZ_COUNT);
 		builder.append("\r\nÀ¹½ØÈºÁÄ£º");
 		builder.append(this.DENY_GROP_COUNT);
-		return builder.toString();
+		String res[] = new String[1];
+		res[0] = builder.toString();
+		return res;
 	}
 }

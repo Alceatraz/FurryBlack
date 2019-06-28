@@ -22,7 +22,6 @@ import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleListener;
-import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
 
 @SuppressWarnings("unused")
 public class Listener_TopSpeak extends ModuleListener {
@@ -32,7 +31,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private int GLOBAL_CHARACTER = 0;
 
 	public LinkedList<Message> RAW_MESSAGE = new LinkedList<>();
-	private HashMap<Long, GroupStatus> GROUP_STATUS = new HashMap<>();
+	private final HashMap<Long, GroupStatus> GROUP_STATUS = new HashMap<>();
 
 	public Listener_TopSpeak() {
 		this.MODULE_PACKAGENAME = "shui";
@@ -53,10 +52,10 @@ public class Listener_TopSpeak extends ModuleListener {
 				"获取消息而不分析"
 		};
 		this.MODULE_PRIVACY_OBTAIN = new String[] {};
-		List<Group> groups = JcqApp.CQ.getGroupList();
-		for (Group group : groups) {
-			GroupStatus groupStatus = new GroupStatus();
-			for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
+		final List<Group> groups = JcqApp.CQ.getGroupList();
+		for (final Group group : groups) {
+			final GroupStatus groupStatus = new GroupStatus();
+			for (final Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
 				groupStatus.USER_STATUS.put(member.getQqId(), new UserStatus());
 			}
 			this.GROUP_STATUS.put(group.getId(), groupStatus);
@@ -70,17 +69,17 @@ public class Listener_TopSpeak extends ModuleListener {
 	// ==========================================================================================================================================================
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		if (message.isCommand) { return false; }
 		if (message.isPicture) {
 			this.GLOBAL_PICTURE++;
@@ -114,7 +113,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		public HashMap<Long, UserStatus> USER_STATUS = new HashMap<>();
 
-		public void pic(long userid, Message message) {
+		public void pic(final long userid, final Message message) {
 			this.GROUP_PICTURE++;
 			this.USER_STATUS.get(userid).pic(userid, message);
 			this.USER_MESSAGES.add(userid);
@@ -123,7 +122,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			this.MESG_PICTURES.add(message);
 		}
 
-		public void say(long userid, Message message) {
+		public void say(final long userid, final Message message) {
 			this.GROUP_SENTENCE++;
 			this.GROUP_CHARACTER += message.length;
 			this.USER_STATUS.get(userid).say(userid, message);
@@ -145,12 +144,12 @@ public class Listener_TopSpeak extends ModuleListener {
 		public LinkedList<Message> USER_MESSAGES = new LinkedList<>();
 		public LinkedList<Message> USER_PCITURES = new LinkedList<>();
 
-		public void pic(long userid, Message message) {
+		public void pic(final long userid, final Message message) {
 			this.USER_PICTURE++;
 			this.USER_PCITURES.add(message);
 		}
 
-		public void say(long userid, Message message) {
+		public void say(final long userid, final Message message) {
 			this.USER_SENTENCE++;
 			this.USER_CHARACTER += message.length;
 			this.USER_MESSAGES.add(message);
@@ -160,11 +159,13 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	// ==========================================================================================================================
 
-	public void memberExit(long gropid, long userid) {
+	@Override
+	public void memberExit(final long gropid, final long userid) {
 		this.GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
 	}
 
-	public void memberJoin(long gropid, long userid) {
+	@Override
+	public void memberJoin(final long gropid, final long userid) {
 		this.GROUP_STATUS.get(gropid).USER_STATUS.put(userid, new UserStatus());
 	}
 
@@ -174,9 +175,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	 * logLevel 选择模式 logMode 发送到群聊还是私聊（管理员）
 	 */
 	@Override
-	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object[] parameters) {
 
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 
 		try {
 			switch (logLevel) {
@@ -193,10 +194,10 @@ public class Listener_TopSpeak extends ModuleListener {
 				this.generateDumpFile();
 				break;
 			}
-		} catch (Exception exce) {
+		} catch (final Exception exce) {
 			exce.printStackTrace();
 			builder.append("报告生成出错");
-			for (StackTraceElement stack : exce.getStackTrace()) {
+			for (final StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
 				builder.append(stack.getClassName());
 				builder.append(".");
@@ -209,7 +210,9 @@ public class Listener_TopSpeak extends ModuleListener {
 				builder.append(stack.getLineNumber());
 				builder.append(")");
 			}
-			return builder.toString();
+			String res[] = new String[1];
+			res[0] = builder.toString();
+			return res;
 		}
 		return null;
 	}
@@ -217,10 +220,10 @@ public class Listener_TopSpeak extends ModuleListener {
 	// ==========================================================================================================================
 
 	private void generateGroupsRank() {
-		StringBuilder builder = new StringBuilder();
-		TreeMap<Integer, Long> allGroupRank = new TreeMap<>((a, b) -> b - a);
-		for (long gropid : this.GROUP_STATUS.keySet()) {
-			int tempSentence = this.GROUP_STATUS.get(gropid).GROUP_SENTENCE;
+		final StringBuilder builder = new StringBuilder();
+		final TreeMap<Integer, Long> allGroupRank = new TreeMap<>((a, b) -> b - a);
+		for (final long gropid : this.GROUP_STATUS.keySet()) {
+			final int tempSentence = this.GROUP_STATUS.get(gropid).GROUP_SENTENCE;
 			if (tempSentence > 0) { allGroupRank.put(this.GROUP_STATUS.get(gropid).GROUP_SENTENCE, gropid); }
 		}
 		builder.append("发言条数：");
@@ -231,8 +234,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		builder.append(this.GLOBAL_PICTURE);
 		builder.append("\r\n总排行：");
 		int i = 1;
-		for (int count : allGroupRank.keySet()) {
-			String groupID = String.valueOf(allGroupRank.get(count));
+		for (final int count : allGroupRank.keySet()) {
+			final String groupID = String.valueOf(allGroupRank.get(count));
 			builder.append("\r\n");
 			builder.append("No.");
 			builder.append(i);
@@ -252,14 +255,14 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	// ==========================================================================================================================
 
-	private void generateMembersRank(int logMode, long gropid) {
+	private void generateMembersRank(final int logMode, final long gropid) {
 
-		StringBuilder builder1 = new StringBuilder();
-		StringBuilder builder2 = new StringBuilder();
-		StringBuilder builder3 = new StringBuilder();
-		StringBuilder builder4 = new StringBuilder();
+		final StringBuilder builder1 = new StringBuilder();
+		final StringBuilder builder2 = new StringBuilder();
+		final StringBuilder builder3 = new StringBuilder();
+		final StringBuilder builder4 = new StringBuilder();
 
-		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid);
+		final GroupStatus groupStatus = this.GROUP_STATUS.get(gropid);
 
 		int REDPACK = 0;
 		int SNAPPIC = 0;
@@ -276,14 +279,14 @@ public class Listener_TopSpeak extends ModuleListener {
 		// ================================================================================
 
 		builder2.append("（2/4）成员排行：");
-		TreeMap<Integer, HashSet<Long>> allMemberRank = new TreeMap<>((a, b) -> b - a);
-		for (long userid : groupStatus.USER_STATUS.keySet()) {
-			int userSentence = groupStatus.USER_STATUS.get(userid).USER_SENTENCE;
+		final TreeMap<Integer, HashSet<Long>> allMemberRank = new TreeMap<>((a, b) -> b - a);
+		for (final long userid : groupStatus.USER_STATUS.keySet()) {
+			final int userSentence = groupStatus.USER_STATUS.get(userid).USER_SENTENCE;
 			if (userSentence > 0) {
 				if (allMemberRank.containsKey(userSentence)) {
 					allMemberRank.get(userSentence).add(userid);
 				} else {
-					HashSet<Long> tempSet = new HashSet<>();
+					final HashSet<Long> tempSet = new HashSet<>();
 					tempSet.add(userid);
 					allMemberRank.put(userSentence, tempSet);
 				}
@@ -292,14 +295,14 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		int i = 1;
 		UserStatus userStatus;
-		for (int userRank : allMemberRank.keySet()) {
-			HashSet<Long> tempSet = allMemberRank.get(userRank);
-			for (Long userid : tempSet) {
+		for (final int userRank : allMemberRank.keySet()) {
+			final HashSet<Long> tempSet = allMemberRank.get(userRank);
+			for (final Long userid : tempSet) {
 				userStatus = groupStatus.USER_STATUS.get(userid);
 				builder2.append("\r\nNo.");
 				builder2.append(i);
 				builder2.append(" - ");
-				builder2.append(NickNameMap.getNickname(userid));
+				builder2.append(Module_Nick.getNickname(userid));
 				builder2.append("(");
 				builder2.append(userid);
 				builder2.append(") ");
@@ -315,13 +318,13 @@ public class Listener_TopSpeak extends ModuleListener {
 		// ================================================================================
 
 		builder3.append("(3/4)最多说的话：");
-		HashMap<String, Integer> allMessageRankTemp = new HashMap<>();
-		for (Message message : groupStatus.MESG_PURETEXT) {
-			String raw = message.rawMessage();
-			if (raw.startsWith("[闪照]")) {
-				REDPACK++;
-			} else if (raw.startsWith("[QQ红包]")) {
+		final HashMap<String, Integer> allMessageRankTemp = new HashMap<>();
+		for (final Message message : groupStatus.MESG_PURETEXT) {
+			final String raw = message.rawMessage();
+			if (raw.equals("&#91;闪照&#93;请使用新版手机QQ查看闪照。")) {
 				SNAPPIC++;
+			} else if (raw.equals("&#91;QQ红包&#93;请使用新版手机QQ查收红包。")) {
+				REDPACK++;
 			} else {
 				if (allMessageRankTemp.containsKey(raw)) {
 					allMessageRankTemp.put(raw, allMessageRankTemp.get(raw) + 1);
@@ -330,21 +333,21 @@ public class Listener_TopSpeak extends ModuleListener {
 				}
 			}
 		}
-		TreeMap<Integer, HashSet<String>> allMessageRank = new TreeMap<>((a, b) -> b - a);
-		for (String raw : allMessageRankTemp.keySet()) {
-			int tempCount = allMessageRankTemp.get(raw);
+		final TreeMap<Integer, HashSet<String>> allMessageRank = new TreeMap<>((a, b) -> b - a);
+		for (final String raw : allMessageRankTemp.keySet()) {
+			final int tempCount = allMessageRankTemp.get(raw);
 			if (allMessageRank.containsKey(tempCount)) {
 				allMessageRank.get(tempCount).add(raw);
 			} else {
-				HashSet<String> tempSet = new HashSet<>();
+				final HashSet<String> tempSet = new HashSet<>();
 				tempSet.add(raw);
 				allMessageRank.put(tempCount, tempSet);
 			}
 		}
 		i = 1;
-		for (int messageRank : allMessageRank.keySet()) {
-			HashSet<String> tempSet = allMessageRank.get(messageRank);
-			for (String message : tempSet) {
+		for (final int messageRank : allMessageRank.keySet()) {
+			final HashSet<String> tempSet = allMessageRank.get(messageRank);
+			for (final String message : tempSet) {
 				builder3.append("\r\nNo.");
 				builder3.append(i);
 				builder3.append(" - ");
@@ -366,30 +369,30 @@ public class Listener_TopSpeak extends ModuleListener {
 		// ================================================================================
 
 		builder4.append("（4/4）最多发的图：");
-		HashMap<String, Integer> allPictureRankTemp = new HashMap<>();
-		for (Message message : groupStatus.MESG_PICTURES) {
-			String raw = message.rawMessage();
+		final HashMap<String, Integer> allPictureRankTemp = new HashMap<>();
+		for (final Message message : groupStatus.MESG_PICTURES) {
+			final String raw = message.rawMessage();
 			if (allPictureRankTemp.containsKey(raw)) {
 				allPictureRankTemp.put(raw, allPictureRankTemp.get(raw) + 1);
 			} else {
 				allPictureRankTemp.put(raw, 1);
 			}
 		}
-		TreeMap<Integer, HashSet<String>> allPictureRank = new TreeMap<>((a, b) -> b - a);
-		for (String raw : allPictureRankTemp.keySet()) {
-			int tempCount = allPictureRankTemp.get(raw);
+		final TreeMap<Integer, HashSet<String>> allPictureRank = new TreeMap<>((a, b) -> b - a);
+		for (final String raw : allPictureRankTemp.keySet()) {
+			final int tempCount = allPictureRankTemp.get(raw);
 			if (allPictureRank.containsKey(tempCount)) {
 				allPictureRank.get(tempCount).add(raw);
 			} else {
-				HashSet<String> tempSet = new HashSet<>();
+				final HashSet<String> tempSet = new HashSet<>();
 				tempSet.add(raw);
 				allPictureRank.put(tempCount, tempSet);
 			}
 		}
 		i = 1;
-		for (int pictureRank : allPictureRank.keySet()) {
-			HashSet<String> tempSet = allPictureRank.get(pictureRank);
-			for (String picture : tempSet) {
+		for (final int pictureRank : allPictureRank.keySet()) {
+			final HashSet<String> tempSet = allPictureRank.get(pictureRank);
+			for (final String picture : tempSet) {
 				builder4.append("\r\nNo.");
 				builder4.append(i);
 				builder4.append(" - ");
@@ -418,40 +421,40 @@ public class Listener_TopSpeak extends ModuleListener {
 	// ==========================================================================================================================
 
 	private void generateDumpFile() throws IOException {
-		String dumpTime = LoggerX.time("yyyy.MM.dd-HH.mm.ss");
-		File dumpFolder = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "TopSpeakDump_" + dumpTime).toFile();
+		final String dumpTime = LoggerX.time("yyyy.MM.dd-HH.mm.ss");
+		final File dumpFolder = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), "TopSpeakDump_" + dumpTime).toFile();
 		dumpFolder.mkdirs();
-		for (long tempGropid : this.GROUP_STATUS.keySet()) {
-			File groupContainerFolder = Paths.get(dumpFolder.getAbsolutePath(), "Group_" + tempGropid).toFile();
+		for (final long tempGropid : this.GROUP_STATUS.keySet()) {
+			final File groupContainerFolder = Paths.get(dumpFolder.getAbsolutePath(), "Group_" + tempGropid).toFile();
 			groupContainerFolder.mkdir();
-			File dumpByTimeline = Paths.get(groupContainerFolder.getAbsolutePath(), "Main.txt").toFile();
+			final File dumpByTimeline = Paths.get(groupContainerFolder.getAbsolutePath(), "Main.txt").toFile();
 			dumpByTimeline.createNewFile();
-			BufferedWriter groupTimelineWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpByTimeline), "UTF-8"));
-			GroupStatus tempGroupStatus = this.GROUP_STATUS.get(tempGropid);
+			final BufferedWriter groupTimelineWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpByTimeline), "UTF-8"));
+			final GroupStatus tempGroupStatus = this.GROUP_STATUS.get(tempGropid);
 			groupTimelineWriter.write("群号：" + tempGropid);
 			groupTimelineWriter.write("\r\n发言条数：" + tempGroupStatus.GROUP_SENTENCE);
 			groupTimelineWriter.write("\r\n发言字数：" + tempGroupStatus.GROUP_CHARACTER);
 			groupTimelineWriter.write("\r\n发言图数：" + tempGroupStatus.GROUP_PICTURE);
 			groupTimelineWriter.write("\r\n");
 			for (int i = 0; i < tempGroupStatus.GROUP_SENTENCE; i++) {
-				long tempSender = tempGroupStatus.USER_MESSAGES.get(i);
-				Message tempMessage = tempGroupStatus.MESG_MESSAGES.get(i);
+				final long tempSender = tempGroupStatus.USER_MESSAGES.get(i);
+				final Message tempMessage = tempGroupStatus.MESG_MESSAGES.get(i);
 				groupTimelineWriter.write("\r\n[" + LoggerX.time(new Date(tempMessage.sendTime)) + "]" + JcqApp.CQ.getStrangerInfo(tempSender).getNick() + "(" + tempSender + "): " + tempMessage.rawMessage());
 			}
 			groupTimelineWriter.flush();
 			groupTimelineWriter.close();
-			for (long tempUserid : tempGroupStatus.USER_STATUS.keySet()) {
-				File dumpByUseid = Paths.get(groupContainerFolder.getAbsolutePath(), "User_" + tempUserid + ".txt").toFile();
+			for (final long tempUserid : tempGroupStatus.USER_STATUS.keySet()) {
+				final File dumpByUseid = Paths.get(groupContainerFolder.getAbsolutePath(), "User_" + tempUserid + ".txt").toFile();
 				dumpByUseid.createNewFile();
-				BufferedWriter useridWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpByUseid), "UTF-8"));
-				UserStatus tempUserStatus = tempGroupStatus.USER_STATUS.get(tempUserid);
+				final BufferedWriter useridWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpByUseid), "UTF-8"));
+				final UserStatus tempUserStatus = tempGroupStatus.USER_STATUS.get(tempUserid);
 				useridWriter.write("成员：" + tempUserid);
 				useridWriter.write("\r\n昵称：" + JcqApp.CQ.getStrangerInfo(tempUserid).getNick());
 				useridWriter.write("\r\n发言条数：" + tempUserStatus.USER_SENTENCE);
 				useridWriter.write("\r\n发言字数：" + tempUserStatus.USER_CHARACTER);
 				useridWriter.write("\r\n发言图数：" + tempGroupStatus.USER_PICTURES);
 				useridWriter.write("\r\n");
-				for (Message tempMessage : tempUserStatus.USER_MESSAGES) {
+				for (final Message tempMessage : tempUserStatus.USER_MESSAGES) {
 					useridWriter.write("\r\n[" + LoggerX.time(new Date(tempMessage.sendTime)) + "]: " + tempMessage.rawMessage());
 				}
 				useridWriter.flush();

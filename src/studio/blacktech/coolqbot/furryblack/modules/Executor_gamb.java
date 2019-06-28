@@ -11,12 +11,11 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import studio.blacktech.coolqbot.furryblack.common.Message;
 import studio.blacktech.coolqbot.furryblack.common.Module;
 import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
 
 public class Executor_gamb extends ModuleExecutor {
 
-	private HashMap<Long, RouletteRound> rounds = new HashMap<>();
-	private ArrayList<Integer> roulette = new ArrayList<>();
+	private final HashMap<Long, RouletteRound> rounds = new HashMap<>();
+	private final ArrayList<Integer> roulette = new ArrayList<>();
 	private int ROUND_EXPIRED = 0;
 	private int ROUND_SUCCESS = 0;
 
@@ -50,17 +49,25 @@ public class Executor_gamb extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public void memberExit(long gropid, long userid) {
+	}
+
+	@Override
+	public void memberJoin(long gropid, long userid) {
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, Message message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
 		if (message.segment < 2) {
 			Module.gropInfo(gropid, userid, "不下注是8koi的");
 			return true;
@@ -82,9 +89,9 @@ public class Executor_gamb extends ModuleExecutor {
 				member = JcqApp.CQ.getGroupMemberInfoV2(gropid, round.player.get(i));
 				if (i == bullet) {
 					this.roulette.set(i, this.roulette.get(i) + 1);
-					Module.gropInfo(gropid, NickNameMap.getNickname(member.getQqId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
+					Module.gropInfo(gropid, Module_Nick.getNickname(member.getQqId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
 				} else {
-					Module.gropInfo(gropid, NickNameMap.getNickname(member.getQqId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
+					Module.gropInfo(gropid, Module_Nick.getNickname(member.getQqId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
 				}
 			}
 			Module.gropInfo(gropid, "目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
@@ -104,7 +111,7 @@ public class Executor_gamb extends ModuleExecutor {
 			this.time = new Date();
 		}
 
-		public boolean join(long gropid, long userid, Message message) {
+		public boolean join(final long gropid, final long userid, final Message message) {
 			if (this.player.contains(userid)) {
 				Module.gropInfo(gropid, "你8koi离开，不准放过");
 			} else {
@@ -138,7 +145,7 @@ public class Executor_gamb extends ModuleExecutor {
 	}
 
 	@Override
-	public String generateReport(int logLevel, int logMode, int typeid, long userid, long diszid, long gropid, Message message, Object[] parameters) {
+	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
 		if (this.COUNT == 0) { return null; }
 		final StringBuilder builder = new StringBuilder();
 		builder.append("成功回合 : ");
@@ -172,7 +179,8 @@ public class Executor_gamb extends ModuleExecutor {
 			builder.append((this.roulette.get(5) * 100) / this.ROUND_SUCCESS);
 			builder.append("%");
 		}
-		return builder.toString();
+		String res[] = new String[1];
+		res[0] = builder.toString();
+		return res;
 	}
-
 }

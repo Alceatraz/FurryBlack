@@ -18,7 +18,7 @@ import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.Message;
-import studio.blacktech.coolqbot.furryblack.common.NickNameMap;
+import studio.blacktech.coolqbot.furryblack.modules.Module_Nick;
 
 public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
@@ -35,10 +35,11 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	private static File FILE_CONFIG;
 	private static File FILE_GANNOUNCE;
 	private static File FILE_BLACKLIST;
-	private static File FILE_NICKNAMES;
+	private static File MODULE_NICK_NICKNAMES;
 	private static File FILE_USERIGNORE;
 	private static File FILE_DISZIGNORE;
 	private static File FILE_GROPIGNORE;
+	private static File MODULE_CHOU_USERIGNORE;
 
 	private static long USERID_COOLQ = 0;
 	private static long USERID_ADMIN = 0;
@@ -90,7 +91,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-			StringBuilder builder = new StringBuilder();
+			final StringBuilder builder = new StringBuilder();
 			builder.append("[FurryBlack]初始化 ");
 			builder.append(LoggerX.time());
 
@@ -103,10 +104,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			entry.FILE_CONFIG = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
 			entry.FILE_GANNOUNCE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "admins.properties").toFile();
 			entry.FILE_BLACKLIST = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "blacklist.txt").toFile();
-			entry.FILE_NICKNAMES = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "nicknames.txt").toFile();
 			entry.FILE_USERIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 			entry.FILE_DISZIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_disz.txt").toFile();
 			entry.FILE_GROPIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "ignore_grop.txt").toFile();
+
+			entry.MODULE_NICK_NICKNAMES = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "module_nick_nicknames.txt").toFile();
+			entry.MODULE_CHOU_USERIGNORE = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "module_chou_userignore.txt").toFile();
 
 			// ==========================================================================================================================
 
@@ -135,9 +138,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 				entry.FILE_BLACKLIST.createNewFile();
 			}
 
-			if (!entry.FILE_NICKNAMES.exists()) {
+			if (!entry.MODULE_NICK_NICKNAMES.exists()) {
 				builder.append("\r\n[System] 用户昵称映射表文件不存在");
-				entry.FILE_NICKNAMES.createNewFile();
+				entry.MODULE_NICK_NICKNAMES.createNewFile();
 			}
 
 			if (!entry.FILE_USERIGNORE.exists()) {
@@ -155,12 +158,17 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 				entry.FILE_GROPIGNORE.createNewFile();
 			}
 
+			if (!entry.MODULE_CHOU_USERIGNORE.exists()) {
+				builder.append("\r\n[System] 随机抽人黑名单文件不存在");
+				entry.MODULE_CHOU_USERIGNORE.createNewFile();
+			}
+
 			if (!entry.FILE_CONFIG.exists()) {
 
 				builder.append("\r\n[System] 配置文件不存在");
 
 				entry.FILE_CONFIG.createNewFile();
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(entry.FILE_CONFIG), "UTF-8"));
+				final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(entry.FILE_CONFIG), "UTF-8"));
 
 				// @formatter:off
 				writer.write(
@@ -196,7 +204,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 				builder.append("\r\n[System] 组公告配置文件不存在");
 
 				entry.FILE_GANNOUNCE.createNewFile();
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(entry.FILE_GANNOUNCE), "UTF-8"));
+				final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(entry.FILE_GANNOUNCE), "UTF-8"));
 
 				// @formatter:off
 				writer.write(
@@ -238,7 +246,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			}
 
 			SystemHandler.init(builder, entry.config);
-			NickNameMap.init(builder, entry.config);
+			Module_Nick.init(builder, entry.config);
 
 			builder.append("\r\n[System] 初始化完成");
 
@@ -284,7 +292,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n 消息:");
 			builder.append(message.length());
 			builder.append("\r\n 报错栈\r\n:");
-			for (StackTraceElement stack : exce.getStackTrace()) {
+			for (final StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
 				builder.append(stack.getClassName());
 				builder.append(".");
@@ -321,7 +329,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n 消息:");
 			builder.append(message.length());
 			builder.append("\r\n 报错栈\r\n:");
-			for (StackTraceElement stack : exce.getStackTrace()) {
+			for (final StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
 				builder.append(stack.getClassName());
 				builder.append(".");
@@ -358,7 +366,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n 消息:");
 			builder.append(message.length());
 			builder.append("\r\n 报错栈:");
-			for (StackTraceElement stack : exce.getStackTrace()) {
+			for (final StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
 				builder.append(stack.getClassName());
 				builder.append(".");
@@ -427,7 +435,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			final StringBuilder builder = new StringBuilder();
 			builder.append(LoggerX.time());
 			builder.append(" [成员增加异常]");
-			for (StackTraceElement stack : exce.getStackTrace()) {
+			for (final StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
 				builder.append(stack.getClassName());
 				builder.append(".");
@@ -454,7 +462,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			final StringBuilder builder = new StringBuilder();
 			builder.append(LoggerX.time());
 			builder.append(" [成员减少异常]");
-			for (StackTraceElement stack : exce.getStackTrace()) {
+			for (final StackTraceElement stack : exce.getStackTrace()) {
 				builder.append("\r\n");
 				builder.append(stack.getClassName());
 				builder.append(".");
@@ -497,10 +505,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return entry.FILE_BLACKLIST;
 	}
 
-	public static File FILE_NICKNAMES() {
-		return entry.FILE_NICKNAMES;
-	}
-
 	public static File FILE_USERIGNORE() {
 		return entry.FILE_USERIGNORE;
 	}
@@ -511,6 +515,14 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static File FILE_GROPIGNORE() {
 		return entry.FILE_GROPIGNORE;
+	}
+
+	public static File MODULE_NICK_NICKNAMES() {
+		return entry.MODULE_NICK_NICKNAMES;
+	}
+
+	public static File MODULE_CHOU_USERIGNORE() {
+		return entry.MODULE_CHOU_USERIGNORE;
 	}
 
 	// ==============================================================================================================================================================
