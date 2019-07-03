@@ -2,15 +2,31 @@
 
 ## 警告
 
-**由于强迫症对不齐很难受 所以很多代码的名命很怪**
+**由于极度强迫症对不齐很难受 所以很多代码的名命很怪**
 
+比如随意乱缩写  
 > user → user  
 > disz → discuz  
 > grop → group  
-
 > 私聊 → 私聊  
 > 组聊 → 讨论组  
 > 群聊 → 群聊  
+
+比如乱加修饰词  
+> Systemd → System  
+> DDNSAPI → DdnsClient  
+
+比如混乱的不一致名命  
+> getIPAddress → get Ip Address  
+> updateDDNSIP → update Ip Address  
+> setDDNSAddress → set Ip Address  
+
+比如混乱的词缀  
+> TRIGER → TRIGGER → 触发  
+> LISTEN → LISTENER → 监听  
+> STORED → STORE → 存储  
+> CACHED → CACHE → 缓存  
+> OBTAIN → OBTAIN → 获取
 
 ![很怪.jpg](https://git.blacktech.studio/blacktechstudio/furryblack/raw/master/images/very_strange.jpg)
 
