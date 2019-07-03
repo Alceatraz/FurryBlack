@@ -12,7 +12,7 @@
 > 组聊 → 讨论组
 > 群聊 → 群聊
 
-[很怪.jpg]https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=702257389,1274025419&fm=27&gp=0.jpg)
+[很怪.jpg]https://git.blacktech.studio/blacktechstudio/furryblack/raw/master/images/very_strange.jpg)
 
 ## 警告×2
 
