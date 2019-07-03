@@ -1,4 +1,4 @@
-#FurryBlack - 一个小动物形象的人工智障
+# FurryBlack - 一个小动物形象的人工智障
 
 ## 警告
 
@@ -12,7 +12,7 @@
 > 组聊 → 讨论组
 > 群聊 → 群聊
 
-![很怪.jpg]https://git.blacktech.studio/blacktechstudio/furryblack/raw/master/images/very_strange.jpg)
+![很怪.jpg](https://git.blacktech.studio/blacktechstudio/furryblack/raw/master/images/very_strange.jpg)
 
 ## 警告×2
 
