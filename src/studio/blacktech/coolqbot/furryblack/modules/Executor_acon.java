@@ -1,194 +1,290 @@
 package studio.blacktech.coolqbot.furryblack.modules;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 
-import studio.blacktech.coolqbot.furryblack.common.Message;
-import studio.blacktech.coolqbot.furryblack.common.Module;
-import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_acon extends ModuleExecutor {
 
-	private final HashMap<Long, Long> CONSUMPTION;
-	private final HashMap<Long, Long> WORKINGMODE;
-	private final HashMap<Long, Long> LASTCHANGED;
+	// ==========================================================================================================================================================
+	//
+	// 模块基本配置
+	//
+	// ==========================================================================================================================================================
 
-	public Executor_acon() {
-		this.MODULE_PACKAGENAME = "acon";
-		this.MODULE_DISPLAYNAME = "空调";
-		this.MODULE_DESCRIPTION = "本群冷气开放";
-		this.MODULE_VERSION = "1.0.0";
-		this.MODULE_USAGE = new String[] {
-				"//acon off - 关机",
-				"//acon dry - 除湿",
-				"//acon cool - 制冷",
-				"//acon cost - 耗电量",
-		};
-		this.MODULE_PRIVACY_TRIGER = new String[] {};
-		this.MODULE_PRIVACY_LISTEN = new String[] {};
-		this.MODULE_PRIVACY_STORED = new String[] {};
-		this.MODULE_PRIVACY_CACHED = new String[] {
-				"按群存储耗电量",
-				"按群存储耗工作模式",
-				"按群存储上次更改模式的时间",
-		};
-		this.MODULE_PRIVACY_OBTAIN = new String[] {
-				"获取命令发送人"
-		};
+	private static String MODULE_PACKAGENAME = "acon";
+	private static String MODULE_DISPLAYNAME = "空调";
+	private static String MODULE_DESCRIPTION = "本群冷气开放";
+	private static String MODULE_VERSION = "3.0";
+	private static String[] MODULE_USAGE = new String[] {
+			"/acon cost - 耗电量",
+			"/acon off - 关机",
+			"/acon wet - 加湿",
+			"/acon dry - 除湿",
+			"/acon cold - 制冰模式",
+			"/acon cool - 制冷模式",
+			"/acon warn - 制热模式",
+			"/acon bake - 烘烤模式",
+			"/acon burn - 烧烤模式",
+			"/acon fire - 焚化模式",
+			"/acon c2h2 - 乙炔炬模式",
+			"/acon argon - 氩气引弧模式",
+			"/acon plasma - 等离子模式",
+			"/acon nova - 点亮一颗新星",
+			"/acon cfnuke - 点燃一颗冷核武器",
+			"/acon trnuke - 点燃一颗热核武器",
+			"/acon tpnuke - 点燃一颗三相热核弹",
+			"/acon ianova - Ia级超新星吸积引燃",
+			"/acon ibnova - Ib级超新星吸积引燃",
+			"/acon icnova - Ic级超新星吸积引燃",
+			"/acon iinova - II级超新星吸积引燃",
+			"/acon ~!C??? - Fy:????"
+	};
+	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
+	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+	private static String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {
+			"按群存储耗电量",
+			"按群存储耗工作模式",
+			"按群存储上次更改模式的时间戳",
+	};
+	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+
+	// ==========================================================================================================================================================
+	//
+	// 成员变量
+	//
+	// ==========================================================================================================================================================
+
+	private HashMap<Long, BigInteger> CONSUMPTION;
+	private HashMap<Long, Long> WORKINGMODE;
+	private HashMap<Long, Long> LASTCHANGED;
+
+	// ==========================================================================================================================================================
+	//
+	// 生命周期函数
+	//
+	// ==========================================================================================================================================================
+
+	public Executor_acon() throws Exception {
+		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+	}
+
+	@Override
+	public void init(LoggerX logger) throws Exception {
 
 		this.CONSUMPTION = new HashMap<>();
 		this.WORKINGMODE = new HashMap<>();
 		this.LASTCHANGED = new HashMap<>();
+
+		this.ENABLE_USER = false;
+		this.ENABLE_DISZ = false;
+		this.ENABLE_GROP = true;
 	}
 
 	@Override
-	public void memberExit(long gropid, long userid) {
+	public void boot(LoggerX logger) throws Exception {
+
 	}
 
 	@Override
-	public void memberJoin(long gropid, long userid) {
+	public void shut(LoggerX logger) throws Exception {
 	}
 
 	@Override
-	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
-		return null;
+	public void reload(LoggerX logger) throws Exception {
 	}
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
+
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
+	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
 
 		final long current = System.currentTimeMillis() / 1000;
 		long elapse = 0L;
 
 		if (!this.CONSUMPTION.containsKey(gropid)) {
-			this.CONSUMPTION.put(gropid, 0L);
+			this.CONSUMPTION.put(gropid, BigInteger.ZERO);
 			this.WORKINGMODE.put(gropid, 0L);
 			this.LASTCHANGED.put(gropid, current);
 			elapse = 0;
 		}
 
-		if (message.segment == 1) {
+		if (message.getSection() == 2) {
 
-			Module.gropInfo(gropid, userid, "请勿触摸以防触电");
+			message.parseOption();
 
-		} else {
-
-			long consumption = this.CONSUMPTION.get(gropid);
+			BigInteger consumption = this.CONSUMPTION.get(gropid);
 			final long workingmode = this.WORKINGMODE.get(gropid);
 			final long lastchanged = this.LASTCHANGED.get(gropid);
 
 			elapse = current - lastchanged;
 
-			switch (message.messages[1]) {
+			switch (message.getSegment()[0]) {
 
 			case "off":
-				if (workingmode == 0L) {
-					Module.gropInfo(gropid, "空调没开");
-				} else {
-					Module.gropInfo(gropid, "空调已关闭");
-					consumption = consumption + (elapse * workingmode);
-					this.CONSUMPTION.put(gropid, consumption);
-					this.LASTCHANGED.put(gropid, current);
-					this.WORKINGMODE.put(gropid, 0L);
-				}
+				entry.getMessage().gropInfo(gropid, "空调已关闭");
+				this.WORKINGMODE.put(gropid, 1L);
 				break;
 
 			case "dry":
-				if (workingmode == 5880L) {
-					Module.gropInfo(gropid, "已经处于除湿模式");
-				} else {
-					Module.gropInfo(gropid, "切换至除湿模式");
-					consumption = consumption + (elapse * workingmode);
-					this.CONSUMPTION.put(gropid, consumption);
-					this.LASTCHANGED.put(gropid, current);
-					this.WORKINGMODE.put(gropid, 5880L);
-				}
+				entry.getMessage().gropInfo(gropid, "切换至除湿模式");
+				this.WORKINGMODE.put(gropid, 5880L);
 				break;
 
 			case "wet":
-				if (workingmode == 5880L) {
-					Module.gropInfo(gropid, "已经处于加湿模式");
-				} else {
-					Module.gropInfo(gropid, "切换至加湿模式");
-					consumption = consumption + (elapse * workingmode);
-					this.CONSUMPTION.put(gropid, consumption);
-					this.LASTCHANGED.put(gropid, current);
-					this.WORKINGMODE.put(gropid, 5880L);
-				}
-				break;
-
-			case "bake":
-				if (workingmode == 114700L) {
-					Module.gropInfo(gropid, "已经处于烧烤模式");
-				} else {
-					Module.gropInfo(gropid, "切换至烧烤模式");
-					consumption = consumption + (elapse * workingmode);
-					this.CONSUMPTION.put(gropid, consumption);
-					this.LASTCHANGED.put(gropid, current);
-					this.WORKINGMODE.put(gropid, 7350L);
-				}
+				entry.getMessage().gropInfo(gropid, "切换至加湿模式");
+				this.WORKINGMODE.put(gropid, 5880L);
 				break;
 
 			case "cold":
-				if (workingmode == 14700L) {
-					Module.gropInfo(gropid, "已经处于制冰模式");
-				} else {
-					Module.gropInfo(gropid, "切换至制冰模式");
-					consumption = consumption + (elapse * workingmode);
-					this.CONSUMPTION.put(gropid, consumption);
-					this.LASTCHANGED.put(gropid, current);
-					this.WORKINGMODE.put(gropid, 7350L);
-				}
-				break;
-
-			case "warn":
-				if (workingmode == 7350L) {
-					Module.gropInfo(gropid, "已经处于制热模式");
-				} else {
-					Module.gropInfo(gropid, "切换至制热模式");
-					consumption = consumption + (elapse * workingmode);
-					this.CONSUMPTION.put(gropid, consumption);
-					this.LASTCHANGED.put(gropid, current);
-					this.WORKINGMODE.put(gropid, 7350L);
-				}
+				entry.getMessage().gropInfo(gropid, "切换至制冰模式 -20°");
+				this.WORKINGMODE.put(gropid, 14700L);
 				break;
 
 			case "cool":
-				if (workingmode == 7350L) {
-					Module.gropInfo(gropid, "已经处于制冷模式");
-				} else {
-					Module.gropInfo(gropid, "切换至制冷模式");
-					consumption = consumption + (elapse * workingmode);
-					this.CONSUMPTION.put(gropid, consumption);
-					this.LASTCHANGED.put(gropid, current);
-					this.WORKINGMODE.put(gropid, 7350L);
-				}
+				entry.getMessage().gropInfo(gropid, "切换至制冷模式 20°");
+				this.WORKINGMODE.put(gropid, 7350L);
+				break;
+
+			case "warn":
+				entry.getMessage().gropInfo(gropid, "切换至制热模式 23°");
+				this.WORKINGMODE.put(gropid, 7350L);
+				break;
+
+			case "bake":
+				entry.getMessage().gropInfo(gropid, "切换至烘烤模式 285°");
+				this.WORKINGMODE.put(gropid, 14700L);
+				break;
+
+			case "burn":
+				entry.getMessage().gropInfo(gropid, "切换至烧烤模式 960°");
+				this.WORKINGMODE.put(gropid, 22050L);
+				break;
+
+			case "fire":
+				entry.getMessage().gropInfo(gropid, "切换至焚化模式 1,200°");
+				this.WORKINGMODE.put(gropid, 29400L);
+				break;
+
+			case "c2h2":
+				entry.getMessage().gropInfo(gropid, "切换至乙炔炬模式 3,300°");
+				this.WORKINGMODE.put(gropid, 33075L);
+				break;
+
+			case "argon":
+				entry.getMessage().gropInfo(gropid, "切换至氩气弧模式 7,550°");
+				this.WORKINGMODE.put(gropid, 36750L);
+				break;
+
+			case "plasma":
+				entry.getMessage().gropInfo(gropid, "切换至等离子模式 23,500°");
+				this.WORKINGMODE.put(gropid, 44100L);
+				break;
+
+			case "nova":
+				entry.getMessage().gropInfo(gropid, "切换至新星模式 1,000,000°");
+				this.WORKINGMODE.put(gropid, 7350000L);
+				break;
+
+			case "cfnuke":
+				entry.getMessage().gropInfo(gropid, "切换至冷核模式 100,000,000°");
+				this.WORKINGMODE.put(gropid, 29400000L);
+				break;
+
+			case "trnuke":
+				entry.getMessage().gropInfo(gropid, "切换至热核模式 120,000,000°");
+				this.WORKINGMODE.put(gropid, 33075000L);
+				break;
+
+			case "tfnuke":
+				entry.getMessage().gropInfo(gropid, "切换至三相热核模式 150,000,000°");
+				this.WORKINGMODE.put(gropid, 44100000L);
+				break;
+
+			case "ianova":
+				entry.getMessage().gropInfo(gropid, "切换至Ia星爆发模式 800,000,000°");
+				this.WORKINGMODE.put(gropid, 294000000L);
+				break;
+
+			case "ibnova":
+				entry.getMessage().gropInfo(gropid, "切换至Ib新星爆发模式 2,600,000,000°");
+				this.WORKINGMODE.put(gropid, 330750000L);
+				break;
+
+			case "icnova":
+				entry.getMessage().gropInfo(gropid, "切换至Ic新星爆发模式 2,800,000,000°");
+				this.WORKINGMODE.put(gropid, 441000000L);
+				break;
+
+			case "iinova":
+				entry.getMessage().gropInfo(gropid, "切换至II新星爆发模式 3,000,000,000°");
+				this.WORKINGMODE.put(gropid, 514500000L);
+				break;
+
+			case "samrage":
+				entry.getMessage().gropInfo(gropid, "父王之怒 10,000,000,000,000,000,000,000,000,000°");
+				this.WORKINGMODE.put(gropid, 73500000000L);
 				break;
 
 			case "cost":
-				consumption = consumption + (elapse * workingmode);
-				this.CONSUMPTION.put(gropid, consumption);
-				this.LASTCHANGED.put(gropid, current);
-				Module.gropInfo(gropid, "累计共耗电：" + String.format("%.2f", consumption / 1000D) + "kW(" + String.format("%.2f", consumption / 3600000D) + ")度\r\n群主须支付：" + String.format("%.2f", consumption / 1936800D) + "元");
+				// @formatter:off
+				entry.getMessage().gropInfo(gropid,
+						"累计共耗电：" +
+						String.format("%.2f", consumption.divide(BigInteger.valueOf(1000))) + "kW(" +
+						String.format("%.2f", consumption.divide(BigInteger.valueOf(3600000L))) + ")度\r\n群主须支付：" +
+						String.format("%.2f", consumption.divide(BigInteger.valueOf(1936800L))) + "元"
+				);
+				// @formatter:on
 				break;
 
 			default:
-				Module.gropInfo(gropid, userid, "请勿触摸以防触电");
+				entry.getMessage().gropInfo(gropid, userid, "请勿触摸以防烫伤");
 				break;
 			}
+
+			consumption = consumption.add(BigInteger.valueOf(elapse * workingmode));
+
+			this.CONSUMPTION.put(gropid, consumption);
+			this.LASTCHANGED.put(gropid, current);
 
 		}
 
 		return true;
+	}
+
+	// ==========================================================================================================================================================
+	//
+	// 工具函数
+	//
+	// ==========================================================================================================================================================
+
+	@Override
+	public String[] generateReport(int mode, final Message message, final Object... parameters) {
+		return null;
 	}
 
 }

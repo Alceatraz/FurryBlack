@@ -1,63 +1,101 @@
 package studio.blacktech.coolqbot.furryblack.modules;
 
-import studio.blacktech.coolqbot.furryblack.common.Message;
-import studio.blacktech.coolqbot.furryblack.common.Module;
-import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_kong extends ModuleExecutor {
 
-	public Executor_kong() {
+	// ==========================================================================================================================================================
+	//
+	// 模块基本配置
+	//
+	// ==========================================================================================================================================================
 
-		this.MODULE_DISPLAYNAME = "变臭";
-		this.MODULE_PACKAGENAME = "kong";
-		this.MODULE_DESCRIPTION = "给 文 字 加 空 格";
-		this.MODULE_VERSION = "2.0.0";
-		this.MODULE_USAGE = new String[] {
-				"//kong 原句 - 给原句添加空格"
-		};
-		this.MODULE_PRIVACY_TRIGER = new String[] {};
-		this.MODULE_PRIVACY_LISTEN = new String[] {};
-		this.MODULE_PRIVACY_STORED = new String[] {};
-		this.MODULE_PRIVACY_CACHED = new String[] {};
-		this.MODULE_PRIVACY_OBTAIN = new String[] {
-				"获取命令发送人"
-		};
+	private static String MODULE_PACKAGENAME = "kong";
+	private static String MODULE_DISPLAYNAME = "变臭";
+	private static String MODULE_DESCRIPTION = "给文字添加空格";
+	private static String MODULE_VERSION = "1.0";
+	private static String[] MODULE_USAGE = new String[] {
+			"/kong 原句 - 给原句添加空格"
+	};
+	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
+	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+	private static String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"获取命令发送人"
+	};
+
+	// ==========================================================================================================================================================
+	//
+	// 成员变量
+	//
+	// ==========================================================================================================================================================
+
+	// ==========================================================================================================================================================
+	//
+	// 生命周期函数
+	//
+	// ==========================================================================================================================================================
+
+	public Executor_kong() throws Exception {
+		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
-	public void memberExit(long gropid, long userid) {
+	public void init(LoggerX logger) throws Exception {
+		this.ENABLE_USER = true;
+		this.ENABLE_DISZ = true;
+		this.ENABLE_GROP = true;
 	}
 
 	@Override
-	public void memberJoin(long gropid, long userid) {
+	public void boot(LoggerX logger) throws Exception {
 	}
 
 	@Override
-	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
-		return null;
+	public void shut(LoggerX logger) throws Exception {
 	}
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-		Module.userInfo(userid, message.length == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
+	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
+
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+		entry.getMessage().userInfo(userid, message.getSection() == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-		Module.diszInfo(diszid, userid, message.length == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
+	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+		entry.getMessage().diszInfo(diszid, userid, message.getSection() == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-		Module.gropInfo(gropid, userid, message.length == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
+	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+		entry.getMessage().gropInfo(gropid, userid, message.getSection() == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 	}
 
 	private static String kong(final Message message) {
 		String temp;
-		temp = message.join(1);
+		temp = message.getOptions();
+		temp = temp.replaceAll("[CQ.*]", "");
 		temp = temp.replaceAll(" ", "");
 		temp = temp.trim();
 		final StringBuilder builder = new StringBuilder();
@@ -67,6 +105,17 @@ public class Executor_kong extends ModuleExecutor {
 		}
 		builder.setLength(builder.length() - 1);
 		return builder.toString();
+	}
+
+	// ==========================================================================================================================================================
+	//
+	// 工具函数
+	//
+	// ==========================================================================================================================================================
+
+	@Override
+	public String[] generateReport(int mode, final Message message, final Object... parameters) {
+		return null;
 	}
 
 }

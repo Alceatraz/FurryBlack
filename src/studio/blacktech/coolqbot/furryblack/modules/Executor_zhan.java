@@ -4,31 +4,58 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import studio.blacktech.coolqbot.furryblack.common.Message;
-import studio.blacktech.coolqbot.furryblack.common.Module;
-import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_zhan extends ModuleExecutor {
+
+	// ==========================================================================================================================================================
+	//
+	// 模块基本配置
+	//
+	// ==========================================================================================================================================================
+
+	private static String MODULE_PACKAGENAME = "zhan";
+	private static String MODULE_DISPLAYNAME = "占卜";
+	private static String MODULE_DESCRIPTION = "大阿卡那塔罗牌占卜";
+	private static String MODULE_VERSION = "1.0";
+	private static String[] MODULE_USAGE = new String[] {
+			"/zhan 理由 - 为某事占卜"
+	};
+	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
+	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+	private static String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"获取命令发送人"
+	};
+
+	// ==========================================================================================================================================================
+	//
+	// 成员变量
+	//
+	// ==========================================================================================================================================================
 
 	private final TreeMap<Integer, String> CARD = new TreeMap<>();
 	private final ArrayList<Integer> FREQ = new ArrayList<>();
 
-	public Executor_zhan() {
+	// ==========================================================================================================================================================
+	//
+	// 生命周期函数
+	//
+	// ==========================================================================================================================================================
 
-		this.MODULE_DISPLAYNAME = "塔罗牌占卜";
-		this.MODULE_PACKAGENAME = "zhan";
-		this.MODULE_DESCRIPTION = "大阿卡那塔罗牌占卜";
-		this.MODULE_VERSION = "2.2.3";
-		this.MODULE_USAGE = new String[] {
-				"//zhan 理由 - 为某事占卜"
-		};
-		this.MODULE_PRIVACY_TRIGER = new String[] {};
-		this.MODULE_PRIVACY_LISTEN = new String[] {};
-		this.MODULE_PRIVACY_STORED = new String[] {};
-		this.MODULE_PRIVACY_CACHED = new String[] {};
-		this.MODULE_PRIVACY_OBTAIN = new String[] {
-				"获取命令发送人"
-		};
+	public Executor_zhan() throws Exception {
+		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+	}
+
+	@Override
+	public void init(LoggerX logger) throws Exception {
 
 		this.CARD.put(1, "O. THE FOOL 愚者正位\r\n愚蠢 狂躁 挥霍无度 神志不清");
 		this.CARD.put(2, "O. THE FOOL 愚者逆位\r\n疏忽 缺乏 暮气 无效 虚荣");
@@ -57,7 +84,7 @@ public class Executor_zhan extends ModuleExecutor {
 		this.CARD.put(25, "XII. THE HANGED MAN 吊人正位\r\n智慧 牺牲 审判 细心 眼光");
 		this.CARD.put(26, "XII. THE HANGED MAN 吊人逆位\r\n自私 群众 人民");
 		this.CARD.put(27, "XIII. DEATH 死亡正位\r\n终结 死亡 毁灭 腐朽");
-		this.CARD.put(28, "XIII. DEATH 死亡逆位\r\n惯性 昏睡 石化 梦游");
+		this.CARD.put(28, "XIII. DEATH 死亡逆位\r\n惯性 石化 梦游 昏 睡");
 		this.CARD.put(29, "XIV. TEMPERANCE 节制正位\r\n经济 适度 节俭 管理 住所");
 		this.CARD.put(30, "XIV. TEMPERANCE 节制逆位\r\n教会 分离 不幸的组合 冲突的利益");
 		this.CARD.put(31, "XV. THE DEVIL 恶魔正位\r\n毁坏 暴力 强迫 愤怒 额外努力 死亡");
@@ -93,43 +120,59 @@ public class Executor_zhan extends ModuleExecutor {
 		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
 		this.FREQ.add(0);this.FREQ.add(0);
 		// @formatter:on
+
+		this.ENABLE_USER = true;
+		this.ENABLE_DISZ = true;
+		this.ENABLE_GROP = true;
 	}
 
 	@Override
-	public void memberExit(long gropid, long userid) {
+	public void boot(LoggerX logger) throws Exception {
 	}
 
 	@Override
-	public void memberJoin(long gropid, long userid) {
+	public void shut(LoggerX logger) throws Exception {
 	}
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-		Module.userInfo(userid, this.zhan(message));
+	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
+
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+		entry.getMessage().userInfo(userid, this.zhan(message));
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-		Module.diszInfo(diszid, userid, this.zhan(message));
+	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+		entry.getMessage().diszInfo(diszid, userid, this.zhan(message));
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-		Module.gropInfo(gropid, userid, this.zhan(message));
+	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+		entry.getMessage().gropInfo(gropid, userid, this.zhan(message));
 		return true;
 	}
 
 	public String zhan(final Message message) {
-		if (message.segment == 1) {
+		if (message.getSection() == 1) {
 			return "你不能占卜空气";
 		} else {
 			final SecureRandom random = new SecureRandom();
 			final int urandom = random.nextInt(43) + 1;
 			final StringBuilder builder = new StringBuilder();
 			builder.append("你因为 ");
-			builder.append(message.join(1));
+			builder.append(message.getOptions());
 			builder.append(" 抽到了：\r\n");
 			builder.append(this.CARD.get(urandom));
 			this.FREQ.set(urandom, this.FREQ.get(urandom) + 1);
@@ -138,7 +181,7 @@ public class Executor_zhan extends ModuleExecutor {
 	}
 
 	@Override
-	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
+	public String[] generateReport(int mode, final Message message, final Object... parameters) {
 		if (this.COUNT == 0) { return null; }
 		final StringBuilder builder = new StringBuilder();
 		int coverage = 0;
@@ -153,11 +196,12 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append(" 张 : ");
 			builder.append(this.FREQ.get(i));
 			builder.append(" - ");
-			builder.append((this.FREQ.get(i) * 100) / coverage);
+			builder.append(this.FREQ.get(i) * 100 / coverage);
 			builder.append("%");
 		}
 		String res[] = new String[1];
 		res[0] = builder.toString();
 		return res;
 	}
+
 }

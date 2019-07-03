@@ -1,6 +1,8 @@
 package studio.blacktech.coolqbot.furryblack.common;
 
-public class NotAFolderException extends Exception {
+import java.io.IOException;
+
+public class NotAFolderException extends IOException {
 
 	private static final long serialVersionUID = 1L;
 

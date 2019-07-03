@@ -1,7 +1,11 @@
 package studio.blacktech.coolqbot.furryblack.modules;
 
-import studio.blacktech.coolqbot.furryblack.common.Message;
-import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 //
 //import java.io.InputStream;
@@ -12,48 +16,101 @@ import studio.blacktech.coolqbot.furryblack.common.ModuleExecutor;
 //import studio.blacktech.coolqbot.furryblack.signal.Workflow;
 //
 public class Executor_mine extends ModuleExecutor {
-	
-	@Override
-	public void memberExit(long gropid, long userid) {
+
+	// ==========================================================================================================================================================
+	//
+	// 模块基本配置
+	//
+	// ==========================================================================================================================================================
+
+	public static String MODULE_PACKAGENAME = "mine";
+	public static String MODULE_DISPLAYNAME = "我的世界助手";
+	public static String MODULE_DESCRIPTION = "我的世界助手";
+	public static String MODULE_VERSION = "2.0";
+	public static String[] MODULE_USAGE = new String[] {
+			"/mine status 查看服务器在线状态",
+			"/mine online 列出服务器在线玩家"
+	};
+	public static String[] MODULE_PRIVACY_TRIGER = new String[] {};
+	public static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+	public static String[] MODULE_PRIVACY_STORED = new String[] {};
+	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
+	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"获取命令发送人"
+	};
+
+	// ==========================================================================================================================================================
+	//
+	// 成员变量
+	//
+	// ==========================================================================================================================================================
+
+	// ==========================================================================================================================================================
+	//
+	// 生命周期函数
+	//
+	// ==========================================================================================================================================================
+
+	public Executor_mine() throws Exception {
+		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
-	public void memberJoin(long gropid, long userid) {
+	public void init(LoggerX logger) throws Exception {
+		this.ENABLE_USER = false;
+		this.ENABLE_DISZ = false;
+		this.ENABLE_GROP = false;
 	}
 
 	@Override
-	public String[] generateReport(final int logLevel, final int logMode, final int typeid, final long userid, final long diszid, final long gropid, final Message message, final Object... parameters) {
+	public void boot(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void shut(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
+
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
+
+	@Override
+	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+		return false;
+	}
+
+	@Override
+	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+		return false;
+	}
+
+	@Override
+	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+		return false;
+	}
+
+	// ==========================================================================================================================================================
+	//
+	// 工具函数
+	//
+	// ==========================================================================================================================================================
+
+	@Override
+	public String[] generateReport(int mode, final Message message, final Object... parameters) {
 		return null;
-	}
-
-	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-
-		return false;
-	}
-
-	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-
-		return false;
-	}
-
-	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final Message message, final int messageid, final int messagefont) throws Exception {
-
-		return false;
 	}
 
 }
 //
-//	public Executor_mine() {
-//		this.MODULE_NAME = "我的世界助手";
-//		this.MODULE_HELP = "//mine status 查看服务器在线状态\r\n//mine online 列出服务器在线玩家";
-//		this.MODULE_COMMAND = "mine";
-//		this.MODULE_VERSION = "1.5.1";
-//		this.MODULE_DESCRIPTION = "我的世界多功能助手";
-//		this.MODULE_PRIVACY = "存储 : 无\r\n缓存 : 无\r\n获取 : 1\r\n1: 命令发送人用于@";
-//	}
+
 //
 //	@Override
 //	public void executor(final Workflow flow) throws Exception {
