@@ -1,6 +1,7 @@
 package studio.blacktech.coolqbot.furryblack.common.message;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,14 +30,17 @@ public class Message {
 	private boolean isSnappic = false;
 	private boolean isQQVideo = false;
 	private boolean isHongbao = false;
-	private boolean isPureCQC = false;
+	private boolean isPureCQS = false;
 
+	private LinkedList<String> segmentParts;
 	private TreeMap<String, String> switchs;
 
 	// ===================================================================================
 
 	public Message(String message, int messageid, int messageFont) {
+
 		this.sendTime = System.currentTimeMillis();
+
 		this.messageId = messageid;
 		this.messageFt = messageFont;
 		this.rawMessage = message;
@@ -44,84 +48,54 @@ public class Message {
 
 	// ===================================================================================
 
-	/***
-	 * 是否为命令 是则切开命令和参数
-	 *
-	 * @return
-	 */
-	public Message anaylysIsCommand() {
+	public Message anaylys() {
 		this.rawLength = this.rawMessage.length();
-		if (this.rawMessage.charAt(0) == '/' && this.rawLength > 2) {
-			this.isCommand = true;
-			this.cmdMessage = this.rawMessage.substring(1);
-			this.cmdMessage = this.cmdMessage.trim();
-			int p = this.cmdMessage.indexOf(' ');
-			if (p < 0) {
-				this.command = this.cmdMessage;
-			} else {
-				this.command = this.cmdMessage.substring(0, p);
-				this.options = this.cmdMessage.substring(p + 1);
-			}
-		}
+		if (this.rawMessage.charAt(0) == '/' && this.rawLength > 1) { this.isCommand = true; }
 		return this;
 	}
 
-	/***
-	 * 进一步处理命令 切开所有参数
-	 *
-	 * @return
-	 */
-	public Message parseOption() {
-		if (this.isCommand) {
-			this.options.replaceAll("\\s+", " ");
-			this.segment = this.options.split(" ");
-			this.section = this.segment.length;
-		}
-		return this;
-	}
+	public Message parseCommand() {
 
-	/***
-	 * 进一步处理命令 读取所有开关
-	 *
-	 * @return
-	 */
-	public Message parseFlags() {
-		if (this.isCommand) {
-			if (this.section > 0) {
-				this.switchs = new TreeMap<>();
-				String[] flag;
-				for (String temp : this.segment) {
-					if (temp.startsWith("--") && temp.indexOf("=") > 0) {
-						temp = temp.substring(2);
-						flag = temp.split("=");
-						this.switchs.put(flag[0], flag[1]);
-					}
+		// 去掉 /
+		// 去掉首尾多余空格
+		// 合并所有连续空格
+		this.cmdMessage = this.rawMessage.substring(1);
+		this.cmdMessage = this.cmdMessage.trim();
+		this.cmdMessage = this.cmdMessage.replaceAll("\\s+", " ");
+
+		int indexOfSpace = this.cmdMessage.indexOf(' ');
+
+		// 是否空命令
+		if (indexOfSpace < 0) {
+			this.command = this.cmdMessage;
+		} else {
+			// 切开
+			// 命令
+			// 参数
+			this.command = this.cmdMessage.substring(0, indexOfSpace);
+			this.options = this.cmdMessage.substring(indexOfSpace + 1);
+
+			String[] flag;
+			this.switchs = new TreeMap<>();
+			this.segmentParts = new LinkedList<>();
+
+			// 提取所有 --XX=XXXX 形式的开关
+			// 提取所有其他内容为参数
+			for (String temp : this.options.split(" ")) {
+				if (temp.startsWith("--") && temp.indexOf("=") > 0) {
+					temp = temp.substring(2);
+					flag = temp.split("=");
+					this.switchs.put(flag[0], flag[1]);
+				} else {
+					this.segmentParts.add(temp);
 				}
 			}
 
+			this.segment = new String[this.segmentParts.size()];
+			this.segmentParts.toArray(this.segment);
+			this.section = this.segment.length;
 		}
 		return this;
-	}
-
-	// ===================================================================================
-
-	/***
-	 * 从指定位置拼接参数
-	 *
-	 * @param i
-	 * @return
-	 */
-	public String join(int i) {
-		if (this.section == 0) {
-			return "";
-		} else {
-			StringBuilder builder = new StringBuilder();
-			for (; i < this.section; i++) {
-				builder.append(" ");
-				builder.append(this.segment[i]);
-			}
-			return builder.toString();
-		}
 	}
 
 	// ===================================================================================
@@ -143,7 +117,7 @@ public class Message {
 	private final static String REGEX_IMAGE = "\\[CQ:image,file=\\w{32}\\.\\w{3}\\]";
 	private final static String REGEX_CCODE = "\\[CQ:.+\\]";
 
-	public Message anaylysMessage() {
+	public Message parseMessage() {
 
 		if (this.rawMessage.startsWith("&#91;闪照&#93;")) {
 			this.isSnappic = true;
@@ -168,9 +142,24 @@ public class Message {
 			}
 			this.resMessage = this.rawMessage.replaceAll(Message.REGEX_CCODE, "");
 			this.resLength = this.resMessage.length();
-			if (this.resLength == 0) { this.isPureCQC = true; }
+			if (this.resLength == 0) { this.isPureCQS = true; }
 		}
 		return this;
+	}
+
+	// ===================================================================================
+
+	public String join(int i) {
+		if (this.section == 0) {
+			return "";
+		} else {
+			StringBuilder builder = new StringBuilder();
+			for (; i < this.section; i++) {
+				builder.append(" ");
+				builder.append(this.segment[i]);
+			}
+			return builder.toString();
+		}
 	}
 
 	// ===================================================================================
@@ -229,9 +218,7 @@ public class Message {
 		return this.segment;
 	}
 
-	// ===================================================================================
-
-	public String getFlag(String name) {
+	public String getSwitch(String name) {
 		return this.switchs.get(name);
 	}
 
@@ -253,8 +240,8 @@ public class Message {
 		return this.isSnappic;
 	}
 
-	public boolean isPureCQC() {
-		return this.isPureCQC;
+	public boolean isPureCQS() {
+		return this.isPureCQS;
 	}
 
 	public boolean hasPicture() {
@@ -264,59 +251,79 @@ public class Message {
 	// ===================================================================================
 
 	public String toString() {
+
 		StringBuilder builder = new StringBuilder();
-		builder.append("Message ID:");
+
+		builder.append("Message ID: ");
 		builder.append(this.messageId);
-		builder.append("\nMessage Font:");
+		builder.append("\nMessage Font: ");
 		builder.append(this.messageFt);
-		builder.append("\nSendTime:");
+
+		builder.append("\nSendTime: ");
 		builder.append(this.sendTime);
-		builder.append("\nRAW-CONTENT:");
+
+		builder.append("\nRAW-CONTENT: ");
 		builder.append(this.rawMessage);
-		builder.append("\nRAW-LENGTH:");
+		builder.append("\nRAW-LENGTH: ");
 		builder.append(this.rawLength);
-		builder.append("\nRES-CONTENT:");
+
+		builder.append("\nRES-CONTENT: ");
 		builder.append(this.resMessage);
-		builder.append("\nRES-LENGTH:");
+		builder.append("\nRES-LENGTH: ");
 		builder.append(this.resLength);
-		builder.append("\nisCommand:");
+
+		builder.append("\nisCommand: ");
 		builder.append(this.isCommand ? "True" : "False");
-		builder.append("\nisSnappic:");
+		builder.append("\nisSnappic: ");
 		builder.append(this.isSnappic ? "True" : "False");
-		builder.append("\nisQQVideo:");
+		builder.append("\nisQQVideo: ");
 		builder.append(this.isQQVideo ? "True" : "False");
-		builder.append("\nisHongbao:");
+		builder.append("\nisHongbao: ");
 		builder.append(this.isHongbao ? "True" : "False");
-		builder.append("\nhasPicture:");
+
+		builder.append("\nhasPicture: ");
 		builder.append(this.hasPicture ? "True" : "False");
-		builder.append("\nPicture:");
-		for (String temp : this.picture) {
-			builder.append("\n");
-			builder.append(temp);
-		}
-		if (this.isCommand) {
-			builder.append("\ncmdMessage:");
-			builder.append(this.cmdMessage);
-			builder.append("\ncommand:");
-			builder.append(this.command);
-			builder.append("\noptions:");
-			builder.append(this.options);
-			builder.append("\nsection");
-			builder.append(this.section);
-			builder.append("\nsegment:");
-			for (String temp : this.segment) {
+
+		if (this.hasPicture) {
+			builder.append("\nPicture: ");
+			for (String temp : this.picture) {
 				builder.append("\n");
 				builder.append(temp);
 			}
-			builder.append("\nFlags:");
-			for (String name : this.switchs.keySet()) {
-				builder.append("\n");
-				builder.append(name);
-				builder.append(" ");
-				builder.append(this.switchs.get(name));
-			}
 		}
 
+		if (this.isCommand) {
+
+			builder.append("\ncmdMessage: ");
+			builder.append(this.cmdMessage);
+
+			builder.append("\ncommand: ");
+			builder.append(this.command);
+
+			builder.append("\noptions: ");
+			builder.append(this.options);
+
+			builder.append("\nsection: ");
+			builder.append(this.section);
+
+			if (this.section > 0) {
+				builder.append("\nsegment: ");
+				for (String temp : this.segment) {
+					builder.append("\n");
+					builder.append(temp);
+				}
+			}
+
+			if (this.switchs != null) {
+				builder.append("\nFlags:");
+				for (String name : this.switchs.keySet()) {
+					builder.append("\n");
+					builder.append(name);
+					builder.append(" ");
+					builder.append(this.switchs.get(name));
+				}
+			}
+		}
 		return builder.toString();
 	}
 }

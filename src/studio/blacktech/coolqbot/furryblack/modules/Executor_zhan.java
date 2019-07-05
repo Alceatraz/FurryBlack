@@ -151,25 +151,8 @@ public class Executor_zhan extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().userInfo(userid, this.zhan(message));
-		return true;
-	}
-
-	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().diszInfo(diszid, userid, this.zhan(message));
-		return true;
-	}
-
-	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().gropInfo(gropid, userid, this.zhan(message));
-		return true;
-	}
-
-	public String zhan(Message message) {
 		if (message.getSection() == 0) {
-			return "你不能占卜空气";
+			entry.getMessage().userInfo(userid, "你不能占卜空气");
 		} else {
 			SecureRandom random = new SecureRandom();
 			int urandom = random.nextInt(43) + 1;
@@ -179,8 +162,45 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append(" 抽到了：\r\n");
 			builder.append(this.CARD.get(urandom));
 			this.FREQ.set(urandom, this.FREQ.get(urandom) + 1);
-			return builder.toString();
+			entry.getMessage().userInfo(userid, builder.toString());
 		}
+		return true;
+	}
+
+	@Override
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+		if (message.getSection() == 0) {
+			entry.getMessage().diszInfo(diszid, userid, "你不能占卜空气");
+		} else {
+			SecureRandom random = new SecureRandom();
+			int urandom = random.nextInt(43) + 1;
+			StringBuilder builder = new StringBuilder();
+			builder.append("你因为 ");
+			builder.append(message.getOptions());
+			builder.append(" 抽到了：\r\n");
+			builder.append(this.CARD.get(urandom));
+			this.FREQ.set(urandom, this.FREQ.get(urandom) + 1);
+			entry.getMessage().diszInfo(diszid, userid, builder.toString());
+		}
+		return true;
+	}
+
+	@Override
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+		if (message.getSection() == 0) {
+			entry.getMessage().gropInfo(gropid, userid, "你不能占卜空气");
+		} else {
+			SecureRandom random = new SecureRandom();
+			int urandom = random.nextInt(43) + 1;
+			StringBuilder builder = new StringBuilder();
+			builder.append("你因为 ");
+			builder.append(message.getOptions());
+			builder.append(" 抽到了：\r\n");
+			builder.append(this.CARD.get(urandom));
+			this.FREQ.set(urandom, this.FREQ.get(urandom) + 1);
+			entry.getMessage().gropInfo(gropid, userid, builder.toString());
+		}
+		return true;
 	}
 
 	@Override

@@ -249,7 +249,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					continue;
 				}
 
-				temp.anaylysMessage();
+				temp.parseMessage();
 
 				if (temp.isSnappic()) {
 					this.USER_SNAPSHOT++;
@@ -276,7 +276,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				// 不能直接按照一句添加进 SENTENCE
 				// 否则会出现大量占位的 ""
 				// 必须独立存储一个数字
-				if (temp.isPureCQC()) {
+				if (temp.isPureCQS()) {
 					this.USER_PURECCODE++;
 					this.USER_CHARACTER++;
 				} else {
@@ -299,7 +299,14 @@ public class Listener_TopSpeak extends ModuleListener {
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 		switch (mode) {
 		case 10:
-			return this.generateMemberRank(Long.parseLong(message.getFlag("gropid")));
+			String gropid = message.getSwitch("gropid");
+			if (gropid == null) {
+				return new String[] {
+						"参数错误 --gropid 为空"
+				};
+			} else {
+				return this.generateMemberRank(Long.parseLong(gropid));
+			}
 		}
 		return null;
 	}

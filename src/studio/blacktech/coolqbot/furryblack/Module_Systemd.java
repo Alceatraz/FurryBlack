@@ -1,7 +1,6 @@
 package studio.blacktech.coolqbot.furryblack;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.TreeMap;
 
 import com.sobte.cqp.jcq.entity.IMsg;
@@ -525,9 +524,9 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================================================================
 
-		if (message.anaylysIsCommand().isCommand()) {
+		if (message.anaylys().isCommand()) {
 
-			switch (message.parseOption().getCommand()) {
+			switch (message.parseCommand().getCommand()) {
 
 			// ===============================================================================================================================
 			case "info":
@@ -562,7 +561,11 @@ public class Module_Systemd extends Module {
 				}
 				break;
 			}
+
+			if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.toString()); }
+
 			// ===============================================================================================================================
+
 		} else {
 			entry.getMessage().userInfo(userid, "未识别的内容，本BOT没有聊天功能，请使用/help查看帮助。");
 		}
@@ -598,9 +601,9 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================================================================
 
-		if (message.anaylysIsCommand().isCommand()) {
+		if (message.anaylys().isCommand()) {
 
-			switch (message.parseOption().getCommand()) {
+			switch (message.parseCommand().getCommand()) {
 			// ===============================================================================================================================
 			case "info":
 				entry.getMessage().sendInfo(userid);
@@ -634,6 +637,9 @@ public class Module_Systemd extends Module {
 				}
 				break;
 			}
+
+			if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.toString()); }
+
 			// ===============================================================================================================================
 		}
 		return IMsg.MSG_IGNORE;
@@ -667,9 +673,9 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================================================================
 
-		if (message.anaylysIsCommand().isCommand()) {
+		if (message.anaylys().isCommand()) {
 
-			switch (message.parseOption().getCommand()) {
+			switch (message.parseCommand().getCommand()) {
 			// ===============================================================================================================================
 			case "info":
 				entry.getMessage().sendInfo(userid);
@@ -703,6 +709,9 @@ public class Module_Systemd extends Module {
 				}
 				break;
 			}
+
+			if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.toString()); }
+
 			// ===============================================================================================================================
 		}
 		return IMsg.MSG_IGNORE;
@@ -747,7 +756,7 @@ public class Module_Systemd extends Module {
 		// ========================================================================================================================
 
 		builder.append(LoggerX.time());
-		builder.append(" - 状态简报\r\n\r\n运行时间: ");
+		builder.append(" - 状态简报\r\n运行时间: ");
 		builder.append(uptimedd);
 		builder.append(" - ");
 		builder.append(uptimehh);
@@ -766,72 +775,13 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("\r\n\r\n调用-私聊： ");
+		builder.append("\r\n调用-私聊： ");
 		builder.append(this.COUNT_USER_MESSAGE);
 		builder.append("次\r\n调用-组聊： ");
 		builder.append(this.COUNT_DISZ_MESSAGE);
 		builder.append("次\r\n调用-群聊： ");
 		builder.append(this.COUNT_GROP_MESSAGE);
 		builder.append("次");
-
-		// ===============================================================================
-
-		builder.append("\r\n\r\n触发器: ");
-		builder.append(this.TRIGGER_INSTANCE.size());
-		builder.append("个");
-
-		for (String name : this.TRIGGER_INSTANCE.keySet()) {
-			ModuleTrigger temp = this.TRIGGER_INSTANCE.get(name);
-			builder.append("\r\n模块 ");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_USER);
-			builder.append("/");
-			builder.append(temp.COUNT_DISZ);
-			builder.append("/");
-			builder.append(temp.COUNT_GROP);
-			builder.append("次");
-		}
-
-		// ===============================================================================
-
-		builder.append("\r\n\r\n监听器: ");
-		builder.append(this.TRIGGER_INSTANCE.size());
-		builder.append("个");
-
-		for (String name : this.LISTENER_INSTANCE.keySet()) {
-			ModuleListener temp = this.LISTENER_INSTANCE.get(name);
-			builder.append("\r\n模块 ");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_USER);
-			builder.append("/");
-			builder.append(temp.COUNT_DISZ);
-			builder.append("/");
-			builder.append(temp.COUNT_GROP);
-			builder.append("次");
-		}
-
-		// ===============================================================================
-
-		builder.append("\r\n\r\n执行器: ");
-		builder.append(this.TRIGGER_INSTANCE.size());
-		builder.append("个");
-
-		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
-			ModuleExecutor temp = this.EXECUTOR_INSTANCE.get(name);
-			builder.append("\r\n模块 ");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_USER);
-			builder.append("/");
-			builder.append(temp.COUNT_DISZ);
-			builder.append("/");
-			builder.append(temp.COUNT_GROP);
-			builder.append("次");
-		}
-
-		// ===============================================================================
 
 		return builder.toString();
 	}
@@ -840,65 +790,195 @@ public class Module_Systemd extends Module {
 
 	private String[] doGenerateModulesReport() {
 
-		LinkedList<String> report = new LinkedList<>();
+		StringBuilder builder;
+		String[] result;
 
-		StringBuilder builder = new StringBuilder();
-
-		for (String name : this.TRIGGER_INSTANCE.keySet()) {
-			ModuleTrigger temp = this.TRIGGER_INSTANCE.get(name);
-			builder.setLength(0);
-			builder.append("[触发器] ");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(" - ");
-			builder.append(temp.COUNT_USER);
-			builder.append("/");
-			builder.append(temp.COUNT_DISZ);
-			builder.append("/");
-			builder.append(temp.COUNT_GROP);
-			builder.append("\r\n");
-			builder.append(temp.generateReport(0, null, null, null));
-			report.add(builder.toString());
-		}
+		String[] report = new String[3];
 
 		// ===============================================================================
 
-		for (String name : this.LISTENER_INSTANCE.keySet()) {
-			ModuleListener temp = this.LISTENER_INSTANCE.get(name);
-			builder.setLength(0);
-			builder.append("[监听器]");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(" - ");
-			builder.append(temp.COUNT_USER);
-			builder.append("/");
-			builder.append(temp.COUNT_DISZ);
-			builder.append("/");
-			builder.append(temp.COUNT_GROP);
+		builder = new StringBuilder();
+
+		builder.append("\r\n[触发器] 私聊: ");
+		builder.append(this.TRIGGER_USER.size());
+		builder.append("个");
+		for (ModuleTrigger temp : this.TRIGGER_USER) {
+			if (temp.COUNT_USER == 0) { continue; }
+			result = temp.generateReport(0, null, null, null);
+			if (result == null) { continue; }
 			builder.append("\r\n");
-			builder.append(temp.generateReport(0, null, null, null));
-			report.add(builder.toString());
+			builder.append(temp.MODULE_PACKAGENAME());
+			builder.append(": ");
+			builder.append(temp.COUNT_USER);
+			builder.append("次");
+			for (String line : result) {
+				builder.append("\r\n");
+				builder.append(line);
+			}
 		}
+
+		builder.append("\r\n[触发器] 组聊: ");
+		builder.append(this.TRIGGER_DISZ.size());
+		builder.append("个");
+		for (ModuleTrigger temp : this.TRIGGER_DISZ) {
+			if (temp.COUNT_DISZ == 0) { continue; }
+			result = temp.generateReport(0, null, null, null);
+			if (result == null) { continue; }
+			builder.append("\r\n");
+			builder.append(temp.MODULE_PACKAGENAME());
+			builder.append(": ");
+			builder.append(temp.COUNT_DISZ);
+			builder.append("次");
+			for (String line : result) {
+				builder.append("\r\n");
+				builder.append(line);
+			}
+		}
+
+		builder.append("\r\n[触发器] 群聊: ");
+		builder.append(this.TRIGGER_GROP.size());
+		builder.append("个");
+		for (ModuleTrigger temp : this.TRIGGER_GROP) {
+			if (temp.COUNT_GROP == 0) { continue; }
+			result = temp.generateReport(0, null, null, null);
+			if (result == null) { continue; }
+			builder.append("\r\n");
+			builder.append(temp.MODULE_PACKAGENAME());
+			builder.append(": ");
+			builder.append(temp.COUNT_GROP);
+			builder.append("次");
+			for (String line : result) {
+				builder.append("\r\n");
+				builder.append(line);
+			}
+		}
+
+		report[0] = builder.toString();
+		builder.setLength(0);
 
 		// ===============================================================================
 
-		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
-			ModuleExecutor temp = this.EXECUTOR_INSTANCE.get(name);
-			builder.setLength(0);
-			builder.append("[执行器]");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(" - ");
-			builder.append(temp.COUNT_USER);
-			builder.append("/");
-			builder.append(temp.COUNT_DISZ);
-			builder.append("/");
-			builder.append(temp.COUNT_GROP);
+		builder.append("\r\n[监听器] 私聊: ");
+		builder.append(this.LISTENER_USER.size());
+		builder.append("个");
+		for (ModuleListener temp : this.LISTENER_USER) {
+			if (temp.COUNT_USER == 0) { continue; }
+			result = temp.generateReport(0, null, null, null);
+			if (result == null) { continue; }
 			builder.append("\r\n");
-			builder.append(temp.generateReport(0, null, null, null));
-			report.add(builder.toString());
+			builder.append(temp.MODULE_PACKAGENAME());
+			builder.append(": ");
+			builder.append(temp.COUNT_USER);
+			builder.append("次");
+			for (String line : result) {
+				builder.append("\r\n");
+				builder.append(line);
+			}
 		}
+
+		builder.append("\r\n[监听器] 组聊: ");
+		builder.append(this.LISTENER_DISZ.size());
+		builder.append("个");
+		for (ModuleListener temp : this.LISTENER_DISZ) {
+			if (temp.COUNT_DISZ == 0) { continue; }
+			result = temp.generateReport(0, null, null, null);
+			if (result == null) { continue; }
+			builder.append("\r\n");
+			builder.append(temp.MODULE_PACKAGENAME());
+			builder.append(": ");
+			builder.append(temp.COUNT_DISZ);
+			builder.append("次");
+			for (String line : result) {
+				builder.append("\r\n");
+				builder.append(line);
+			}
+		}
+
+		builder.append("\r\n[监听器] 群聊: ");
+		builder.append(this.LISTENER_GROP.size());
+		builder.append("个");
+		for (ModuleListener temp : this.LISTENER_GROP) {
+			if (temp.COUNT_GROP == 0) { continue; }
+			result = temp.generateReport(0, null, null, null);
+			if (result == null) { continue; }
+			builder.append("\r\n");
+			builder.append(temp.MODULE_PACKAGENAME());
+			builder.append(": ");
+			builder.append(temp.COUNT_GROP);
+			builder.append("次");
+			for (String line : result) {
+				builder.append("\r\n");
+				builder.append(line);
+			}
+		}
+
+		report[1] = builder.toString();
+		builder.setLength(0);
 
 		// ===============================================================================
 
-		return report.toArray(new String[report.size()]);
+		builder.append("\r\n[执行器] 私聊: ");
+		builder.append(this.EXECUTOR_USER.size());
+		builder.append("个");
+		for (String name : this.EXECUTOR_USER.keySet()) {
+			ModuleExecutor temp = this.EXECUTOR_USER.get(name);
+			if (temp.COUNT_USER == 0) { continue; }
+			result = temp.generateReport(0, null, null, null);
+			if (result == null) { continue; }
+			builder.append("\r\n模块 ");
+			builder.append(temp.MODULE_PACKAGENAME());
+			builder.append(": ");
+			builder.append(temp.COUNT_USER);
+			builder.append("次");
+			for (String line : result) {
+				builder.append("\r\n");
+				builder.append(line);
+			}
+		}
+
+		builder.append("\r\n[执行器] 组聊: ");
+		builder.append(this.EXECUTOR_DISZ.size());
+		builder.append("个");
+		for (String name : this.EXECUTOR_DISZ.keySet()) {
+			ModuleExecutor temp = this.EXECUTOR_DISZ.get(name);
+			if (temp.COUNT_DISZ == 0) { continue; }
+			result = temp.generateReport(0, null, null, null);
+			if (result == null) { continue; }
+			builder.append("\r\n模块 ");
+			builder.append(temp.MODULE_PACKAGENAME());
+			builder.append(": ");
+			builder.append(temp.COUNT_DISZ);
+			builder.append("次");
+			for (String line : result) {
+				builder.append("\r\n");
+				builder.append(line);
+			}
+		}
+
+		builder.append("\r\n[执行器] 群聊: ");
+		builder.append(this.EXECUTOR_GROP.size());
+		builder.append("个");
+		for (String name : this.EXECUTOR_GROP.keySet()) {
+			ModuleExecutor temp = this.EXECUTOR_GROP.get(name);
+			if (temp.COUNT_GROP == 0) { continue; }
+			result = temp.generateReport(0, null, null, null);
+			if (result == null) { continue; }
+			builder.append("\r\n模块 ");
+			builder.append(temp.MODULE_PACKAGENAME());
+			builder.append(": ");
+			builder.append(temp.COUNT_GROP);
+			builder.append("次");
+			for (String line : result) {
+				builder.append("\r\n");
+				builder.append(line);
+			}
+		}
+
+		report[2] = builder.toString();
+
+		// ===============================================================================
+
+		return report;
 	}
 
 	// ===============================================================================
@@ -930,22 +1010,6 @@ public class Module_Systemd extends Module {
 	// ========================================================================================================================
 	// ========================================================================================================================
 	// ========================================================================================================================
-
-	public void doSendModuleFullHelp(int logdest, long destid, String name) {
-		switch (logdest) {
-		case 0:
-			entry.getMessage().adminInfo(this.doGenerateModuleFullHelp(name));
-			break;
-		case 1:
-			entry.getMessage().userInfo(destid, this.doGenerateModuleFullHelp(name));
-			break;
-		case 2:
-			entry.getMessage().diszInfo(destid, this.doGenerateModuleFullHelp(name));
-			break;
-		case 3:
-			entry.getMessage().gropInfo(destid, this.doGenerateModuleFullHelp(name));
-		}
-	}
 
 	public void doSendSystemsReport(int logdest, long destid) {
 		switch (logdest) {
@@ -979,27 +1043,51 @@ public class Module_Systemd extends Module {
 		}
 	}
 
-	public void doSendModuleReport(Message message) {
-		String[] target = message.getFlag("target").split(":");
-		String[] module = message.getFlag("module").split(":");
-		if (target == null || module == null) { return; }
-		switch (target[0]) {
-		case "1":
-			entry.getMessage().userInfo(Long.parseLong(target[1]), this.doGenerateModuleReport(module[0], Integer.parseInt(module[1]), message));
+	public void doSendModuleFullHelp(int logdest, long destid, String name) {
+		switch (logdest) {
+		case 0:
+			entry.getMessage().adminInfo(this.doGenerateModuleFullHelp(name));
 			break;
-		case "2":
-			entry.getMessage().diszInfo(Long.parseLong(target[1]), this.doGenerateModuleReport(module[0], Integer.parseInt(module[1]), message));
+		case 1:
+			entry.getMessage().userInfo(destid, this.doGenerateModuleFullHelp(name));
 			break;
-		case "3":
-			entry.getMessage().gropInfo(Long.parseLong(target[1]), this.doGenerateModuleReport(module[0], Integer.parseInt(module[1]), message));
+		case 2:
+			entry.getMessage().diszInfo(destid, this.doGenerateModuleFullHelp(name));
 			break;
+		case 3:
+			entry.getMessage().gropInfo(destid, this.doGenerateModuleFullHelp(name));
 		}
-
 	}
 
-	// ========================================================================================================================
-	// ========================================================================================================================
-	// ========================================================================================================================
+	public void doSendModuleReport(Message message) {
+		String[] target = message.getSwitch("target").split(":");
+		String[] module = message.getSwitch("module").split(":");
+
+		String[] report = new String[2];
+		if (target == null) {
+			report[0] = "参数错误 --target 为空";
+		} else if (module == null) {
+			report[1] = "参数错误 --module 为空";
+		} else {
+			report = this.doGenerateModuleReport(module[0], Integer.parseInt(module[1]), message);
+		}
+
+		switch (target[0]) {
+		case "1":
+			entry.getMessage().userInfo(Long.parseLong(target[1]), report);
+			break;
+		case "2":
+			entry.getMessage().diszInfo(Long.parseLong(target[1]), report);
+			break;
+		case "3":
+			entry.getMessage().gropInfo(Long.parseLong(target[1]), report);
+			break;
+		}
+	}
+
+// ========================================================================================================================
+// ========================================================================================================================
+// ========================================================================================================================
 
 	public class SystemdDelegate {
 

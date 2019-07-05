@@ -42,6 +42,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	//
 	// ==========================================================================================================================================================
 
+	private static boolean DEBUG = false;
+
 	private static File FOLDER_CONF;
 	private static File FOLDER_DATA;
 
@@ -55,6 +57,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		entry demo = new entry();
 		demo.startup();
 		demo.enable();
+
+		demo.privateMsg(1, 1, 1752384244, "/admin", 1);
+
 		demo.disable();
 		demo.exit();
 
@@ -409,6 +414,15 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static NicknameDelegate getNickmap() {
 		return NICKMAP.getDelegate();
+	}
+
+	public static boolean switchDEBUG() {
+		DEBUG = !DEBUG;
+		return DEBUG;
+	}
+
+	public static boolean DEBUG() {
+		return DEBUG;
 	}
 
 }

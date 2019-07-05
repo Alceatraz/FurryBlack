@@ -251,11 +251,11 @@ public class Executor_acon extends ModuleExecutor {
 			case "cost":
 				// @formatter:off
 				entry.getMessage().gropInfo(gropid,
-					String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元", 
+					String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元",
 						consumption.divide(BigInteger.valueOf(1000)).toString(),
 						consumption.divide(BigInteger.valueOf(3600000L)).toString(),
 						consumption.divide(BigInteger.valueOf(1936800L)).toString()
-					)		
+					)
 				);
 				// @formatter:on
 				break;

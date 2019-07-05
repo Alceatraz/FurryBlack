@@ -41,7 +41,7 @@ public class Executor_admin extends ModuleExecutor {
 	@Override
 	public void init(LoggerX logger) throws Exception {
 		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = false;
+		this.ENABLE_DISZ = true;
 		this.ENABLE_GROP = true;
 	}
 
@@ -69,18 +69,24 @@ public class Executor_admin extends ModuleExecutor {
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		if (!entry.getMessage().isAdmin(userid)) { return false; }
+
 		if (message.getSection() == 0) {
+
 			entry.getSystemd().sendSystemsReport(0, 0);
 			entry.getSystemd().sendModulesReport(0, 0);
 			return true;
+
 		} else {
-			message.parseOption();
-			message.parseFlags();
+
 			switch (message.getSegment()[0]) {
+			case "debug":
+				entry.getMessage().adminInfo("DEBUG ¡ú " + entry.switchDEBUG());
+				return true;
 			case "report":
 				entry.getSystemd().sendModuleReport(message);
 				return true;
 			}
+
 			return false;
 		}
 	}
@@ -92,15 +98,17 @@ public class Executor_admin extends ModuleExecutor {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+
 		if (!entry.getMessage().isAdmin(userid)) { return false; }
 
 		if (message.getSection() == 0) {
+
 			entry.getSystemd().sendSystemsReport(0, 0);
 			entry.getSystemd().sendModulesReport(0, 0);
 			return true;
+
 		} else {
-			message.parseOption();
-			message.parseFlags();
+
 			switch (message.getSegment()[0]) {
 			case "say":
 				entry.getMessage().gropInfo(gropid, message.join(1));
@@ -113,19 +121,12 @@ public class Executor_admin extends ModuleExecutor {
 					break;
 				}
 				return true;
-			case "system":
-				return true;
-			case "ddns":
-				return true;
-			case "nick":
-				return true;
-			case "mode":
-				return true;
-
 			case "report":
 				entry.getSystemd().sendModuleReport(message);
 				return true;
+
 			}
+
 			return false;
 		}
 	}
