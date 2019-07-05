@@ -18,7 +18,8 @@ public class Executor_roll extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "roll";
+	private static String MODULE_PACKAGENAME = "executor_roll";
+	private static String MODULE_COMMANDNAME = "roll";
 	private static String MODULE_DISPLAYNAME = "生成随机数";
 	private static String MODULE_DESCRIPTION = "生成随机数";
 	private static String MODULE_VERSION = "1.0";
@@ -55,7 +56,7 @@ public class Executor_roll extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_roll() throws Exception {
-		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -86,27 +87,27 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		entry.getMessage().userInfo(userid, this.roll(message));
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		entry.getMessage().diszInfo(diszid, userid, this.roll(message));
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		entry.getMessage().gropInfo(gropid, userid, this.roll(message));
 		return true;
 	}
 
-	public String roll(final Message message) {
+	public String roll(Message message) {
 
 		String res = null;
-		final SecureRandom random = new SecureRandom();
+		SecureRandom random = new SecureRandom();
 
 		switch (message.getSection()) {
 
@@ -131,7 +132,7 @@ public class Executor_roll extends ModuleExecutor {
 				range = Integer.parseInt(message.getSegment()[0]);
 				res = Integer.toString(random.nextInt(range));
 				this.mode_2++;
-			} catch (final Exception exce) {
+			} catch (Exception exce) {
 				res = message.getSegment()[0] + "是";
 				if (random.nextBoolean()) {
 					this.mode_fucker++;
@@ -152,7 +153,7 @@ public class Executor_roll extends ModuleExecutor {
 			try {
 				min = Integer.parseInt(message.getSegment()[0]);
 				max = Integer.parseInt(message.getSegment()[1]);
-			} catch (final Exception exce) {
+			} catch (Exception exce) {
 				return "参数必须是罗马数字";
 			}
 			int temp = random.nextInt(max);
@@ -168,9 +169,9 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public String[] generateReport(int mode, final Message message, final Object... parameters) {
-		if (this.COUNT == 0) { return null; }
-		final StringBuilder builder = new StringBuilder();
+	public String[] generateReport(int mode, Message message, Object... parameters) {
+		if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null; }
+		StringBuilder builder = new StringBuilder();
 		builder.append("模式1 - 真假: ");
 		builder.append(this.mode_1);
 		builder.append(" (");
@@ -181,7 +182,7 @@ public class Executor_roll extends ModuleExecutor {
 		builder.append(this.mode_2);
 		builder.append("\r\n模式3 - 双限: ");
 		builder.append(this.mode_3);
-		final String res[] = new String[1];
+		String res[] = new String[1];
 		res[0] = builder.toString();
 		return res;
 	}

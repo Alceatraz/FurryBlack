@@ -32,7 +32,8 @@ public class Executor_jrjp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "jrjp";
+	private static String MODULE_PACKAGENAME = "executor_jrjp";
+	private static String MODULE_COMMANDNAME = "jrjp";
 	private static String MODULE_DISPLAYNAME = "祭祀";
 	private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
 	private static String MODULE_VERSION = "1.0";
@@ -57,11 +58,11 @@ public class Executor_jrjp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private final HashMap<Long, Long> AVCODE = new HashMap<>();
-	private final HashMap<Long, Long> VICTIM = new HashMap<>();
+	private HashMap<Long, Long> AVCODE = new HashMap<>();
+	private HashMap<Long, Long> VICTIM = new HashMap<>();
 
-	private final HashMap<Long, ArrayList<Long>> MEMBERS = new HashMap<>();
-	private final HashMap<Long, ArrayList<Long>> IGNORES = new HashMap<>();
+	private HashMap<Long, ArrayList<Long>> MEMBERS = new HashMap<>();
+	private HashMap<Long, ArrayList<Long>> IGNORES = new HashMap<>();
 
 	private File USER_IGNORE;
 
@@ -74,7 +75,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_jrjp() throws Exception {
-		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -84,9 +85,9 @@ public class Executor_jrjp extends ModuleExecutor {
 
 		if (!this.USER_IGNORE.exists()) { this.USER_IGNORE.createNewFile(); }
 
-		final List<Group> groups = JcqApp.CQ.getGroupList();
+		List<Group> groups = JcqApp.CQ.getGroupList();
 
-		for (final Group group : groups) {
+		for (Group group : groups) {
 			this.MEMBERS.put(group.getId(), new ArrayList<Long>());
 			this.IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
@@ -98,19 +99,19 @@ public class Executor_jrjp extends ModuleExecutor {
 				if (line.startsWith("#")) { continue; }
 				if (line.indexOf(":") < 0) { continue; }
 				temp = line.split(":");
-				final long gropid = Long.parseLong(temp[0]);
-				final long userid = Long.parseLong(temp[1]);
+				long gropid = Long.parseLong(temp[0]);
+				long userid = Long.parseLong(temp[1]);
 				this.IGNORES.get(gropid).add(userid);
 			}
 			reader.close();
-		} catch (final Exception exce) {
+		} catch (Exception exce) {
 			exce.printStackTrace();
 		}
 
-		for (final Group group : groups) {
-			final ArrayList<Long> tempMembers = this.MEMBERS.get(group.getId());
-			final ArrayList<Long> tempIgnores = this.IGNORES.get(group.getId());
-			for (final Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
+		for (Group group : groups) {
+			ArrayList<Long> tempMembers = this.MEMBERS.get(group.getId());
+			ArrayList<Long> tempIgnores = this.IGNORES.get(group.getId());
+			for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
 				if (entry.getMessage().isAdmin(member.getQqId())) { continue; }
 				if (tempIgnores.contains(member.getQqId())) { continue; }
 				tempMembers.add(member.getQqId());
@@ -146,29 +147,29 @@ public class Executor_jrjp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		long victim = this.VICTIM.get(gropid);
 		entry.getMessage().gropInfo(gropid, entry.getNickmap().getNickname(victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.AVCODE.get(gropid));
 		return true;
 	}
-		// ==========================================================================================================================================================
+	// ==========================================================================================================================================================
 	//
 	// 工具函数
 	//
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, final Message message, final Object... parameters) {
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
 	}
 
@@ -176,6 +177,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	class Worker implements Runnable {
 		@Override
 		public void run() {
+			JcqApp.CQ.logInfo("FurryBlack", "jrjp - Worker 已启动");
 			while (JcqAppAbstract.enable) {
 				try {
 					long time;
@@ -200,7 +202,7 @@ public class Executor_jrjp extends ModuleExecutor {
 						}
 						Thread.sleep(random.nextInt(3600000));
 					}
-				} catch (final InterruptedException exception) {
+				} catch (InterruptedException exception) {
 				}
 			}
 		}

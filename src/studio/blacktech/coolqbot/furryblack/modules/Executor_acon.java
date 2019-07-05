@@ -19,7 +19,8 @@ public class Executor_acon extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "acon";
+	private static String MODULE_PACKAGENAME = "executor_acon";
+	private static String MODULE_COMMANDNAME = "acon";
 	private static String MODULE_DISPLAYNAME = "空调";
 	private static String MODULE_DESCRIPTION = "本群冷气开放";
 	private static String MODULE_VERSION = "3.0";
@@ -64,8 +65,8 @@ public class Executor_acon extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	private HashMap<Long, BigInteger> CONSUMPTION;
-	private HashMap<Long, Long> WORKINGMODE;
 	private HashMap<Long, Long> LASTCHANGED;
+	private HashMap<Long, Long> WORKINGMODE;
 
 	// ==========================================================================================================================================================
 	//
@@ -74,15 +75,15 @@ public class Executor_acon extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_acon() throws Exception {
-		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
 
 		this.CONSUMPTION = new HashMap<>();
-		this.WORKINGMODE = new HashMap<>();
 		this.LASTCHANGED = new HashMap<>();
+		this.WORKINGMODE = new HashMap<>();
 
 		this.ENABLE_USER = false;
 		this.ENABLE_DISZ = false;
@@ -111,35 +112,32 @@ public class Executor_acon extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
-		final long current = System.currentTimeMillis() / 1000;
+		long current = System.currentTimeMillis() / 1000;
 		long elapse = 0L;
 
 		if (!this.CONSUMPTION.containsKey(gropid)) {
 			this.CONSUMPTION.put(gropid, BigInteger.ZERO);
-			this.WORKINGMODE.put(gropid, 0L);
 			this.LASTCHANGED.put(gropid, current);
-			elapse = 0;
+			this.WORKINGMODE.put(gropid, 0L);
 		}
 
-		if (message.getSection() == 2) {
-
-			message.parseOption();
+		if (message.getSection() > 0) {
 
 			BigInteger consumption = this.CONSUMPTION.get(gropid);
-			final long workingmode = this.WORKINGMODE.get(gropid);
-			final long lastchanged = this.LASTCHANGED.get(gropid);
+			long lastchanged = this.LASTCHANGED.get(gropid);
+			long workingmode = this.WORKINGMODE.get(gropid);
 
 			elapse = current - lastchanged;
 
@@ -253,10 +251,11 @@ public class Executor_acon extends ModuleExecutor {
 			case "cost":
 				// @formatter:off
 				entry.getMessage().gropInfo(gropid,
-						"累计共耗电：" +
-						String.format("%.2f", consumption.divide(BigInteger.valueOf(1000))) + "kW(" +
-						String.format("%.2f", consumption.divide(BigInteger.valueOf(3600000L))) + ")度\r\n群主须支付：" +
-						String.format("%.2f", consumption.divide(BigInteger.valueOf(1936800L))) + "元"
+					String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元", 
+						consumption.divide(BigInteger.valueOf(1000)).toString(),
+						consumption.divide(BigInteger.valueOf(3600000L)).toString(),
+						consumption.divide(BigInteger.valueOf(1936800L)).toString()
+					)		
 				);
 				// @formatter:on
 				break;
@@ -264,6 +263,7 @@ public class Executor_acon extends ModuleExecutor {
 			default:
 				entry.getMessage().gropInfo(gropid, userid, "请勿触摸以防烫伤");
 				break;
+
 			}
 
 			consumption = consumption.add(BigInteger.valueOf(elapse * workingmode));
@@ -283,7 +283,7 @@ public class Executor_acon extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, final Message message, final Object... parameters) {
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
 	}
 

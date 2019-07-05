@@ -21,16 +21,17 @@ public class Module_Nickmap extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	public static String MODULE_PACKAGENAME = "message";
-	public static String MODULE_DISPLAYNAME = "消息路由";
-	public static String MODULE_DESCRIPTION = "消息路由";
-	public static String MODULE_VERSION = "1.0";
-	public static String[] MODULE_USAGE = new String[] {};
-	public static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	public static String[] MODULE_PRIVACY_LISTEN = new String[] {};
-	public static String[] MODULE_PRIVACY_STORED = new String[] {};
-	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+	private static String MODULE_PACKAGENAME = "core_nicknmap";
+	private static String MODULE_COMMANDNAME = "ddns";
+	private static String MODULE_DISPLAYNAME = "昵称映射";
+	private static String MODULE_DESCRIPTION = "将复杂的昵称映射为朋友间的简短称呼";
+	private static String MODULE_VERSION = "1.0";
+	private static String[] MODULE_USAGE = new String[] {};
+	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
+	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+	private static String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//
@@ -53,13 +54,13 @@ public class Module_Nickmap extends Module {
 	// ==========================================================================================================================================================
 
 	public Module_Nickmap() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
 		if (this.NEW_CONFIG) {
-			logger.seek("[Nickname] 配置文件不存在 - 生成默认配置");
+			logger.seek("[Nickmap] 配置文件不存在 - 生成默认配置");
 			this.CONFIG.setProperty("enable_nickname_replace", "false");
 			this.saveConfig();
 		} else {
@@ -86,6 +87,9 @@ public class Module_Nickmap extends Module {
 			NICKNAME.put(Long.parseLong(temp[0]), temp[1]);
 		}
 		reader.close();
+
+		logger.seek("[Nickmap] 昵称替换：", this.ENABLE_REPLACE ? "启用" : "禁用");
+
 	}
 
 	@Override

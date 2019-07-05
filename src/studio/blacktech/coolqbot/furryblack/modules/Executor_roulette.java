@@ -24,7 +24,8 @@ public class Executor_roulette extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "roulette";
+	private static String MODULE_PACKAGENAME = "executor_roulette";
+	private static String MODULE_COMMANDNAME = "roulette";
 	private static String MODULE_DISPLAYNAME = "俄罗斯轮盘赌";
 	private static String MODULE_DESCRIPTION = "你看这子弹又尖又长，这名单又大又宽";
 	private static String MODULE_VERSION = "1.0";
@@ -45,8 +46,8 @@ public class Executor_roulette extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private final HashMap<Long, RouletteRound> rounds = new HashMap<>();
-	private final ArrayList<Integer> roulette = new ArrayList<>();
+	private HashMap<Long, RouletteRound> rounds = new HashMap<>();
+	private ArrayList<Integer> roulette = new ArrayList<>();
 	private int ROUND_EXPIRED = 0;
 	private int ROUND_SUCCESS = 0;
 
@@ -57,7 +58,7 @@ public class Executor_roulette extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_roulette() throws Exception {
-		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -96,23 +97,23 @@ public class Executor_roulette extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		if (message.getSection() < 2) {
 			entry.getMessage().gropInfo(gropid, userid, "不下注是8koi的");
 			return true;
 		}
 		if (!this.rounds.containsKey(gropid)) { this.rounds.put(gropid, new RouletteRound()); }
-		final RouletteRound round = this.rounds.get(gropid);
+		RouletteRound round = this.rounds.get(gropid);
 
 		if (round.lock) {
 			// 本来是有锁的，但是我觉得没人能正好在100ms内再加入所以删了
@@ -127,8 +128,8 @@ public class Executor_roulette extends ModuleExecutor {
 			}
 			if (round.join(gropid, userid, message)) {
 				this.ROUND_SUCCESS++;
-				final SecureRandom random = new SecureRandom();
-				final int bullet = random.nextInt(6);
+				SecureRandom random = new SecureRandom();
+				int bullet = random.nextInt(6);
 				entry.getMessage().gropInfo(gropid, "名单已凑齐 装填子弹中");
 				Member member;
 				for (int i = 0; i < 6; i++) {
@@ -160,7 +161,7 @@ public class Executor_roulette extends ModuleExecutor {
 			this.time = new Date();
 		}
 
-		public boolean join(final long gropid, final long userid, final Message message) {
+		public boolean join(long gropid, long userid, Message message) {
 			if (this.player.contains(userid)) {
 				entry.getMessage().gropInfo(gropid, "你8koi离开，不准放过");
 			} else {
@@ -168,7 +169,7 @@ public class Executor_roulette extends ModuleExecutor {
 				this.players++;
 				this.player.add(userid);
 				this.chip.add(message.join(1));
-				final StringBuilder buffer = new StringBuilder();
+				StringBuilder buffer = new StringBuilder();
 				buffer.append("俄罗斯轮盘 - 当前人数 (");
 				buffer.append(this.players);
 				buffer.append("/6)");
@@ -194,9 +195,9 @@ public class Executor_roulette extends ModuleExecutor {
 	}
 
 	@Override
-	public String[] generateReport(int mode, final Message message, final Object... parameters) {
-		if (this.COUNT == 0) { return null; }
-		final StringBuilder builder = new StringBuilder();
+	public String[] generateReport(int mode, Message message, Object... parameters) {
+		if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null; }
+		StringBuilder builder = new StringBuilder();
 		builder.append("成功回合 : ");
 		builder.append(this.ROUND_SUCCESS);
 		builder.append("\r\n失败回合 : ");
@@ -228,7 +229,7 @@ public class Executor_roulette extends ModuleExecutor {
 			builder.append(this.roulette.get(5) * 100 / this.ROUND_SUCCESS);
 			builder.append("%");
 		}
-		final String res[] = new String[1];
+		String res[] = new String[1];
 		res[0] = builder.toString();
 		return res;
 	}

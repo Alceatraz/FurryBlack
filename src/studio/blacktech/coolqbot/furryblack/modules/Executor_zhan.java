@@ -20,7 +20,8 @@ public class Executor_zhan extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "zhan";
+	private static String MODULE_PACKAGENAME = "executor_zhan";
+	private static String MODULE_COMMANDNAME = "zhan";
 	private static String MODULE_DISPLAYNAME = "占卜";
 	private static String MODULE_DESCRIPTION = "大阿卡那塔罗牌占卜";
 	private static String MODULE_VERSION = "1.0";
@@ -41,8 +42,8 @@ public class Executor_zhan extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private final TreeMap<Integer, String> CARD = new TreeMap<>();
-	private final ArrayList<Integer> FREQ = new ArrayList<>();
+	private TreeMap<Integer, String> CARD = new TreeMap<>();
+	private ArrayList<Integer> FREQ = new ArrayList<>();
 
 	// ==========================================================================================================================================================
 	//
@@ -51,12 +52,14 @@ public class Executor_zhan extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_zhan() throws Exception {
-		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
 
+		// 为什么不读配置文件？
+		// 塔罗牌又不会变
 		this.CARD.put(1, "O. THE FOOL 愚者正位\r\n愚蠢 狂躁 挥霍无度 神志不清");
 		this.CARD.put(2, "O. THE FOOL 愚者逆位\r\n疏忽 缺乏 暮气 无效 虚荣");
 		this.CARD.put(3, "I. THE MAGICIAN 魔术师正位\r\n手段 灾难 痛苦 损失");
@@ -147,30 +150,30 @@ public class Executor_zhan extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		entry.getMessage().userInfo(userid, this.zhan(message));
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		entry.getMessage().diszInfo(diszid, userid, this.zhan(message));
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		entry.getMessage().gropInfo(gropid, userid, this.zhan(message));
 		return true;
 	}
 
-	public String zhan(final Message message) {
-		if (message.getSection() == 1) {
+	public String zhan(Message message) {
+		if (message.getSection() == 0) {
 			return "你不能占卜空气";
 		} else {
-			final SecureRandom random = new SecureRandom();
-			final int urandom = random.nextInt(43) + 1;
-			final StringBuilder builder = new StringBuilder();
+			SecureRandom random = new SecureRandom();
+			int urandom = random.nextInt(43) + 1;
+			StringBuilder builder = new StringBuilder();
 			builder.append("你因为 ");
 			builder.append(message.getOptions());
 			builder.append(" 抽到了：\r\n");
@@ -181,9 +184,9 @@ public class Executor_zhan extends ModuleExecutor {
 	}
 
 	@Override
-	public String[] generateReport(int mode, final Message message, final Object... parameters) {
-		if (this.COUNT == 0) { return null; }
-		final StringBuilder builder = new StringBuilder();
+	public String[] generateReport(int mode, Message message, Object... parameters) {
+		if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null; }
+		StringBuilder builder = new StringBuilder();
 		int coverage = 0;
 		for (int i = 0; i < 44; i++) {
 			if (this.FREQ.get(i) == 0) { coverage++; }

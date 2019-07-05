@@ -6,8 +6,11 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeMap;
 
+import com.sobte.cqp.jcq.entity.Group;
 import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
@@ -25,16 +28,17 @@ public class Module_Message extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	public static String MODULE_PACKAGENAME = "message";
-	public static String MODULE_DISPLAYNAME = "消息路由";
-	public static String MODULE_DESCRIPTION = "消息路由";
-	public static String MODULE_VERSION = "1.0";
-	public static String[] MODULE_USAGE = new String[] {};
-	public static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	public static String[] MODULE_PRIVACY_LISTEN = new String[] {};
-	public static String[] MODULE_PRIVACY_STORED = new String[] {};
-	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+	private static String MODULE_PACKAGENAME = "core_message";
+	private static String MODULE_COMMANDNAME = "message";
+	private static String MODULE_DISPLAYNAME = "消息广播";
+	private static String MODULE_DESCRIPTION = "负责发送所有消息";
+	private static String MODULE_VERSION = "1.0";
+	private static String[] MODULE_USAGE = new String[] {};
+	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
+	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+	private static String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//
@@ -54,6 +58,7 @@ public class Module_Message extends Module {
 	private String MESSAGE_LIST_DISZ;
 	private String MESSAGE_LIST_GROP;
 
+	private TreeMap<Long, LinkedList<Integer>> MESSAGE_HISTORY_GROP = new TreeMap<>();
 	private MessageDelegate delegate = new MessageDelegate();
 
 	private long USERID_CQBOT = 0;
@@ -68,7 +73,7 @@ public class Module_Message extends Module {
 	// ==========================================================================================================================================================
 
 	public Module_Message() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -79,7 +84,6 @@ public class Module_Message extends Module {
 			this.CONFIG.setProperty("logger_level", "0");
 			this.CONFIG.setProperty("userid_admin", "0");
 			this.saveConfig();
-			throw new Exception("[Message] 生成配置文件 自动停机");
 		} else {
 			this.loadConfig();
 		}
@@ -99,32 +103,37 @@ public class Module_Message extends Module {
 		String line;
 
 		while ((line = readerHelp.readLine()) != null) {
-			this.MESSAGE_HELP = this.MESSAGE_HELP + line;
+			this.MESSAGE_HELP = this.MESSAGE_HELP + line + "\r\n";
 		}
 
-		while ((line = readerHelp.readLine()) != null) {
-			this.MESSAGE_INFO = this.MESSAGE_INFO + line;
+		while ((line = readerInfo.readLine()) != null) {
+			this.MESSAGE_INFO = this.MESSAGE_INFO + line + "\r\n";
 		}
 
-		while ((line = readerHelp.readLine()) != null) {
-			this.MESSAGE_EULA = this.MESSAGE_EULA + line;
+		while ((line = readerEula.readLine()) != null) {
+			this.MESSAGE_EULA = this.MESSAGE_EULA + line + "\r\n";
 		}
 
 		readerHelp.close();
 		readerInfo.close();
 		readerEula.close();
 
-		this.MESSAGE_HELP.replace("REPLACE_VERSION", entry.VerID);
-		this.MESSAGE_INFO.replace("REPLACE_VERSION", entry.VerID);
-		this.MESSAGE_EULA.replace("REPLACE_VERSION", entry.VerID);
+		this.MESSAGE_HELP = this.MESSAGE_HELP.replaceAll("REPLACE_VERSION", entry.VerID);
+		this.MESSAGE_INFO = this.MESSAGE_INFO.replaceAll("REPLACE_VERSION", entry.VerID);
+		this.MESSAGE_EULA = this.MESSAGE_EULA.replaceAll("REPLACE_VERSION", entry.VerID);
 
 		this.USERID_CQBOT = JcqApp.CQ.getLoginQQ();
 		this.USERID_ADMIN = Long.parseLong(this.CONFIG.getProperty("userid_admin", "0"));
 
 		if (this.USERID_ADMIN == 0) { throw new Exception("管理员账号配置错误"); }
 
-		logger.full("[CORE] 机器人账号：", this.USERID_CQBOT);
-		logger.full("[CORE] 管理员账号：", this.USERID_ADMIN);
+		logger.full("[Message] 机器人账号：", this.USERID_CQBOT);
+		logger.full("[Message] 管理员账号：", this.USERID_ADMIN);
+
+		List<Group> groups = JcqApp.CQ.getGroupList();
+		for (Group group : groups) {
+			this.MESSAGE_HISTORY_GROP.put(group.getId(), new LinkedList<>());
+		}
 
 	}
 
@@ -156,76 +165,104 @@ public class Module_Message extends Module {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) throws Exception {
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
 	}
 
-	public void doAdminInfo(final String message) {
+	private void doAdminInfo(String message) {
 		JcqApp.CQ.sendPrivateMsg(this.USERID_ADMIN, message);
 	}
 
-	public void doUserInfo(final long userid, final String message) {
+	private void doAdminInfo(String[] message) {
+		for (String temp : message) {
+			JcqApp.CQ.sendPrivateMsg(this.USERID_ADMIN, temp);
+		}
+	}
+
+	private void doUserInfo(long userid, String message) {
 		JcqApp.CQ.sendPrivateMsg(userid, message);
 	}
 
-	public void doDiszInfo(final long diszid, final String message) {
+	private void doUserInfo(long userid, String[] message) {
+		for (String temp : message) {
+			JcqApp.CQ.sendPrivateMsg(userid, temp);
+		}
+	}
+
+	private void doDiszInfo(long diszid, String message) {
 		JcqApp.CQ.sendDiscussMsg(diszid, message);
 	}
 
-	public void doDiszInfo(final long diszid, final long userid, final String message) {
+	private void doDiszInfo(long diszid, String[] message) {
+		for (String temp : message) {
+			JcqApp.CQ.sendDiscussMsg(diszid, temp);
+		}
+	}
+
+	private void doDiszInfo(long diszid, long userid, String message) {
 		JcqApp.CQ.sendDiscussMsg(diszid, "[CQ:at,qq=" + userid + "] " + message);
 	}
 
-	public void doGropInfo(final long gropid, final String message) {
-		JcqApp.CQ.sendGroupMsg(gropid, message);
+	private void doGropInfo(long gropid, String message) {
+		this.MESSAGE_HISTORY_GROP.get(gropid).add(JcqApp.CQ.sendGroupMsg(gropid, message));
 	}
 
-	public void doGropInfo(final long gropid, final long userid, final String message) {
-		JcqApp.CQ.sendGroupMsg(gropid, "[CQ:at,qq=" + userid + "] " + message);
+	private void doGropInfo(long gropid, String[] message) {
+		for (String temp : message) {
+			this.MESSAGE_HISTORY_GROP.get(gropid).add(JcqApp.CQ.sendGroupMsg(gropid, temp));
+		}
 	}
 
-	public void doSendInfo(final long userid) {
+	private void doGropInfo(long gropid, long userid, String message) {
+		this.MESSAGE_HISTORY_GROP.get(gropid).add(JcqApp.CQ.sendGroupMsg(gropid, "[CQ:at,qq=" + userid + "] " + message));
+	}
+
+	private void doSendInfo(long userid) {
 		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_INFO);
 	}
 
-	public void doSendEula(final long userid) {
+	private void doSendEula(long userid) {
 		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_EULA);
 	}
 
-	public void doSendHelp(final long userid) {
+	private void doSendHelp(long userid) {
 		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_HELP);
 	}
 
-	public void doSendHelp(final long userid, ModuleTrigger module) {
+	private void doSendHelp(long userid, ModuleTrigger module) {
 		JcqApp.CQ.sendPrivateMsg(userid, module.MODULE_FULLHELP());
 	}
 
-	public void doSendHelp(final long userid, ModuleListener module) {
+	private void doSendHelp(long userid, ModuleListener module) {
 		JcqApp.CQ.sendPrivateMsg(userid, module.MODULE_FULLHELP());
 	}
 
-	public void doSendHelp(final long userid, ModuleExecutor module) {
+	private void doSendHelp(long userid, ModuleExecutor module) {
 		JcqApp.CQ.sendPrivateMsg(userid, module.MODULE_FULLHELP());
 	}
 
-	public void doSendListUser(final long userid) {
+	private void doSendListUser(long userid) {
 		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_LIST_USER);
 	}
 
-	public void doSendListDisz(final long userid) {
+	private void doSendListDisz(long userid) {
 		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_LIST_DISZ);
 	}
 
-	public void doSendListGrop(final long userid) {
+	private void doSendListGrop(long userid) {
 		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_LIST_GROP);
 	}
 
-	public boolean doIsMyself(long userid) {
+	private boolean doIsMyself(long userid) {
 		return this.USERID_CQBOT == userid;
 	}
 
-	public boolean doIsAdmin(long userid) {
+	private boolean doIsAdmin(long userid) {
 		return this.USERID_ADMIN == userid;
+	}
+
+	private void doRevokeMessage(long gropid) {
+		JcqApp.CQ.deleteMsg(this.MESSAGE_HISTORY_GROP.get(gropid).pollLast());
 	}
 
 	public void doGenetateList(
@@ -244,9 +281,9 @@ public class Module_Message extends Module {
 		if (this.GEN_LOCK) { return; }
 
 		StringBuilder preBuilder = new StringBuilder();
-		preBuilder.append("\r\n已经安装的触发器： ");
+		preBuilder.append("已经安装的触发器： ");
 		preBuilder.append(TRIGGER_USER.size());
-		for (final ModuleTrigger temp : TRIGGER_USER) {
+		for (ModuleTrigger temp : TRIGGER_USER) {
 			preBuilder.append("\r\n");
 			preBuilder.append(temp.MODULE_PACKAGENAME());
 			preBuilder.append(" > ");
@@ -256,7 +293,7 @@ public class Module_Message extends Module {
 		}
 		preBuilder.append("\r\n已经安装的监听器： ");
 		preBuilder.append(LISTENER_USER.size());
-		for (final ModuleListener temp : LISTENER_USER) {
+		for (ModuleListener temp : LISTENER_USER) {
 			preBuilder.append("\r\n");
 			preBuilder.append(temp.MODULE_PACKAGENAME());
 			preBuilder.append(" > ");
@@ -264,10 +301,10 @@ public class Module_Message extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(temp.MODULE_DESCRIPTION());
 		}
-		preBuilder.append("已经安装的执行器： ");
+		preBuilder.append("\r\n已经安装的执行器： ");
 		preBuilder.append(EXECUTOR_USER.size());
-		for (final String temp : EXECUTOR_USER.keySet()) {
-			final ModuleExecutor module = EXECUTOR_USER.get(temp);
+		for (String temp : EXECUTOR_USER.keySet()) {
+			ModuleExecutor module = EXECUTOR_USER.get(temp);
 			module.genFullHelp();
 			preBuilder.append("\r\n");
 			preBuilder.append(module.MODULE_PACKAGENAME());
@@ -280,7 +317,7 @@ public class Module_Message extends Module {
 		preBuilder = new StringBuilder();
 		preBuilder.append("\r\n已经安装的触发器： ");
 		preBuilder.append(TRIGGER_DISZ.size());
-		for (final ModuleTrigger temp : TRIGGER_DISZ) {
+		for (ModuleTrigger temp : TRIGGER_DISZ) {
 			preBuilder.append("\r\n");
 			preBuilder.append(temp.MODULE_PACKAGENAME());
 			preBuilder.append(" > ");
@@ -290,7 +327,7 @@ public class Module_Message extends Module {
 		}
 		preBuilder.append("\r\n已经安装的监听器： ");
 		preBuilder.append(LISTENER_DISZ.size());
-		for (final ModuleListener temp : LISTENER_DISZ) {
+		for (ModuleListener temp : LISTENER_DISZ) {
 			preBuilder.append("\r\n");
 			preBuilder.append(temp.MODULE_PACKAGENAME());
 			preBuilder.append(" > ");
@@ -300,8 +337,8 @@ public class Module_Message extends Module {
 		}
 		preBuilder.append("已经安装的执行器： ");
 		preBuilder.append(EXECUTOR_DISZ.size());
-		for (final String temp : EXECUTOR_DISZ.keySet()) {
-			final ModuleExecutor module = EXECUTOR_DISZ.get(temp);
+		for (String temp : EXECUTOR_DISZ.keySet()) {
+			ModuleExecutor module = EXECUTOR_DISZ.get(temp);
 			module.genFullHelp();
 			preBuilder.append("\r\n");
 			preBuilder.append(module.MODULE_PACKAGENAME());
@@ -314,7 +351,7 @@ public class Module_Message extends Module {
 		preBuilder = new StringBuilder();
 		preBuilder.append("\r\n已经安装的触发器： ");
 		preBuilder.append(TRIGGER_GROP.size());
-		for (final ModuleTrigger temp : TRIGGER_GROP) {
+		for (ModuleTrigger temp : TRIGGER_GROP) {
 			preBuilder.append("\r\n");
 			preBuilder.append(temp.MODULE_PACKAGENAME());
 			preBuilder.append(" > ");
@@ -324,7 +361,7 @@ public class Module_Message extends Module {
 		}
 		preBuilder.append("\r\n已经安装的监听器： ");
 		preBuilder.append(LISTENER_GROP.size());
-		for (final ModuleListener temp : LISTENER_GROP) {
+		for (ModuleListener temp : LISTENER_GROP) {
 			preBuilder.append("\r\n");
 			preBuilder.append(temp.MODULE_PACKAGENAME());
 			preBuilder.append(" > ");
@@ -334,8 +371,8 @@ public class Module_Message extends Module {
 		}
 		preBuilder.append("已经安装的执行器： ");
 		preBuilder.append(EXECUTOR_GROP.size());
-		for (final String temp : EXECUTOR_GROP.keySet()) {
-			final ModuleExecutor module = EXECUTOR_GROP.get(temp);
+		for (String temp : EXECUTOR_GROP.keySet()) {
+			ModuleExecutor module = EXECUTOR_GROP.get(temp);
 			module.genFullHelp();
 			preBuilder.append("\r\n");
 			preBuilder.append(module.MODULE_PACKAGENAME());
@@ -353,72 +390,92 @@ public class Module_Message extends Module {
 
 	public class MessageDelegate {
 
-		public void adminInfo(final String message) {
-			doAdminInfo(message);
+		public void adminInfo(String message) {
+			Module_Message.this.doAdminInfo(message);
+		}
+
+		public void adminInfo(String[] message) {
+			Module_Message.this.doAdminInfo(message);
 		}
 
 		public void userInfo(long userid, String message) {
-			doUserInfo(userid, message);
+			Module_Message.this.doUserInfo(userid, message);
+		}
+
+		public void userInfo(long userid, String[] message) {
+			Module_Message.this.doUserInfo(userid, message);
 		}
 
 		public void diszInfo(long diszid, String message) {
-			doDiszInfo(diszid, message);
+			Module_Message.this.doDiszInfo(diszid, message);
+		}
+
+		public void diszInfo(long diszid, String[] message) {
+			Module_Message.this.doDiszInfo(diszid, message);
 		}
 
 		public void diszInfo(long diszid, long userid, String message) {
-			doDiszInfo(diszid, userid, message);
+			Module_Message.this.doDiszInfo(diszid, userid, message);
 		}
 
 		public void gropInfo(long gropid, String message) {
-			doGropInfo(gropid, message);
+			Module_Message.this.doGropInfo(gropid, message);
+		}
+
+		public void gropInfo(long gropid, String[] message) {
+			Module_Message.this.doGropInfo(gropid, message);
 		}
 
 		public void gropInfo(long gropid, long userid, String message) {
-			doGropInfo(gropid, userid, message);
+			Module_Message.this.doGropInfo(gropid, userid, message);
 		}
 
-		public void sendInfo(final long userid) {
-			doSendInfo(userid);
+		public void sendInfo(long userid) {
+			Module_Message.this.doSendInfo(userid);
 		}
 
-		public void sendEula(final long userid) {
-			doSendEula(userid);
+		public void sendEula(long userid) {
+			Module_Message.this.doSendEula(userid);
 		}
 
-		public void sendHelp(final long userid) {
-			doSendHelp(userid);
+		public void sendHelp(long userid) {
+			Module_Message.this.doSendHelp(userid);
 		}
 
 		public void sendHelp(long userid, ModuleTrigger module) {
-			doSendHelp(userid, module);
+			Module_Message.this.doSendHelp(userid, module);
 		}
 
 		public void sendHelp(long userid, ModuleListener module) {
-			doSendHelp(userid, module);
+			Module_Message.this.doSendHelp(userid, module);
 		}
 
 		public void sendHelp(long userid, ModuleExecutor module) {
-			doSendHelp(userid, module);
+			Module_Message.this.doSendHelp(userid, module);
 		}
 
-		public void sendListUser(final long userid) {
-			doSendListUser(userid);
+		public void sendListUser(long userid) {
+			Module_Message.this.doSendListUser(userid);
 		}
 
-		public void sendListDisz(final long userid) {
-			doSendListDisz(userid);
+		public void sendListDisz(long userid) {
+			Module_Message.this.doSendListDisz(userid);
 		}
 
-		public void sendListGrop(final long userid) {
-			doSendListGrop(userid);
+		public void sendListGrop(long userid) {
+			Module_Message.this.doSendListGrop(userid);
 		}
 
 		public boolean isMyself(long userid) {
-			return doIsMyself(userid);
+			return Module_Message.this.doIsMyself(userid);
 		}
 
 		public boolean isAdmin(long userid) {
-			return doIsAdmin(userid);
+			return Module_Message.this.doIsAdmin(userid);
+		}
+
+		public void revokeMessage(long gropid) {
+			Module_Message.this.doRevokeMessage(gropid);
 		}
 
 		public void genetateList(
@@ -434,7 +491,8 @@ public class Module_Message extends Module {
 			TreeMap<String, ModuleExecutor> EXECUTOR_GROP
 			// @formatter:on
 		) {
-			doGenetateList(TRIGGER_USER, TRIGGER_DISZ, TRIGGER_GROP, LISTENER_USER, LISTENER_DISZ, LISTENER_GROP, EXECUTOR_USER, EXECUTOR_DISZ, EXECUTOR_GROP);
+			Module_Message.this.doGenetateList(TRIGGER_USER, TRIGGER_DISZ, TRIGGER_GROP, LISTENER_USER, LISTENER_DISZ, LISTENER_GROP, EXECUTOR_USER, EXECUTOR_DISZ, EXECUTOR_GROP);
 		}
+
 	}
 }

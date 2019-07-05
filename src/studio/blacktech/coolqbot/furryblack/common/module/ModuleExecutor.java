@@ -10,6 +10,7 @@ public abstract class ModuleExecutor extends Module {
 	// @formatter:off
 	public ModuleExecutor(
 			String MODULE_PACKAGENAME,
+			String MODULE_COMMANDNAME,
 			String MODULE_DISPLAYNAME,
 			String MODULE_DESCRIPTION,
 			String MODULE_VERSION,
@@ -21,8 +22,9 @@ public abstract class ModuleExecutor extends Module {
 			String[] MODULE_PRIVACY_OBTAIN
 	) throws Exception {
 		super(
-			MODULE_DISPLAYNAME,
 			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
 			MODULE_DESCRIPTION,
 			MODULE_VERSION,
 			MODULE_USAGE,
@@ -34,6 +36,10 @@ public abstract class ModuleExecutor extends Module {
 		);
 	}
 	// @formatter:on
+
+	public int COUNT_USER = 0;
+	public int COUNT_DISZ = 0;
+	public int COUNT_GROP = 0;
 
 	public boolean ENABLE_USER = false;
 	public boolean ENABLE_DISZ = false;
@@ -53,18 +59,18 @@ public abstract class ModuleExecutor extends Module {
 
 	public abstract boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception;
 
-	public boolean executeUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
-		this.COUNT++;
+	public boolean executeUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+		this.COUNT_USER++;
 		return this.doUserMessage(typeid, userid, message, messageid, messagefont);
 	}
 
-	public boolean executeDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
-		this.COUNT++;
+	public boolean executeDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+		this.COUNT_DISZ++;
 		return this.doDiszMessage(diszid, userid, message, messageid, messagefont);
 	}
 
-	public boolean executeGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
-		this.COUNT++;
+	public boolean executeGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+		this.COUNT_GROP++;
 		return this.doGropMessage(gropid, userid, message, messageid, messagefont);
 	}
 

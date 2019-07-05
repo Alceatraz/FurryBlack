@@ -7,15 +7,14 @@ import java.net.URLConnection;
 import java.security.SecureRandom;
 import java.util.Date;
 
-import javax.naming.ConfigurationException;
-
+import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.Module;
 
-public class Module_DDNSAPI extends Module {
+public class Module_DDNS extends Module {
 
 	// ==========================================================================================================================================================
 	//
@@ -23,16 +22,17 @@ public class Module_DDNSAPI extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	public static String MODULE_PACKAGENAME = "ddnsapi";
-	public static String MODULE_DISPLAYNAME = "动态域名";
-	public static String MODULE_DESCRIPTION = "动态域名";
-	public static String MODULE_VERSION = "1.0";
-	public static String[] MODULE_USAGE = new String[] {};
-	public static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	public static String[] MODULE_PRIVACY_LISTEN = new String[] {};
-	public static String[] MODULE_PRIVACY_STORED = new String[] {};
-	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+	private static String MODULE_PACKAGENAME = "core_ddnsclient";
+	private static String MODULE_COMMANDNAME = "ddns";
+	private static String MODULE_DISPLAYNAME = "动态域名";
+	private static String MODULE_DESCRIPTION = "动态域名客户端";
+	private static String MODULE_VERSION = "1.0";
+	private static String[] MODULE_USAGE = new String[] {};
+	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
+	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+	private static String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//
@@ -54,14 +54,14 @@ public class Module_DDNSAPI extends Module {
 	private Thread thread;
 	private DDNSapiDelegate delegate = new DDNSapiDelegate();
 
-	public Module_DDNSAPI() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+	public Module_DDNS() throws Exception {
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
 		if (this.NEW_CONFIG) {
-			logger.seek("[DDNSAPI] 配置文件不存在 - 生成默认配置");
+			logger.seek("[DDNS] 配置文件不存在 - 生成默认配置");
 			this.CONFIG.setProperty("enable_ddnsclient", "false");
 			this.CONFIG.setProperty("ddnsapi_getaddress", "");
 			this.CONFIG.setProperty("ddnsapi_setaddress", "");
@@ -69,7 +69,6 @@ public class Module_DDNSAPI extends Module {
 			this.CONFIG.setProperty("ddnsapi_hostname", "");
 			this.CONFIG.setProperty("ddnsapi_password", "");
 			this.saveConfig();
-			throw new ConfigurationException("[DDNSAPI] 生成配置文件 自动停机");
 		}
 	}
 
@@ -79,6 +78,9 @@ public class Module_DDNSAPI extends Module {
 		this.loadConfig();
 
 		this.ENABLE = Boolean.parseBoolean(this.CONFIG.getProperty("enable_ddnsclient", "false"));
+
+		if (!this.ENABLE) { return; }
+
 		this.API_GETADDRESS = this.CONFIG.getProperty("ddnsapi_getaddress", "");
 		this.API_SETADDRESS = this.CONFIG.getProperty("ddnsapi_setaddress", "");
 		this.CLIENTUA = this.CONFIG.getProperty("ddnsapi_clientua", "BTSCoolQ/1.0");
@@ -114,6 +116,7 @@ public class Module_DDNSAPI extends Module {
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+		if (!this.ENABLE) { return; }
 		this.thread.interrupt();
 	}
 
@@ -136,21 +139,21 @@ public class Module_DDNSAPI extends Module {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, final Message message, final Object... parameters) {
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
 	}
 
 	public String doGetIPAddress() {
 		try {
-			final URL url = new URL(this.API_GETADDRESS);
-			final URLConnection connection = url.openConnection();
+			URL url = new URL(this.API_GETADDRESS);
+			URLConnection connection = url.openConnection();
 			connection.setReadTimeout(5000);
 			connection.setConnectTimeout(5000);
 			connection.setRequestProperty("User-Agent", this.CLIENTUA);
 			connection.connect();
 			connection.getContent();
-			final byte[] buffer = new byte[32];
-			final InputStream rx = connection.getInputStream();
+			byte[] buffer = new byte[32];
+			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
@@ -162,16 +165,16 @@ public class Module_DDNSAPI extends Module {
 
 	public String doUpdateDDNSIP() {
 		try {
-			final URL url = new URL(this.API_SETADDRESS + "?hostname=" + this.HOSTNAME);
-			final URLConnection connection = url.openConnection();
+			URL url = new URL(this.API_SETADDRESS + "?hostname=" + this.HOSTNAME);
+			URLConnection connection = url.openConnection();
 			connection.setReadTimeout(5000);
 			connection.setConnectTimeout(5000);
 			connection.setRequestProperty("User-Agent", this.CLIENTUA);
 			connection.setRequestProperty("Authorization", this.PASSWORD);
 			connection.connect();
 			connection.getContent();
-			final byte[] buffer = new byte[32];
-			final InputStream rx = connection.getInputStream();
+			byte[] buffer = new byte[32];
+			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
@@ -181,19 +184,19 @@ public class Module_DDNSAPI extends Module {
 		}
 	}
 
-	public String doSetDDNSAddress(final String address) {
+	public String doSetDDNSAddress(String address) {
 		try {
 			this.ADDRESS = address;
-			final URL url = new URL(this.API_SETADDRESS + "?hostname=" + this.HOSTNAME + "&myip=" + address);
-			final URLConnection connection = url.openConnection();
+			URL url = new URL(this.API_SETADDRESS + "?hostname=" + this.HOSTNAME + "&myip=" + address);
+			URLConnection connection = url.openConnection();
 			connection.setReadTimeout(5000);
 			connection.setConnectTimeout(5000);
 			connection.setRequestProperty("User-Agent", this.CLIENTUA);
 			connection.setRequestProperty("Authorization", this.PASSWORD);
 			connection.connect();
 			connection.getContent();
-			final byte[] buffer = new byte[32];
-			final InputStream rx = connection.getInputStream();
+			byte[] buffer = new byte[32];
+			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
@@ -210,15 +213,15 @@ public class Module_DDNSAPI extends Module {
 	public class DDNSapiDelegate {
 
 		public String getIPAddress() {
-			return doGetIPAddress();
+			return Module_DDNS.this.doGetIPAddress();
 		}
 
 		public String updateDDNSIP() {
-			return doUpdateDDNSIP();
+			return Module_DDNS.this.doUpdateDDNSIP();
 		}
 
-		public String setDDNSAddress(final String address) {
-			return doSetDDNSAddress(address);
+		public String setDDNSAddress(String address) {
+			return Module_DDNS.this.doSetDDNSAddress(address);
 		}
 
 	}
@@ -228,10 +231,9 @@ public class Module_DDNSAPI extends Module {
 
 		@Override
 		public void run() {
-
+			JcqApp.CQ.logInfo("FurryBlack", "DDNS - Worker 已启动");
 			long time;
 			Date date;
-
 			while (JcqAppAbstract.enable) {
 				try {
 					// =======================================================
@@ -244,21 +246,22 @@ public class Module_DDNSAPI extends Module {
 					time = time - 5;
 					Thread.sleep(time);
 					// =======================================================
-					String response = delegate.updateDDNSIP();
+					String response = Module_DDNS.this.delegate.updateDDNSIP();
 					if (response == null) {
 						entry.getMessage().adminInfo("[DDNS] 更新失败：更新新地址失败");
 					} else {
 						response = response.split(" ")[1];
-						if (!Module_DDNSAPI.this.ADDRESS.equals(response)) {
-							entry.getMessage().adminInfo("[DDNS] 检测到地址变更： " + LoggerX.time() + "\r\n旧地址：" + Module_DDNSAPI.this.ADDRESS + "\r\n新地址：" + response);
-							Module_DDNSAPI.this.ADDRESS = response;
+						if (!Module_DDNS.this.ADDRESS.equals(response)) {
+							entry.getMessage().adminInfo("[DDNS] 检测到地址变更： " + LoggerX.time() + "\r\n旧地址：" + Module_DDNS.this.ADDRESS + "\r\n新地址：" + response);
+							Module_DDNS.this.ADDRESS = response;
 						}
 					}
 					// =======================================================
-					final SecureRandom random = new SecureRandom();
+					SecureRandom random = new SecureRandom();
 					Thread.sleep(random.nextInt(60000));
 					// =======================================================
 				} catch (InterruptedException exception) {
+
 				}
 			}
 		}

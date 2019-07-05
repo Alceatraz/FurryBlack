@@ -10,7 +10,7 @@ import com.sobte.cqp.jcq.entity.IRequest;
 import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
-import studio.blacktech.coolqbot.furryblack.Module_DDNSAPI.DDNSapiDelegate;
+import studio.blacktech.coolqbot.furryblack.Module_DDNS.DDNSapiDelegate;
 import studio.blacktech.coolqbot.furryblack.Module_Message.MessageDelegate;
 import studio.blacktech.coolqbot.furryblack.Module_Nickmap.NicknameDelegate;
 import studio.blacktech.coolqbot.furryblack.Module_Systemd.SystemdDelegate;
@@ -29,12 +29,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	// ==========================================================================================================================================================
 
 	// 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-	public static final String AppID = "studio.blacktech.coolqbot.furryblack.entry";
+	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public static final String VerID = "7.0 2019-07-02 (00:00)";
+	public final static String VerID = "7.0 2019-07-02 (00:00)";
 
-	public static final long BOOTTIME = System.currentTimeMillis();
+	public final static long BOOTTIME = System.currentTimeMillis();
 
 	// ==========================================================================================================================================================
 	//
@@ -44,22 +44,20 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	private static File FOLDER_CONF;
 	private static File FOLDER_DATA;
-	private static File FILE_CONFIG;
-	private static File FOLDER_MODULE_CONF;
-	private static File FOLDER_MODULE_DATA;
 
 	private static Module_Systemd SYSTEMD;
 	private static Module_Nickmap NICKMAP;
 	private static Module_Message MESSAGE;
-	private static Module_DDNSAPI DDNSAPI;
+	private static Module_DDNS DDNSAPI;
 
-	public static void main(final String[] args) {
+	public static void main(String[] args) {
 		JcqApp.CQ = new CQDebug();
 		entry demo = new entry();
 		demo.startup();
 		demo.enable();
 		demo.disable();
 		demo.exit();
+
 	}
 
 	// ==========================================================================================================================================================
@@ -104,18 +102,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			entry.FOLDER_CONF = Paths.get(JcqAppAbstract.appDirectory, "conf").toFile();
 			entry.FOLDER_DATA = Paths.get(JcqAppAbstract.appDirectory, "data").toFile();
-			entry.FILE_CONFIG = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
-			entry.FOLDER_MODULE_CONF = Paths.get(entry.FOLDER_CONF.getAbsolutePath(), "module").toFile();
-			entry.FOLDER_MODULE_DATA = Paths.get(entry.FOLDER_DATA.getAbsolutePath(), "module").toFile();
 
 			// ==========================================================================================================================
 
 			logger.full("[CORE] 工作目录", appDirectory);
 			logger.full("[CORE] 配置文件目录", FOLDER_CONF.getPath());
 			logger.full("[CORE] 数据文件目录", FOLDER_DATA.getPath());
-			logger.full("[CORE] 配置文件", FILE_CONFIG.getPath());
-			logger.full("[CORE] 模块配置文件目录", FOLDER_MODULE_CONF.getPath());
-			logger.full("[CORE] 模块数据文件目录", FOLDER_MODULE_DATA.getPath());
 
 			// ==========================================================================================================================
 
@@ -129,40 +121,26 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 				entry.FOLDER_DATA.mkdirs();
 			}
 
-			if (!entry.FOLDER_MODULE_CONF.exists()) {
-				logger.seek("[CORE] 创建目录", FOLDER_MODULE_CONF.getName());
-				entry.FOLDER_MODULE_CONF.mkdirs();
-			}
-
-			if (!entry.FOLDER_MODULE_DATA.exists()) {
-				logger.seek("[CORE] 创建目录", FOLDER_MODULE_DATA.getName());
-				entry.FOLDER_MODULE_DATA.mkdirs();
-			}
-
-
 			// ==========================================================================================================================
 
 			if (!entry.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + entry.FOLDER_CONF.getAbsolutePath()); }
 			if (!entry.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + entry.FOLDER_DATA.getAbsolutePath()); }
 
-			if (!entry.FOLDER_MODULE_CONF.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + entry.FOLDER_MODULE_CONF.getAbsolutePath()); }
-			if (!entry.FOLDER_MODULE_DATA.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + entry.FOLDER_MODULE_DATA.getAbsolutePath()); }
-
 			// ==========================================================================================================================
 
+			entry.DDNSAPI = new Module_DDNS();
 			entry.MESSAGE = new Module_Message();
 			entry.NICKMAP = new Module_Nickmap();
-			entry.DDNSAPI = new Module_DDNSAPI();
 			entry.SYSTEMD = new Module_Systemd();
 
+			DDNSAPI.init(logger);
 			MESSAGE.init(logger);
 			NICKMAP.init(logger);
-			DDNSAPI.init(logger);
 			SYSTEMD.init(logger);
 
+			DDNSAPI.boot(logger);
 			MESSAGE.boot(logger);
 			NICKMAP.boot(logger);
-			DDNSAPI.boot(logger);
 			SYSTEMD.boot(logger);
 
 			// ==========================================================================================================================
@@ -177,7 +155,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			getMessage().adminInfo(logger.make(0));
 
-		} catch (final Exception exce) {
+		} catch (Exception exce) {
 			exce.printStackTrace();
 			JcqAppAbstract.enable = false;
 			getMessage().adminInfo(logger.make(3));
@@ -226,12 +204,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	// ==========================================================================================================================================================
 
 	@Override
-	public int privateMsg(final int typeid, final int messageid, final long userid, final String message, final int messagefont) {
+	public int privateMsg(int typeid, int messageid, long userid, String message, int messagefont) {
 		try {
 			entry.SYSTEMD.doUserMessage(typeid, userid, new MessageUser(typeid, userid, message, messageid, messagefont), messageid, messagefont);
-		} catch (final Exception exce) {
+		} catch (Exception exce) {
 			exce.printStackTrace();
-			final StringBuilder builder = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 			builder.append(LoggerX.time());
 			builder.append(" [私聊消息异常] - ");
 			builder.append(messageid);
@@ -249,12 +227,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	}
 
 	@Override
-	public int discussMsg(final int typeid, final int messageid, final long diszid, final long userid, final String message, final int messagefont) {
+	public int discussMsg(int typeid, int messageid, long diszid, long userid, String message, int messagefont) {
 		try {
 			entry.SYSTEMD.doDiszMessage(diszid, userid, new MessageDisz(diszid, userid, message, messageid, messagefont), messageid, messagefont);
-		} catch (final Exception exce) {
+		} catch (Exception exce) {
 			exce.printStackTrace();
-			final StringBuilder builder = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 			builder.append(LoggerX.time());
 			builder.append(" [讨论组消息异常] - ");
 			builder.append(messageid);
@@ -274,12 +252,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	}
 
 	@Override
-	public int groupMsg(final int typeid, final int messageid, final long gropid, final long userid, final String anonymous, final String message, final int messagefont) {
+	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
 		try {
 			entry.SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
-		} catch (final Exception exce) {
+		} catch (Exception exce) {
 			exce.printStackTrace();
-			final StringBuilder builder = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 			builder.append(LoggerX.time());
 			builder.append(" [群聊消息异常] - ");
 			builder.append(messageid);
@@ -308,9 +286,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public int groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		try {
 			entry.SYSTEMD.groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
-		} catch (final Exception exce) {
+		} catch (Exception exce) {
 			exce.printStackTrace();
-			final StringBuilder builder = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 			builder.append(LoggerX.time());
 			builder.append(" [成员增加异常]");
 			builder.append(sendtime);
@@ -333,9 +311,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public int groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		try {
 			entry.SYSTEMD.groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
-		} catch (final Exception exce) {
+		} catch (Exception exce) {
 			exce.printStackTrace();
-			final StringBuilder builder = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 			builder.append(LoggerX.time());
 			builder.append(" [成员减少异常]");
 			builder.append(sendtime);
@@ -364,14 +342,14 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 * 同意好友邀请
 	 */
 	@Override
-	public int requestAddFriend(final int type, final int time, final long qqid, final String message, final String flag) {
+	public int requestAddFriend(int type, int time, long qqid, String message, String flag) {
 		JcqApp.CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, String.valueOf(JcqApp.CQ.getStrangerInfo(qqid).getQqId()));
 		getMessage().adminInfo(LoggerX.time() + "[FurryBlack] 好友申请 " + qqid + " : " + message);
 		return 0;
 	}
 
 	@Override
-	public int friendAdd(final int typeid, final int sendTime, final long userid) {
+	public int friendAdd(int typeid, int sendTime, long userid) {
 		JcqApp.CQ.sendPrivateMsg(userid, "你好，在下人工智障");
 		getMessage().sendHelp(userid);
 		getMessage().sendEula(userid);
@@ -379,7 +357,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	}
 
 	@Override
-	public int requestAddGroup(final int subtype, final int sendTime, final long fromGroup, final long fromQQ, final String msg, final String responseFlag) {
+	public int requestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
 		// sub type
 		// 1 -> 作为管理时收到了用户加入申请
 		// 2 -> 收到好友邀请加入某群的邀请
@@ -394,12 +372,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	}
 
 	@Override
-	public int groupUpload(final int subType, final int sendTime, final long fromGroup, final long fromQQ, final String file) {
+	public int groupUpload(int subType, int sendTime, long fromGroup, long fromQQ, String file) {
 		return 0;
 	}
 
 	@Override
-	public int groupAdmin(final int subtype, final int sendTime, final long fromGroup, final long beingOperateQQ) {
+	public int groupAdmin(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
 		return 0;
 	}
 
@@ -415,14 +393,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	public static File FOLDER_DATA() {
 		return entry.FOLDER_DATA;
-	}
-
-	public static File FOLDER_MODULE_CONF() {
-		return entry.FOLDER_MODULE_CONF;
-	}
-
-	public static File FOLDER_MODULE_DATA() {
-		return entry.FOLDER_MODULE_DATA;
 	}
 
 	public static SystemdDelegate getSystemd() {

@@ -16,17 +16,12 @@ public class Executor_admin extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "admin";
-	private static String MODULE_DISPLAYNAME = "Sakurga";
-	private static String MODULE_DESCRIPTION = "??rZVxx";
-	private static String MODULE_VERSION = "Lv:80";
-	private static String[] MODULE_USAGE = new String[] {
-			"~~?C???r Pz>\\???",
-			"~~\\T+??r Pz>]]??",
-			"~~\\C???r Fy:????",
-			".?-\\C??r Pt=??!#",
-			"~.ZT\\C?r Rr>:!??"
-	};
+	private static String MODULE_PACKAGENAME = "executor_admin";
+	private static String MODULE_COMMANDNAME = "admin";
+	private static String MODULE_DISPLAYNAME = "shell";
+	private static String MODULE_DESCRIPTION = "管理员shell";
+	private static String MODULE_VERSION = "1.0";
+	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
@@ -40,19 +35,19 @@ public class Executor_admin extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_admin() throws Exception {
-		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
-
+		this.ENABLE_USER = true;
+		this.ENABLE_DISZ = false;
+		this.ENABLE_GROP = true;
 	}
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = false;
-		this.ENABLE_GROP = true;
+
 	}
 
 	@Override
@@ -73,65 +68,70 @@ public class Executor_admin extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-
-		if (entry.getMessage().isAdmin(userid)) { return false; }
-
+		if (!entry.getMessage().isAdmin(userid)) { return false; }
 		if (message.getSection() == 0) {
-
-			entry.getMessage().adminInfo(entry.getSystemd().generateSystemReport());
-//			entry.getRouter().adminInfo(entry.getSystemd().generateModuleReport());
-
+			entry.getSystemd().sendSystemsReport(0, 0);
+			entry.getSystemd().sendModulesReport(0, 0);
 			return true;
-
 		} else {
-
-			switch (message.parseOption().getSegment()[0]) {
-
-			case "ddns":
-
-				return doDDNS(typeid, userid, message, messageid, messagefont);
-
-			// 获取地址
-			case "getddns":
-				entry.getMessage().adminInfo(entry.getDDNSAPI().getIPAddress());
-				break;
-
-			// 设置地址 强制更新 手动设置
-			case "setddns":
-				if (message.getSection() == 0) {
-					entry.getMessage().adminInfo(entry.getDDNSAPI().updateDDNSIP());
-				} else {
-					entry.getMessage().adminInfo(entry.getDDNSAPI().setDDNSAddress(message.getSegment()[0]));
-				}
-				break;
-
+			message.parseOption();
+			message.parseFlags();
+			switch (message.getSegment()[0]) {
+			case "report":
+				entry.getSystemd().sendModuleReport(message);
+				return true;
 			}
+			return false;
 		}
-		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		if (entry.getMessage().isAdmin(userid)) { return false; }
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		if (entry.getMessage().isAdmin(userid)) { return false; }
-		return true;
+		if (!entry.getMessage().isAdmin(userid)) { return false; }
+
+		if (message.getSection() == 0) {
+			entry.getSystemd().sendSystemsReport(0, 0);
+			entry.getSystemd().sendModulesReport(0, 0);
+			return true;
+		} else {
+			message.parseOption();
+			message.parseFlags();
+			switch (message.getSegment()[0]) {
+			case "say":
+				entry.getMessage().gropInfo(gropid, message.join(1));
+				return true;
+			case "message":
+				switch (message.getSegment()[1]) {
+				case "revoke":
+					entry.getMessage().revokeMessage(gropid);
+					System.out.print(message);
+					break;
+				}
+				return true;
+			case "system":
+				return true;
+			case "ddns":
+				return true;
+			case "nick":
+				return true;
+			case "mode":
+				return true;
+
+			case "report":
+				entry.getSystemd().sendModuleReport(message);
+				return true;
+			}
+			return false;
+		}
 	}
 
 	@Override
-	public String[] generateReport(int mode, final Message message, final Object... parameters) {
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
 	}
-
-	private boolean doDDNS(int typeid, long userid, MessageUser message, int messageid, int messagefont) {
-
-		
-		
-		
-	}
-
 }

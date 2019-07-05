@@ -31,7 +31,8 @@ public class Executor_chou extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "chou";
+	private static String MODULE_PACKAGENAME = "executor_chou";
+	private static String MODULE_COMMANDNAME = "chou";
 	private static String MODULE_DISPLAYNAME = "随机抽人";
 	private static String MODULE_DESCRIPTION = "从当前群随机选择一个成员";
 	private static String MODULE_VERSION = "5.0";
@@ -66,7 +67,7 @@ public class Executor_chou extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_chou() throws Exception {
-		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -75,23 +76,13 @@ public class Executor_chou extends ModuleExecutor {
 		this.MEMBERS = new HashMap<>();
 		this.IGNORES = new HashMap<>();
 
-		if (this.NEW_CONFIG) {
-			this.CONFIG.setProperty("config1", "none");
-			this.CONFIG.setProperty("config2", "none");
-			this.CONFIG.setProperty("config3", "none");
-			this.CONFIG.setProperty("config4", "none");
-			this.saveConfig();
-		} else {
-			this.loadConfig();
-		}
-
 		this.FILE_IGNORE_USER = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
 		if (!this.FILE_IGNORE_USER.exists()) { this.FILE_IGNORE_USER.createNewFile(); }
 
 		List<Group> groups = JcqApp.CQ.getGroupList();
 
-		for (final Group group : groups) {
+		for (Group group : groups) {
 			this.MEMBERS.put(group.getId(), new ArrayList<Long>());
 			this.IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
@@ -118,12 +109,12 @@ public class Executor_chou extends ModuleExecutor {
 		ArrayList<Long> tempMembers;
 		ArrayList<Long> tempIgnores;
 
-		for (final Group group : groups) {
+		for (Group group : groups) {
 
 			tempMembers = this.MEMBERS.get(group.getId());
 			tempIgnores = this.IGNORES.get(group.getId());
 
-			for (final Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
+			for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
 				if (entry.getMessage().isMyself(member.getQqId())) { continue; }
 				if (tempIgnores.contains(member.getQqId())) { continue; }
 				tempMembers.add(member.getQqId());
@@ -172,17 +163,17 @@ public class Executor_chou extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		SecureRandom random = new SecureRandom();
 		ArrayList<Long> members = this.MEMBERS.get(gropid);
 		int size = members.size();
@@ -210,7 +201,7 @@ public class Executor_chou extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, final Message message, final Object... parameters) {
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
 	}
 

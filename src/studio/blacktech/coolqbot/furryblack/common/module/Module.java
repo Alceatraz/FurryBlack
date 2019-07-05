@@ -13,9 +13,8 @@ import studio.blacktech.coolqbot.furryblack.common.message.Message;
 
 public abstract class Module {
 
-	public int COUNT = 0;
-
 	private String MODULE_PACKAGENAME;
+	private String MODULE_COMMANDNAME;
 	private String MODULE_DISPLAYNAME;
 	private String MODULE_DESCRIPTION;
 	private String MODULE_VERSION;
@@ -36,9 +35,10 @@ public abstract class Module {
 
 	protected boolean NEW_CONFIG = false;
 
-	public Module(String MODULE_PACKAGENAME, String MODULE_DISPLAYNAME, String MODULE_DESCRIPTION, String MODULE_VERSION, String[] MODULE_USAGE, String[] MODULE_PRIVACY_TRIGER, String[] MODULE_PRIVACY_LISTEN, String[] MODULE_PRIVACY_STORED, String[] MODULE_PRIVACY_CACHED, String[] MODULE_PRIVACY_OBTAIN) throws Exception {
+	public Module(String MODULE_PACKAGENAME, String MODULE_COMMANDNAME, String MODULE_DISPLAYNAME, String MODULE_DESCRIPTION, String MODULE_VERSION, String[] MODULE_USAGE, String[] MODULE_PRIVACY_TRIGER, String[] MODULE_PRIVACY_LISTEN, String[] MODULE_PRIVACY_STORED, String[] MODULE_PRIVACY_CACHED, String[] MODULE_PRIVACY_OBTAIN) throws Exception {
 
 		this.MODULE_PACKAGENAME = MODULE_PACKAGENAME;
+		this.MODULE_COMMANDNAME = MODULE_COMMANDNAME;
 		this.MODULE_DISPLAYNAME = MODULE_DISPLAYNAME;
 		this.MODULE_DESCRIPTION = MODULE_DESCRIPTION;
 		this.MODULE_VERSION = MODULE_VERSION;
@@ -51,8 +51,8 @@ public abstract class Module {
 
 		this.MODULE_FULLHELP = this.genFullHelp();
 
-		this.FOLDER_CONF = Paths.get(entry.FOLDER_MODULE_CONF().getAbsolutePath(), this.MODULE_PACKAGENAME).toFile();
-		this.FOLDER_DATA = Paths.get(entry.FOLDER_MODULE_DATA().getAbsolutePath(), this.MODULE_PACKAGENAME).toFile();
+		this.FOLDER_CONF = Paths.get(entry.FOLDER_CONF().getAbsolutePath(), this.MODULE_PACKAGENAME).toFile();
+		this.FOLDER_DATA = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), this.MODULE_PACKAGENAME).toFile();
 
 		this.FILE_CONFIG = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
 
@@ -80,7 +80,7 @@ public abstract class Module {
 
 	public abstract void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
 
-	public abstract String[] generateReport(int mode, final Message message, final Object... parameters) throws Exception;
+	public abstract String[] generateReport(int mode, Message message, Object... parameters);
 
 	protected void loadConfig() throws Exception {
 		this.CONFIG.load(new FileInputStream(this.FILE_CONFIG));
@@ -91,35 +91,42 @@ public abstract class Module {
 	}
 
 	public String MODULE_PACKAGENAME() {
-		return MODULE_PACKAGENAME;
+		return this.MODULE_PACKAGENAME;
+	}
+
+	public String MODULE_COMMANDNAME() {
+		return this.MODULE_COMMANDNAME;
 	}
 
 	public String MODULE_DISPLAYNAME() {
-		return MODULE_DISPLAYNAME;
+		return this.MODULE_DISPLAYNAME;
 	}
 
 	public String MODULE_DESCRIPTION() {
-		return MODULE_DESCRIPTION;
+		return this.MODULE_DESCRIPTION;
 	}
 
 	public String MODULE_FULLHELP() {
-		return MODULE_FULLHELP;
+		return this.MODULE_FULLHELP;
 	}
 
 	public String genFullHelp() {
 		StringBuilder builder = new StringBuilder();
+		builder.append("模块：");
 		builder.append(this.MODULE_PACKAGENAME);
+		builder.append("\r\n");
+		builder.append(this.MODULE_COMMANDNAME);
 		builder.append(" > ");
 		builder.append(this.MODULE_DISPLAYNAME);
 		builder.append(" v");
 		builder.append(this.MODULE_VERSION);
-		builder.append(" - ");
+		builder.append("\r\b");
 		builder.append(this.MODULE_DESCRIPTION);
 		builder.append("\r\n命令用法：");
 		if (this.MODULE_USAGE.length == 0) {
 			builder.append("无");
 		} else {
-			for (final String temp : this.MODULE_USAGE) {
+			for (String temp : this.MODULE_USAGE) {
 				builder.append("\r\n");
 				builder.append(temp);
 			}
@@ -130,7 +137,7 @@ public abstract class Module {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_TRIGER.length);
-			for (final String temp : this.MODULE_PRIVACY_TRIGER) {
+			for (String temp : this.MODULE_PRIVACY_TRIGER) {
 				builder.append("\r\n  ");
 				builder.append(temp);
 			}
@@ -140,7 +147,7 @@ public abstract class Module {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_LISTEN.length);
-			for (final String temp : this.MODULE_PRIVACY_LISTEN) {
+			for (String temp : this.MODULE_PRIVACY_LISTEN) {
 				builder.append("\r\n  ");
 				builder.append(temp);
 			}
@@ -150,7 +157,7 @@ public abstract class Module {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_STORED.length);
-			for (final String temp : this.MODULE_PRIVACY_STORED) {
+			for (String temp : this.MODULE_PRIVACY_STORED) {
 				builder.append("\r\n  ");
 				builder.append(temp);
 			}
@@ -160,7 +167,7 @@ public abstract class Module {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_CACHED.length);
-			for (final String temp : this.MODULE_PRIVACY_CACHED) {
+			for (String temp : this.MODULE_PRIVACY_CACHED) {
 				builder.append("\r\n  ");
 				builder.append(temp);
 			}
@@ -170,7 +177,7 @@ public abstract class Module {
 			builder.append("无");
 		} else {
 			builder.append(this.MODULE_PRIVACY_OBTAIN.length);
-			for (final String temp : this.MODULE_PRIVACY_OBTAIN) {
+			for (String temp : this.MODULE_PRIVACY_OBTAIN) {
 				builder.append("\r\n  ");
 				builder.append(temp);
 			}

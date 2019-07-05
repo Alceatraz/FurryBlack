@@ -23,19 +23,20 @@ public class Executor_mine extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	public static String MODULE_PACKAGENAME = "mine";
-	public static String MODULE_DISPLAYNAME = "我的世界助手";
-	public static String MODULE_DESCRIPTION = "我的世界助手";
-	public static String MODULE_VERSION = "2.0";
-	public static String[] MODULE_USAGE = new String[] {
+	private static String MODULE_PACKAGENAME = "executor_mine";
+	private static String MODULE_COMMANDNAME = "mine";
+	private static String MODULE_DISPLAYNAME = "我的世界助手";
+	private static String MODULE_DESCRIPTION = "我的世界助手";
+	private static String MODULE_VERSION = "2.0";
+	private static String[] MODULE_USAGE = new String[] {
 			"/mine status 查看服务器在线状态",
 			"/mine online 列出服务器在线玩家"
 	};
-	public static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	public static String[] MODULE_PRIVACY_LISTEN = new String[] {};
-	public static String[] MODULE_PRIVACY_STORED = new String[] {};
-	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
+	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+	private static String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人"
 	};
 
@@ -52,7 +53,7 @@ public class Executor_mine extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_mine() throws Exception {
-		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -83,17 +84,17 @@ public class Executor_mine extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		return false;
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		return false;
 	}
 
@@ -104,7 +105,7 @@ public class Executor_mine extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, final Message message, final Object... parameters) {
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
 	}
 
@@ -113,7 +114,7 @@ public class Executor_mine extends ModuleExecutor {
 
 //
 //	@Override
-//	public void executor(final Workflow flow) throws Exception {
+//	public void executor( Workflow flow) throws Exception {
 //		this.counter++;
 //		String res;
 //		String temp;
@@ -121,10 +122,10 @@ public class Executor_mine extends ModuleExecutor {
 //		if (flow.length == 1) {
 //			res = "命令错误 - 至少需要一个参数";
 //		} else {
-//			final Socket socket = new Socket();
+//			 Socket socket = new Socket();
 //			socket.connect(new InetSocketAddress("192.168.1.10", 44505), 2000);
-//			final InputStream rx = socket.getInputStream();
-//			final OutputStream tx = socket.getOutputStream();
+//			 InputStream rx = socket.getInputStream();
+//			 OutputStream tx = socket.getOutputStream();
 //			Thread.sleep(50L);
 //			switch (flow.command[1]) {
 //			case "online":

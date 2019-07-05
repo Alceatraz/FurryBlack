@@ -23,7 +23,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "userdeny";
+	private static String MODULE_PACKAGENAME = "trigger_userdeny";
+	private static String MODULE_COMMANDNAME = "userdeny";
 	private static String MODULE_DISPLAYNAME = "¹ýÂËÆ÷";
 	private static String MODULE_DESCRIPTION = "ÓÃ»§¹ýÂËÆ÷";
 	private static String MODULE_VERSION = "1.0";
@@ -44,9 +45,9 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	//
 	// ==========================================================================================================================================================
 
-	private final ArrayList<Long> USER_IGNORE = new ArrayList<>(100);
-	private final TreeMap<Long, ArrayList<Long>> DISZ_IGNORE = new TreeMap<>();
-	private final TreeMap<Long, ArrayList<Long>> GROP_IGNORE = new TreeMap<>();
+	private ArrayList<Long> USER_IGNORE = new ArrayList<>(100);
+	private TreeMap<Long, ArrayList<Long>> DISZ_IGNORE = new TreeMap<>();
+	private TreeMap<Long, ArrayList<Long>> GROP_IGNORE = new TreeMap<>();
 
 	private int DENY_USER_COUNT = 0;
 	private int DENY_DISZ_COUNT = 0;
@@ -63,7 +64,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	// ==========================================================================================================================================================
 
 	public Trigger_UserDeny() throws Exception {
-		super(MODULE_DISPLAYNAME, MODULE_PACKAGENAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -158,7 +159,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public boolean doUserMessage(final int typeid, final long userid, final MessageUser message, final int messageid, final int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		if (this.USER_IGNORE.contains(userid)) {
 			this.DENY_USER_COUNT++;
 			return true;
@@ -168,7 +169,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public boolean doDiszMessage(final long diszid, final long userid, final MessageDisz message, final int messageid, final int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		if (this.DISZ_IGNORE.containsKey(diszid) && this.DISZ_IGNORE.get(diszid).contains(userid)) {
 			this.DENY_DISZ_COUNT++;
 			return true;
@@ -178,7 +179,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public boolean doGropMessage(final long gropid, final long userid, final MessageGrop message, final int messageid, final int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		if (this.GROP_IGNORE.containsKey(gropid) && this.GROP_IGNORE.get(gropid).contains(userid)) {
 			this.DENY_GROP_COUNT++;
 			return true;
@@ -188,15 +189,15 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public String[] generateReport(int mode, final Message message, final Object... parameters) {
-		final StringBuilder builder = new StringBuilder();
+	public String[] generateReport(int mode, Message message, Object... parameters) {
+		StringBuilder builder = new StringBuilder();
 		builder.append("À¹½ØË½ÁÄ£º");
 		builder.append(this.DENY_USER_COUNT);
 		builder.append("\r\nÀ¹½Ø×éÁÄ£º");
 		builder.append(this.DENY_DISZ_COUNT);
 		builder.append("\r\nÀ¹½ØÈºÁÄ£º");
 		builder.append(this.DENY_GROP_COUNT);
-		final String res[] = new String[1];
+		String res[] = new String[1];
 		res[0] = builder.toString();
 		return res;
 	}
