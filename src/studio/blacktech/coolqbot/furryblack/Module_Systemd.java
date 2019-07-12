@@ -799,7 +799,7 @@ public class Module_Systemd extends Module {
 
 		builder = new StringBuilder();
 
-		builder.append("\r\n[´¥·¢Æ÷] Ë½ÁÄ: ");
+		builder.append("[´¥·¢Æ÷] Ë½ÁÄ: ");
 		builder.append(this.TRIGGER_USER.size());
 		builder.append("¸ö");
 		for (ModuleTrigger temp : this.TRIGGER_USER) {
@@ -858,7 +858,7 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("\r\n[¼àÌýÆ÷] Ë½ÁÄ: ");
+		builder.append("[¼àÌýÆ÷] Ë½ÁÄ: ");
 		builder.append(this.LISTENER_USER.size());
 		builder.append("¸ö");
 		for (ModuleListener temp : this.LISTENER_USER) {
@@ -917,7 +917,7 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("\r\n[Ö´ÐÐÆ÷] Ë½ÁÄ: ");
+		builder.append("[Ö´ÐÐÆ÷] Ë½ÁÄ: ");
 		builder.append(this.EXECUTOR_USER.size());
 		builder.append("¸ö");
 		for (String name : this.EXECUTOR_USER.keySet()) {

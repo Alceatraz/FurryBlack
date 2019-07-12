@@ -3,8 +3,6 @@ package studio.blacktech.coolqbot.furryblack.modules;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
@@ -125,27 +123,19 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null; }
-		TreeMap<Integer, Integer> frequency = new TreeMap<>();
-		for (long temp : this.JRRP.keySet()) {
-			int luck = this.JRRP.get(temp);
-			frequency.put(luck, frequency.containsKey(luck) ? frequency.get(luck) + 1 : 1);
-		}
-		int size = this.JRRP.size();
-		StringBuilder builder = new StringBuilder();
-		builder.append("共生成了 ");
-		builder.append(size);
-		builder.append("次");
-		for (Entry<Integer, Integer> temp : frequency.entrySet()) {
-			builder.append("\r\n");
-			builder.append(temp.getKey());
-			builder.append(" : ");
-			builder.append(temp.getValue() * 100 / size);
-			builder.append("%");
-		}
-		String res[] = new String[1];
-		res[0] = builder.toString();
-		return res;
+		return null;
+		/*
+		 * if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null;
+		 * } TreeMap<Integer, Integer> frequency = new TreeMap<>(); for (long temp :
+		 * this.JRRP.keySet()) { int luck = this.JRRP.get(temp); frequency.put(luck,
+		 * frequency.containsKey(luck) ? frequency.get(luck) + 1 : 1); } int size =
+		 * this.JRRP.size(); StringBuilder builder = new StringBuilder();
+		 * builder.append("共生成了 "); builder.append(size); builder.append("次"); for
+		 * (Entry<Integer, Integer> temp : frequency.entrySet()) {
+		 * builder.append("\r\n"); builder.append(temp.getKey()); builder.append(" : ");
+		 * builder.append(temp.getValue() * 100 / size); builder.append("%"); } String
+		 * res[] = new String[1]; res[0] = builder.toString(); return res;
+		 */
 	}
 
 	@SuppressWarnings("deprecation")

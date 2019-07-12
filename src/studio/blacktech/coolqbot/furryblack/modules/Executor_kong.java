@@ -77,19 +77,19 @@ public class Executor_kong extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().userInfo(userid, message.getSection() == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
+		entry.getMessage().userInfo(userid, message.getSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().diszInfo(diszid, userid, message.getSection() == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
+		entry.getMessage().diszInfo(diszid, userid, message.getSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().gropInfo(gropid, userid, message.getSection() == 1 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
+		entry.getMessage().gropInfo(gropid, userid, message.getSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 	}
 

@@ -1,6 +1,12 @@
 package studio.blacktech.coolqbot.furryblack.modules;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,9 +61,13 @@ public class Listener_TopSpeak extends ModuleListener {
 	//
 	// ==========================================================================================================================================================
 
+	private ArrayList<Long> GROUP_REPORT = new ArrayList<>();
+
 	private HashMap<Long, GroupStatus> GROUP_STATUS = new HashMap<>();
 
 	private Thread worker;
+
+	private File CONFIG_GROUP_REPORT;
 
 	// ==========================================================================================================================================================
 	//
@@ -71,6 +81,18 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
+		this.CONFIG_GROUP_REPORT = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "grop_report.txt").toFile();
+
+		if (!this.CONFIG_GROUP_REPORT.exists()) { this.CONFIG_GROUP_REPORT.createNewFile(); }
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_GROUP_REPORT), "UTF-8"));
+		String line;
+		while ((line = reader.readLine()) != null) {
+			if (line.startsWith("#")) { continue; }
+			this.GROUP_REPORT.add(Long.parseLong(line));
+		}
+		reader.close();
 
 		List<Group> groups = JcqApp.CQ.getGroupList();
 		for (Group group : groups) {
@@ -103,12 +125,24 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-		this.GROUP_STATUS.get(gropid).USER_STATUS.put(userid, new UserStatus(userid));
+		if (entry.getMessage().isMyself(userid)) {
+			GroupStatus groupStatus = new GroupStatus(gropid);
+			for (Member member : JcqApp.CQ.getGroupMemberList(gropid)) {
+				groupStatus.USER_STATUS.put(member.getQqId(), new UserStatus(member.getQqId()));
+			}
+			this.GROUP_STATUS.put(gropid, groupStatus);
+		} else {
+			this.GROUP_STATUS.get(gropid).USER_STATUS.put(userid, new UserStatus(userid));
+		}
 	}
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-		this.GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
+		if (entry.getMessage().isMyself(userid)) {
+			this.GROUP_STATUS.remove(gropid);
+		} else {
+			this.GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
+		}
 	}
 
 	// ==========================================================================================================================================================
@@ -272,7 +306,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					}
 				}
 
-				// 纯CQ Code的消息会被替换为 "" 按 1句0字计算
+				// 纯CQ Code的消息会被替换为 "" 按 1句1字计算
 				// 不能直接按照一句添加进 SENTENCE
 				// 否则会出现大量占位的 ""
 				// 必须独立存储一个数字
@@ -440,8 +474,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		if (allMessageRank.size() > 0) {
 			builder.append("（3/4）整句排行：");
 			int i = 1;
+			boolean enought = false;
 			for (int messageRank : allMessageRank.keySet()) {
-
 				HashSet<String> tempSet = allMessageRank.get(messageRank);
 				for (String message : tempSet) {
 					builder.append("\r\nNo.");
@@ -450,7 +484,12 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(messageRank);
 					builder.append("次：");
 					builder.append(message);
-					if (i++ > 25) { break; }
+					i++;
+					if (i > 25) {
+						enought = true;
+						break;
+					}
+					if (enought) { break; }
 				}
 			}
 			report.add(builder.toString());
@@ -486,6 +525,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		if (allPictureRank.size() > 0) {
 			report.add("（4/4）图片排行：");
 			int i = 1;
+			boolean enought = false;
 			for (int pictureRank : allPictureRank.keySet()) {
 				HashSet<String> tempSet = allPictureRank.get(pictureRank);
 				for (String picture : tempSet) {
@@ -497,7 +537,12 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append("次：\r\n");
 					builder.append(JcqApp.CC.getCQImage(picture).getUrl());
 					report.add(builder.toString());
-					if (i++ > 5) { break; }
+					i++;
+					if (i > 5) {
+						enought = true;
+						break;
+					}
+					if (enought) { break; }
 				}
 			}
 		} else {
@@ -529,7 +574,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						Thread.sleep(time);
 
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {
-							entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp));
+							if (Listener_TopSpeak.this.GROUP_REPORT.contains(temp)) { entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp)); }
 						}
 
 						SecureRandom random = new SecureRandom();

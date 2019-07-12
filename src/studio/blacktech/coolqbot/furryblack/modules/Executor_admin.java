@@ -98,11 +98,9 @@ public class Executor_admin extends ModuleExecutor {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-
 		if (!entry.getMessage().isAdmin(userid)) { return false; }
 
 		if (message.getSection() == 0) {
-
 			entry.getSystemd().sendSystemsReport(0, 0);
 			entry.getSystemd().sendModulesReport(0, 0);
 			return true;

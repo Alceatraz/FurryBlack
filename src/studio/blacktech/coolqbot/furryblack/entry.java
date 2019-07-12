@@ -32,7 +32,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "7.0 2019-07-02 (00:00)";
+	public final static String VerID = "7.1 2019-07-12 (17:00)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 
@@ -226,6 +226,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(message.length());
 			builder.append("\r\n 原因:");
 			builder.append(exce.getMessage());
+			System.out.println(builder.toString());
 			getMessage().adminInfo(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
@@ -251,6 +252,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(message.length());
 			builder.append("\r\n 原因:");
 			builder.append(exce.getMessage());
+			System.out.println(builder.toString());
 			getMessage().adminInfo(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
@@ -276,6 +278,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(message.length());
 			builder.append("\r\n 原因:");
 			builder.append(exce.getMessage());
+			System.out.println(builder.toString());
 			getMessage().adminInfo(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;

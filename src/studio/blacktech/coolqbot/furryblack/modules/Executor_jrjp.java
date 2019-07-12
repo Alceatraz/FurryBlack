@@ -92,21 +92,18 @@ public class Executor_jrjp extends ModuleExecutor {
 			this.IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
 
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.USER_IGNORE), "UTF-8"));) {
-			String line;
-			String temp[];
-			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("#")) { continue; }
-				if (line.indexOf(":") < 0) { continue; }
-				temp = line.split(":");
-				long gropid = Long.parseLong(temp[0]);
-				long userid = Long.parseLong(temp[1]);
-				this.IGNORES.get(gropid).add(userid);
-			}
-			reader.close();
-		} catch (Exception exce) {
-			exce.printStackTrace();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.USER_IGNORE), "UTF-8"));
+		String line;
+		String temp[];
+		while ((line = reader.readLine()) != null) {
+			if (line.startsWith("#")) { continue; }
+			if (line.indexOf(":") < 0) { continue; }
+			temp = line.split(":");
+			long gropid = Long.parseLong(temp[0]);
+			long userid = Long.parseLong(temp[1]);
+			this.IGNORES.get(gropid).add(userid);
 		}
+		reader.close();
 
 		for (Group group : groups) {
 			ArrayList<Long> tempMembers = this.MEMBERS.get(group.getId());
