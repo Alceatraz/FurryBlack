@@ -20,29 +20,29 @@ public class Executor_roulette extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_roulette";
 	private static String MODULE_COMMANDNAME = "roulette";
-	private static String MODULE_DISPLAYNAME = "¶íÂŞË¹ÂÖÅÌ¶Ä";
-	private static String MODULE_DESCRIPTION = "Äã¿´Õâ×Óµ¯ÓÖ¼âÓÖ³¤£¬ÕâÃûµ¥ÓÖ´óÓÖ¿í";
+	private static String MODULE_DISPLAYNAME = "ä¿„ç½—æ–¯è½®ç›˜èµŒ";
+	private static String MODULE_DESCRIPTION = "ä½ çœ‹è¿™å­å¼¹åˆå°–åˆé•¿ï¼Œè¿™åå•åˆå¤§åˆå®½";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/roulette ³ïÂë - ¼ÓÈë»òÕß·¢ÆğÒ»¾Ö¶íÂŞË¹ÂÖÅÌ¶Ä£¬Ê®·ÖÖÓÈÔÎ´ÂúÔ±Ôò×Ô¶¯½âÉ¢¶Ô¾Ö"
+			"/roulette ç­¹ç  - åŠ å…¥æˆ–è€…å‘èµ·ä¸€å±€ä¿„ç½—æ–¯è½®ç›˜èµŒï¼Œååˆ†é’Ÿä»æœªæ»¡å‘˜åˆ™è‡ªåŠ¨è§£æ•£å¯¹å±€"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"»ñÈ¡ÃüÁî·¢ËÍÈË"
+			"è·å–å‘½ä»¤å‘é€äºº"
 	};
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -53,7 +53,7 @@ public class Executor_roulette extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -109,16 +109,16 @@ public class Executor_roulette extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		if (message.getSection() < 2) {
-			entry.getMessage().gropInfo(gropid, userid, "²»ÏÂ×¢ÊÇ8koiµÄ");
+			entry.getMessage().gropInfo(gropid, userid, "ä¸ä¸‹æ³¨æ˜¯8koiçš„");
 			return true;
 		}
 		if (!this.rounds.containsKey(gropid)) { this.rounds.put(gropid, new RouletteRound()); }
 		RouletteRound round = this.rounds.get(gropid);
 
 		if (round.lock) {
-			// ±¾À´ÊÇÓĞËøµÄ£¬µ«ÊÇÎÒ¾õµÃÃ»ÈËÄÜÕıºÃÔÚ100msÄÚÔÙ¼ÓÈëËùÒÔÉ¾ÁË
+			// æœ¬æ¥æ˜¯æœ‰é”çš„ï¼Œä½†æ˜¯æˆ‘è§‰å¾—æ²¡äººèƒ½æ­£å¥½åœ¨100mså†…å†åŠ å…¥æ‰€ä»¥åˆ äº†
 			// SX found this BUG
-			// Module.gropInfo(gropid, "ÄãÊÇ×î¼ÑµÚÆßÈË£¬ÄãÂèÂè²»°®Äã£¬ÄãÉõÖÁ²»ÅäÓµÓĞÃû×Ö¡£");
+			// Module.gropInfo(gropid, "ä½ æ˜¯æœ€ä½³ç¬¬ä¸ƒäººï¼Œä½ å¦ˆå¦ˆä¸çˆ±ä½ ï¼Œä½ ç”šè‡³ä¸é…æ‹¥æœ‰åå­—ã€‚");
 			return false;
 		} else {
 			if (round.time.getTime() + 600000 < new Date().getTime()) {
@@ -130,7 +130,7 @@ public class Executor_roulette extends ModuleExecutor {
 				this.ROUND_SUCCESS++;
 				SecureRandom random = new SecureRandom();
 				int bullet = random.nextInt(6);
-				entry.getMessage().gropInfo(gropid, "Ãûµ¥ÒÑ´ÕÆë ×°Ìî×Óµ¯ÖĞ");
+				entry.getMessage().gropInfo(gropid, "åå•å·²å‡‘é½ è£…å¡«å­å¼¹ä¸­");
 				Member member;
 				for (int i = 0; i < 6; i++) {
 					member = JcqApp.CQ.getGroupMemberInfoV2(gropid, round.player.get(i));
@@ -142,7 +142,7 @@ public class Executor_roulette extends ModuleExecutor {
 					}
 
 				}
-				entry.getMessage().gropInfo(gropid, "@Æ½°²ÖĞ¹ú Ä¿±êÒÑ»÷±Ğ:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
+				entry.getMessage().gropInfo(gropid, "@å¹³å®‰ä¸­å›½ ç›®æ ‡å·²å‡»æ¯™:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
 				this.rounds.remove(gropid);
 			}
 		}
@@ -163,14 +163,14 @@ public class Executor_roulette extends ModuleExecutor {
 
 		public boolean join(long gropid, long userid, Message message) {
 			if (this.player.contains(userid)) {
-				entry.getMessage().gropInfo(gropid, "Äã8koiÀë¿ª£¬²»×¼·Å¹ı");
+				entry.getMessage().gropInfo(gropid, "ä½ 8koiç¦»å¼€ï¼Œä¸å‡†æ”¾è¿‡");
 			} else {
 				this.time = new Date();
 				this.players++;
 				this.player.add(userid);
 				this.chip.add(message.join(1));
 				StringBuilder buffer = new StringBuilder();
-				buffer.append("¶íÂŞË¹ÂÖÅÌ - µ±Ç°ÈËÊı (");
+				buffer.append("ä¿„ç½—æ–¯è½®ç›˜ - å½“å‰äººæ•° (");
 				buffer.append(this.players);
 				buffer.append("/6)");
 				int i = 0;
@@ -185,7 +185,7 @@ public class Executor_roulette extends ModuleExecutor {
 				for (; i < 6; i++) {
 					buffer.append("\r\n");
 					buffer.append(i + 1);
-					buffer.append(" - µÈ´ı¼ÓÈë");
+					buffer.append(" - ç­‰å¾…åŠ å…¥");
 				}
 				entry.getMessage().gropInfo(gropid, buffer.toString());
 			}
@@ -198,32 +198,32 @@ public class Executor_roulette extends ModuleExecutor {
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 		if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
-		builder.append("³É¹¦»ØºÏ : ");
+		builder.append("æˆåŠŸå›åˆ : ");
 		builder.append(this.ROUND_SUCCESS);
-		builder.append("\r\nÊ§°Ü»ØºÏ : ");
+		builder.append("\r\nå¤±è´¥å›åˆ : ");
 		builder.append(this.ROUND_EXPIRED);
 		if (this.ROUND_SUCCESS > 0) {
-			builder.append("\r\nµÚÒ»·¢ : ");
+			builder.append("\r\nç¬¬ä¸€å‘ : ");
 			builder.append(this.roulette.get(0));
 			builder.append(" - ");
 			builder.append(this.roulette.get(0) * 100 / this.ROUND_SUCCESS);
-			builder.append("%\r\nµÚ¶ş·¢ : ");
+			builder.append("%\r\nç¬¬äºŒå‘ : ");
 			builder.append(this.roulette.get(1));
 			builder.append(" - ");
 			builder.append(this.roulette.get(1) * 100 / this.ROUND_SUCCESS);
-			builder.append("%\r\nµÚÈı·¢ : ");
+			builder.append("%\r\nç¬¬ä¸‰å‘ : ");
 			builder.append(this.roulette.get(2));
 			builder.append(" - ");
 			builder.append(this.roulette.get(2) * 100 / this.ROUND_SUCCESS);
-			builder.append("%\r\nµÚËÄ·¢ : ");
+			builder.append("%\r\nç¬¬å››å‘ : ");
 			builder.append(this.roulette.get(3));
 			builder.append(" - ");
 			builder.append(this.roulette.get(3) * 100 / this.ROUND_SUCCESS);
-			builder.append("%\r\nµÚÎå·¢ : ");
+			builder.append("%\r\nç¬¬äº”å‘ : ");
 			builder.append(this.roulette.get(4));
 			builder.append(" - ");
 			builder.append(this.roulette.get(4) * 100 / this.ROUND_SUCCESS);
-			builder.append("%\r\nµÚÁù·¢ : ");
+			builder.append("%\r\nç¬¬å…­å‘ : ");
 			builder.append(this.roulette.get(5));
 			builder.append(" - ");
 			builder.append(this.roulette.get(5) * 100 / this.ROUND_SUCCESS);

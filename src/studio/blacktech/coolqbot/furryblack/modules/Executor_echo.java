@@ -12,35 +12,35 @@ public class Executor_echo extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// 模块基本配置
+	// 妯″潡鍩烘湰閰嶇疆
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_echo";
 	private static String MODULE_COMMANDNAME = "echo";
-	private static String MODULE_DISPLAYNAME = "回显";
+	private static String MODULE_DISPLAYNAME = "鍥炴樉";
 	private static String MODULE_DESCRIPTION = "&0>1";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/echo 内容 - &0>1"
+			"/echo 鍐呭 - &0>1"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"获取命令发送人"
+			"鑾峰彇鍛戒护鍙戦�佷汉"
 	};
 
 	// ==========================================================================================================================================================
 	//
-	// 成员变量
+	// 鎴愬憳鍙橀噺
 	//
 	// ==========================================================================================================================================================
 
 	// ==========================================================================================================================================================
 	//
-	// 生命周期函数
+	// 鐢熷懡鍛ㄦ湡鍑芥暟
 	//
 	// ==========================================================================================================================================================
 

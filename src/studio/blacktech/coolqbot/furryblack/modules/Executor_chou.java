@@ -27,31 +27,31 @@ public class Executor_chou extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_chou";
 	private static String MODULE_COMMANDNAME = "chou";
-	private static String MODULE_DISPLAYNAME = "Ëæ»ú³éÈË";
-	private static String MODULE_DESCRIPTION = "´Óµ±Ç°ÈºËæ»úÑ¡ÔñÒ»¸ö³ÉÔ±";
+	private static String MODULE_DISPLAYNAME = "éšæœºæŠ½äºº";
+	private static String MODULE_DESCRIPTION = "ä»å½“å‰ç¾¤éšæœºé€‰æ‹©ä¸€ä¸ªæˆå‘˜";
 	private static String MODULE_VERSION = "5.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/chou - Ëæ»ú³éÒ»¸öÈË",
-			"/chou ÀíÓÉ - ÒÔÄ³¸öÀíÓÉ³éÒ»¸öÈË"
+			"/chou - éšæœºæŠ½ä¸€ä¸ªäºº",
+			"/chou ç†ç”± - ä»¥æŸä¸ªç†ç”±æŠ½ä¸€ä¸ªäºº"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"»ñÈ¡ÃüÁî·¢ËÍÈË",
-			"»ñÈ¡Èº³ÉÔ±ÁĞ±í"
+			"è·å–å‘½ä»¤å‘é€äºº",
+			"è·å–ç¾¤æˆå‘˜åˆ—è¡¨"
 	};
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -62,7 +62,7 @@ public class Executor_chou extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -158,7 +158,7 @@ public class Executor_chou extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ¹¤×÷º¯Êı
+	// å·¥ä½œå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -178,7 +178,7 @@ public class Executor_chou extends ModuleExecutor {
 		ArrayList<Long> members = this.MEMBERS.get(gropid);
 		int size = members.size();
 		if (size < 3) {
-			entry.getMessage().gropInfo(gropid, userid, "ÖÁÉÙĞèÒªÈı¸ö³ÉÔ±");
+			entry.getMessage().gropInfo(gropid, userid, "è‡³å°‘éœ€è¦ä¸‰ä¸ªæˆå‘˜");
 		} else {
 			long chouid = 0;
 			do {
@@ -186,9 +186,9 @@ public class Executor_chou extends ModuleExecutor {
 			} while (chouid == userid);
 			QQInfo member = JcqApp.CQ.getStrangerInfo(chouid);
 			if (message.getSection() == 1) {
-				entry.getMessage().gropInfo(gropid, userid, "Ëæ»ú³éµ½ " + entry.getNickmap().getNickname(member.getQqId()) + "(" + chouid + ")");
+				entry.getMessage().gropInfo(gropid, userid, "éšæœºæŠ½åˆ° " + entry.getNickmap().getNickname(member.getQqId()) + "(" + chouid + ")");
 			} else {
-				entry.getMessage().gropInfo(gropid, userid, "Ëæ»ú³éµ½ " + entry.getNickmap().getNickname(member.getQqId()) + "(" + chouid + ")£º " + message.getOptions());
+				entry.getMessage().gropInfo(gropid, userid, "éšæœºæŠ½åˆ° " + entry.getNickmap().getNickname(member.getQqId()) + "(" + chouid + ")ï¼š " + message.getOptions());
 			}
 		}
 		return true;
@@ -196,7 +196,7 @@ public class Executor_chou extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ¹¤¾ßº¯Êı
+	// å·¥å…·å‡½æ•°
 	//
 	// ==========================================================================================================================================================
 

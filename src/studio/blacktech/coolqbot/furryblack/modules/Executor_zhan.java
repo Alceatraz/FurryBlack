@@ -16,29 +16,29 @@ public class Executor_zhan extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_zhan";
 	private static String MODULE_COMMANDNAME = "zhan";
-	private static String MODULE_DISPLAYNAME = "Õ¼²·";
-	private static String MODULE_DESCRIPTION = "´ó°¢¿¨ÄÇËşÂŞÅÆÕ¼²·";
+	private static String MODULE_DISPLAYNAME = "å åœ";
+	private static String MODULE_DESCRIPTION = "å¤§é˜¿å¡é‚£å¡”ç½—ç‰Œå åœ";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/zhan ÀíÓÉ - ÎªÄ³ÊÂÕ¼²·"
+			"/zhan ç†ç”± - ä¸ºæŸäº‹å åœ"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"»ñÈ¡ÃüÁî·¢ËÍÈË"
+			"è·å–å‘½ä»¤å‘é€äºº"
 	};
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -47,7 +47,7 @@ public class Executor_zhan extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -58,54 +58,54 @@ public class Executor_zhan extends ModuleExecutor {
 	@Override
 	public void init(LoggerX logger) throws Exception {
 
-		// ÎªÊ²Ã´²»¶ÁÅäÖÃÎÄ¼ş£¿
-		// ËşÂŞÅÆÓÖ²»»á±ä
-		this.CARD.put(1, "O. THE FOOL ÓŞÕßÕıÎ»\r\nÓŞ´À ¿ñÔê »Ó»ôÎŞ¶È ÉñÖ¾²»Çå");
-		this.CARD.put(2, "O. THE FOOL ÓŞÕßÄæÎ»\r\nÊèºö È±·¦ ÄºÆø ÎŞĞ§ ĞéÈÙ");
-		this.CARD.put(3, "I. THE MAGICIAN Ä§ÊõÊ¦ÕıÎ»\r\nÊÖ¶Î ÔÖÄÑ Í´¿à ËğÊ§");
-		this.CARD.put(4, "I. THE MAGICIAN Ä§ÊõÊ¦ÄæÎ»\r\nĞßÈè ÓÇÂÇ ¾«Éñ¼²²¡");
-		this.CARD.put(5, "II. THE HIGH PRIESTESS Å®¼ÀË¾ÕıÎ»\r\nÃØÃÜ ÉñÃØ Î´À´²»Ã÷ÀÊ Ó¢Ã÷");
-		this.CARD.put(6, "II. THE HIGH PRIESTESS Å®¼ÀË¾ÄæÎ»\r\n³å¶¯ ¿ñÈÈ ×Ô¸º ¸¡ÓÚ±íÃæ");
-		this.CARD.put(7, "III. THE EMPRESS »ÊºóÕıÎ»\r\n·áÊÕ ³«Òé ÒşÃØ À§ÄÑ ÎŞÖª");
-		this.CARD.put(8, "III. THE EMPRESS »ÊºóÄæÎ»\r\n¹âÃ÷ ÕæÏà Ï²ÔÃ");
-		this.CARD.put(9, "IV. THE EMPEROR »ÊµÛÕıÎ»\r\nÎÈ¶¨ Á¦Á¿ °ïÖú ±£»¤ ĞÅÄî");
-		this.CARD.put(10, "IV. THE EMPEROR »ÊµÛÄæÎ»\r\nÈÊ´È Í¬Çé ÔŞĞí ×è°­ ²»³ÉÊì");
-		this.CARD.put(11, "V. THE HIEROPHANT ½Ì»ÊÕıÎ»\r\n¿íË¡ Êø¸¿ Å«ÒÛ Áé¸Ğ");
-		this.CARD.put(12, "V. THE HIEROPHANT ½Ì»ÊÄæÎ»\r\nÉÆ½âÈËÒâ ºÍÄÀ ¹ı¶ÈÉÆÁ¼ ÈíÈõ");
-		this.CARD.put(13, "VI. THE LOVERS ÁµÈËÕıÎ»\r\nÎüÒı °® ÃÀÀö Í¨¹ıÊÔÁ¶");
-		this.CARD.put(14, "VI. THE LOVERS ÁµÈËÄæÎ»\r\nÊ§°Ü ÓŞ´ÀµÄÉè¼Æ");
-		this.CARD.put(15, "VII. THE CHARIOT Õ½³µÕıÎ»\r\n¾ÈÖú ÌìÒâ Ê¤Àû ¸´³ğ");
-		this.CARD.put(16, "VII. THE CHARIOT Õ½³µÄæÎ»\r\n´ò°Ü ¿ñ±© ³³¼Ü ËßËÏ");
-		this.CARD.put(17, "VIII. THE STRENGTH Á¦Á¿ÕıÎ»\r\nÄÜÁ¿ ĞĞ¶¯ ÓÂÆø º£Á¿");
-		this.CARD.put(18, "VIII. THE STRENGTH Á¦Á¿ÄæÎ»\r\n×¨¶Ï Èõµã ÀÄÓÃÁ¦Á¿ ²»ºÍ");
-		this.CARD.put(19, "IX. THE HERMIT ÒşÕßÕıÎ»\r\nÉ÷ÖØ ÅÑÍ½ ÑÚÊÎ ¶éÂä ¶ñÊÂ");
-		this.CARD.put(20, "IX. THE HERMIT ÒşÕßÄæÎ»\r\nÒş±Î º¦ÅÂ Î±×° ¹ı·ÖĞ¡ĞÄ");
-		this.CARD.put(21, "X. THE WHEEL OF FORTUNE ÃüÔËÖ®ÂÖÕıÎ»\r\nÃüÔË ºÃÔË ³É¹¦ ĞÒ¸£");
-		this.CARD.put(22, "X. THE WHEEL OF FORTUNE ÃüÔËÖ®ÂÖÄæÎ»\r\nÔö¼Ó ·á¸» ¶àÓà");
-		this.CARD.put(23, "XI. THE JUSTICE ÕıÒåÕıÎ»\r\n¹«Æ½ ÕıÒå Á®½à ĞĞÕş");
-		this.CARD.put(24, "XI. THE JUSTICE ÕıÒåÄæÎ»\r\nÆ«Ö´ ²»¹« ¹ı¶È¼óÆÓ");
-		this.CARD.put(25, "XII. THE HANGED MAN µõÈËÕıÎ»\r\nÖÇ»Û ÎşÉü ÉóÅĞ Ï¸ĞÄ ÑÛ¹â");
-		this.CARD.put(26, "XII. THE HANGED MAN µõÈËÄæÎ»\r\n×ÔË½ ÈºÖÚ ÈËÃñ");
-		this.CARD.put(27, "XIII. DEATH ËÀÍöÕıÎ»\r\nÖÕ½á ËÀÍö »ÙÃğ ¸¯Ğà");
-		this.CARD.put(28, "XIII. DEATH ËÀÍöÄæÎ»\r\n¹ßĞÔ Ê¯»¯ ÃÎÓÎ »è Ë¯");
-		this.CARD.put(29, "XIV. TEMPERANCE ½ÚÖÆÕıÎ»\r\n¾­¼Ã ÊÊ¶È ½Ú¼ó ¹ÜÀí ×¡Ëù");
-		this.CARD.put(30, "XIV. TEMPERANCE ½ÚÖÆÄæÎ»\r\n½Ì»á ·ÖÀë ²»ĞÒµÄ×éºÏ ³åÍ»µÄÀûÒæ");
-		this.CARD.put(31, "XV. THE DEVIL ¶ñÄ§ÕıÎ»\r\n»Ù»µ ±©Á¦ Ç¿ÆÈ ·ßÅ­ ¶îÍâÅ¬Á¦ ËÀÍö");
-		this.CARD.put(32, "XV. THE DEVIL ¶ñÄ§ÄæÎ»\r\nËÀÍö Èõµã Ã¤Ä¿ ËöÊÂ");
-		this.CARD.put(33, "XVI. THE TOWER ¸ßËşÕıÎ»\r\n¿àÄÑ ·ÏĞæ Æ¶·¦ ³ÜÈè ÔÖº¦ Äæ¾³ Æ­¾Ö");
-		this.CARD.put(34, "XVI. THE TOWER ¸ßËşÄæÎ»\r\n×¨¶Ï ¼à½û ÊÜ¿à Ëğº¦");
-		this.CARD.put(35, "XVII. THE STAR ĞÇĞÇÕıÎ»\r\n¶ªÊ§ ÇÔÔô ØÑ·¦ ·ÅÆú Î´À´µÄÏ£Íû");
-		this.CARD.put(36, "XVII. THE STAR ĞÇĞÇÄæÎ»\r\n°ÁÂı ÎŞÄÜ °ÁÆø");
-		this.CARD.put(37, "XVIII. THE MOON ÔÂÁÁÕıÎ»\r\nÒş²ØµÄµĞÈË ·Ì°ù Î£ÏÕ ºÚ°µ ¿Ö²À ´íÎó");
-		this.CARD.put(38, "XVIII. THE MOON ÔÂÁÁÄæÎ»\r\n²»ÎÈ¶¨ Ò×±ä Æ­¾Ö ´íÎó");
-		this.CARD.put(39, "XIX. THE SUN Ì«ÑôÕıÎ»\r\nÏ²ÔÃ ½á»é ÂúÒâ");
-		this.CARD.put(40, "XIX. THE SUN Ì«ÑôÄæÎ»\r\n¿ªĞÄ ÂúÒâ");
-		this.CARD.put(41, "XX. THE LAST JUDGMENT ÉóÅĞÕıÎ»\r\n±äÎ» ¸´ĞË ½á¹û");
-		this.CARD.put(42, "XX. THE LAST JUDGMENT ÉóÅĞÄæÎ»\r\nÈõµã µ¨ÇÓ ÌìÕæ ¾ö¶¨ ÊìÂÇ");
-		this.CARD.put(43, "XXI. THE WORLD ÊÀ½çÕıÎ»\r\n³É¹¦ µÀÂ· º½³Ì »»Î»");
-		this.CARD.put(44, "XXI. THE WORLD ÊÀ½çÄæÎ»\r\n¹ßĞÔ ¹ÌÖ´ Í£ÖÍ ³Ö¾Ã");
+		// ä¸ºä»€ä¹ˆä¸è¯»é…ç½®æ–‡ä»¶ï¼Ÿ
+		// å¡”ç½—ç‰Œåˆä¸ä¼šå˜
+		this.CARD.put(1, "O. THE FOOL æ„šè€…æ­£ä½\r\næ„šè ¢ ç‹‚èº æŒ¥éœæ— åº¦ ç¥å¿—ä¸æ¸…");
+		this.CARD.put(2, "O. THE FOOL æ„šè€…é€†ä½\r\nç–å¿½ ç¼ºä¹ æš®æ°” æ— æ•ˆ è™šè£");
+		this.CARD.put(3, "I. THE MAGICIAN é­”æœ¯å¸ˆæ­£ä½\r\næ‰‹æ®µ ç¾éš¾ ç—›è‹¦ æŸå¤±");
+		this.CARD.put(4, "I. THE MAGICIAN é­”æœ¯å¸ˆé€†ä½\r\nç¾è¾± å¿§è™‘ ç²¾ç¥ç–¾ç—…");
+		this.CARD.put(5, "II. THE HIGH PRIESTESS å¥³ç¥­å¸æ­£ä½\r\nç§˜å¯† ç¥ç§˜ æœªæ¥ä¸æ˜æœ— è‹±æ˜");
+		this.CARD.put(6, "II. THE HIGH PRIESTESS å¥³ç¥­å¸é€†ä½\r\nå†²åŠ¨ ç‹‚çƒ­ è‡ªè´Ÿ æµ®äºè¡¨é¢");
+		this.CARD.put(7, "III. THE EMPRESS çš‡åæ­£ä½\r\nä¸°æ”¶ å€¡è®® éšç§˜ å›°éš¾ æ— çŸ¥");
+		this.CARD.put(8, "III. THE EMPRESS çš‡åé€†ä½\r\nå…‰æ˜ çœŸç›¸ å–œæ‚¦");
+		this.CARD.put(9, "IV. THE EMPEROR çš‡å¸æ­£ä½\r\nç¨³å®š åŠ›é‡ å¸®åŠ© ä¿æŠ¤ ä¿¡å¿µ");
+		this.CARD.put(10, "IV. THE EMPEROR çš‡å¸é€†ä½\r\nä»æ…ˆ åŒæƒ… èµè®¸ é˜»ç¢ ä¸æˆç†Ÿ");
+		this.CARD.put(11, "V. THE HIEROPHANT æ•™çš‡æ­£ä½\r\nå®½æ• æŸç¼š å¥´å½¹ çµæ„Ÿ");
+		this.CARD.put(12, "V. THE HIEROPHANT æ•™çš‡é€†ä½\r\nå–„è§£äººæ„ å’Œç¦ è¿‡åº¦å–„è‰¯ è½¯å¼±");
+		this.CARD.put(13, "VI. THE LOVERS æ‹äººæ­£ä½\r\nå¸å¼• çˆ± ç¾ä¸½ é€šè¿‡è¯•ç‚¼");
+		this.CARD.put(14, "VI. THE LOVERS æ‹äººé€†ä½\r\nå¤±è´¥ æ„šè ¢çš„è®¾è®¡");
+		this.CARD.put(15, "VII. THE CHARIOT æˆ˜è½¦æ­£ä½\r\næ•‘åŠ© å¤©æ„ èƒœåˆ© å¤ä»‡");
+		this.CARD.put(16, "VII. THE CHARIOT æˆ˜è½¦é€†ä½\r\næ‰“è´¥ ç‹‚æš´ åµæ¶ è¯‰è®¼");
+		this.CARD.put(17, "VIII. THE STRENGTH åŠ›é‡æ­£ä½\r\nèƒ½é‡ è¡ŒåŠ¨ å‹‡æ°” æµ·é‡");
+		this.CARD.put(18, "VIII. THE STRENGTH åŠ›é‡é€†ä½\r\nä¸“æ–­ å¼±ç‚¹ æ»¥ç”¨åŠ›é‡ ä¸å’Œ");
+		this.CARD.put(19, "IX. THE HERMIT éšè€…æ­£ä½\r\næ…é‡ å›å¾’ æ©é¥° å •è½ æ¶äº‹");
+		this.CARD.put(20, "IX. THE HERMIT éšè€…é€†ä½\r\néšè”½ å®³æ€• ä¼ªè£… è¿‡åˆ†å°å¿ƒ");
+		this.CARD.put(21, "X. THE WHEEL OF FORTUNE å‘½è¿ä¹‹è½®æ­£ä½\r\nå‘½è¿ å¥½è¿ æˆåŠŸ å¹¸ç¦");
+		this.CARD.put(22, "X. THE WHEEL OF FORTUNE å‘½è¿ä¹‹è½®é€†ä½\r\nå¢åŠ  ä¸°å¯Œ å¤šä½™");
+		this.CARD.put(23, "XI. THE JUSTICE æ­£ä¹‰æ­£ä½\r\nå…¬å¹³ æ­£ä¹‰ å»‰æ´ è¡Œæ”¿");
+		this.CARD.put(24, "XI. THE JUSTICE æ­£ä¹‰é€†ä½\r\nåæ‰§ ä¸å…¬ è¿‡åº¦ä¿­æœ´");
+		this.CARD.put(25, "XII. THE HANGED MAN åŠäººæ­£ä½\r\næ™ºæ…§ ç‰ºç‰² å®¡åˆ¤ ç»†å¿ƒ çœ¼å…‰");
+		this.CARD.put(26, "XII. THE HANGED MAN åŠäººé€†ä½\r\nè‡ªç§ ç¾¤ä¼— äººæ°‘");
+		this.CARD.put(27, "XIII. DEATH æ­»äº¡æ­£ä½\r\nç»ˆç»“ æ­»äº¡ æ¯ç­ è…æœ½");
+		this.CARD.put(28, "XIII. DEATH æ­»äº¡é€†ä½\r\næƒ¯æ€§ çŸ³åŒ– æ¢¦æ¸¸ æ˜ ç¡");
+		this.CARD.put(29, "XIV. TEMPERANCE èŠ‚åˆ¶æ­£ä½\r\nç»æµ é€‚åº¦ èŠ‚ä¿­ ç®¡ç† ä½æ‰€");
+		this.CARD.put(30, "XIV. TEMPERANCE èŠ‚åˆ¶é€†ä½\r\næ•™ä¼š åˆ†ç¦» ä¸å¹¸çš„ç»„åˆ å†²çªçš„åˆ©ç›Š");
+		this.CARD.put(31, "XV. THE DEVIL æ¶é­”æ­£ä½\r\næ¯å æš´åŠ› å¼ºè¿« æ„¤æ€’ é¢å¤–åŠªåŠ› æ­»äº¡");
+		this.CARD.put(32, "XV. THE DEVIL æ¶é­”é€†ä½\r\næ­»äº¡ å¼±ç‚¹ ç›²ç›® çäº‹");
+		this.CARD.put(33, "XVI. THE TOWER é«˜å¡”æ­£ä½\r\nè‹¦éš¾ åºŸå¢Ÿ è´«ä¹ è€»è¾± ç¾å®³ é€†å¢ƒ éª—å±€");
+		this.CARD.put(34, "XVI. THE TOWER é«˜å¡”é€†ä½\r\nä¸“æ–­ ç›‘ç¦ å—è‹¦ æŸå®³");
+		this.CARD.put(35, "XVII. THE STAR æ˜Ÿæ˜Ÿæ­£ä½\r\nä¸¢å¤± çªƒè´¼ åŒ®ä¹ æ”¾å¼ƒ æœªæ¥çš„å¸Œæœ›");
+		this.CARD.put(36, "XVII. THE STAR æ˜Ÿæ˜Ÿé€†ä½\r\nå‚²æ…¢ æ— èƒ½ å‚²æ°”");
+		this.CARD.put(37, "XVIII. THE MOON æœˆäº®æ­£ä½\r\néšè—çš„æ•Œäºº è¯½è°¤ å±é™© é»‘æš— ææ€– é”™è¯¯");
+		this.CARD.put(38, "XVIII. THE MOON æœˆäº®é€†ä½\r\nä¸ç¨³å®š æ˜“å˜ éª—å±€ é”™è¯¯");
+		this.CARD.put(39, "XIX. THE SUN å¤ªé˜³æ­£ä½\r\nå–œæ‚¦ ç»“å©š æ»¡æ„");
+		this.CARD.put(40, "XIX. THE SUN å¤ªé˜³é€†ä½\r\nå¼€å¿ƒ æ»¡æ„");
+		this.CARD.put(41, "XX. THE LAST JUDGMENT å®¡åˆ¤æ­£ä½\r\nå˜ä½ å¤å…´ ç»“æœ");
+		this.CARD.put(42, "XX. THE LAST JUDGMENT å®¡åˆ¤é€†ä½\r\nå¼±ç‚¹ èƒ†æ€¯ å¤©çœŸ å†³å®š ç†Ÿè™‘");
+		this.CARD.put(43, "XXI. THE WORLD ä¸–ç•Œæ­£ä½\r\næˆåŠŸ é“è·¯ èˆªç¨‹ æ¢ä½");
+		this.CARD.put(44, "XXI. THE WORLD ä¸–ç•Œé€†ä½\r\næƒ¯æ€§ å›ºæ‰§ åœæ» æŒä¹…");
 
-		// ÎªÊ²Ã´²»Ğ´Ñ­»·£¿ ÒòÎªÔËĞĞ¿ì
+		// ä¸ºä»€ä¹ˆä¸å†™å¾ªç¯ï¼Ÿ å› ä¸ºè¿è¡Œå¿«
 		// @formatter:off
 		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
 		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
@@ -152,14 +152,14 @@ public class Executor_zhan extends ModuleExecutor {
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		if (message.getSection() == 0) {
-			entry.getMessage().userInfo(userid, "Äã²»ÄÜÕ¼²·¿ÕÆø");
+			entry.getMessage().userInfo(userid, "ä½ ä¸èƒ½å åœç©ºæ°”");
 		} else {
 			SecureRandom random = new SecureRandom();
 			int urandom = random.nextInt(43) + 1;
 			StringBuilder builder = new StringBuilder();
-			builder.append("ÄãÒòÎª ");
+			builder.append("ä½ å› ä¸º ");
 			builder.append(message.getOptions());
-			builder.append(" ³éµ½ÁË£º\r\n");
+			builder.append(" æŠ½åˆ°äº†ï¼š\r\n");
 			builder.append(this.CARD.get(urandom));
 			this.FREQ.set(urandom, this.FREQ.get(urandom) + 1);
 			entry.getMessage().userInfo(userid, builder.toString());
@@ -170,14 +170,14 @@ public class Executor_zhan extends ModuleExecutor {
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		if (message.getSection() == 0) {
-			entry.getMessage().diszInfo(diszid, userid, "Äã²»ÄÜÕ¼²·¿ÕÆø");
+			entry.getMessage().diszInfo(diszid, userid, "ä½ ä¸èƒ½å åœç©ºæ°”");
 		} else {
 			SecureRandom random = new SecureRandom();
 			int urandom = random.nextInt(43) + 1;
 			StringBuilder builder = new StringBuilder();
-			builder.append("ÄãÒòÎª ");
+			builder.append("ä½ å› ä¸º ");
 			builder.append(message.getOptions());
-			builder.append(" ³éµ½ÁË£º\r\n");
+			builder.append(" æŠ½åˆ°äº†ï¼š\r\n");
 			builder.append(this.CARD.get(urandom));
 			this.FREQ.set(urandom, this.FREQ.get(urandom) + 1);
 			entry.getMessage().diszInfo(diszid, userid, builder.toString());
@@ -188,14 +188,14 @@ public class Executor_zhan extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		if (message.getSection() == 0) {
-			entry.getMessage().gropInfo(gropid, userid, "Äã²»ÄÜÕ¼²·¿ÕÆø");
+			entry.getMessage().gropInfo(gropid, userid, "ä½ ä¸èƒ½å åœç©ºæ°”");
 		} else {
 			SecureRandom random = new SecureRandom();
 			int urandom = random.nextInt(43) + 1;
 			StringBuilder builder = new StringBuilder();
-			builder.append("ÄãÒòÎª ");
+			builder.append("ä½ å› ä¸º ");
 			builder.append(message.getOptions());
-			builder.append(" ³éµ½ÁË£º\r\n");
+			builder.append(" æŠ½åˆ°äº†ï¼š\r\n");
 			builder.append(this.CARD.get(urandom));
 			this.FREQ.set(urandom, this.FREQ.get(urandom) + 1);
 			entry.getMessage().gropInfo(gropid, userid, builder.toString());
@@ -214,9 +214,9 @@ public class Executor_zhan extends ModuleExecutor {
 		coverage = 44 - coverage;
 		for (int i = 0; i < 44; i++) {
 			if (this.FREQ.get(i) == 0) { continue; }
-			builder.append("\r\nµÚ ");
+			builder.append("\r\nç¬¬ ");
 			builder.append(i + 1);
-			builder.append(" ÕÅ : ");
+			builder.append(" å¼  : ");
 			builder.append(this.FREQ.get(i));
 			builder.append(" - ");
 			builder.append(this.FREQ.get(i) * 100 / coverage);

@@ -17,14 +17,14 @@ public class Module_Nickmap extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "core_nicknmap";
 	private static String MODULE_COMMANDNAME = "ddns";
-	private static String MODULE_DISPLAYNAME = "êÇ³ÆÓ³Éä";
-	private static String MODULE_DESCRIPTION = "½«¸´ÔÓµÄêÇ³ÆÓ³ÉäÎªÅóÓÑ¼äµÄ¼ò¶Ì³Æºô";
+	private static String MODULE_DISPLAYNAME = "æ˜µç§°æ˜ å°„";
+	private static String MODULE_DESCRIPTION = "å°†å¤æ‚çš„æ˜µç§°æ˜ å°„ä¸ºæœ‹å‹é—´çš„ç®€çŸ­ç§°å‘¼";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
@@ -35,7 +35,7 @@ public class Module_Nickmap extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -49,7 +49,7 @@ public class Module_Nickmap extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -60,7 +60,7 @@ public class Module_Nickmap extends Module {
 	@Override
 	public void init(LoggerX logger) throws Exception {
 		if (this.NEW_CONFIG) {
-			logger.seek("[Nickmap] ÅäÖÃÎÄ¼ş²»´æÔÚ - Éú³ÉÄ¬ÈÏÅäÖÃ");
+			logger.seek("[Nickmap] é…ç½®æ–‡ä»¶ä¸å­˜åœ¨ - ç”Ÿæˆé»˜è®¤é…ç½®");
 			this.CONFIG.setProperty("enable_nickname_replace", "false");
 			this.saveConfig();
 		} else {
@@ -88,7 +88,7 @@ public class Module_Nickmap extends Module {
 		}
 		reader.close();
 
-		logger.seek("[Nickmap] êÇ³ÆÌæ»»£º", this.ENABLE_REPLACE ? "ÆôÓÃ" : "½ûÓÃ");
+		logger.seek("[Nickmap] æ˜µç§°æ›¿æ¢ï¼š", this.ENABLE_REPLACE ? "å¯ç”¨" : "ç¦ç”¨");
 
 	}
 
@@ -110,7 +110,7 @@ public class Module_Nickmap extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// ¹¤¾ßº¯Êı
+	// å·¥å…·å‡½æ•°
 	//
 	// ==========================================================================================================================================================
 

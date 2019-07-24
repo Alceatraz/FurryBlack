@@ -19,18 +19,18 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "trigger_userdeny";
 	private static String MODULE_COMMANDNAME = "userdeny";
-	private static String MODULE_DISPLAYNAME = "¹ıÂËÆ÷";
-	private static String MODULE_DESCRIPTION = "ÓÃ»§¹ıÂËÆ÷";
+	private static String MODULE_DISPLAYNAME = "è¿‡æ»¤å™¨";
+	private static String MODULE_DESCRIPTION = "ç”¨æˆ·è¿‡æ»¤å™¨";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {
-			"»ñÈ¡IDºÅÂë - ÓÃÓÚ¹ıÂË"
+			"è·å–IDå·ç  - ç”¨äºè¿‡æ»¤"
 	};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
@@ -41,7 +41,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -59,7 +59,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -191,11 +191,11 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("À¹½ØË½ÁÄ£º");
+		builder.append("æ‹¦æˆªç§èŠï¼š");
 		builder.append(this.DENY_USER_COUNT);
-		builder.append("\r\nÀ¹½Ø×éÁÄ£º");
+		builder.append("\r\næ‹¦æˆªç»„èŠï¼š");
 		builder.append(this.DENY_DISZ_COUNT);
-		builder.append("\r\nÀ¹½ØÈºÁÄ£º");
+		builder.append("\r\næ‹¦æˆªç¾¤èŠï¼š");
 		builder.append(this.DENY_GROP_COUNT);
 		String res[] = new String[1];
 		res[0] = builder.toString();

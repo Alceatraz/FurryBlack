@@ -14,84 +14,84 @@ import com.sobte.cqp.jcq.event.JcqAppAbstract;
  * ===============================================
  *
  *
- * Comment by Alceatraz : ´ËÎÄ¼şÊÇJcqSDKµÄ×Ô´øDemo
+ * Comment by Alceatraz : æ­¤æ–‡ä»¶æ˜¯JcqSDKçš„è‡ªå¸¦Demo
  *
  *
  * ===============================================
  */
 /**
- * ±¾ÎÄ¼şÊÇJCQ²å¼şµÄÖ÷Àà<br>
+ * æœ¬æ–‡ä»¶æ˜¯JCQæ’ä»¶çš„ä¸»ç±»<br>
  * <br>
  *
- * ×¢ÒâĞŞ¸ÄjsonÖĞµÄclassÀ´¼ÓÔØÖ÷Àà£¬Èç²»ÉèÖÃÔòÀûÓÃappid¼ÓÔØ£¬×îºóÒ»¸öµ¥´Ê×Ô¶¯´óĞ´²éÕÒ<br>
- * Àı£ºappid(com.example.demo) Ôò¼ÓÔØÀà com.example.Demo<br>
- * ÎÄµµµØÖ·£º https://gitee.com/Sobte/JCQ-CoolQ <br>
- * Ìû×Ó£ºhttps://cqp.cc/t/37318 <br>
- * ¸¨Öú¿ª·¢±äÁ¿: {@link JcqAppAbstract#CQ CQ}({@link com.sobte.cqp.jcq.entity.CoolQ
- * ¿áQºËĞÄ²Ù×÷Àà}), {@link JcqAppAbstract#CC
- * CC}({@link com.sobte.cqp.jcq.entity.CQCode ¿áQÂë²Ù×÷Àà}), ¾ßÌå¹¦ÄÜ¿ÉÒÔ²é¿´ÎÄµµ
+ * æ³¨æ„ä¿®æ”¹jsonä¸­çš„classæ¥åŠ è½½ä¸»ç±»ï¼Œå¦‚ä¸è®¾ç½®åˆ™åˆ©ç”¨appidåŠ è½½ï¼Œæœ€åä¸€ä¸ªå•è¯è‡ªåŠ¨å¤§å†™æŸ¥æ‰¾<br>
+ * ä¾‹ï¼šappid(com.example.demo) åˆ™åŠ è½½ç±» com.example.Demo<br>
+ * æ–‡æ¡£åœ°å€ï¼š https://gitee.com/Sobte/JCQ-CoolQ <br>
+ * å¸–å­ï¼šhttps://cqp.cc/t/37318 <br>
+ * è¾…åŠ©å¼€å‘å˜é‡: {@link JcqAppAbstract#CQ CQ}({@link com.sobte.cqp.jcq.entity.CoolQ
+ * é…·Qæ ¸å¿ƒæ“ä½œç±»}), {@link JcqAppAbstract#CC
+ * CC}({@link com.sobte.cqp.jcq.entity.CQCode é…·Qç æ“ä½œç±»}), å…·ä½“åŠŸèƒ½å¯ä»¥æŸ¥çœ‹æ–‡æ¡£
  */
 public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	/**
-	 * ÓÃmain·½·¨µ÷ÊÔ¿ÉÒÔ×î´ó»¯µÄ¼Ó¿ì¿ª·¢Ğ§ÂÊ£¬¼ì²âºÍ¶¨Î»´íÎóÎ»ÖÃ<br/>
-	 * ÒÔÏÂ¾ÍÊÇÊ¹ÓÃMain·½·¨½øĞĞ²âÊÔµÄÒ»¸ö¼òÒ×°¸Àı
+	 * ç”¨mainæ–¹æ³•è°ƒè¯•å¯ä»¥æœ€å¤§åŒ–çš„åŠ å¿«å¼€å‘æ•ˆç‡ï¼Œæ£€æµ‹å’Œå®šä½é”™è¯¯ä½ç½®<br/>
+	 * ä»¥ä¸‹å°±æ˜¯ä½¿ç”¨Mainæ–¹æ³•è¿›è¡Œæµ‹è¯•çš„ä¸€ä¸ªç®€æ˜“æ¡ˆä¾‹
 	 *
-	 * @param args ÏµÍ³²ÎÊı
+	 * @param args ç³»ç»Ÿå‚æ•°
 	 */
 	public static void main(String[] args) {
-// CQ´Ë±äÁ¿ÎªÌØÊâ±äÁ¿£¬ÔÚJCQÆô¶¯Ê±ÊµÀı»¯¸³Öµ¸øÃ¿¸ö²å¼ş£¬¶øÔÚ²âÊÔÖĞ¿ÉÒÔÓÃCQDebugÀàÀ´´úÌæËû
-		JcqApp.CQ = new CQDebug();// new CQDebug("Ó¦ÓÃÄ¿Â¼","Ó¦ÓÃÃû³Æ") ¿ÉÒÔÓÃ´Ë¹¹ÔìÆ÷³õÊ¼»¯Ó¦ÓÃµÄÄ¿Â¼
-		JcqApp.CQ.logInfo("[JCQ] TEST Demo", "²âÊÔÆô¶¯");// ÏÖÔÚ¾Í¿ÉÒÔÓÃCQ±äÁ¿À´Ö´ĞĞÈÎºÎÏëÒªµÄ²Ù×÷ÁË
-// Òª²âÊÔÖ÷Àà¾ÍÏÈÊµÀı»¯Ò»¸öÖ÷Àà¶ÔÏó
+// CQæ­¤å˜é‡ä¸ºç‰¹æ®Šå˜é‡ï¼Œåœ¨JCQå¯åŠ¨æ—¶å®ä¾‹åŒ–èµ‹å€¼ç»™æ¯ä¸ªæ’ä»¶ï¼Œè€Œåœ¨æµ‹è¯•ä¸­å¯ä»¥ç”¨CQDebugç±»æ¥ä»£æ›¿ä»–
+		JcqApp.CQ = new CQDebug();// new CQDebug("åº”ç”¨ç›®å½•","åº”ç”¨åç§°") å¯ä»¥ç”¨æ­¤æ„é€ å™¨åˆå§‹åŒ–åº”ç”¨çš„ç›®å½•
+		JcqApp.CQ.logInfo("[JCQ] TEST Demo", "æµ‹è¯•å¯åŠ¨");// ç°åœ¨å°±å¯ä»¥ç”¨CQå˜é‡æ¥æ‰§è¡Œä»»ä½•æƒ³è¦çš„æ“ä½œäº†
+// è¦æµ‹è¯•ä¸»ç±»å°±å…ˆå®ä¾‹åŒ–ä¸€ä¸ªä¸»ç±»å¯¹è±¡
 		JcqDemo demo = new JcqDemo();
-// ÏÂÃæ¶ÔÖ÷Àà½øĞĞ¸÷·½·¨²âÊÔ,°´ÕÕJCQÔËĞĞ¹ı³Ì£¬Ä£ÄâÊµ¼ÊÇé¿ö
-		demo.startup();// ³ÌĞòÔËĞĞ¿ªÊ¼ µ÷ÓÃÓ¦ÓÃ³õÊ¼»¯·½·¨
-		demo.enable();// ³ÌĞò³õÊ¼»¯Íê³Éºó£¬ÆôÓÃÓ¦ÓÃ£¬ÈÃÓ¦ÓÃÕı³£¹¤×÷
-// ¿ªÊ¼Ä£Äâ·¢ËÍÏûÏ¢
-// Ä£ÄâË½ÁÄÏûÏ¢
-// ¿ªÊ¼Ä£ÄâQQÓÃ»§·¢ËÍÏûÏ¢£¬ÒÔÏÂQQÈ«²¿±àÔì£¬ÇëÎğÌí¼Ó
-		demo.privateMsg(0, 10001, 2234567819L, "Ğ¡½ã½ãÔ¼Âğ", 0);
-		demo.privateMsg(0, 10002, 2222222224L, "ß÷ÎØß÷ÎØß÷ÎØ", 0);
-		demo.privateMsg(0, 10003, 2111111334L, "¿ÉÒÔ¸øÎÒÄãµÄÎ¢ĞÅÂğ", 0);
-		demo.privateMsg(0, 10004, 3111111114L, "½ñÌìÌìÆøÕæºÃ", 0);
-		demo.privateMsg(0, 10005, 3333333334L, "ÄãºÃ»µ£¬¶¼²»ÀíÎÒQAQ", 0);
-// Ä£ÄâÈºÁÄÏûÏ¢
-// ¿ªÊ¼Ä£ÄâÈºÁÄÏûÏ¢
-		demo.groupMsg(0, 10006, 3456789012L, 3333333334L, "", "²Ëµ¥", 0);
-		demo.groupMsg(0, 10008, 3456789012L, 11111111114L, "", "Ğ¡ß÷ÄØ£¬³öÀ´ÍæÍæÑ½", 0);
-		demo.groupMsg(0, 10009, 427984429L, 3333333334L, "", "[CQ:at,qq=2222222224] À´Ò»ÆğÍæÓÎÏ·£¬¿ª³µ¿ª³µ", 0);
-		demo.groupMsg(0, 10010, 427984429L, 3333333334L, "", "ºÃ¾Ã²»¼ûÀ² [CQ:at,qq=11111111114]", 0);
-		demo.groupMsg(0, 10011, 427984429L, 11111111114L, "", "qwq ÓĞÃ»ÓĞÒ»Æğ¿ªµÄ\n[CQ:at,qq=3333333334]ÄãÍæÂï", 0);
+// ä¸‹é¢å¯¹ä¸»ç±»è¿›è¡Œå„æ–¹æ³•æµ‹è¯•,æŒ‰ç…§JCQè¿è¡Œè¿‡ç¨‹ï¼Œæ¨¡æ‹Ÿå®é™…æƒ…å†µ
+		demo.startup();// ç¨‹åºè¿è¡Œå¼€å§‹ è°ƒç”¨åº”ç”¨åˆå§‹åŒ–æ–¹æ³•
+		demo.enable();// ç¨‹åºåˆå§‹åŒ–å®Œæˆåï¼Œå¯ç”¨åº”ç”¨ï¼Œè®©åº”ç”¨æ­£å¸¸å·¥ä½œ
+// å¼€å§‹æ¨¡æ‹Ÿå‘é€æ¶ˆæ¯
+// æ¨¡æ‹Ÿç§èŠæ¶ˆæ¯
+// å¼€å§‹æ¨¡æ‹ŸQQç”¨æˆ·å‘é€æ¶ˆæ¯ï¼Œä»¥ä¸‹QQå…¨éƒ¨ç¼–é€ ï¼Œè¯·å‹¿æ·»åŠ 
+		demo.privateMsg(0, 10001, 2234567819L, "å°å§å§çº¦å—", 0);
+		demo.privateMsg(0, 10002, 2222222224L, "å–µå‘œå–µå‘œå–µå‘œ", 0);
+		demo.privateMsg(0, 10003, 2111111334L, "å¯ä»¥ç»™æˆ‘ä½ çš„å¾®ä¿¡å—", 0);
+		demo.privateMsg(0, 10004, 3111111114L, "ä»Šå¤©å¤©æ°”çœŸå¥½", 0);
+		demo.privateMsg(0, 10005, 3333333334L, "ä½ å¥½åï¼Œéƒ½ä¸ç†æˆ‘QAQ", 0);
+// æ¨¡æ‹Ÿç¾¤èŠæ¶ˆæ¯
+// å¼€å§‹æ¨¡æ‹Ÿç¾¤èŠæ¶ˆæ¯
+		demo.groupMsg(0, 10006, 3456789012L, 3333333334L, "", "èœå•", 0);
+		demo.groupMsg(0, 10008, 3456789012L, 11111111114L, "", "å°å–µå‘¢ï¼Œå‡ºæ¥ç©ç©å‘€", 0);
+		demo.groupMsg(0, 10009, 427984429L, 3333333334L, "", "[CQ:at,qq=2222222224] æ¥ä¸€èµ·ç©æ¸¸æˆï¼Œå¼€è½¦å¼€è½¦", 0);
+		demo.groupMsg(0, 10010, 427984429L, 3333333334L, "", "å¥½ä¹…ä¸è§å•¦ [CQ:at,qq=11111111114]", 0);
+		demo.groupMsg(0, 10011, 427984429L, 11111111114L, "", "qwq æœ‰æ²¡æœ‰ä¸€èµ·å¼€çš„\n[CQ:at,qq=3333333334]ä½ ç©å˜›", 0);
 // ......
-// ÒÀ´ÎÀàÍÆ£¬¿ÉÒÔ¸ù¾İÊµ¼ÊÇé¿öĞŞ¸Ä²ÎÊı£¬ºÍ·½·¨²âÊÔĞ§¹û
-// ÒÔÏÂÊÇÊÕÎ²´¥·¢º¯Êı
-// demo.disable();// Êµ¼Ê¹ı³ÌÖĞ³ÌĞò½áÊø²»»á´¥·¢disable£¬Ö»ÓĞÓÃ»§¹Ø±ÕÁË´Ë²å¼ş²Å»á´¥·¢
-		demo.exit();// ×îºó³ÌĞòÔËĞĞ½áÊø£¬µ÷ÓÃexit·½·¨
+// ä¾æ¬¡ç±»æ¨ï¼Œå¯ä»¥æ ¹æ®å®é™…æƒ…å†µä¿®æ”¹å‚æ•°ï¼Œå’Œæ–¹æ³•æµ‹è¯•æ•ˆæœ
+// ä»¥ä¸‹æ˜¯æ”¶å°¾è§¦å‘å‡½æ•°
+// demo.disable();// å®é™…è¿‡ç¨‹ä¸­ç¨‹åºç»“æŸä¸ä¼šè§¦å‘disableï¼Œåªæœ‰ç”¨æˆ·å…³é—­äº†æ­¤æ’ä»¶æ‰ä¼šè§¦å‘
+		demo.exit();// æœ€åç¨‹åºè¿è¡Œç»“æŸï¼Œè°ƒç”¨exitæ–¹æ³•
 	}
 
 	/**
-	 * ´ò°üºó½«²»»áµ÷ÓÃ Çë²»ÒªÔÚ´ËÊÂ¼şÖĞĞ´ÆäËû´úÂë
+	 * æ‰“åŒ…åå°†ä¸ä¼šè°ƒç”¨ è¯·ä¸è¦åœ¨æ­¤äº‹ä»¶ä¸­å†™å…¶ä»–ä»£ç 
 	 *
-	 * @return ·µ»ØÓ¦ÓÃµÄApiVer¡¢Appid
+	 * @return è¿”å›åº”ç”¨çš„ApiVerã€Appid
 	 */
 	@Override
 	public String appInfo() {
-// Ó¦ÓÃAppID,¹æÔò¼û http://d.cqp.me/Pro/¿ª·¢/»ù´¡ĞÅÏ¢#appid
-		String AppID = "com.example.demo";// ¼Ç×¡±àÒëºóµÄÎÄ¼şºÍjsonÒ²ÒªÊ¹ÓÃappid×öÎÄ¼şÃû
+// åº”ç”¨AppID,è§„åˆ™è§ http://d.cqp.me/Pro/å¼€å‘/åŸºç¡€ä¿¡æ¯#appid
+		String AppID = "com.example.demo";// è®°ä½ç¼–è¯‘åçš„æ–‡ä»¶å’Œjsonä¹Ÿè¦ä½¿ç”¨appidåšæ–‡ä»¶å
 		/**
-		 * ±¾º¯Êı¡¾½ûÖ¹¡¿´¦ÀíÆäËûÈÎºÎ´úÂë£¬ÒÔÃâ·¢ÉúÒì³£Çé¿ö¡£ ÈçĞèÖ´ĞĞ³õÊ¼»¯´úÂëÇëÔÚ startup ÊÂ¼şÖĞÖ´ĞĞ£¨Type=1001£©¡£
+		 * æœ¬å‡½æ•°ã€ç¦æ­¢ã€‘å¤„ç†å…¶ä»–ä»»ä½•ä»£ç ï¼Œä»¥å…å‘ç”Ÿå¼‚å¸¸æƒ…å†µã€‚ å¦‚éœ€æ‰§è¡Œåˆå§‹åŒ–ä»£ç è¯·åœ¨ startup äº‹ä»¶ä¸­æ‰§è¡Œï¼ˆType=1001ï¼‰ã€‚
 		 */
 		return ICQVer.CQAPIVER + "," + AppID;
 	}
 
 	/**
-	 * Ó¦ÓÃ½«±»Í£ÓÃ (Type=1004)<br>
-	 * µ±Ó¦ÓÃ±»Í£ÓÃÇ°£¬½«ÊÕµ½´ËÊÂ¼ş¡£<br>
-	 * Èç¹û¿áQÔØÈëÊ±Ó¦ÓÃÒÑ±»Í£ÓÃ£¬Ôò±¾º¯Êı¡¾²»»á¡¿±»µ÷ÓÃ¡£<br>
-	 * ÎŞÂÛ±¾Ó¦ÓÃÊÇ·ñ±»ÆôÓÃ£¬¿áQ¹Ø±ÕÇ°±¾º¯Êı¶¼¡¾²»»á¡¿±»µ÷ÓÃ¡£
+	 * åº”ç”¨å°†è¢«åœç”¨ (Type=1004)<br>
+	 * å½“åº”ç”¨è¢«åœç”¨å‰ï¼Œå°†æ”¶åˆ°æ­¤äº‹ä»¶ã€‚<br>
+	 * å¦‚æœé…·Qè½½å…¥æ—¶åº”ç”¨å·²è¢«åœç”¨ï¼Œåˆ™æœ¬å‡½æ•°ã€ä¸ä¼šã€‘è¢«è°ƒç”¨ã€‚<br>
+	 * æ— è®ºæœ¬åº”ç”¨æ˜¯å¦è¢«å¯ç”¨ï¼Œé…·Qå…³é—­å‰æœ¬å‡½æ•°éƒ½ã€ä¸ä¼šã€‘è¢«è°ƒç”¨ã€‚
 	 *
-	 * @return Çë¹Ì¶¨·µ»Ø0¡£
+	 * @return è¯·å›ºå®šè¿”å›0ã€‚
 	 */
 	@Override
 	public int disable() {
@@ -100,31 +100,31 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	}
 
 	/**
-	 * ÌÖÂÛ×éÏûÏ¢ (Type=4)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
+	 * è®¨è®ºç»„æ¶ˆæ¯ (Type=4)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
 	 *
-	 * @param subtype     ×ÓÀàĞÍ£¬Ä¿Ç°¹Ì¶¨Îª1
-	 * @param msgId       ÏûÏ¢ID
-	 * @param fromDiscuss À´Ô´ÌÖÂÛ×é
-	 * @param fromQQ      À´Ô´QQºÅ
-	 * @param msg         ÏûÏ¢ÄÚÈİ
-	 * @param font        ×ÖÌå
-	 * @return ¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û {@link #privateMsg Ë½ÁÄÏûÏ¢} µÄ·½·¨
+	 * @param subtype     å­ç±»å‹ï¼Œç›®å‰å›ºå®šä¸º1
+	 * @param msgId       æ¶ˆæ¯ID
+	 * @param fromDiscuss æ¥æºè®¨è®ºç»„
+	 * @param fromQQ      æ¥æºQQå·
+	 * @param msg         æ¶ˆæ¯å†…å®¹
+	 * @param font        å­—ä½“
+	 * @return å…³äºè¿”å›å€¼è¯´æ˜, è§ {@link #privateMsg ç§èŠæ¶ˆæ¯} çš„æ–¹æ³•
 	 */
 	@Override
 	public int discussMsg(int subtype, int msgId, long fromDiscuss, long fromQQ, String msg, int font) {
-// ÕâÀï´¦ÀíÏûÏ¢
+// è¿™é‡Œå¤„ç†æ¶ˆæ¯
 		return IMsg.MSG_IGNORE;
 	}
 
 	/**
-	 * Ó¦ÓÃÒÑ±»ÆôÓÃ (Type=1003)<br>
-	 * µ±Ó¦ÓÃ±»ÆôÓÃºó£¬½«ÊÕµ½´ËÊÂ¼ş¡£<br>
-	 * Èç¹û¿áQÔØÈëÊ±Ó¦ÓÃÒÑ±»ÆôÓÃ£¬ÔòÔÚ {@link #startup startup}(Type=1001,¿áQÆô¶¯)
-	 * ±»µ÷ÓÃºó£¬±¾º¯ÊıÒ²½«±»µ÷ÓÃÒ»´Î¡£<br>
-	 * Èç·Ç±ØÒª£¬²»½¨ÒéÔÚÕâÀï¼ÓÔØ´°¿Ú¡£
+	 * åº”ç”¨å·²è¢«å¯ç”¨ (Type=1003)<br>
+	 * å½“åº”ç”¨è¢«å¯ç”¨åï¼Œå°†æ”¶åˆ°æ­¤äº‹ä»¶ã€‚<br>
+	 * å¦‚æœé…·Qè½½å…¥æ—¶åº”ç”¨å·²è¢«å¯ç”¨ï¼Œåˆ™åœ¨ {@link #startup startup}(Type=1001,é…·Qå¯åŠ¨)
+	 * è¢«è°ƒç”¨åï¼Œæœ¬å‡½æ•°ä¹Ÿå°†è¢«è°ƒç”¨ä¸€æ¬¡ã€‚<br>
+	 * å¦‚éå¿…è¦ï¼Œä¸å»ºè®®åœ¨è¿™é‡ŒåŠ è½½çª—å£ã€‚
 	 *
-	 * @return Çë¹Ì¶¨·µ»Ø0¡£
+	 * @return è¯·å›ºå®šè¿”å›0ã€‚
 	 */
 	@Override
 	public int enable() {
@@ -133,11 +133,11 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	}
 
 	/**
-	 * ¿áQÍË³ö (Type=1002)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ö÷Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
-	 * ÎŞÂÛ±¾Ó¦ÓÃÊÇ·ñ±»ÆôÓÃ£¬±¾º¯Êı¶¼»áÔÚ¿áQÍË³öÇ°Ö´ĞĞÒ»´Î£¬ÇëÔÚÕâÀïÖ´ĞĞ²å¼ş¹Ø±Õ´úÂë¡£
+	 * é…·Qé€€å‡º (Type=1002)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€ä¸»çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
+	 * æ— è®ºæœ¬åº”ç”¨æ˜¯å¦è¢«å¯ç”¨ï¼Œæœ¬å‡½æ•°éƒ½ä¼šåœ¨é…·Qé€€å‡ºå‰æ‰§è¡Œä¸€æ¬¡ï¼Œè¯·åœ¨è¿™é‡Œæ‰§è¡Œæ’ä»¶å…³é—­ä»£ç ã€‚
 	 *
-	 * @return Çë¹Ì¶¨·µ»Ø0£¬·µ»Øºó¿áQ½«ºÜ¿ì¹Ø±Õ£¬Çë²»ÒªÔÙÍ¨¹ıÏß³ÌµÈ·½Ê½Ö´ĞĞÆäËû´úÂë¡£
+	 * @return è¯·å›ºå®šè¿”å›0ï¼Œè¿”å›åé…·Qå°†å¾ˆå¿«å…³é—­ï¼Œè¯·ä¸è¦å†é€šè¿‡çº¿ç¨‹ç­‰æ–¹å¼æ‰§è¡Œå…¶ä»–ä»£ç ã€‚
 	 */
 	@Override
 	public int exit() {
@@ -145,224 +145,224 @@ public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	}
 
 	/**
-	 * ºÃÓÑÊÂ¼ş-ºÃÓÑÒÑÌí¼Ó (Type=201)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
+	 * å¥½å‹äº‹ä»¶-å¥½å‹å·²æ·»åŠ  (Type=201)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
 	 *
-	 * @param subtype  ×ÓÀàĞÍ£¬Ä¿Ç°¹Ì¶¨Îª1
-	 * @param sendTime ·¢ËÍÊ±¼ä(Ê±¼ä´Á)
-	 * @param fromQQ   À´Ô´QQ
-	 * @return ¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û {@link #privateMsg Ë½ÁÄÏûÏ¢} µÄ·½·¨
+	 * @param subtype  å­ç±»å‹ï¼Œç›®å‰å›ºå®šä¸º1
+	 * @param sendTime å‘é€æ—¶é—´(æ—¶é—´æˆ³)
+	 * @param fromQQ   æ¥æºQQ
+	 * @return å…³äºè¿”å›å€¼è¯´æ˜, è§ {@link #privateMsg ç§èŠæ¶ˆæ¯} çš„æ–¹æ³•
 	 */
 	@Override
 	public int friendAdd(int subtype, int sendTime, long fromQQ) {
-		// ÕâÀï´¦ÀíÏûÏ¢
+		// è¿™é‡Œå¤„ç†æ¶ˆæ¯
 		return IMsg.MSG_IGNORE;
 	}
 
 	/**
-	 * ÈºÊÂ¼ş-¹ÜÀíÔ±±ä¶¯ (Type=101)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
+	 * ç¾¤äº‹ä»¶-ç®¡ç†å‘˜å˜åŠ¨ (Type=101)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
 	 *
-	 * @param subtype        ×ÓÀàĞÍ£¬1/±»È¡Ïû¹ÜÀíÔ± 2/±»ÉèÖÃ¹ÜÀíÔ±
-	 * @param sendTime       ·¢ËÍÊ±¼ä(Ê±¼ä´Á)
-	 * @param fromGroup      À´Ô´ÈººÅ
-	 * @param beingOperateQQ ±»²Ù×÷QQ
-	 * @return ¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û {@link #privateMsg Ë½ÁÄÏûÏ¢} µÄ·½·¨
+	 * @param subtype        å­ç±»å‹ï¼Œ1/è¢«å–æ¶ˆç®¡ç†å‘˜ 2/è¢«è®¾ç½®ç®¡ç†å‘˜
+	 * @param sendTime       å‘é€æ—¶é—´(æ—¶é—´æˆ³)
+	 * @param fromGroup      æ¥æºç¾¤å·
+	 * @param beingOperateQQ è¢«æ“ä½œQQ
+	 * @return å…³äºè¿”å›å€¼è¯´æ˜, è§ {@link #privateMsg ç§èŠæ¶ˆæ¯} çš„æ–¹æ³•
 	 */
 	@Override
 	public int groupAdmin(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
-		// ÕâÀï´¦ÀíÏûÏ¢
+		// è¿™é‡Œå¤„ç†æ¶ˆæ¯
 		return IMsg.MSG_IGNORE;
 	}
 
 	/**
-	 * ÈºÊÂ¼ş-Èº³ÉÔ±¼õÉÙ (Type=102)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
+	 * ç¾¤äº‹ä»¶-ç¾¤æˆå‘˜å‡å°‘ (Type=102)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
 	 *
-	 * @param subtype        ×ÓÀàĞÍ£¬1/ÈºÔ±Àë¿ª 2/ÈºÔ±±»Ìß
-	 * @param sendTime       ·¢ËÍÊ±¼ä(Ê±¼ä´Á)
-	 * @param fromGroup      À´Ô´ÈººÅ
-	 * @param fromQQ         ²Ù×÷ÕßQQ(½ö×ÓÀàĞÍÎª2Ê±´æÔÚ)
-	 * @param beingOperateQQ ±»²Ù×÷QQ
-	 * @return ¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û {@link #privateMsg Ë½ÁÄÏûÏ¢} µÄ·½·¨
+	 * @param subtype        å­ç±»å‹ï¼Œ1/ç¾¤å‘˜ç¦»å¼€ 2/ç¾¤å‘˜è¢«è¸¢
+	 * @param sendTime       å‘é€æ—¶é—´(æ—¶é—´æˆ³)
+	 * @param fromGroup      æ¥æºç¾¤å·
+	 * @param fromQQ         æ“ä½œè€…QQ(ä»…å­ç±»å‹ä¸º2æ—¶å­˜åœ¨)
+	 * @param beingOperateQQ è¢«æ“ä½œQQ
+	 * @return å…³äºè¿”å›å€¼è¯´æ˜, è§ {@link #privateMsg ç§èŠæ¶ˆæ¯} çš„æ–¹æ³•
 	 */
 	@Override
 	public int groupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-// ÕâÀï´¦ÀíÏûÏ¢
+// è¿™é‡Œå¤„ç†æ¶ˆæ¯
 		return IMsg.MSG_IGNORE;
 	}
 
 	/**
-	 * ÈºÊÂ¼ş-Èº³ÉÔ±Ôö¼Ó (Type=103)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
+	 * ç¾¤äº‹ä»¶-ç¾¤æˆå‘˜å¢åŠ  (Type=103)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
 	 *
-	 * @param subtype        ×ÓÀàĞÍ£¬1/¹ÜÀíÔ±ÒÑÍ¬Òâ 2/¹ÜÀíÔ±ÑûÇë
-	 * @param sendTime       ·¢ËÍÊ±¼ä(Ê±¼ä´Á)
-	 * @param fromGroup      À´Ô´ÈººÅ
-	 * @param fromQQ         ²Ù×÷ÕßQQ(¼´¹ÜÀíÔ±QQ)
-	 * @param beingOperateQQ ±»²Ù×÷QQ(¼´¼ÓÈºµÄQQ)
-	 * @return ¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û {@link #privateMsg Ë½ÁÄÏûÏ¢} µÄ·½·¨
+	 * @param subtype        å­ç±»å‹ï¼Œ1/ç®¡ç†å‘˜å·²åŒæ„ 2/ç®¡ç†å‘˜é‚€è¯·
+	 * @param sendTime       å‘é€æ—¶é—´(æ—¶é—´æˆ³)
+	 * @param fromGroup      æ¥æºç¾¤å·
+	 * @param fromQQ         æ“ä½œè€…QQ(å³ç®¡ç†å‘˜QQ)
+	 * @param beingOperateQQ è¢«æ“ä½œQQ(å³åŠ ç¾¤çš„QQ)
+	 * @return å…³äºè¿”å›å€¼è¯´æ˜, è§ {@link #privateMsg ç§èŠæ¶ˆæ¯} çš„æ–¹æ³•
 	 */
 	@Override
 	public int groupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-		// ÕâÀï´¦ÀíÏûÏ¢
+		// è¿™é‡Œå¤„ç†æ¶ˆæ¯
 		return IMsg.MSG_IGNORE;
 	}
 
 	/**
-	 * ÈºÏûÏ¢ (Type=2)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
+	 * ç¾¤æ¶ˆæ¯ (Type=2)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
 	 *
-	 * @param subType       ×ÓÀàĞÍ£¬Ä¿Ç°¹Ì¶¨Îª1
-	 * @param msgId         ÏûÏ¢ID
-	 * @param fromGroup     À´Ô´ÈººÅ
-	 * @param fromQQ        À´Ô´QQºÅ
-	 * @param fromAnonymous À´Ô´ÄäÃûÕß
-	 * @param msg           ÏûÏ¢ÄÚÈİ
-	 * @param font          ×ÖÌå
-	 * @return ¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û {@link #privateMsg Ë½ÁÄÏûÏ¢} µÄ·½·¨
+	 * @param subType       å­ç±»å‹ï¼Œç›®å‰å›ºå®šä¸º1
+	 * @param msgId         æ¶ˆæ¯ID
+	 * @param fromGroup     æ¥æºç¾¤å·
+	 * @param fromQQ        æ¥æºQQå·
+	 * @param fromAnonymous æ¥æºåŒ¿åè€…
+	 * @param msg           æ¶ˆæ¯å†…å®¹
+	 * @param font          å­—ä½“
+	 * @return å…³äºè¿”å›å€¼è¯´æ˜, è§ {@link #privateMsg ç§èŠæ¶ˆæ¯} çš„æ–¹æ³•
 	 */
 	@SuppressWarnings("unused")
 	@Override
 	public int groupMsg(int subType, int msgId, long fromGroup, long fromQQ, String fromAnonymous, String msg, int font) {
-		// Èç¹ûÏûÏ¢À´×ÔÄäÃûÕß
+		// å¦‚æœæ¶ˆæ¯æ¥è‡ªåŒ¿åè€…
 		if (fromQQ == 80000000L && !fromAnonymous.equals("")) { JcqApp.CQ.getAnonymous(fromAnonymous); }
-		// ½âÎöCQÂë°¸Àı Èç£º[CQ:at,qq=100000]
-		// ½âÎöCQÂë ³£ÓÃ±äÁ¿Îª CC(CQCode) ´Ë±äÁ¿×¨ÎªCQÂëÕâÖÖÌØ¶¨¸ñÊ½×öÁË½âÎöºÍ·â×°
+		// è§£æCQç æ¡ˆä¾‹ å¦‚ï¼š[CQ:at,qq=100000]
+		// è§£æCQç  å¸¸ç”¨å˜é‡ä¸º CC(CQCode) æ­¤å˜é‡ä¸“ä¸ºCQç è¿™ç§ç‰¹å®šæ ¼å¼åšäº†è§£æå’Œå°è£…
 		// CC.analysis();
-		// ´Ë·½·¨½«CQÂë½âÎöÎª¿ÉÖ±½Ó¶ÁÈ¡µÄ¶ÔÏó
-		// ½âÎöÏûÏ¢ÖĞµÄQQID
+		// æ­¤æ–¹æ³•å°†CQç è§£æä¸ºå¯ç›´æ¥è¯»å–çš„å¯¹è±¡
+		// è§£ææ¶ˆæ¯ä¸­çš„QQID
 		// long qqId = CC.getAt(msg);
-		// ´Ë·½·¨Îª¼ò±ã·½·¨£¬»ñÈ¡µÚÒ»¸öCQ:atÀïµÄQQºÅ£¬´íÎóÊ±Îª£º-1000
+		// æ­¤æ–¹æ³•ä¸ºç®€ä¾¿æ–¹æ³•ï¼Œè·å–ç¬¬ä¸€ä¸ªCQ:até‡Œçš„QQå·ï¼Œé”™è¯¯æ—¶ä¸ºï¼š-1000
 		// List<Long> qqIds = CC.getAts(msg);
-		// ´Ë·½·¨Îª»ñÈ¡ÏûÏ¢ÖĞËùÓĞµÄCQÂë¶ÔÏó£¬´íÎóÊ±·µ»Ø ÒÑ½âÎöµÄÊı¾İ
-		// ½âÎöÏûÏ¢ÖĞµÄÍ¼Æ¬
+		// æ­¤æ–¹æ³•ä¸ºè·å–æ¶ˆæ¯ä¸­æ‰€æœ‰çš„CQç å¯¹è±¡ï¼Œé”™è¯¯æ—¶è¿”å› å·²è§£æçš„æ•°æ®
+		// è§£ææ¶ˆæ¯ä¸­çš„å›¾ç‰‡
 		// CQImage image = CC.getCQImage(msg);
-		// ´Ë·½·¨Îª¼ò±ã·½·¨£¬»ñÈ¡µÚÒ»¸öCQ:imageÀïµÄÍ¼Æ¬Êı¾İ£¬´íÎóÊ±´òÓ¡Òì³£µ½¿ØÖÆÌ¨£¬·µ»Ø null
+		// æ­¤æ–¹æ³•ä¸ºç®€ä¾¿æ–¹æ³•ï¼Œè·å–ç¬¬ä¸€ä¸ªCQ:imageé‡Œçš„å›¾ç‰‡æ•°æ®ï¼Œé”™è¯¯æ—¶æ‰“å°å¼‚å¸¸åˆ°æ§åˆ¶å°ï¼Œè¿”å› null
 		// List<CQImage> images = CC.getCQImages(msg);
-		// ´Ë·½·¨Îª»ñÈ¡ÏûÏ¢ÖĞËùÓĞµÄCQÍ¼Æ¬Êı¾İ£¬´íÎóÊ±´òÓ¡Òì³£µ½¿ØÖÆÌ¨£¬·µ»Ø ÒÑ½âÎöµÄÊı¾İ
-		// ÕâÀï´¦ÀíÏûÏ¢
-		JcqApp.CQ.sendGroupMsg(fromGroup, JcqApp.CC.at(fromQQ) + "Äã·¢ËÍÁËÕâÑùµÄÏûÏ¢£º" + msg + "\nÀ´×ÔJava²å¼ş");
+		// æ­¤æ–¹æ³•ä¸ºè·å–æ¶ˆæ¯ä¸­æ‰€æœ‰çš„CQå›¾ç‰‡æ•°æ®ï¼Œé”™è¯¯æ—¶æ‰“å°å¼‚å¸¸åˆ°æ§åˆ¶å°ï¼Œè¿”å› å·²è§£æçš„æ•°æ®
+		// è¿™é‡Œå¤„ç†æ¶ˆæ¯
+		JcqApp.CQ.sendGroupMsg(fromGroup, JcqApp.CC.at(fromQQ) + "ä½ å‘é€äº†è¿™æ ·çš„æ¶ˆæ¯ï¼š" + msg + "\næ¥è‡ªJavaæ’ä»¶");
 		return IMsg.MSG_IGNORE;
 	}
 
 	/**
-	 * ÈºÎÄ¼şÉÏ´«ÊÂ¼ş (Type=11)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
+	 * ç¾¤æ–‡ä»¶ä¸Šä¼ äº‹ä»¶ (Type=11)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
 	 *
-	 * @param subType   ×ÓÀàĞÍ£¬Ä¿Ç°¹Ì¶¨Îª1
-	 * @param sendTime  ·¢ËÍÊ±¼ä(Ê±¼ä´Á)// 10Î»Ê±¼ä´Á
-	 * @param fromGroup À´Ô´ÈººÅ
-	 * @param fromQQ    À´Ô´QQºÅ
-	 * @param file      ÉÏ´«ÎÄ¼şĞÅÏ¢
-	 * @return ¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û {@link #privateMsg Ë½ÁÄÏûÏ¢} µÄ·½·¨
+	 * @param subType   å­ç±»å‹ï¼Œç›®å‰å›ºå®šä¸º1
+	 * @param sendTime  å‘é€æ—¶é—´(æ—¶é—´æˆ³)// 10ä½æ—¶é—´æˆ³
+	 * @param fromGroup æ¥æºç¾¤å·
+	 * @param fromQQ    æ¥æºQQå·
+	 * @param file      ä¸Šä¼ æ–‡ä»¶ä¿¡æ¯
+	 * @return å…³äºè¿”å›å€¼è¯´æ˜, è§ {@link #privateMsg ç§èŠæ¶ˆæ¯} çš„æ–¹æ³•
 	 */
 	@Override
 	public int groupUpload(int subType, int sendTime, long fromGroup, long fromQQ, String file) {
 		GroupFile groupFile = JcqApp.CQ.getGroupFile(file);
 		if (groupFile == null) { return IMsg.MSG_IGNORE; }
-// ÕâÀï´¦ÀíÏûÏ¢
+// è¿™é‡Œå¤„ç†æ¶ˆæ¯
 		return IMsg.MSG_IGNORE;
 	}
 
 	/**
-	 * ±¾º¯Êı»áÔÚJCQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£
+	 * æœ¬å‡½æ•°ä¼šåœ¨JCQã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚
 	 *
-	 * @return ¹Ì¶¨·µ»Ø0
+	 * @return å›ºå®šè¿”å›0
 	 */
 	public int menuA() {
-		JOptionPane.showMessageDialog(null, "ÕâÊÇ²âÊÔ²Ëµ¥A£¬¿ÉÒÔÔÚÕâÀï¼ÓÔØ´°¿Ú");
+		JOptionPane.showMessageDialog(null, "è¿™æ˜¯æµ‹è¯•èœå•Aï¼Œå¯ä»¥åœ¨è¿™é‡ŒåŠ è½½çª—å£");
 		return 0;
 	}
 
 	/**
-	 * ±¾º¯Êı»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£
+	 * æœ¬å‡½æ•°ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚
 	 *
-	 * @return ¹Ì¶¨·µ»Ø0
+	 * @return å›ºå®šè¿”å›0
 	 */
 	public int menuB() {
-		JOptionPane.showMessageDialog(null, "ÕâÊÇ²âÊÔ²Ëµ¥B£¬¿ÉÒÔÔÚÕâÀï¼ÓÔØ´°¿Ú");
+		JOptionPane.showMessageDialog(null, "è¿™æ˜¯æµ‹è¯•èœå•Bï¼Œå¯ä»¥åœ¨è¿™é‡ŒåŠ è½½çª—å£");
 		return 0;
 	}
 
 	/**
-	 * Ë½ÁÄÏûÏ¢ (Type=21)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
+	 * ç§èŠæ¶ˆæ¯ (Type=21)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
 	 *
-	 * @param subType ×ÓÀàĞÍ£¬11/À´×ÔºÃÓÑ 1/À´×ÔÔÚÏß×´Ì¬ 2/À´×ÔÈº 3/À´×ÔÌÖÂÛ×é
-	 * @param msgId   ÏûÏ¢ID
-	 * @param fromQQ  À´Ô´QQ
-	 * @param msg     ÏûÏ¢ÄÚÈİ
-	 * @param font    ×ÖÌå
-	 * @return ·µ»ØÖµ*²»ÄÜ*Ö±½Ó·µ»ØÎÄ±¾ Èç¹ûÒª»Ø¸´ÏûÏ¢£¬Çëµ÷ÓÃapi·¢ËÍ<br>
-	 *         ÕâÀï ·µ»Ø {@link IMsg#MSG_INTERCEPT MSG_INTERCEPT} - ½Ø¶Ï±¾ÌõÏûÏ¢£¬²»ÔÙ¼ÌĞø´¦Àí<br>
-	 *         ×¢Òâ£ºÓ¦ÓÃÓÅÏÈ¼¶ÉèÖÃÎª"×î¸ß"(10000)Ê±£¬²»µÃÊ¹ÓÃ±¾·µ»ØÖµ<br>
-	 *         Èç¹û²»»Ø¸´ÏûÏ¢£¬½»ÓÉÖ®ºóµÄÓ¦ÓÃ/¹ıÂËÆ÷´¦Àí£¬ÕâÀï ·µ»Ø {@link IMsg#MSG_IGNORE MSG_IGNORE} -
-	 *         ºöÂÔ±¾ÌõÏûÏ¢
+	 * @param subType å­ç±»å‹ï¼Œ11/æ¥è‡ªå¥½å‹ 1/æ¥è‡ªåœ¨çº¿çŠ¶æ€ 2/æ¥è‡ªç¾¤ 3/æ¥è‡ªè®¨è®ºç»„
+	 * @param msgId   æ¶ˆæ¯ID
+	 * @param fromQQ  æ¥æºQQ
+	 * @param msg     æ¶ˆæ¯å†…å®¹
+	 * @param font    å­—ä½“
+	 * @return è¿”å›å€¼*ä¸èƒ½*ç›´æ¥è¿”å›æ–‡æœ¬ å¦‚æœè¦å›å¤æ¶ˆæ¯ï¼Œè¯·è°ƒç”¨apiå‘é€<br>
+	 *         è¿™é‡Œ è¿”å› {@link IMsg#MSG_INTERCEPT MSG_INTERCEPT} - æˆªæ–­æœ¬æ¡æ¶ˆæ¯ï¼Œä¸å†ç»§ç»­å¤„ç†<br>
+	 *         æ³¨æ„ï¼šåº”ç”¨ä¼˜å…ˆçº§è®¾ç½®ä¸º"æœ€é«˜"(10000)æ—¶ï¼Œä¸å¾—ä½¿ç”¨æœ¬è¿”å›å€¼<br>
+	 *         å¦‚æœä¸å›å¤æ¶ˆæ¯ï¼Œäº¤ç”±ä¹‹åçš„åº”ç”¨/è¿‡æ»¤å™¨å¤„ç†ï¼Œè¿™é‡Œ è¿”å› {@link IMsg#MSG_IGNORE MSG_IGNORE} -
+	 *         å¿½ç•¥æœ¬æ¡æ¶ˆæ¯
 	 */
 	@Override
 	public int privateMsg(int subType, int msgId, long fromQQ, String msg, int font) {
-// ÕâÀï´¦ÀíÏûÏ¢
-		JcqApp.CQ.sendPrivateMsg(fromQQ, "Äã·¢ËÍÁËÕâÑùµÄÏûÏ¢£º" + msg + "\nÀ´×ÔJava²å¼ş");
+// è¿™é‡Œå¤„ç†æ¶ˆæ¯
+		JcqApp.CQ.sendPrivateMsg(fromQQ, "ä½ å‘é€äº†è¿™æ ·çš„æ¶ˆæ¯ï¼š" + msg + "\næ¥è‡ªJavaæ’ä»¶");
 		return IMsg.MSG_IGNORE;
 	}
 
 	/**
-	 * ÇëÇó-ºÃÓÑÌí¼Ó (Type=301)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
+	 * è¯·æ±‚-å¥½å‹æ·»åŠ  (Type=301)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
 	 *
-	 * @param subtype      ×ÓÀàĞÍ£¬Ä¿Ç°¹Ì¶¨Îª1
-	 * @param sendTime     ·¢ËÍÊ±¼ä(Ê±¼ä´Á)
-	 * @param fromQQ       À´Ô´QQ
-	 * @param msg          ¸½ÑÔ
-	 * @param responseFlag ·´À¡±êÊ¶(´¦ÀíÇëÇóÓÃ)
-	 * @return ¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û {@link #privateMsg Ë½ÁÄÏûÏ¢} µÄ·½·¨
+	 * @param subtype      å­ç±»å‹ï¼Œç›®å‰å›ºå®šä¸º1
+	 * @param sendTime     å‘é€æ—¶é—´(æ—¶é—´æˆ³)
+	 * @param fromQQ       æ¥æºQQ
+	 * @param msg          é™„è¨€
+	 * @param responseFlag åé¦ˆæ ‡è¯†(å¤„ç†è¯·æ±‚ç”¨)
+	 * @return å…³äºè¿”å›å€¼è¯´æ˜, è§ {@link #privateMsg ç§èŠæ¶ˆæ¯} çš„æ–¹æ³•
 	 */
 	@Override
 	public int requestAddFriend(int subtype, int sendTime, long fromQQ, String msg, String responseFlag) {
-		// REQUEST_ADOPT Í¨¹ı REQUEST_REFUSE ¾Ü¾ø
-		JcqApp.CQ.setFriendAddRequest(responseFlag, IRequest.REQUEST_ADOPT, null); // Í¬ÒâºÃÓÑÌí¼ÓÇëÇó
+		// REQUEST_ADOPT é€šè¿‡ REQUEST_REFUSE æ‹’ç»
+		JcqApp.CQ.setFriendAddRequest(responseFlag, IRequest.REQUEST_ADOPT, null); // åŒæ„å¥½å‹æ·»åŠ è¯·æ±‚
 		return IMsg.MSG_IGNORE;
 	}
 
 	/**
-	 * ÇëÇó-ÈºÌí¼Ó (Type=302)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
+	 * è¯·æ±‚-ç¾¤æ·»åŠ  (Type=302)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
 	 *
-	 * @param subtype      ×ÓÀàĞÍ£¬1/ËûÈËÉêÇëÈëÈº 2/×Ô¼º(¼´µÇÂ¼ºÅ)ÊÜÑûÈëÈº
-	 * @param sendTime     ·¢ËÍÊ±¼ä(Ê±¼ä´Á)
-	 * @param fromGroup    À´Ô´ÈººÅ
-	 * @param fromQQ       À´Ô´QQ
-	 * @param msg          ¸½ÑÔ
-	 * @param responseFlag ·´À¡±êÊ¶(´¦ÀíÇëÇóÓÃ)
-	 * @return ¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û {@link #privateMsg Ë½ÁÄÏûÏ¢} µÄ·½·¨
+	 * @param subtype      å­ç±»å‹ï¼Œ1/ä»–äººç”³è¯·å…¥ç¾¤ 2/è‡ªå·±(å³ç™»å½•å·)å—é‚€å…¥ç¾¤
+	 * @param sendTime     å‘é€æ—¶é—´(æ—¶é—´æˆ³)
+	 * @param fromGroup    æ¥æºç¾¤å·
+	 * @param fromQQ       æ¥æºQQ
+	 * @param msg          é™„è¨€
+	 * @param responseFlag åé¦ˆæ ‡è¯†(å¤„ç†è¯·æ±‚ç”¨)
+	 * @return å…³äºè¿”å›å€¼è¯´æ˜, è§ {@link #privateMsg ç§èŠæ¶ˆæ¯} çš„æ–¹æ³•
 	 */
 	@Override
 	public int requestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
-		// ÕâÀï´¦ÀíÏûÏ¢
-		// REQUEST_ADOPT Í¨¹ı
-		// REQUEST_REFUSE ¾Ü¾ø
-		// REQUEST_GROUP_ADD ÈºÌí¼Ó
-		// REQUEST_GROUP_INVITE ÈºÑûÇë
+		// è¿™é‡Œå¤„ç†æ¶ˆæ¯
+		// REQUEST_ADOPT é€šè¿‡
+		// REQUEST_REFUSE æ‹’ç»
+		// REQUEST_GROUP_ADD ç¾¤æ·»åŠ 
+		// REQUEST_GROUP_INVITE ç¾¤é‚€è¯·
 		if (subtype == 1) { JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_ADD, IRequest.REQUEST_ADOPT, null); }
 		if (subtype == 2) { JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null); }
 		return IMsg.MSG_IGNORE;
 	}
 
 	/**
-	 * ¿áQÆô¶¯ (Type=1001)<br>
-	 * ±¾·½·¨»áÔÚ¿áQ¡¾Ö÷Ïß³Ì¡¿ÖĞ±»µ÷ÓÃ¡£<br>
-	 * ÇëÔÚÕâÀïÖ´ĞĞ²å¼ş³õÊ¼»¯´úÂë¡£<br>
-	 * ÇëÎñ±Ø¾¡¿ì·µ»Ø±¾×Ó³ÌĞò£¬·ñÔò»á¿¨×¡ÆäËû²å¼şÒÔ¼°Ö÷³ÌĞòµÄ¼ÓÔØ¡£
+	 * é…·Qå¯åŠ¨ (Type=1001)<br>
+	 * æœ¬æ–¹æ³•ä¼šåœ¨é…·Qã€ä¸»çº¿ç¨‹ã€‘ä¸­è¢«è°ƒç”¨ã€‚<br>
+	 * è¯·åœ¨è¿™é‡Œæ‰§è¡Œæ’ä»¶åˆå§‹åŒ–ä»£ç ã€‚<br>
+	 * è¯·åŠ¡å¿…å°½å¿«è¿”å›æœ¬å­ç¨‹åºï¼Œå¦åˆ™ä¼šå¡ä½å…¶ä»–æ’ä»¶ä»¥åŠä¸»ç¨‹åºçš„åŠ è½½ã€‚
 	 *
-	 * @return Çë¹Ì¶¨·µ»Ø0
+	 * @return è¯·å›ºå®šè¿”å›0
 	 */
 	@Override
 	@SuppressWarnings("unused")
 	public int startup() {
 		JcqApp.CQ.getAppDirectory();
-// ·µ»ØÈç£ºD:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
-// Ó¦ÓÃµÄËùÓĞÊı¾İ¡¢ÅäÖÃ¡¾±ØĞë¡¿´æ·ÅÓÚ´ËÄ¿Â¼£¬±ÜÃâ¸øÓÃ»§´øÀ´À§ÈÅ¡£
+// è¿”å›å¦‚ï¼šD:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
+// åº”ç”¨çš„æ‰€æœ‰æ•°æ®ã€é…ç½®ã€å¿…é¡»ã€‘å­˜æ”¾äºæ­¤ç›®å½•ï¼Œé¿å…ç»™ç”¨æˆ·å¸¦æ¥å›°æ‰°ã€‚
 		return 0;
 	}
 }

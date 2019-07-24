@@ -12,14 +12,14 @@ public class Executor_admin extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ƒ£øÈª˘±æ≈‰÷√
+	// Ê®°ÂùóÂü∫Êú¨ÈÖçÁΩÆ
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_admin";
 	private static String MODULE_COMMANDNAME = "admin";
 	private static String MODULE_DISPLAYNAME = "shell";
-	private static String MODULE_DESCRIPTION = "π‹¿Ì‘±shell";
+	private static String MODULE_DESCRIPTION = "ÁÆ°ÁêÜÂëòshell";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
@@ -30,7 +30,7 @@ public class Executor_admin extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ≥…‘±±‰¡ø
+	// ÊàêÂëòÂèòÈáè
 	//
 	// ==========================================================================================================================================================
 
@@ -80,7 +80,7 @@ public class Executor_admin extends ModuleExecutor {
 
 			switch (message.getSegment()[0]) {
 			case "debug":
-				entry.getMessage().adminInfo("DEBUG °˙ " + entry.switchDEBUG());
+				entry.getMessage().adminInfo("DEBUG ‚Üí " + entry.switchDEBUG());
 				return true;
 			case "report":
 				entry.getSystemd().sendModuleReport(message);

@@ -1,4 +1,4 @@
-﻿package studio.blacktech.coolqbot.furryblack;
+package studio.blacktech.coolqbot.furryblack;
 
 import java.io.File;
 import java.nio.file.Paths;

@@ -32,32 +32,32 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "listener_topspeak";
 	private static String MODULE_COMMANDNAME = "shui";
-	private static String MODULE_DISPLAYNAME = "Ë®ÈºÍ³¼Æ";
-	private static String MODULE_DESCRIPTION = "Ë®ÈºÍ³¼Æ";
+	private static String MODULE_DISPLAYNAME = "æ°´ç¾¤ç»Ÿè®¡";
+	private static String MODULE_DESCRIPTION = "æ°´ç¾¤ç»Ÿè®¡";
 	private static String MODULE_VERSION = "18.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {
-			"¼ÇÂ¼ËùÓĞÏûÏ¢"
+			"è®°å½•æ‰€æœ‰æ¶ˆæ¯"
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"¼ÇÂ¼ËùÓĞÏûÏ¢"
+			"è®°å½•æ‰€æœ‰æ¶ˆæ¯"
 	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"»ñÈ¡ÏûÏ¢·¢ËÍÈº",
-			"»ñÈ¡ÏûÏ¢·¢ËÍÈË",
+			"è·å–æ¶ˆæ¯å‘é€ç¾¤",
+			"è·å–æ¶ˆæ¯å‘é€äºº",
 	};
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -71,7 +71,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -306,10 +306,10 @@ public class Listener_TopSpeak extends ModuleListener {
 					}
 				}
 
-				// ´¿CQ CodeµÄÏûÏ¢»á±»Ìæ»»Îª "" °´ 1¾ä1×Ö¼ÆËã
-				// ²»ÄÜÖ±½Ó°´ÕÕÒ»¾äÌí¼Ó½ø SENTENCE
-				// ·ñÔò»á³öÏÖ´óÁ¿Õ¼Î»µÄ ""
-				// ±ØĞë¶ÀÁ¢´æ´¢Ò»¸öÊı×Ö
+				// çº¯CQ Codeçš„æ¶ˆæ¯ä¼šè¢«æ›¿æ¢ä¸º "" æŒ‰ 1å¥1å­—è®¡ç®—
+				// ä¸èƒ½ç›´æ¥æŒ‰ç…§ä¸€å¥æ·»åŠ è¿› SENTENCE
+				// å¦åˆ™ä¼šå‡ºç°å¤§é‡å ä½çš„ ""
+				// å¿…é¡»ç‹¬ç«‹å­˜å‚¨ä¸€ä¸ªæ•°å­—
 				if (temp.isPureCQS()) {
 					this.USER_PURECCODE++;
 					this.USER_CHARACTER++;
@@ -336,7 +336,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			String gropid = message.getSwitch("gropid");
 			if (gropid == null) {
 				return new String[] {
-						"²ÎÊı´íÎó --gropid Îª¿Õ"
+						"å‚æ•°é”™è¯¯ --gropid ä¸ºç©º"
 				};
 			} else {
 				return this.generateMemberRank(Long.parseLong(gropid));
@@ -359,23 +359,23 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		// ===========================================================
 
-		builder.append("£¨1/4£©Ë®ÈºÍ³¼Æ");
+		builder.append("ï¼ˆ1/4ï¼‰æ°´ç¾¤ç»Ÿè®¡");
 
-		builder.append("\r\n×ÜÏûÏ¢Êı£º");
+		builder.append("\r\næ€»æ¶ˆæ¯æ•°ï¼š");
 		builder.append(groupStatus.GROP_MESSAGES);
-		builder.append("\r\n·¢ÑÔÌõÊı£º");
+		builder.append("\r\nå‘è¨€æ¡æ•°ï¼š");
 		builder.append(groupStatus.GROP_SENTENCE.size() + groupStatus.GROP_PURECCODE);
-		builder.append("\r\n·¢ÑÔ×ÖÊı£º");
+		builder.append("\r\nå‘è¨€å­—æ•°ï¼š");
 		builder.append(groupStatus.GROP_CHARACTER);
-		builder.append("\r\nÃüÁî´ÎÊı£º");
+		builder.append("\r\nå‘½ä»¤æ¬¡æ•°ï¼š");
 		builder.append(groupStatus.GROP_COMMANDS.size());
-		builder.append("\r\n·¢ÑÔÍ¼Êı£º");
+		builder.append("\r\nå‘è¨€å›¾æ•°ï¼š");
 		builder.append(groupStatus.GROP_PICTURES.size());
-		builder.append("\r\nÉÁÕÕÍ¼Êı£º");
+		builder.append("\r\né—ªç…§å›¾æ•°ï¼š");
 		builder.append(groupStatus.GROP_SNAPSHOT);
-		builder.append("\r\nÊÓÆµ¸öÊı£º");
+		builder.append("\r\nè§†é¢‘ä¸ªæ•°ï¼š");
 		builder.append(groupStatus.GROP_TAPVIDEO);
-		builder.append("\r\nºì°ü¸öÊı£º");
+		builder.append("\r\nçº¢åŒ…ä¸ªæ•°ï¼š");
 		builder.append(groupStatus.GROP_HONGBAOS);
 
 		report.add(builder.toString());
@@ -402,7 +402,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		}
 
 		if (allMemberRank.size() > 0) {
-			builder.append("£¨2/4£©³ÉÔ±ÅÅĞĞ£º");
+			builder.append("ï¼ˆ2/4ï¼‰æˆå‘˜æ’è¡Œï¼š");
 			int i = 1;
 			for (int userRank : allMemberRank.keySet()) {
 				HashSet<Long> tempSet = allMemberRank.get(userRank);
@@ -416,17 +416,17 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(userid);
 					builder.append(") ");
 					builder.append(userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE);
-					builder.append("¾ä/");
+					builder.append("å¥/");
 					builder.append(userStatus.USER_CHARACTER);
-					builder.append("×Ö/");
+					builder.append("å­—/");
 					builder.append(userStatus.USER_PICTURES.size());
-					builder.append("Í¼/");
+					builder.append("å›¾/");
 					builder.append(userStatus.USER_SNAPSHOT);
-					builder.append("ÉÁ/");
+					builder.append("é—ª/");
 					builder.append(userStatus.USER_TAPVIDEO);
-					builder.append("Æ¬/");
+					builder.append("ç‰‡/");
 					builder.append(userStatus.USER_HONGBAOS);
-					builder.append("°ü");
+					builder.append("åŒ…");
 				}
 				i = i + tempSet.size();
 			}
@@ -441,14 +441,18 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		for (String message : groupStatus.GROP_SENTENCE) {
 
-			// ºÏ²¢³£¼ûÄÚÈİ
-			if (message.equals("?")) { message = "£¿"; }
-			if (message.equals("wky")) { message = "ÎÒ¿ÉÒÔ"; }
-			if (message.equals("whl")) { message = "ÎÒºÃÁË"; }
-			if (message.equals("hso")) { message = "ºÃÉ§Å¶"; }
-			if (message.equals("tql")) { message = "Ì«Ç¿ÁË"; }
-			if (message.equals("tfl")) { message = "Ì«¸»ÁË"; }
-			// ºÏ²¢³£¼ûÄÚÈİ
+			// åˆå¹¶å¸¸è§å†…å®¹
+			if (message.equals("?")) { message = "ï¼Ÿ"; }
+			if (message.equals("wky")) { message = "æˆ‘å¯ä»¥"; }
+			if (message.equals("whl")) { message = "æˆ‘å¥½äº†"; }
+			if (message.equals("hso")) { message = "å¥½éªšå“¦"; }
+			if (message.equals("tql")) { message = "å¤ªå¼ºäº†"; }
+			if (message.equals("tfl")) { message = "å¤ªå¯Œäº†"; }
+			// åˆå¹¶å¸¸è§å†…å®¹
+
+			// æ¶ˆé™¤BUG
+			if (message.equals("")) { continue; }
+			// æ¶ˆé™¤BUG
 
 			if (allMessageRankTemp.containsKey(message)) {
 				allMessageRankTemp.put(message, allMessageRankTemp.get(message) + 1);
@@ -472,29 +476,27 @@ public class Listener_TopSpeak extends ModuleListener {
 		allMessageRank.remove(1);
 
 		if (allMessageRank.size() > 0) {
-			builder.append("£¨3/4£©Õû¾äÅÅĞĞ£º");
-			int i = 1;
-			boolean enought = false;
+			builder.append("ï¼ˆ3/4ï¼‰æ•´å¥æ’è¡Œï¼š");
+			int order = 1;
+			int limit = 0;
 			for (int messageRank : allMessageRank.keySet()) {
 				HashSet<String> tempSet = allMessageRank.get(messageRank);
 				for (String message : tempSet) {
+					limit++;
 					builder.append("\r\nNo.");
-					builder.append(i);
+					builder.append(order);
 					builder.append(" - ");
 					builder.append(messageRank);
-					builder.append("´Î£º");
+					builder.append("æ¬¡ï¼š");
 					builder.append(message);
-					i++;
-					if (i > 25) {
-						enought = true;
-						break;
-					}
-					if (enought) { break; }
+					if (limit > 20) { break; }
 				}
+				order = order + tempSet.size();
+				if (limit > 20) { break; }
 			}
 			report.add(builder.toString());
 		} else {
-			builder.append("£¨3/4£©Õû¾äÅÅĞĞ£ºÃ»ÓĞÖØ¸´¹ıµÄÕû¾ä");
+			builder.append("ï¼ˆ3/4ï¼‰æ•´å¥æ’è¡Œï¼šæ²¡æœ‰é‡å¤è¿‡çš„æ•´å¥");
 		}
 
 		// ===========================================================
@@ -523,30 +525,28 @@ public class Listener_TopSpeak extends ModuleListener {
 		allPictureRank.remove(1);
 
 		if (allPictureRank.size() > 0) {
-			report.add("£¨4/4£©Í¼Æ¬ÅÅĞĞ£º");
-			int i = 1;
-			boolean enought = false;
+			report.add("ï¼ˆ4/4ï¼‰å›¾ç‰‡æ’è¡Œï¼š");
+			int order = 1;
+			int limit = 0;
 			for (int pictureRank : allPictureRank.keySet()) {
 				HashSet<String> tempSet = allPictureRank.get(pictureRank);
 				for (String picture : tempSet) {
 					builder = new StringBuilder();
 					builder.append("No.");
-					builder.append(i);
+					builder.append(order);
 					builder.append(" - ");
 					builder.append(pictureRank);
-					builder.append("´Î£º\r\n");
+					builder.append("æ¬¡ï¼š\r\n");
 					builder.append(JcqApp.CC.getCQImage(picture).getUrl());
 					report.add(builder.toString());
-					i++;
-					if (i > 5) {
-						enought = true;
-						break;
-					}
-					if (enought) { break; }
+					limit++;
+					if (limit > 5) { break; }
 				}
+				order = order + tempSet.size();
+				if (limit > 5) { break; }
 			}
 		} else {
-			builder.append("£¨4/4£©Í¼Æ¬ÅÅĞĞ£ºÃ»ÓĞÖØ¸´¹ıµÄÍ¼Æ¬");
+			builder.append("ï¼ˆ4/4ï¼‰å›¾ç‰‡æ’è¡Œï¼šæ²¡æœ‰é‡å¤è¿‡çš„å›¾ç‰‡");
 		}
 
 		// ===========================================================
@@ -558,7 +558,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	class Worker implements Runnable {
 		@Override
 		public void run() {
-			JcqApp.CQ.logInfo("FurryBlack", "TopSpeak - Worker ÒÑÆô¶¯");
+			JcqApp.CQ.logInfo("FurryBlack", "TopSpeak - Worker å·²å¯åŠ¨");
 			while (JcqAppAbstract.enable) {
 				try {
 					long time;

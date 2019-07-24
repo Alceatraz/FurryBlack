@@ -14,31 +14,31 @@ public class Executor_roll extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_roll";
 	private static String MODULE_COMMANDNAME = "roll";
-	private static String MODULE_DISPLAYNAME = "Éú³ÉËæ»úÊı";
-	private static String MODULE_DESCRIPTION = "Éú³ÉËæ»úÊı";
+	private static String MODULE_DISPLAYNAME = "ç”Ÿæˆéšæœºæ•°";
+	private static String MODULE_DESCRIPTION = "ç”Ÿæˆéšæœºæ•°";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/roll - ³éÈ¡Õæ¼Ù",
-			"/roll Êı×Ö - ´ÓÁãµ½¸ø¶¨Êı×ÖÈÎÑ¡Ò»¸öÊı×Ö",
-			"/roll Êı×Ö Êı×Ö - ´Ó¸ø¶¨Á½¸öÊı×ÖÖĞ¼ä³éÈ¡Ò»¸ö"
+			"/roll - æŠ½å–çœŸå‡",
+			"/roll æ•°å­— - ä»é›¶åˆ°ç»™å®šæ•°å­—ä»»é€‰ä¸€ä¸ªæ•°å­—",
+			"/roll æ•°å­— æ•°å­— - ä»ç»™å®šä¸¤ä¸ªæ•°å­—ä¸­é—´æŠ½å–ä¸€ä¸ª"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"»ñÈ¡ÃüÁî·¢ËÍÈË"
+			"è·å–å‘½ä»¤å‘é€äºº"
 	};
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -51,7 +51,7 @@ public class Executor_roll extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -133,7 +133,7 @@ public class Executor_roll extends ModuleExecutor {
 				res = Integer.toString(random.nextInt(range));
 				this.mode_2++;
 			} catch (Exception exce) {
-				res = message.getSegment()[0] + "ÊÇ";
+				res = message.getSegment()[0] + "æ˜¯";
 				if (random.nextBoolean()) {
 					this.mode_fucker++;
 					res = res + "1";
@@ -154,7 +154,7 @@ public class Executor_roll extends ModuleExecutor {
 				min = Integer.parseInt(message.getSegment()[0]);
 				max = Integer.parseInt(message.getSegment()[1]);
 			} catch (Exception exce) {
-				return "²ÎÊı±ØĞëÊÇÂŞÂíÊı×Ö";
+				return "å‚æ•°å¿…é¡»æ˜¯ç½—é©¬æ•°å­—";
 			}
 			int temp = random.nextInt(max);
 			if (temp < min) { temp = temp / max * (max - min) + min; }
@@ -172,15 +172,15 @@ public class Executor_roll extends ModuleExecutor {
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 		if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
-		builder.append("Ä£Ê½1 - Õæ¼Ù: ");
+		builder.append("æ¨¡å¼1 - çœŸå‡: ");
 		builder.append(this.mode_1);
 		builder.append(" (");
 		builder.append(this.mode_fucker);
 		builder.append("/");
 		builder.append(this.mode_fucked);
-		builder.append(")\r\nÄ£Ê½2 - µ¥ÏŞ: ");
+		builder.append(")\r\næ¨¡å¼2 - å•é™: ");
 		builder.append(this.mode_2);
-		builder.append("\r\nÄ£Ê½3 - Ë«ÏŞ: ");
+		builder.append("\r\næ¨¡å¼3 - åŒé™: ");
 		builder.append(this.mode_3);
 		String res[] = new String[1];
 		res[0] = builder.toString();

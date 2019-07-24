@@ -35,14 +35,14 @@ public class Module_Systemd extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "core_systemd";
 	private static String MODULE_COMMANDNAME = "system";
-	private static String MODULE_DISPLAYNAME = "ºËĞÄÄ£¿é";
-	private static String MODULE_DESCRIPTION = "¹ÜÀíËùÓĞ¹¦ÄÜÄ£¿é²¢Â·ÓÉËùÓĞÏûÏ¢";
+	private static String MODULE_DISPLAYNAME = "æ ¸å¿ƒæ¨¡å—";
+	private static String MODULE_DESCRIPTION = "ç®¡ç†æ‰€æœ‰åŠŸèƒ½æ¨¡å—å¹¶è·¯ç”±æ‰€æœ‰æ¶ˆæ¯";
 	private static String MODULE_VERSION = "22.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
@@ -53,7 +53,7 @@ public class Module_Systemd extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -110,7 +110,7 @@ public class Module_Systemd extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -121,7 +121,7 @@ public class Module_Systemd extends Module {
 	@Override
 	public void init(LoggerX logger) throws Exception {
 		if (this.NEW_CONFIG) {
-			logger.seek("[Systemd] ÅäÖÃÎÄ¼ş²»´æÔÚ - Éú³ÉÄ¬ÈÏÅäÖÃ");
+			logger.seek("[Systemd] é…ç½®æ–‡ä»¶ä¸å­˜åœ¨ - ç”Ÿæˆé»˜è®¤é…ç½®");
 			this.CONFIG.setProperty("trigger_user", "none");
 			this.CONFIG.setProperty("trigger_disz", "none");
 			this.CONFIG.setProperty("trigger_grop", "none");
@@ -140,18 +140,18 @@ public class Module_Systemd extends Module {
 		//
 		//
 		// =======================================================================================================================
-		// ÊµÀı»¯´¥·¢Æ÷
+		// å®ä¾‹åŒ–è§¦å‘å™¨
 
 		this.instantiationTrigger(new Trigger_UserDeny());
 		this.instantiationTrigger(new Trigger_WordDeny());
 
 		// =======================================================================================================================
-		// ÊµÀı»¯¼àÌıÆ÷
+		// å®ä¾‹åŒ–ç›‘å¬å™¨
 
 		this.instantiationListener(new Listener_TopSpeak());
 
 		// =======================================================================================================================
-		// ÊµÀı»¯Ö´ĞĞÆ÷
+		// å®ä¾‹åŒ–æ‰§è¡Œå™¨
 
 		this.instantiationExecutor(new Executor_admin());
 		this.instantiationExecutor(new Executor_acon());
@@ -170,26 +170,26 @@ public class Module_Systemd extends Module {
 		//
 		//
 		// =======================================================================================================================
-		// ³õÊ¼»¯´¥·¢Æ÷
+		// åˆå§‹åŒ–è§¦å‘å™¨
 
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
-			logger.full("[Systemd] ³õÊ¼»¯´¥·¢Æ÷", name);
+			logger.full("[Systemd] åˆå§‹åŒ–è§¦å‘å™¨", name);
 			this.TRIGGER_INSTANCE.get(name).init(logger);
 		}
 
 		// =======================================================================================================================
-		// ³õÊ¼»¯¼àÌıÆ÷
+		// åˆå§‹åŒ–ç›‘å¬å™¨
 
 		for (String name : this.LISTENER_INSTANCE.keySet()) {
-			logger.full("[Systemd] ³õÊ¼»¯¼àÌıÆ÷", name);
+			logger.full("[Systemd] åˆå§‹åŒ–ç›‘å¬å™¨", name);
 			this.LISTENER_INSTANCE.get(name).init(logger);
 		}
 
 		// =======================================================================================================================
-		// ³õÊ¼»¯Ö´ĞĞÆ÷
+		// åˆå§‹åŒ–æ‰§è¡Œå™¨
 
 		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
-			logger.full("[Systemd] ³õÊ¼»¯Ö´ĞĞÆ÷", name);
+			logger.full("[Systemd] åˆå§‹åŒ–æ‰§è¡Œå™¨", name);
 			this.EXECUTOR_INSTANCE.get(name).init(logger);
 		}
 
@@ -197,45 +197,45 @@ public class Module_Systemd extends Module {
 		//
 		//
 		// =======================================================================================================================
-		// ¶ÁÈ¡´¥·¢Æ÷ÅäÖÃ
+		// è¯»å–è§¦å‘å™¨é…ç½®
 
 		this.CONFIG_TRIGGER_USER = this.CONFIG.getProperty("trigger_user", "none");
 		this.CONFIG_TRIGGER_DISZ = this.CONFIG.getProperty("trigger_disz", "none");
 		this.CONFIG_TRIGGER_GROP = this.CONFIG.getProperty("trigger_grop", "none");
 
-		logger.seek("[Systemd] ´¥·¢Æ÷£ºË½ÁÄ" + this.CONFIG_TRIGGER_USER);
-		logger.seek("[Systemd] ´¥·¢Æ÷£º×éÁÄ" + this.CONFIG_TRIGGER_DISZ);
-		logger.seek("[Systemd] ´¥·¢Æ÷£ºÈºÁÄ" + this.CONFIG_TRIGGER_GROP);
+		logger.seek("[Systemd] è§¦å‘å™¨ï¼šç§èŠ" + this.CONFIG_TRIGGER_USER);
+		logger.seek("[Systemd] è§¦å‘å™¨ï¼šç»„èŠ" + this.CONFIG_TRIGGER_DISZ);
+		logger.seek("[Systemd] è§¦å‘å™¨ï¼šç¾¤èŠ" + this.CONFIG_TRIGGER_GROP);
 
 		this.LIST_TRIGGER_USER = this.CONFIG_TRIGGER_USER.equals("none") ? new String[0] : this.CONFIG_TRIGGER_USER.split(",");
 		this.LIST_TRIGGER_DISZ = this.CONFIG_TRIGGER_DISZ.equals("none") ? new String[0] : this.CONFIG_TRIGGER_DISZ.split(",");
 		this.LIST_TRIGGER_GROP = this.CONFIG_TRIGGER_GROP.equals("none") ? new String[0] : this.CONFIG_TRIGGER_GROP.split(",");
 
 		// =======================================================================================================================
-		// ¶ÁÈ¡¼àÌıÆ÷ÅäÖÃ
+		// è¯»å–ç›‘å¬å™¨é…ç½®
 
 		this.CONFIG_LISENTER_USER = this.CONFIG.getProperty("listener_user", "none");
 		this.CONFIG_LISENTER_DISZ = this.CONFIG.getProperty("listener_disz", "none");
 		this.CONFIG_LISENTER_GROP = this.CONFIG.getProperty("listener_grop", "none");
 
-		logger.seek("[Systemd] ¼àÌıÆ÷£ºË½ÁÄ" + this.CONFIG_LISENTER_USER);
-		logger.seek("[Systemd] ¼àÌıÆ÷£º×éÁÄ" + this.CONFIG_LISENTER_DISZ);
-		logger.seek("[Systemd] ¼àÌıÆ÷£ºÈºÁÄ" + this.CONFIG_LISENTER_GROP);
+		logger.seek("[Systemd] ç›‘å¬å™¨ï¼šç§èŠ" + this.CONFIG_LISENTER_USER);
+		logger.seek("[Systemd] ç›‘å¬å™¨ï¼šç»„èŠ" + this.CONFIG_LISENTER_DISZ);
+		logger.seek("[Systemd] ç›‘å¬å™¨ï¼šç¾¤èŠ" + this.CONFIG_LISENTER_GROP);
 
 		this.LIST_LISENTER_USER = this.CONFIG_LISENTER_USER.equals("none") ? new String[0] : this.CONFIG_LISENTER_USER.split(",");
 		this.LIST_LISENTER_DISZ = this.CONFIG_LISENTER_DISZ.equals("none") ? new String[0] : this.CONFIG_LISENTER_DISZ.split(",");
 		this.LIST_LISENTER_GROP = this.CONFIG_LISENTER_GROP.equals("none") ? new String[0] : this.CONFIG_LISENTER_GROP.split(",");
 
 		// =======================================================================================================================
-		// ¶ÁÈ¡Ö´ĞĞÆ÷ÅäÖÃ
+		// è¯»å–æ‰§è¡Œå™¨é…ç½®
 
 		this.CONFIG_EXECUTOR_USER = this.CONFIG.getProperty("executor_user", "none");
 		this.CONFIG_EXECUTOR_DISZ = this.CONFIG.getProperty("executor_disz", "none");
 		this.CONFIG_EXECUTOR_GROP = this.CONFIG.getProperty("executor_grop", "none");
 
-		logger.seek("[Systemd] Ö´ĞĞÆ÷£ºË½ÁÄ" + this.CONFIG_EXECUTOR_USER);
-		logger.seek("[Systemd] Ö´ĞĞÆ÷£º×éÁÄ" + this.CONFIG_EXECUTOR_DISZ);
-		logger.seek("[Systemd] Ö´ĞĞÆ÷£ºÈºÁÄ" + this.CONFIG_EXECUTOR_GROP);
+		logger.seek("[Systemd] æ‰§è¡Œå™¨ï¼šç§èŠ" + this.CONFIG_EXECUTOR_USER);
+		logger.seek("[Systemd] æ‰§è¡Œå™¨ï¼šç»„èŠ" + this.CONFIG_EXECUTOR_DISZ);
+		logger.seek("[Systemd] æ‰§è¡Œå™¨ï¼šç¾¤èŠ" + this.CONFIG_EXECUTOR_GROP);
 
 		this.LIST_EXECUTOR_USER = this.CONFIG_EXECUTOR_USER.equals("none") ? new String[0] : this.CONFIG_EXECUTOR_USER.split(",");
 		this.LIST_EXECUTOR_DISZ = this.CONFIG_EXECUTOR_DISZ.equals("none") ? new String[0] : this.CONFIG_EXECUTOR_DISZ.split(",");
@@ -245,14 +245,14 @@ public class Module_Systemd extends Module {
 		//
 		//
 		// =======================================================================================================================
-		// ×¢²á´¥·¢Æ÷
+		// æ³¨å†Œè§¦å‘å™¨
 
 		for (String name : this.LIST_TRIGGER_USER) {
 			if (this.TRIGGER_INSTANCE.containsKey(name)) {
 				ModuleTrigger instance = this.TRIGGER_INSTANCE.get(name);
 				if (instance.ENABLE_USER) { this.TRIGGER_USER.add(instance); }
 			} else {
-				logger.mini("[Systemd] ÅäÖÃ´íÎó", "Ë½ÁÄ´¥·¢Æ÷²»´æÔÚ" + name);
+				logger.mini("[Systemd] é…ç½®é”™è¯¯", "ç§èŠè§¦å‘å™¨ä¸å­˜åœ¨" + name);
 			}
 		}
 
@@ -261,7 +261,7 @@ public class Module_Systemd extends Module {
 				ModuleTrigger instance = this.TRIGGER_INSTANCE.get(name);
 				if (instance.ENABLE_DISZ) { this.TRIGGER_DISZ.add(instance); }
 			} else {
-				logger.mini("[Systemd] ÅäÖÃ´íÎó", "×éÁÄ´¥·¢Æ÷²»´æÔÚ" + name);
+				logger.mini("[Systemd] é…ç½®é”™è¯¯", "ç»„èŠè§¦å‘å™¨ä¸å­˜åœ¨" + name);
 			}
 		}
 
@@ -270,7 +270,7 @@ public class Module_Systemd extends Module {
 				ModuleTrigger instance = this.TRIGGER_INSTANCE.get(name);
 				if (instance.ENABLE_GROP) { this.TRIGGER_GROP.add(instance); }
 			} else {
-				logger.mini("[Systemd] ÅäÖÃ´íÎó", "ÈºÁÄ´¥·¢Æ÷²»´æÔÚ" + name);
+				logger.mini("[Systemd] é…ç½®é”™è¯¯", "ç¾¤èŠè§¦å‘å™¨ä¸å­˜åœ¨" + name);
 			}
 		}
 
@@ -279,14 +279,14 @@ public class Module_Systemd extends Module {
 		this.ENABLE_TRIGGER_GROP = this.TRIGGER_GROP.size() > 0;
 
 		// =======================================================================================================================
-		// ×¢²á¼àÌıÆ÷
+		// æ³¨å†Œç›‘å¬å™¨
 
 		for (String name : this.LIST_LISENTER_USER) {
 			if (this.LISTENER_INSTANCE.containsKey(name)) {
 				ModuleListener instance = this.LISTENER_INSTANCE.get(name);
 				if (instance.ENABLE_USER) { this.LISTENER_USER.add(instance); }
 			} else {
-				logger.mini("[Systemd] ÅäÖÃ´íÎó", "Ë½ÁÄ¼àÌıÆ÷²»´æÔÚ" + name);
+				logger.mini("[Systemd] é…ç½®é”™è¯¯", "ç§èŠç›‘å¬å™¨ä¸å­˜åœ¨" + name);
 			}
 		}
 
@@ -295,7 +295,7 @@ public class Module_Systemd extends Module {
 				ModuleListener instance = this.LISTENER_INSTANCE.get(name);
 				if (instance.ENABLE_DISZ) { this.LISTENER_DISZ.add(instance); }
 			} else {
-				logger.mini("[Systemd] ÅäÖÃ´íÎó", "×éÁÄ¼àÌıÆ÷²»´æÔÚ" + name);
+				logger.mini("[Systemd] é…ç½®é”™è¯¯", "ç»„èŠç›‘å¬å™¨ä¸å­˜åœ¨" + name);
 			}
 		}
 
@@ -304,7 +304,7 @@ public class Module_Systemd extends Module {
 				ModuleListener instance = this.LISTENER_INSTANCE.get(name);
 				if (instance.ENABLE_GROP) { this.LISTENER_GROP.add(instance); }
 			} else {
-				logger.mini("[Systemd] ÅäÖÃ´íÎó", "ÈºÁÄ¼àÌıÆ÷²»´æÔÚ" + name);
+				logger.mini("[Systemd] é…ç½®é”™è¯¯", "ç¾¤èŠç›‘å¬å™¨ä¸å­˜åœ¨" + name);
 			}
 		}
 
@@ -313,14 +313,14 @@ public class Module_Systemd extends Module {
 		this.ENABLE_LISENTER_GROP = this.LISTENER_GROP.size() > 0;
 
 		// =======================================================================================================================
-		// ×¢²áÖ´ĞĞÆ÷
+		// æ³¨å†Œæ‰§è¡Œå™¨
 
 		for (String name : this.LIST_EXECUTOR_USER) {
 			if (this.EXECUTOR_INSTANCE.containsKey(name)) {
 				ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(name);
 				if (instance.ENABLE_USER) { this.EXECUTOR_USER.put(instance.MODULE_COMMANDNAME(), instance); }
 			} else {
-				logger.mini("[Systemd] ÅäÖÃ´íÎó", "×éÁÄÖ´ĞĞÆ÷²»´æÔÚ" + name);
+				logger.mini("[Systemd] é…ç½®é”™è¯¯", "ç»„èŠæ‰§è¡Œå™¨ä¸å­˜åœ¨" + name);
 			}
 		}
 
@@ -329,7 +329,7 @@ public class Module_Systemd extends Module {
 				ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(name);
 				if (instance.ENABLE_DISZ) { this.EXECUTOR_DISZ.put(instance.MODULE_COMMANDNAME(), instance); }
 			} else {
-				logger.mini("[Systemd] ÅäÖÃ´íÎó", "×éÁÄÖ´ĞĞÆ÷²»´æÔÚ" + name);
+				logger.mini("[Systemd] é…ç½®é”™è¯¯", "ç»„èŠæ‰§è¡Œå™¨ä¸å­˜åœ¨" + name);
 			}
 		}
 
@@ -338,7 +338,7 @@ public class Module_Systemd extends Module {
 				ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(name);
 				if (instance.ENABLE_GROP) { this.EXECUTOR_GROP.put(instance.MODULE_COMMANDNAME(), instance); }
 			} else {
-				logger.mini("[Systemd] ÅäÖÃ´íÎó", "×éÁÄÖ´ĞĞÆ÷²»´æÔÚ" + name);
+				logger.mini("[Systemd] é…ç½®é”™è¯¯", "ç»„èŠæ‰§è¡Œå™¨ä¸å­˜åœ¨" + name);
 			}
 		}
 
@@ -348,26 +348,26 @@ public class Module_Systemd extends Module {
 
 		// =======================================================================================================================
 
-		logger.info("[Systemd] ´¥·¢Æ÷");
-		logger.info("  Ë½ÁÄ£º", this.ENABLE_TRIGGER_USER ? "ÆôÓÃ - " + this.TRIGGER_USER.size() + "¸ö" : "½ûÓÃ");
-		logger.info("  ×éÁÄ£º", this.ENABLE_TRIGGER_DISZ ? "ÆôÓÃ - " + this.TRIGGER_DISZ.size() + "¸ö" : "½ûÓÃ");
-		logger.info("  ÈºÁÄ£º", this.ENABLE_TRIGGER_GROP ? "ÆôÓÃ - " + this.TRIGGER_GROP.size() + "¸ö" : "½ûÓÃ");
+		logger.info("[Systemd] è§¦å‘å™¨");
+		logger.info("  ç§èŠï¼š", this.ENABLE_TRIGGER_USER ? "å¯ç”¨ - " + this.TRIGGER_USER.size() + "ä¸ª" : "ç¦ç”¨");
+		logger.info("  ç»„èŠï¼š", this.ENABLE_TRIGGER_DISZ ? "å¯ç”¨ - " + this.TRIGGER_DISZ.size() + "ä¸ª" : "ç¦ç”¨");
+		logger.info("  ç¾¤èŠï¼š", this.ENABLE_TRIGGER_GROP ? "å¯ç”¨ - " + this.TRIGGER_GROP.size() + "ä¸ª" : "ç¦ç”¨");
 
-		logger.seek("[Systemd] ¼àÌıÆ÷");
-		logger.seek("  Ë½ÁÄ£º", this.ENABLE_LISENTER_USER ? "ÆôÓÃ - " + this.LISTENER_DISZ.size() + "¸ö" : "½ûÓÃ");
-		logger.seek("  ×éÁÄ£º", this.ENABLE_LISENTER_DISZ ? "ÆôÓÃ - " + this.LISTENER_DISZ.size() + "¸ö" : "½ûÓÃ");
-		logger.seek("  ÈºÁÄ£º", this.ENABLE_LISENTER_GROP ? "ÆôÓÃ - " + this.LISTENER_GROP.size() + "¸ö" : "½ûÓÃ");
+		logger.seek("[Systemd] ç›‘å¬å™¨");
+		logger.seek("  ç§èŠï¼š", this.ENABLE_LISENTER_USER ? "å¯ç”¨ - " + this.LISTENER_DISZ.size() + "ä¸ª" : "ç¦ç”¨");
+		logger.seek("  ç»„èŠï¼š", this.ENABLE_LISENTER_DISZ ? "å¯ç”¨ - " + this.LISTENER_DISZ.size() + "ä¸ª" : "ç¦ç”¨");
+		logger.seek("  ç¾¤èŠï¼š", this.ENABLE_LISENTER_GROP ? "å¯ç”¨ - " + this.LISTENER_GROP.size() + "ä¸ª" : "ç¦ç”¨");
 
-		logger.seek("[Systemd] Ö´ĞĞÆ÷");
-		logger.seek("  Ë½ÁÄ£º", this.ENABLE_EXECUTOR_USER ? "ÆôÓÃ - " + this.EXECUTOR_USER.size() + "¸ö" : "½ûÓÃ");
-		logger.seek("  ×éÁÄ£º", this.ENABLE_EXECUTOR_DISZ ? "ÆôÓÃ - " + this.EXECUTOR_DISZ.size() + "¸ö" : "½ûÓÃ");
-		logger.seek("  ÈºÁÄ£º", this.ENABLE_EXECUTOR_GROP ? "ÆôÓÃ - " + this.EXECUTOR_GROP.size() + "¸ö" : "½ûÓÃ");
+		logger.seek("[Systemd] æ‰§è¡Œå™¨");
+		logger.seek("  ç§èŠï¼š", this.ENABLE_EXECUTOR_USER ? "å¯ç”¨ - " + this.EXECUTOR_USER.size() + "ä¸ª" : "ç¦ç”¨");
+		logger.seek("  ç»„èŠï¼š", this.ENABLE_EXECUTOR_DISZ ? "å¯ç”¨ - " + this.EXECUTOR_DISZ.size() + "ä¸ª" : "ç¦ç”¨");
+		logger.seek("  ç¾¤èŠï¼š", this.ENABLE_EXECUTOR_GROP ? "å¯ç”¨ - " + this.EXECUTOR_GROP.size() + "ä¸ª" : "ç¦ç”¨");
 
 		// =======================================================================================================================
 		//
 		//
 		// =======================================================================================================================
-		// Ô¤Éú³É /list µÄĞÅÏ¢
+		// é¢„ç”Ÿæˆ /list çš„ä¿¡æ¯
 
 		entry.getMessage().genetateList(this.TRIGGER_USER, this.TRIGGER_DISZ, this.TRIGGER_GROP, this.LISTENER_USER, this.LISTENER_DISZ, this.LISTENER_GROP, this.EXECUTOR_USER, this.EXECUTOR_DISZ, this.EXECUTOR_GROP);
 	}
@@ -376,26 +376,26 @@ public class Module_Systemd extends Module {
 	public void boot(LoggerX logger) throws Exception {
 
 		// =======================================================================================================================
-		// Æô¶¯´¥·¢Æ÷
+		// å¯åŠ¨è§¦å‘å™¨
 
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
-			logger.full("[Systemd] Æô¶¯´¥·¢Æ÷", name);
+			logger.full("[Systemd] å¯åŠ¨è§¦å‘å™¨", name);
 			this.TRIGGER_INSTANCE.get(name).boot(logger);
 		}
 
 		// =======================================================================================================================
-		// Æô¶¯ ¼àÌıÆ÷
+		// å¯åŠ¨ ç›‘å¬å™¨
 
 		for (String name : this.LISTENER_INSTANCE.keySet()) {
-			logger.full("[Systemd] Æô¶¯¼àÌıÆ÷", name);
+			logger.full("[Systemd] å¯åŠ¨ç›‘å¬å™¨", name);
 			this.LISTENER_INSTANCE.get(name).boot(logger);
 		}
 
 		// =======================================================================================================================
-		// Æô¶¯Ö´ĞĞÆ÷
+		// å¯åŠ¨æ‰§è¡Œå™¨
 
 		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
-			logger.full("[Systemd] Æô¶¯Ö´ĞĞÆ÷", name);
+			logger.full("[Systemd] å¯åŠ¨æ‰§è¡Œå™¨", name);
 			this.EXECUTOR_INSTANCE.get(name).boot(logger);
 		}
 
@@ -430,10 +430,10 @@ public class Module_Systemd extends Module {
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 		LoggerX logger = new LoggerX();
-		logger.info("[¼ÓÈº]", typeid == 1 ? "×ÔÖ÷ÉêÇë" : "ÑûÇë¼ÓÈº");
-		logger.info("ÈººÅ", gropid);
-		logger.info("¹ÜÀí", JcqApp.CQ.getStrangerInfo(operid).getNick() + "(" + operid + ")");
-		logger.info("³ÉÔ±", JcqApp.CQ.getStrangerInfo(userid).getNick() + "(" + userid + ")");
+		logger.info("[åŠ ç¾¤]", typeid == 1 ? "è‡ªä¸»ç”³è¯·" : "é‚€è¯·åŠ ç¾¤");
+		logger.info("ç¾¤å·", gropid);
+		logger.info("ç®¡ç†", JcqApp.CQ.getStrangerInfo(operid).getNick() + "(" + operid + ")");
+		logger.info("æˆå‘˜", JcqApp.CQ.getStrangerInfo(userid).getNick() + "(" + userid + ")");
 		entry.getMessage().adminInfo(logger.make(1));
 
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
@@ -450,10 +450,10 @@ public class Module_Systemd extends Module {
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 		LoggerX logger = new LoggerX();
-		logger.info("[ÍËÈº]", typeid == 1 ? "×ÔÖ÷ÍËÈº" : "¹ÜÀíÌß³ö");
-		logger.info("ÈººÅ", gropid);
-		logger.info("¹ÜÀí", JcqApp.CQ.getStrangerInfo(operid).getNick() + "(" + operid + ")");
-		logger.info("³ÉÔ±", JcqApp.CQ.getStrangerInfo(userid).getNick() + "(" + userid + ")");
+		logger.info("[é€€ç¾¤]", typeid == 1 ? "è‡ªä¸»é€€ç¾¤" : "ç®¡ç†è¸¢å‡º");
+		logger.info("ç¾¤å·", gropid);
+		logger.info("ç®¡ç†", JcqApp.CQ.getStrangerInfo(operid).getNick() + "(" + operid + ")");
+		logger.info("æˆå‘˜", JcqApp.CQ.getStrangerInfo(userid).getNick() + "(" + userid + ")");
 		entry.getMessage().adminInfo(logger.make(1));
 
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
@@ -557,7 +557,7 @@ public class Module_Systemd extends Module {
 				if (this.ENABLE_EXECUTOR_USER && this.EXECUTOR_USER.containsKey(message.getCommand())) {
 					this.EXECUTOR_USER.get(message.getCommand()).executeUserMessage(typeid, userid, message, messageid, messagefont);
 				} else {
-					entry.getMessage().userInfo(userid, "Ã»ÓĞ´Ë²å¼ş");
+					entry.getMessage().userInfo(userid, "æ²¡æœ‰æ­¤æ’ä»¶");
 				}
 				break;
 			}
@@ -567,7 +567,7 @@ public class Module_Systemd extends Module {
 			// ===============================================================================================================================
 
 		} else {
-			entry.getMessage().userInfo(userid, "Î´Ê¶±ğµÄÄÚÈİ£¬±¾BOTÃ»ÓĞÁÄÌì¹¦ÄÜ£¬ÇëÊ¹ÓÃ/help²é¿´°ïÖú¡£");
+			entry.getMessage().userInfo(userid, "æœªè¯†åˆ«çš„å†…å®¹ï¼Œæœ¬BOTæ²¡æœ‰èŠå¤©åŠŸèƒ½ï¼Œè¯·ä½¿ç”¨/helpæŸ¥çœ‹å¸®åŠ©ã€‚");
 		}
 
 		return IMsg.MSG_IGNORE;
@@ -633,7 +633,7 @@ public class Module_Systemd extends Module {
 				if (this.ENABLE_EXECUTOR_DISZ && this.EXECUTOR_DISZ.containsKey(message.getCommand())) {
 					this.EXECUTOR_DISZ.get(message.getCommand()).executeDiszMessage(diszid, userid, message, messageid, messagefont);
 				} else {
-					entry.getMessage().userInfo(userid, "Ã»ÓĞ´Ë²å¼ş");
+					entry.getMessage().userInfo(userid, "æ²¡æœ‰æ­¤æ’ä»¶");
 				}
 				break;
 			}
@@ -696,7 +696,7 @@ public class Module_Systemd extends Module {
 					if (this.EXECUTOR_INSTANCE.containsKey(message.getSegment()[0])) {
 						entry.getMessage().sendHelp(userid, this.EXECUTOR_INSTANCE.get(message.getSegment()[0]));
 					} else {
-						entry.getMessage().userInfo(userid, "Ã»ÓĞ´Ë²å¼ş");
+						entry.getMessage().userInfo(userid, "æ²¡æœ‰æ­¤æ’ä»¶");
 					}
 				}
 				break;
@@ -756,7 +756,7 @@ public class Module_Systemd extends Module {
 		// ========================================================================================================================
 
 		builder.append(LoggerX.time());
-		builder.append(" - ×´Ì¬¼ò±¨\r\nÔËĞĞÊ±¼ä: ");
+		builder.append(" - çŠ¶æ€ç®€æŠ¥\r\nè¿è¡Œæ—¶é—´: ");
 		builder.append(uptimedd);
 		builder.append(" - ");
 		builder.append(uptimehh);
@@ -767,7 +767,7 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("\r\nÏµÍ³ÄÚ´æ: ");
+		builder.append("\r\nç³»ç»Ÿå†…å­˜: ");
 		builder.append(totalMemory - freeMemory);
 		builder.append("KB /");
 		builder.append(totalMemory);
@@ -775,13 +775,13 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("\r\nµ÷ÓÃ-Ë½ÁÄ£º ");
+		builder.append("\r\nè°ƒç”¨-ç§èŠï¼š ");
 		builder.append(this.COUNT_USER_MESSAGE);
-		builder.append("´Î\r\nµ÷ÓÃ-×éÁÄ£º ");
+		builder.append("æ¬¡\r\nè°ƒç”¨-ç»„èŠï¼š ");
 		builder.append(this.COUNT_DISZ_MESSAGE);
-		builder.append("´Î\r\nµ÷ÓÃ-ÈºÁÄ£º ");
+		builder.append("æ¬¡\r\nè°ƒç”¨-ç¾¤èŠï¼š ");
 		builder.append(this.COUNT_GROP_MESSAGE);
-		builder.append("´Î");
+		builder.append("æ¬¡");
 
 		return builder.toString();
 	}
@@ -799,9 +799,9 @@ public class Module_Systemd extends Module {
 
 		builder = new StringBuilder();
 
-		builder.append("[´¥·¢Æ÷] Ë½ÁÄ: ");
+		builder.append("[è§¦å‘å™¨] ç§èŠ: ");
 		builder.append(this.TRIGGER_USER.size());
-		builder.append("¸ö");
+		builder.append("ä¸ª");
 		for (ModuleTrigger temp : this.TRIGGER_USER) {
 			if (temp.COUNT_USER == 0) { continue; }
 			result = temp.generateReport(0, null, null, null);
@@ -810,16 +810,16 @@ public class Module_Systemd extends Module {
 			builder.append(temp.MODULE_PACKAGENAME());
 			builder.append(": ");
 			builder.append(temp.COUNT_USER);
-			builder.append("´Î");
+			builder.append("æ¬¡");
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
 			}
 		}
 
-		builder.append("\r\n[´¥·¢Æ÷] ×éÁÄ: ");
+		builder.append("\r\n[è§¦å‘å™¨] ç»„èŠ: ");
 		builder.append(this.TRIGGER_DISZ.size());
-		builder.append("¸ö");
+		builder.append("ä¸ª");
 		for (ModuleTrigger temp : this.TRIGGER_DISZ) {
 			if (temp.COUNT_DISZ == 0) { continue; }
 			result = temp.generateReport(0, null, null, null);
@@ -828,16 +828,16 @@ public class Module_Systemd extends Module {
 			builder.append(temp.MODULE_PACKAGENAME());
 			builder.append(": ");
 			builder.append(temp.COUNT_DISZ);
-			builder.append("´Î");
+			builder.append("æ¬¡");
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
 			}
 		}
 
-		builder.append("\r\n[´¥·¢Æ÷] ÈºÁÄ: ");
+		builder.append("\r\n[è§¦å‘å™¨] ç¾¤èŠ: ");
 		builder.append(this.TRIGGER_GROP.size());
-		builder.append("¸ö");
+		builder.append("ä¸ª");
 		for (ModuleTrigger temp : this.TRIGGER_GROP) {
 			if (temp.COUNT_GROP == 0) { continue; }
 			result = temp.generateReport(0, null, null, null);
@@ -846,7 +846,7 @@ public class Module_Systemd extends Module {
 			builder.append(temp.MODULE_PACKAGENAME());
 			builder.append(": ");
 			builder.append(temp.COUNT_GROP);
-			builder.append("´Î");
+			builder.append("æ¬¡");
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
@@ -858,9 +858,9 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("[¼àÌıÆ÷] Ë½ÁÄ: ");
+		builder.append("[ç›‘å¬å™¨] ç§èŠ: ");
 		builder.append(this.LISTENER_USER.size());
-		builder.append("¸ö");
+		builder.append("ä¸ª");
 		for (ModuleListener temp : this.LISTENER_USER) {
 			if (temp.COUNT_USER == 0) { continue; }
 			result = temp.generateReport(0, null, null, null);
@@ -869,16 +869,16 @@ public class Module_Systemd extends Module {
 			builder.append(temp.MODULE_PACKAGENAME());
 			builder.append(": ");
 			builder.append(temp.COUNT_USER);
-			builder.append("´Î");
+			builder.append("æ¬¡");
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
 			}
 		}
 
-		builder.append("\r\n[¼àÌıÆ÷] ×éÁÄ: ");
+		builder.append("\r\n[ç›‘å¬å™¨] ç»„èŠ: ");
 		builder.append(this.LISTENER_DISZ.size());
-		builder.append("¸ö");
+		builder.append("ä¸ª");
 		for (ModuleListener temp : this.LISTENER_DISZ) {
 			if (temp.COUNT_DISZ == 0) { continue; }
 			result = temp.generateReport(0, null, null, null);
@@ -887,16 +887,16 @@ public class Module_Systemd extends Module {
 			builder.append(temp.MODULE_PACKAGENAME());
 			builder.append(": ");
 			builder.append(temp.COUNT_DISZ);
-			builder.append("´Î");
+			builder.append("æ¬¡");
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
 			}
 		}
 
-		builder.append("\r\n[¼àÌıÆ÷] ÈºÁÄ: ");
+		builder.append("\r\n[ç›‘å¬å™¨] ç¾¤èŠ: ");
 		builder.append(this.LISTENER_GROP.size());
-		builder.append("¸ö");
+		builder.append("ä¸ª");
 		for (ModuleListener temp : this.LISTENER_GROP) {
 			if (temp.COUNT_GROP == 0) { continue; }
 			result = temp.generateReport(0, null, null, null);
@@ -905,7 +905,7 @@ public class Module_Systemd extends Module {
 			builder.append(temp.MODULE_PACKAGENAME());
 			builder.append(": ");
 			builder.append(temp.COUNT_GROP);
-			builder.append("´Î");
+			builder.append("æ¬¡");
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
@@ -917,57 +917,57 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("[Ö´ĞĞÆ÷] Ë½ÁÄ: ");
+		builder.append("[æ‰§è¡Œå™¨] ç§èŠ: ");
 		builder.append(this.EXECUTOR_USER.size());
-		builder.append("¸ö");
+		builder.append("ä¸ª");
 		for (String name : this.EXECUTOR_USER.keySet()) {
 			ModuleExecutor temp = this.EXECUTOR_USER.get(name);
 			if (temp.COUNT_USER == 0) { continue; }
 			result = temp.generateReport(0, null, null, null);
 			if (result == null) { continue; }
-			builder.append("\r\nÄ£¿é ");
+			builder.append("\r\næ¨¡å— ");
 			builder.append(temp.MODULE_PACKAGENAME());
 			builder.append(": ");
 			builder.append(temp.COUNT_USER);
-			builder.append("´Î");
+			builder.append("æ¬¡");
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
 			}
 		}
 
-		builder.append("\r\n[Ö´ĞĞÆ÷] ×éÁÄ: ");
+		builder.append("\r\n[æ‰§è¡Œå™¨] ç»„èŠ: ");
 		builder.append(this.EXECUTOR_DISZ.size());
-		builder.append("¸ö");
+		builder.append("ä¸ª");
 		for (String name : this.EXECUTOR_DISZ.keySet()) {
 			ModuleExecutor temp = this.EXECUTOR_DISZ.get(name);
 			if (temp.COUNT_DISZ == 0) { continue; }
 			result = temp.generateReport(0, null, null, null);
 			if (result == null) { continue; }
-			builder.append("\r\nÄ£¿é ");
+			builder.append("\r\næ¨¡å— ");
 			builder.append(temp.MODULE_PACKAGENAME());
 			builder.append(": ");
 			builder.append(temp.COUNT_DISZ);
-			builder.append("´Î");
+			builder.append("æ¬¡");
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
 			}
 		}
 
-		builder.append("\r\n[Ö´ĞĞÆ÷] ÈºÁÄ: ");
+		builder.append("\r\n[æ‰§è¡Œå™¨] ç¾¤èŠ: ");
 		builder.append(this.EXECUTOR_GROP.size());
-		builder.append("¸ö");
+		builder.append("ä¸ª");
 		for (String name : this.EXECUTOR_GROP.keySet()) {
 			ModuleExecutor temp = this.EXECUTOR_GROP.get(name);
 			if (temp.COUNT_GROP == 0) { continue; }
 			result = temp.generateReport(0, null, null, null);
 			if (result == null) { continue; }
-			builder.append("\r\nÄ£¿é ");
+			builder.append("\r\næ¨¡å— ");
 			builder.append(temp.MODULE_PACKAGENAME());
 			builder.append(": ");
 			builder.append(temp.COUNT_GROP);
-			builder.append("´Î");
+			builder.append("æ¬¡");
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
@@ -1002,7 +1002,7 @@ public class Module_Systemd extends Module {
 			return this.EXECUTOR_INSTANCE.get(name).generateReport(mode, message, null, null);
 		} else {
 			return new String[] {
-					"Ä£¿é²»´æÔÚ"
+					"æ¨¡å—ä¸å­˜åœ¨"
 			};
 		}
 	}
@@ -1065,9 +1065,9 @@ public class Module_Systemd extends Module {
 
 		String[] report = new String[2];
 		if (target == null) {
-			report[0] = "²ÎÊı´íÎó --target Îª¿Õ";
+			report[0] = "å‚æ•°é”™è¯¯ --target ä¸ºç©º";
 		} else if (module == null) {
-			report[1] = "²ÎÊı´íÎó --module Îª¿Õ";
+			report[1] = "å‚æ•°é”™è¯¯ --module ä¸ºç©º";
 		} else {
 			report = this.doGenerateModuleReport(module[0], Integer.parseInt(module[1]), message);
 		}

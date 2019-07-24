@@ -15,52 +15,52 @@ public class Executor_acon extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_acon";
 	private static String MODULE_COMMANDNAME = "acon";
-	private static String MODULE_DISPLAYNAME = "¿Õµ÷";
-	private static String MODULE_DESCRIPTION = "±¾ÈºÀäÆø¿ª·Å";
+	private static String MODULE_DISPLAYNAME = "ç©ºè°ƒ";
+	private static String MODULE_DESCRIPTION = "æœ¬ç¾¤å†·æ°”å¼€æ”¾";
 	private static String MODULE_VERSION = "3.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/acon cost - ºÄµçÁ¿",
-			"/acon off - ¹Ø»ú",
-			"/acon wet - ¼ÓÊª",
-			"/acon dry - ³ıÊª",
-			"/acon cold - ÖÆ±ùÄ£Ê½",
-			"/acon cool - ÖÆÀäÄ£Ê½",
-			"/acon warn - ÖÆÈÈÄ£Ê½",
-			"/acon bake - ºæ¿¾Ä£Ê½",
-			"/acon burn - ÉÕ¿¾Ä£Ê½",
-			"/acon fire - ·Ù»¯Ä£Ê½",
-			"/acon c2h2 - ÒÒÈ²¾æÄ£Ê½",
-			"/acon argon - ë²ÆøÒı»¡Ä£Ê½",
-			"/acon plasma - µÈÀë×ÓÄ£Ê½",
-			"/acon nova - µãÁÁÒ»¿ÅĞÂĞÇ",
-			"/acon cfnuke - µãÈ¼Ò»¿ÅÀäºËÎäÆ÷",
-			"/acon trnuke - µãÈ¼Ò»¿ÅÈÈºËÎäÆ÷",
-			"/acon tpnuke - µãÈ¼Ò»¿ÅÈıÏàÈÈºËµ¯",
-			"/acon ianova - Ia¼¶³¬ĞÂĞÇÎü»ıÒıÈ¼",
-			"/acon ibnova - Ib¼¶³¬ĞÂĞÇÎü»ıÒıÈ¼",
-			"/acon icnova - Ic¼¶³¬ĞÂĞÇÎü»ıÒıÈ¼",
-			"/acon iinova - II¼¶³¬ĞÂĞÇÎü»ıÒıÈ¼",
+			"/acon cost - è€—ç”µé‡",
+			"/acon off - å…³æœº",
+			"/acon wet - åŠ æ¹¿",
+			"/acon dry - é™¤æ¹¿",
+			"/acon cold - åˆ¶å†°æ¨¡å¼",
+			"/acon cool - åˆ¶å†·æ¨¡å¼",
+			"/acon warn - åˆ¶çƒ­æ¨¡å¼",
+			"/acon bake - çƒ˜çƒ¤æ¨¡å¼",
+			"/acon burn - çƒ§çƒ¤æ¨¡å¼",
+			"/acon fire - ç„šåŒ–æ¨¡å¼",
+			"/acon c2h2 - ä¹™ç‚”ç‚¬æ¨¡å¼",
+			"/acon argon - æ°©æ°”å¼•å¼§æ¨¡å¼",
+			"/acon plasma - ç­‰ç¦»å­æ¨¡å¼",
+			"/acon nova - ç‚¹äº®ä¸€é¢—æ–°æ˜Ÿ",
+			"/acon cfnuke - ç‚¹ç‡ƒä¸€é¢—å†·æ ¸æ­¦å™¨",
+			"/acon trnuke - ç‚¹ç‡ƒä¸€é¢—çƒ­æ ¸æ­¦å™¨",
+			"/acon tpnuke - ç‚¹ç‡ƒä¸€é¢—ä¸‰ç›¸çƒ­æ ¸å¼¹",
+			"/acon ianova - Iaçº§è¶…æ–°æ˜Ÿå¸ç§¯å¼•ç‡ƒ",
+			"/acon ibnova - Ibçº§è¶…æ–°æ˜Ÿå¸ç§¯å¼•ç‡ƒ",
+			"/acon icnova - Icçº§è¶…æ–°æ˜Ÿå¸ç§¯å¼•ç‡ƒ",
+			"/acon iinova - IIçº§è¶…æ–°æ˜Ÿå¸ç§¯å¼•ç‡ƒ",
 			"/acon ~!C??? - Fy:????"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"°´Èº´æ´¢ºÄµçÁ¿",
-			"°´Èº´æ´¢ºÄ¹¤×÷Ä£Ê½",
-			"°´Èº´æ´¢ÉÏ´Î¸ü¸ÄÄ£Ê½µÄÊ±¼ä´Á",
+			"æŒ‰ç¾¤å­˜å‚¨è€—ç”µé‡",
+			"æŒ‰ç¾¤å­˜å‚¨è€—å·¥ä½œæ¨¡å¼",
+			"æŒ‰ç¾¤å­˜å‚¨ä¸Šæ¬¡æ›´æ”¹æ¨¡å¼çš„æ—¶é—´æˆ³",
 	};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -70,7 +70,7 @@ public class Executor_acon extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -144,114 +144,114 @@ public class Executor_acon extends ModuleExecutor {
 			switch (message.getSegment()[0]) {
 
 			case "off":
-				entry.getMessage().gropInfo(gropid, "¿Õµ÷ÒÑ¹Ø±Õ");
+				entry.getMessage().gropInfo(gropid, "ç©ºè°ƒå·²å…³é—­");
 				this.WORKINGMODE.put(gropid, 1L);
 				break;
 
 			case "dry":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁ³ıÊªÄ£Ê½");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³é™¤æ¹¿æ¨¡å¼");
 				this.WORKINGMODE.put(gropid, 5880L);
 				break;
 
 			case "wet":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁ¼ÓÊªÄ£Ê½");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³åŠ æ¹¿æ¨¡å¼");
 				this.WORKINGMODE.put(gropid, 5880L);
 				break;
 
 			case "cold":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁÖÆ±ùÄ£Ê½ -20¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³åˆ¶å†°æ¨¡å¼ -20Â°");
 				this.WORKINGMODE.put(gropid, 14700L);
 				break;
 
 			case "cool":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁÖÆÀäÄ£Ê½ 20¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³åˆ¶å†·æ¨¡å¼ 20Â°");
 				this.WORKINGMODE.put(gropid, 7350L);
 				break;
 
 			case "warn":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁÖÆÈÈÄ£Ê½ 23¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³åˆ¶çƒ­æ¨¡å¼ 23Â°");
 				this.WORKINGMODE.put(gropid, 7350L);
 				break;
 
 			case "bake":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁºæ¿¾Ä£Ê½ 285¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³çƒ˜çƒ¤æ¨¡å¼ 285Â°");
 				this.WORKINGMODE.put(gropid, 14700L);
 				break;
 
 			case "burn":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁÉÕ¿¾Ä£Ê½ 960¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³çƒ§çƒ¤æ¨¡å¼ 960Â°");
 				this.WORKINGMODE.put(gropid, 22050L);
 				break;
 
 			case "fire":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁ·Ù»¯Ä£Ê½ 1,200¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³ç„šåŒ–æ¨¡å¼ 1,200Â°");
 				this.WORKINGMODE.put(gropid, 29400L);
 				break;
 
 			case "c2h2":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁÒÒÈ²¾æÄ£Ê½ 3,300¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³ä¹™ç‚”ç‚¬æ¨¡å¼ 3,300Â°");
 				this.WORKINGMODE.put(gropid, 33075L);
 				break;
 
 			case "argon":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁë²Æø»¡Ä£Ê½ 7,550¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³æ°©æ°”å¼§æ¨¡å¼ 7,550Â°");
 				this.WORKINGMODE.put(gropid, 36750L);
 				break;
 
 			case "plasma":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁµÈÀë×ÓÄ£Ê½ 23,500¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³ç­‰ç¦»å­æ¨¡å¼ 23,500Â°");
 				this.WORKINGMODE.put(gropid, 44100L);
 				break;
 
 			case "nova":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁĞÂĞÇÄ£Ê½ 1,000,000¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³æ–°æ˜Ÿæ¨¡å¼ 1,000,000Â°");
 				this.WORKINGMODE.put(gropid, 7350000L);
 				break;
 
 			case "cfnuke":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁÀäºËÄ£Ê½ 100,000,000¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³å†·æ ¸æ¨¡å¼ 100,000,000Â°");
 				this.WORKINGMODE.put(gropid, 29400000L);
 				break;
 
 			case "trnuke":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁÈÈºËÄ£Ê½ 120,000,000¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³çƒ­æ ¸æ¨¡å¼ 120,000,000Â°");
 				this.WORKINGMODE.put(gropid, 33075000L);
 				break;
 
 			case "tfnuke":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁÈıÏàÈÈºËÄ£Ê½ 150,000,000¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³ä¸‰ç›¸çƒ­æ ¸æ¨¡å¼ 150,000,000Â°");
 				this.WORKINGMODE.put(gropid, 44100000L);
 				break;
 
 			case "ianova":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁIaĞÇ±¬·¢Ä£Ê½ 800,000,000¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³Iaæ˜Ÿçˆ†å‘æ¨¡å¼ 800,000,000Â°");
 				this.WORKINGMODE.put(gropid, 294000000L);
 				break;
 
 			case "ibnova":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁIbĞÂĞÇ±¬·¢Ä£Ê½ 2,600,000,000¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³Ibæ–°æ˜Ÿçˆ†å‘æ¨¡å¼ 2,600,000,000Â°");
 				this.WORKINGMODE.put(gropid, 330750000L);
 				break;
 
 			case "icnova":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁIcĞÂĞÇ±¬·¢Ä£Ê½ 2,800,000,000¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³Icæ–°æ˜Ÿçˆ†å‘æ¨¡å¼ 2,800,000,000Â°");
 				this.WORKINGMODE.put(gropid, 441000000L);
 				break;
 
 			case "iinova":
-				entry.getMessage().gropInfo(gropid, "ÇĞ»»ÖÁIIĞÂĞÇ±¬·¢Ä£Ê½ 3,000,000,000¡ã");
+				entry.getMessage().gropInfo(gropid, "åˆ‡æ¢è‡³IIæ–°æ˜Ÿçˆ†å‘æ¨¡å¼ 3,000,000,000Â°");
 				this.WORKINGMODE.put(gropid, 514500000L);
 				break;
 
 			case "samrage":
-				entry.getMessage().gropInfo(gropid, "¸¸ÍõÖ®Å­ 10,000,000,000,000,000,000,000,000,000¡ã");
+				entry.getMessage().gropInfo(gropid, "çˆ¶ç‹ä¹‹æ€’ 10,000,000,000,000,000,000,000,000,000Â°");
 				this.WORKINGMODE.put(gropid, 73500000000L);
 				break;
 
 			case "cost":
 				// @formatter:off
 				entry.getMessage().gropInfo(gropid,
-					String.format("ÀÛ¼Æ¹²ºÄµç£º%skW(%s)¶È\r\nÈºÖ÷ĞëÖ§¸¶£º%sÔª",
+					String.format("ç´¯è®¡å…±è€—ç”µï¼š%skW(%s)åº¦\r\nç¾¤ä¸»é¡»æ”¯ä»˜ï¼š%så…ƒ",
 						consumption.divide(BigInteger.valueOf(1000)).toString(),
 						consumption.divide(BigInteger.valueOf(3600000L)).toString(),
 						consumption.divide(BigInteger.valueOf(1936800L)).toString()
@@ -261,7 +261,7 @@ public class Executor_acon extends ModuleExecutor {
 				break;
 
 			default:
-				entry.getMessage().gropInfo(gropid, userid, "ÇëÎğ´¥ÃşÒÔ·ÀÌÌÉË");
+				entry.getMessage().gropInfo(gropid, userid, "è¯·å‹¿è§¦æ‘¸ä»¥é˜²çƒ«ä¼¤");
 				break;
 
 			}
@@ -278,7 +278,7 @@ public class Executor_acon extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ¹¤¾ßº¯Êı
+	// å·¥å…·å‡½æ•°
 	//
 	// ==========================================================================================================================================================
 

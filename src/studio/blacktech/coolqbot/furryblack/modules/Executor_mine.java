@@ -19,36 +19,36 @@ public class Executor_mine extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_mine";
 	private static String MODULE_COMMANDNAME = "mine";
-	private static String MODULE_DISPLAYNAME = "ÎÒµÄÊÀ½çÖúÊÖ";
-	private static String MODULE_DESCRIPTION = "ÎÒµÄÊÀ½çÖúÊÖ";
+	private static String MODULE_DISPLAYNAME = "æˆ‘çš„ä¸–ç•ŒåŠ©æ‰‹";
+	private static String MODULE_DESCRIPTION = "æˆ‘çš„ä¸–ç•ŒåŠ©æ‰‹";
 	private static String MODULE_VERSION = "2.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/mine status ²é¿´·şÎñÆ÷ÔÚÏß×´Ì¬",
-			"/mine online ÁĞ³ö·şÎñÆ÷ÔÚÏßÍæ¼Ò"
+			"/mine status æŸ¥çœ‹æœåŠ¡å™¨åœ¨çº¿çŠ¶æ€",
+			"/mine online åˆ—å‡ºæœåŠ¡å™¨åœ¨çº¿ç©å®¶"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"»ñÈ¡ÃüÁî·¢ËÍÈË"
+			"è·å–å‘½ä»¤å‘é€äºº"
 	};
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -100,7 +100,7 @@ public class Executor_mine extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ¹¤¾ßº¯Êı
+	// å·¥å…·å‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -120,7 +120,7 @@ public class Executor_mine extends ModuleExecutor {
 //		String temp;
 //		byte[] buffer;
 //		if (flow.length == 1) {
-//			res = "ÃüÁî´íÎó - ÖÁÉÙĞèÒªÒ»¸ö²ÎÊı";
+//			res = "å‘½ä»¤é”™è¯¯ - è‡³å°‘éœ€è¦ä¸€ä¸ªå‚æ•°";
 //		} else {
 //			 Socket socket = new Socket();
 //			socket.connect(new InetSocketAddress("192.168.1.10", 44505), 2000);
@@ -145,7 +145,7 @@ public class Executor_mine extends ModuleExecutor {
 //				rx.read(buffer);
 //				temp = new String(buffer, "UTF-8");
 //				temp = temp.trim();
-//				res = "·şÎñÆ÷Õı³£ - " + temp + "ÈËÔÚÏß";
+//				res = "æœåŠ¡å™¨æ­£å¸¸ - " + temp + "äººåœ¨çº¿";
 //				break;
 //			}
 //			rx.close();

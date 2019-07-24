@@ -59,8 +59,8 @@ public abstract class Module {
 		if (!this.FOLDER_CONF.exists()) { this.FOLDER_CONF.mkdirs(); }
 		if (!this.FOLDER_DATA.exists()) { this.FOLDER_DATA.mkdirs(); }
 
-		if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("ÅäÖÃÎÄ¼ş¼Ğ±»ÎÄ¼şÕ¼Î»£º" + this.FOLDER_CONF.getAbsolutePath()); }
-		if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("ÅäÖÃÎÄ¼ş¼Ğ±»ÎÄ¼şÕ¼Î»£º" + this.FOLDER_DATA.getAbsolutePath()); }
+		if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("é…ç½®æ–‡ä»¶å¤¹è¢«æ–‡ä»¶å ä½ï¼š" + this.FOLDER_CONF.getAbsolutePath()); }
+		if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("é…ç½®æ–‡ä»¶å¤¹è¢«æ–‡ä»¶å ä½ï¼š" + this.FOLDER_DATA.getAbsolutePath()); }
 
 		if (!this.FILE_CONFIG.exists()) {
 			this.FILE_CONFIG.createNewFile();
@@ -112,7 +112,7 @@ public abstract class Module {
 
 	public String genFullHelp() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Ä£¿é£º");
+		builder.append("æ¨¡å—ï¼š");
 		builder.append(this.MODULE_PACKAGENAME);
 		builder.append("\r\n");
 		builder.append(this.MODULE_COMMANDNAME);
@@ -122,19 +122,19 @@ public abstract class Module {
 		builder.append(this.MODULE_VERSION);
 		builder.append("\r\b");
 		builder.append(this.MODULE_DESCRIPTION);
-		builder.append("\r\nÃüÁîÓÃ·¨£º");
+		builder.append("\r\nå‘½ä»¤ç”¨æ³•ï¼š");
 		if (this.MODULE_USAGE.length == 0) {
-			builder.append("ÎŞ");
+			builder.append("æ— ");
 		} else {
 			for (String temp : this.MODULE_USAGE) {
 				builder.append("\r\n");
 				builder.append(temp);
 			}
 		}
-		builder.append("\r\nÒşË½ÉùÃ÷£º");
-		builder.append("\r\n´¥·¢Æ÷£º");
+		builder.append("\r\néšç§å£°æ˜ï¼š");
+		builder.append("\r\nè§¦å‘å™¨ï¼š");
 		if (this.MODULE_PRIVACY_TRIGER.length == 0) {
-			builder.append("ÎŞ");
+			builder.append("æ— ");
 		} else {
 			builder.append(this.MODULE_PRIVACY_TRIGER.length);
 			for (String temp : this.MODULE_PRIVACY_TRIGER) {
@@ -142,9 +142,9 @@ public abstract class Module {
 				builder.append(temp);
 			}
 		}
-		builder.append("\r\n¼àÌıÆ÷£º");
+		builder.append("\r\nç›‘å¬å™¨ï¼š");
 		if (this.MODULE_PRIVACY_LISTEN.length == 0) {
-			builder.append("ÎŞ");
+			builder.append("æ— ");
 		} else {
 			builder.append(this.MODULE_PRIVACY_LISTEN.length);
 			for (String temp : this.MODULE_PRIVACY_LISTEN) {
@@ -152,9 +152,9 @@ public abstract class Module {
 				builder.append(temp);
 			}
 		}
-		builder.append("\r\n´æ´¢£º");
+		builder.append("\r\nå­˜å‚¨ï¼š");
 		if (this.MODULE_PRIVACY_STORED.length == 0) {
-			builder.append("ÎŞ");
+			builder.append("æ— ");
 		} else {
 			builder.append(this.MODULE_PRIVACY_STORED.length);
 			for (String temp : this.MODULE_PRIVACY_STORED) {
@@ -162,9 +162,9 @@ public abstract class Module {
 				builder.append(temp);
 			}
 		}
-		builder.append("\r\n»º´æ£º");
+		builder.append("\r\nç¼“å­˜ï¼š");
 		if (this.MODULE_PRIVACY_CACHED.length == 0) {
-			builder.append("ÎŞ");
+			builder.append("æ— ");
 		} else {
 			builder.append(this.MODULE_PRIVACY_CACHED.length);
 			for (String temp : this.MODULE_PRIVACY_CACHED) {
@@ -172,9 +172,9 @@ public abstract class Module {
 				builder.append(temp);
 			}
 		}
-		builder.append("\r\n»ñÈ¡£º");
+		builder.append("\r\nè·å–ï¼š");
 		if (this.MODULE_PRIVACY_OBTAIN.length == 0) {
-			builder.append("ÎŞ");
+			builder.append("æ— ");
 		} else {
 			builder.append(this.MODULE_PRIVACY_OBTAIN.length);
 			for (String temp : this.MODULE_PRIVACY_OBTAIN) {

@@ -19,18 +19,18 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "trigger_worddeny";
 	private static String MODULE_COMMANDNAME = "worddeny";
-	private static String MODULE_DISPLAYNAME = "¹ıÂËÆ÷";
-	private static String MODULE_DESCRIPTION = "ÕıÔò¹ıÂËÆ÷";
+	private static String MODULE_DISPLAYNAME = "è¿‡æ»¤å™¨";
+	private static String MODULE_DESCRIPTION = "æ­£åˆ™è¿‡æ»¤å™¨";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {
-			"»ñÈ¡ÏûÏ¢ÄÚÈİ - ÓÃÓÚ¹ıÂË"
+			"è·å–æ¶ˆæ¯å†…å®¹ - ç”¨äºè¿‡æ»¤"
 	};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
@@ -41,7 +41,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -55,7 +55,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -153,11 +153,11 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("À¹½ØË½ÁÄ£º");
+		builder.append("æ‹¦æˆªç§èŠï¼š");
 		builder.append(this.DENY_USER_COUNT);
-		builder.append("\r\nÀ¹½Ø×éÁÄ£º");
+		builder.append("\r\næ‹¦æˆªç»„èŠï¼š");
 		builder.append(this.DENY_DISZ_COUNT);
-		builder.append("\r\nÀ¹½ØÈºÁÄ£º");
+		builder.append("\r\næ‹¦æˆªç¾¤èŠï¼š");
 		builder.append(this.DENY_GROP_COUNT);
 		String res[] = new String[1];
 		res[0] = builder.toString();

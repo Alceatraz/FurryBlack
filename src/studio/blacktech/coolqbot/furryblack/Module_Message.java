@@ -24,14 +24,14 @@ public class Module_Message extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "core_message";
 	private static String MODULE_COMMANDNAME = "message";
-	private static String MODULE_DISPLAYNAME = "ÏûÏ¢¹ã²¥";
-	private static String MODULE_DESCRIPTION = "¸ºÔğ·¢ËÍËùÓĞÏûÏ¢";
+	private static String MODULE_DISPLAYNAME = "æ¶ˆæ¯å¹¿æ’­";
+	private static String MODULE_DESCRIPTION = "è´Ÿè´£å‘é€æ‰€æœ‰æ¶ˆæ¯";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
@@ -42,7 +42,7 @@ public class Module_Message extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -68,7 +68,7 @@ public class Module_Message extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -80,7 +80,7 @@ public class Module_Message extends Module {
 	public void init(LoggerX logger) throws Exception {
 
 		if (this.NEW_CONFIG) {
-			logger.seek("[Message] ÅäÖÃÎÄ¼ş²»´æÔÚ - Éú³ÉÄ¬ÈÏÅäÖÃ");
+			logger.seek("[Message] é…ç½®æ–‡ä»¶ä¸å­˜åœ¨ - ç”Ÿæˆé»˜è®¤é…ç½®");
 			this.CONFIG.setProperty("logger_level", "0");
 			this.CONFIG.setProperty("userid_admin", "0");
 			this.saveConfig();
@@ -125,10 +125,10 @@ public class Module_Message extends Module {
 		this.USERID_CQBOT = JcqApp.CQ.getLoginQQ();
 		this.USERID_ADMIN = Long.parseLong(this.CONFIG.getProperty("userid_admin", "0"));
 
-		if (this.USERID_ADMIN == 0) { throw new Exception("¹ÜÀíÔ±ÕËºÅÅäÖÃ´íÎó"); }
+		if (this.USERID_ADMIN == 0) { throw new Exception("ç®¡ç†å‘˜è´¦å·é…ç½®é”™è¯¯"); }
 
-		logger.full("[Message] »úÆ÷ÈËÕËºÅ£º", this.USERID_CQBOT);
-		logger.full("[Message] ¹ÜÀíÔ±ÕËºÅ£º", this.USERID_ADMIN);
+		logger.full("[Message] æœºå™¨äººè´¦å·ï¼š", this.USERID_CQBOT);
+		logger.full("[Message] ç®¡ç†å‘˜è´¦å·ï¼š", this.USERID_ADMIN);
 
 		List<Group> groups = JcqApp.CQ.getGroupList();
 		for (Group group : groups) {
@@ -160,7 +160,7 @@ public class Module_Message extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// ¹¤¾ßº¯Êı
+	// å·¥å…·å‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -281,7 +281,7 @@ public class Module_Message extends Module {
 		if (this.GEN_LOCK) { return; }
 
 		StringBuilder preBuilder = new StringBuilder();
-		preBuilder.append("ÒÑ¾­°²×°µÄ´¥·¢Æ÷£º ");
+		preBuilder.append("å·²ç»å®‰è£…çš„è§¦å‘å™¨ï¼š ");
 		preBuilder.append(TRIGGER_USER.size());
 		for (ModuleTrigger temp : TRIGGER_USER) {
 			preBuilder.append("\r\n");
@@ -291,7 +291,7 @@ public class Module_Message extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(temp.MODULE_DESCRIPTION());
 		}
-		preBuilder.append("\r\nÒÑ¾­°²×°µÄ¼àÌıÆ÷£º ");
+		preBuilder.append("\r\nå·²ç»å®‰è£…çš„ç›‘å¬å™¨ï¼š ");
 		preBuilder.append(LISTENER_USER.size());
 		for (ModuleListener temp : LISTENER_USER) {
 			preBuilder.append("\r\n");
@@ -301,7 +301,7 @@ public class Module_Message extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(temp.MODULE_DESCRIPTION());
 		}
-		preBuilder.append("\r\nÒÑ¾­°²×°µÄÖ´ĞĞÆ÷£º ");
+		preBuilder.append("\r\nå·²ç»å®‰è£…çš„æ‰§è¡Œå™¨ï¼š ");
 		preBuilder.append(EXECUTOR_USER.size());
 		for (String temp : EXECUTOR_USER.keySet()) {
 			ModuleExecutor module = EXECUTOR_USER.get(temp);
@@ -315,7 +315,7 @@ public class Module_Message extends Module {
 		}
 		this.MESSAGE_LIST_USER = preBuilder.toString();
 		preBuilder = new StringBuilder();
-		preBuilder.append("\r\nÒÑ¾­°²×°µÄ´¥·¢Æ÷£º ");
+		preBuilder.append("\r\nå·²ç»å®‰è£…çš„è§¦å‘å™¨ï¼š ");
 		preBuilder.append(TRIGGER_DISZ.size());
 		for (ModuleTrigger temp : TRIGGER_DISZ) {
 			preBuilder.append("\r\n");
@@ -325,7 +325,7 @@ public class Module_Message extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(temp.MODULE_DESCRIPTION());
 		}
-		preBuilder.append("\r\nÒÑ¾­°²×°µÄ¼àÌıÆ÷£º ");
+		preBuilder.append("\r\nå·²ç»å®‰è£…çš„ç›‘å¬å™¨ï¼š ");
 		preBuilder.append(LISTENER_DISZ.size());
 		for (ModuleListener temp : LISTENER_DISZ) {
 			preBuilder.append("\r\n");
@@ -335,7 +335,7 @@ public class Module_Message extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(temp.MODULE_DESCRIPTION());
 		}
-		preBuilder.append("ÒÑ¾­°²×°µÄÖ´ĞĞÆ÷£º ");
+		preBuilder.append("å·²ç»å®‰è£…çš„æ‰§è¡Œå™¨ï¼š ");
 		preBuilder.append(EXECUTOR_DISZ.size());
 		for (String temp : EXECUTOR_DISZ.keySet()) {
 			ModuleExecutor module = EXECUTOR_DISZ.get(temp);
@@ -349,7 +349,7 @@ public class Module_Message extends Module {
 		}
 		this.MESSAGE_LIST_DISZ = preBuilder.toString();
 		preBuilder = new StringBuilder();
-		preBuilder.append("\r\nÒÑ¾­°²×°µÄ´¥·¢Æ÷£º ");
+		preBuilder.append("\r\nå·²ç»å®‰è£…çš„è§¦å‘å™¨ï¼š ");
 		preBuilder.append(TRIGGER_GROP.size());
 		for (ModuleTrigger temp : TRIGGER_GROP) {
 			preBuilder.append("\r\n");
@@ -359,7 +359,7 @@ public class Module_Message extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(temp.MODULE_DESCRIPTION());
 		}
-		preBuilder.append("\r\nÒÑ¾­°²×°µÄ¼àÌıÆ÷£º ");
+		preBuilder.append("\r\nå·²ç»å®‰è£…çš„ç›‘å¬å™¨ï¼š ");
 		preBuilder.append(LISTENER_GROP.size());
 		for (ModuleListener temp : LISTENER_GROP) {
 			preBuilder.append("\r\n");
@@ -369,7 +369,7 @@ public class Module_Message extends Module {
 			preBuilder.append(" : ");
 			preBuilder.append(temp.MODULE_DESCRIPTION());
 		}
-		preBuilder.append("ÒÑ¾­°²×°µÄÖ´ĞĞÆ÷£º ");
+		preBuilder.append("å·²ç»å®‰è£…çš„æ‰§è¡Œå™¨ï¼š ");
 		preBuilder.append(EXECUTOR_GROP.size());
 		for (String temp : EXECUTOR_GROP.keySet()) {
 			ModuleExecutor module = EXECUTOR_GROP.get(temp);

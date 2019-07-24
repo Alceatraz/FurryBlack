@@ -18,14 +18,14 @@ public class Module_DDNS extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "core_ddnsclient";
 	private static String MODULE_COMMANDNAME = "ddns";
-	private static String MODULE_DISPLAYNAME = "¶¯Ì¬ÓòÃû";
-	private static String MODULE_DESCRIPTION = "¶¯Ì¬ÓòÃû¿Í»§¶Ë";
+	private static String MODULE_DISPLAYNAME = "åŠ¨æ€åŸŸå";
+	private static String MODULE_DESCRIPTION = "åŠ¨æ€åŸŸåå®¢æˆ·ç«¯";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
@@ -36,7 +36,7 @@ public class Module_DDNS extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -61,7 +61,7 @@ public class Module_DDNS extends Module {
 	@Override
 	public void init(LoggerX logger) throws Exception {
 		if (this.NEW_CONFIG) {
-			logger.seek("[DDNS] ÅäÖÃÎÄ¼ş²»´æÔÚ - Éú³ÉÄ¬ÈÏÅäÖÃ");
+			logger.seek("[DDNS] é…ç½®æ–‡ä»¶ä¸å­˜åœ¨ - ç”Ÿæˆé»˜è®¤é…ç½®");
 			this.CONFIG.setProperty("enable_ddnsclient", "false");
 			this.CONFIG.setProperty("ddnsapi_getaddress", "");
 			this.CONFIG.setProperty("ddnsapi_setaddress", "");
@@ -87,27 +87,27 @@ public class Module_DDNS extends Module {
 		this.HOSTNAME = this.CONFIG.getProperty("ddnsapi_hostname", "");
 		this.PASSWORD = this.CONFIG.getProperty("ddnsapi_password", "");
 
-		logger.seek("[DDNS] ¿ª¹Ø", this.ENABLE ? "ÆôÓÃ" : "½ûÓÃ");
-		logger.seek("[DDNS] »ñÈ¡µØÖ·", this.API_GETADDRESS);
-		logger.seek("[DDNS] ÉèÖÃÓòÃû", this.API_SETADDRESS);
-		logger.seek("[DDNS] ±íÊ¾", this.CLIENTUA);
-		logger.seek("[DDNS] ÓòÃû", this.HOSTNAME);
-		logger.seek("[DDNS] ÃÜÂë", this.PASSWORD);
+		logger.seek("[DDNS] å¼€å…³", this.ENABLE ? "å¯ç”¨" : "ç¦ç”¨");
+		logger.seek("[DDNS] è·å–åœ°å€", this.API_GETADDRESS);
+		logger.seek("[DDNS] è®¾ç½®åŸŸå", this.API_SETADDRESS);
+		logger.seek("[DDNS] è¡¨ç¤º", this.CLIENTUA);
+		logger.seek("[DDNS] åŸŸå", this.HOSTNAME);
+		logger.seek("[DDNS] å¯†ç ", this.PASSWORD);
 
 		String response = this.delegate.updateDDNSIP();
 
 		if (response == null) {
 			response = this.delegate.getIPAddress();
 			if (response == null) {
-				logger.mini("[DDNS] ÉèÖÃµØÖ·Ê§°Ü", "ĞèÒªÊÖ¶¯½éÈë");
+				logger.mini("[DDNS] è®¾ç½®åœ°å€å¤±è´¥", "éœ€è¦æ‰‹åŠ¨ä»‹å…¥");
 			} else {
 				this.ADDRESS = response;
 				response = this.delegate.setDDNSAddress(this.ADDRESS);
-				logger.mini("[DDNS] ÉèÖÃµØÖ·³É¹¦", response);
+				logger.mini("[DDNS] è®¾ç½®åœ°å€æˆåŠŸ", response);
 			}
 		} else {
 			this.ADDRESS = response.split(" ")[1];
-			logger.mini("[DDNS] Ë¢ĞÂµØÖ·³É¹¦", response);
+			logger.mini("[DDNS] åˆ·æ–°åœ°å€æˆåŠŸ", response);
 		}
 
 		this.thread = new Thread(new WorkerProcerss());
@@ -134,7 +134,7 @@ public class Module_DDNS extends Module {
 
 	// ==========================================================================================================================================================
 	//
-	// ¹¤¾ßº¯Êı
+	// å·¥å…·å‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -158,7 +158,7 @@ public class Module_DDNS extends Module {
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.getMessage().adminInfo("[DDNS]»ñÈ¡Òì³£" + exception.getMessage());
+			entry.getMessage().adminInfo("[DDNS]è·å–å¼‚å¸¸" + exception.getMessage());
 			return null;
 		}
 	}
@@ -179,7 +179,7 @@ public class Module_DDNS extends Module {
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.getMessage().adminInfo("[DDNS]»ñÈ¡Òì³£" + exception.getMessage());
+			entry.getMessage().adminInfo("[DDNS]è·å–å¼‚å¸¸" + exception.getMessage());
 			return null;
 		}
 	}
@@ -201,7 +201,7 @@ public class Module_DDNS extends Module {
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.getMessage().adminInfo("[DDNS]»ñÈ¡Òì³£" + exception.getMessage());
+			entry.getMessage().adminInfo("[DDNS]è·å–å¼‚å¸¸" + exception.getMessage());
 			return null;
 		}
 	}
@@ -231,7 +231,7 @@ public class Module_DDNS extends Module {
 
 		@Override
 		public void run() {
-			JcqApp.CQ.logInfo("FurryBlack", "DDNS - Worker ÒÑÆô¶¯");
+			JcqApp.CQ.logInfo("FurryBlack", "DDNS - Worker å·²å¯åŠ¨");
 			long time;
 			Date date;
 			while (JcqAppAbstract.enable) {
@@ -248,11 +248,11 @@ public class Module_DDNS extends Module {
 					// =======================================================
 					String response = Module_DDNS.this.delegate.updateDDNSIP();
 					if (response == null) {
-						entry.getMessage().adminInfo("[DDNS] ¸üĞÂÊ§°Ü£º¸üĞÂĞÂµØÖ·Ê§°Ü");
+						entry.getMessage().adminInfo("[DDNS] æ›´æ–°å¤±è´¥ï¼šæ›´æ–°æ–°åœ°å€å¤±è´¥");
 					} else {
 						response = response.split(" ")[1];
 						if (!Module_DDNS.this.ADDRESS.equals(response)) {
-							entry.getMessage().adminInfo("[DDNS] ¼ì²âµ½µØÖ·±ä¸ü£º " + LoggerX.time() + "\r\n¾ÉµØÖ·£º" + Module_DDNS.this.ADDRESS + "\r\nĞÂµØÖ·£º" + response);
+							entry.getMessage().adminInfo("[DDNS] æ£€æµ‹åˆ°åœ°å€å˜æ›´ï¼š " + LoggerX.time() + "\r\næ—§åœ°å€ï¼š" + Module_DDNS.this.ADDRESS + "\r\næ–°åœ°å€ï¼š" + response);
 							Module_DDNS.this.ADDRESS = response;
 						}
 					}

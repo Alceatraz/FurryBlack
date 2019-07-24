@@ -28,33 +28,33 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_jrjp";
 	private static String MODULE_COMMANDNAME = "jrjp";
-	private static String MODULE_DISPLAYNAME = "¼Àìë";
-	private static String MODULE_DESCRIPTION = "Ï×¼ÀÒ»¸ö³ÉÔ± ÕÙ»½Ò»¸öÊÓÆµ";
+	private static String MODULE_DISPLAYNAME = "ç¥­ç¥€";
+	private static String MODULE_DESCRIPTION = "çŒ®ç¥­ä¸€ä¸ªæˆå‘˜ å¬å”¤ä¸€ä¸ªè§†é¢‘";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/jrjp - ²é¿´½ñÈÕ¼ÀÆ·"
+			"/jrjp - æŸ¥çœ‹ä»Šæ—¥ç¥­å“"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"ÈººÅ-QQºÅ¶ÔÓ¦±í - Ã¿ÈÕUTC+8 00:00 Çå¿Õ",
-			"ÈººÅ-AVºÅ¶ÔÓ¦±í - Ã¿ÈÕUTC+8 00:00 Çå¿Õ"
+			"ç¾¤å·-QQå·å¯¹åº”è¡¨ - æ¯æ—¥UTC+8 00:00 æ¸…ç©º",
+			"ç¾¤å·-AVå·å¯¹åº”è¡¨ - æ¯æ—¥UTC+8 00:00 æ¸…ç©º"
 	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"»ñÈ¡ÃüÁî·¢ËÍÈË",
-			"±»³éµ½³ÉÔ±µÄêÇ³ÆºÍÈºêÇ³Æ"
+			"è·å–å‘½ä»¤å‘é€äºº",
+			"è¢«æŠ½åˆ°æˆå‘˜çš„æ˜µç§°å’Œç¾¤æ˜µç§°"
 	};
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -70,7 +70,7 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -156,12 +156,12 @@ public class Executor_jrjp extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		long victim = this.VICTIM.get(gropid);
-		entry.getMessage().gropInfo(gropid, entry.getNickmap().getNickname(victim) + " (" + victim + ") ±»×÷Îª¼ÀÆ·Ï×¼ÀµôÁË£¬ÕÙ»½³öÒ»¸öÉñÃØÊÓÆµ https://www.bilibili.com/video/av" + this.AVCODE.get(gropid));
+		entry.getMessage().gropInfo(gropid, entry.getNickmap().getNickname(victim) + " (" + victim + ") è¢«ä½œä¸ºç¥­å“çŒ®ç¥­æ‰äº†ï¼Œå¬å”¤å‡ºä¸€ä¸ªç¥ç§˜è§†é¢‘ https://www.bilibili.com/video/av" + this.AVCODE.get(gropid));
 		return true;
 	}
 	// ==========================================================================================================================================================
 	//
-	// ¹¤¾ßº¯Êı
+	// å·¥å…·å‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -174,7 +174,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	class Worker implements Runnable {
 		@Override
 		public void run() {
-			JcqApp.CQ.logInfo("FurryBlack", "jrjp - Worker ÒÑÆô¶¯");
+			JcqApp.CQ.logInfo("FurryBlack", "jrjp - Worker å·²å¯åŠ¨");
 			while (JcqAppAbstract.enable) {
 				try {
 					long time;

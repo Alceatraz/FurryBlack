@@ -56,22 +56,22 @@ public class Message {
 
 	public Message parseCommand() {
 
-		// È¥µô /
-		// È¥µôÊ×Î²¶àÓà¿Õ¸ñ
-		// ºÏ²¢ËùÓĞÁ¬Ğø¿Õ¸ñ
+		// å»æ‰ /
+		// å»æ‰é¦–å°¾å¤šä½™ç©ºæ ¼
+		// åˆå¹¶æ‰€æœ‰è¿ç»­ç©ºæ ¼
 		this.cmdMessage = this.rawMessage.substring(1);
 		this.cmdMessage = this.cmdMessage.trim();
 		this.cmdMessage = this.cmdMessage.replaceAll("\\s+", " ");
 
 		int indexOfSpace = this.cmdMessage.indexOf(' ');
 
-		// ÊÇ·ñ¿ÕÃüÁî
+		// æ˜¯å¦ç©ºå‘½ä»¤
 		if (indexOfSpace < 0) {
 			this.command = this.cmdMessage;
 		} else {
-			// ÇĞ¿ª
-			// ÃüÁî
-			// ²ÎÊı
+			// åˆ‡å¼€
+			// å‘½ä»¤
+			// å‚æ•°
 			this.command = this.cmdMessage.substring(0, indexOfSpace);
 			this.options = this.cmdMessage.substring(indexOfSpace + 1);
 
@@ -79,8 +79,8 @@ public class Message {
 			this.switchs = new TreeMap<>();
 			this.segmentParts = new LinkedList<>();
 
-			// ÌáÈ¡ËùÓĞ --XX=XXXX ĞÎÊ½µÄ¿ª¹Ø
-			// ÌáÈ¡ËùÓĞÆäËûÄÚÈİÎª²ÎÊı
+			// æå–æ‰€æœ‰ --XX=XXXX å½¢å¼çš„å¼€å…³
+			// æå–æ‰€æœ‰å…¶ä»–å†…å®¹ä¸ºå‚æ•°
 			for (String temp : this.options.split(" ")) {
 				if (temp.startsWith("--") && temp.indexOf("=") > 0) {
 					temp = temp.substring(2);
@@ -101,15 +101,15 @@ public class Message {
 	// ===================================================================================
 
 	/***
-	 * ·ÖÎöÏûÏ¢ÄÚÈİ 1£ºÉÁÕÕ 2£ºÊÓÆµ 3£ººì°ü
+	 * åˆ†ææ¶ˆæ¯å†…å®¹ 1ï¼šé—ªç…§ 2ï¼šè§†é¢‘ 3ï¼šçº¢åŒ…
 	 *
-	 * Èç¹û°üº¬Í¼Æ¬ÔòÈ¡³öËùÓĞÍ¼Æ¬²¢Éú³É´¿ÎÄ±¾¼°Æä³¤¶È
+	 * å¦‚æœåŒ…å«å›¾ç‰‡åˆ™å–å‡ºæ‰€æœ‰å›¾ç‰‡å¹¶ç”Ÿæˆçº¯æ–‡æœ¬åŠå…¶é•¿åº¦
 	 *
-	 * "&#91;ÉÁÕÕ&#93;ÇëÊ¹ÓÃĞÂ°æÊÖ»úQQ²é¿´ÉÁÕÕ¡£"
+	 * "&#91;é—ªç…§&#93;è¯·ä½¿ç”¨æ–°ç‰ˆæ‰‹æœºQQæŸ¥çœ‹é—ªç…§ã€‚"
 	 *
-	 * "&#91;QQºì°ü&#93;ÇëÊ¹ÓÃĞÂ°æÊÖ»úQQ²éÊÕºì°ü¡£"
+	 * "&#91;QQçº¢åŒ…&#93;è¯·ä½¿ç”¨æ–°ç‰ˆæ‰‹æœºQQæŸ¥æ”¶çº¢åŒ…ã€‚"
 	 *
-	 * "&#91;ÊÓÆµ&#93;ÄãµÄQQÔİ²»Ö§³Ö²é¿´ÊÓÆµ¶ÌÆ¬£¬ÇëÉı¼¶µ½×îĞÂ°æ±¾ºó²é¿´¡£"
+	 * "&#91;è§†é¢‘&#93;ä½ çš„QQæš‚ä¸æ”¯æŒæŸ¥çœ‹è§†é¢‘çŸ­ç‰‡ï¼Œè¯·å‡çº§åˆ°æœ€æ–°ç‰ˆæœ¬åæŸ¥çœ‹ã€‚"
 	 *
 	 * @return
 	 */
@@ -119,21 +119,21 @@ public class Message {
 
 	public Message parseMessage() {
 
-		if (this.rawMessage.startsWith("&#91;ÉÁÕÕ&#93;")) {
+		if (this.rawMessage.startsWith("&#91;é—ªç…§&#93;")) {
 			this.isSnappic = true;
-		} else if (this.rawMessage.startsWith("&#91;ÊÓÆµ&#93;")) {
+		} else if (this.rawMessage.startsWith("&#91;è§†é¢‘&#93;")) {
 			this.isQQVideo = true;
-		} else if (this.rawMessage.startsWith("&#91;QQºì°ü&#93;")) {
+		} else if (this.rawMessage.startsWith("&#91;QQçº¢åŒ…&#93;")) {
 			this.isHongbao = true;
 		} else {
-			// ÒÆ¶¯¶ËÓÃ»§ÊıÁ¿·Ç³£´ó, Í¨³£°üº¬Í¼Æ¬µÄÏûÏ¢¶¼ÊÇµ¥ÕÅÍ¼Æ¬£¨±íÇé°ü£©
+			// ç§»åŠ¨ç«¯ç”¨æˆ·æ•°é‡éå¸¸å¤§, é€šå¸¸åŒ…å«å›¾ç‰‡çš„æ¶ˆæ¯éƒ½æ˜¯å•å¼ å›¾ç‰‡ï¼ˆè¡¨æƒ…åŒ…ï¼‰
 			Pattern pattern = Pattern.compile(Message.REGEX_IMAGE);
 			Matcher matcher = pattern.matcher(this.rawMessage);
 			ArrayList<String> temp = new ArrayList<>(1);
 			if (matcher.find()) {
 				this.hasPicture = true;
 				temp.add(matcher.group());
-				// ÕâÀïÒ»°ã¶¼ÊÇfalse
+				// è¿™é‡Œä¸€èˆ¬éƒ½æ˜¯false
 				while (matcher.find()) {
 					temp.add(matcher.group());
 				}

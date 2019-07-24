@@ -12,35 +12,35 @@ public class Executor_kong extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_kong";
 	private static String MODULE_COMMANDNAME = "kong";
-	private static String MODULE_DISPLAYNAME = "±ä³ô";
-	private static String MODULE_DESCRIPTION = "¸øÎÄ×ÖÌí¼Ó¿Õ¸ñ";
+	private static String MODULE_DISPLAYNAME = "å˜è‡­";
+	private static String MODULE_DESCRIPTION = "ç»™æ–‡å­—æ·»åŠ ç©ºæ ¼";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/kong Ô­¾ä - ¸øÔ­¾äÌí¼Ó¿Õ¸ñ"
+			"/kong åŸå¥ - ç»™åŸå¥æ·»åŠ ç©ºæ ¼"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"»ñÈ¡ÃüÁî·¢ËÍÈË"
+			"è·å–å‘½ä»¤å‘é€äºº"
 	};
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -77,19 +77,19 @@ public class Executor_kong extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().userInfo(userid, message.getSection() == 0 ? "Äã Ïë °Ñ ¿Õ Æø ±ä ³ô Âğ" : Executor_kong.kong(message));
+		entry.getMessage().userInfo(userid, message.getSection() == 0 ? "ä½  æƒ³ æŠŠ ç©º æ°” å˜ è‡­ å—" : Executor_kong.kong(message));
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().diszInfo(diszid, userid, message.getSection() == 0 ? "Äã Ïë °Ñ ¿Õ Æø ±ä ³ô Âğ" : Executor_kong.kong(message));
+		entry.getMessage().diszInfo(diszid, userid, message.getSection() == 0 ? "ä½  æƒ³ æŠŠ ç©º æ°” å˜ è‡­ å—" : Executor_kong.kong(message));
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().gropInfo(gropid, userid, message.getSection() == 0 ? "Äã Ïë °Ñ ¿Õ Æø ±ä ³ô Âğ" : Executor_kong.kong(message));
+		entry.getMessage().gropInfo(gropid, userid, message.getSection() == 0 ? "ä½  æƒ³ æŠŠ ç©º æ°” å˜ è‡­ å—" : Executor_kong.kong(message));
 		return true;
 	}
 
@@ -110,7 +110,7 @@ public class Executor_kong extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ¹¤¾ßº¯Êı
+	// å·¥å…·å‡½æ•°
 	//
 	// ==========================================================================================================================================================
 

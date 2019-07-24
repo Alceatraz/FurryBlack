@@ -19,31 +19,31 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// Ä£¿é»ù±¾ÅäÖÃ
+	// æ¨¡å—åŸºæœ¬é…ç½®
 	//
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "executor_jrrp";
 	private static String MODULE_COMMANDNAME = "jrrp";
-	private static String MODULE_DISPLAYNAME = "½ñÈÕÔËÆø";
-	private static String MODULE_DESCRIPTION = "²é¿´½ñÌìµÄÔËÆøÖµ";
+	private static String MODULE_DISPLAYNAME = "ä»Šæ—¥è¿æ°”";
+	private static String MODULE_DESCRIPTION = "æŸ¥çœ‹ä»Šå¤©çš„è¿æ°”å€¼";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/jrrp - ²é¿´½ñÈÕÔËÆø"
+			"/jrrp - æŸ¥çœ‹ä»Šæ—¥è¿æ°”"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"ÓÃ»§ÓëÔËÆø¶ÔÓ¦±í - Ã¿ÈÕUTC+8 00:00 Çå¿Õ"
+			"ç”¨æˆ·ä¸è¿æ°”å¯¹åº”è¡¨ - æ¯æ—¥UTC+8 00:00 æ¸…ç©º"
 	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"»ñÈ¡ÃüÁî·¢ËÍÈË"
+			"è·å–å‘½ä»¤å‘é€äºº"
 	};
 
 	// ==========================================================================================================================================================
 	//
-	// ³ÉÔ±±äÁ¿
+	// æˆå‘˜å˜é‡
 	//
 	// ==========================================================================================================================================================
 
@@ -53,7 +53,7 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	// ==========================================================================================================================================================
 	//
-	// ÉúÃüÖÜÆÚº¯Êı
+	// ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 	//
 	// ==========================================================================================================================================================
 
@@ -97,7 +97,7 @@ public class Executor_jrrp extends ModuleExecutor {
 			SecureRandom random = new SecureRandom();
 			this.JRRP.put(userid, random.nextInt(100));
 		}
-		entry.getMessage().userInfo(userid, "½ñÌìµÄÔËÆøÊÇ" + this.JRRP.get(userid) + "%!!!");
+		entry.getMessage().userInfo(userid, "ä»Šå¤©çš„è¿æ°”æ˜¯" + this.JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
@@ -107,7 +107,7 @@ public class Executor_jrrp extends ModuleExecutor {
 			SecureRandom random = new SecureRandom();
 			this.JRRP.put(userid, random.nextInt(100));
 		}
-		entry.getMessage().diszInfo(diszid, userid, "½ñÌìµÄÔËÆøÊÇ" + this.JRRP.get(userid) + "%!!!");
+		entry.getMessage().diszInfo(diszid, userid, "ä»Šå¤©çš„è¿æ°”æ˜¯" + this.JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
@@ -117,7 +117,7 @@ public class Executor_jrrp extends ModuleExecutor {
 			SecureRandom random = new SecureRandom();
 			this.JRRP.put(userid, random.nextInt(100));
 		}
-		entry.getMessage().gropInfo(gropid, userid, "½ñÌìµÄÔËÆøÊÇ" + this.JRRP.get(userid) + "%!!!");
+		entry.getMessage().gropInfo(gropid, userid, "ä»Šå¤©çš„è¿æ°”æ˜¯" + this.JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
@@ -130,7 +130,7 @@ public class Executor_jrrp extends ModuleExecutor {
 		 * this.JRRP.keySet()) { int luck = this.JRRP.get(temp); frequency.put(luck,
 		 * frequency.containsKey(luck) ? frequency.get(luck) + 1 : 1); } int size =
 		 * this.JRRP.size(); StringBuilder builder = new StringBuilder();
-		 * builder.append("¹²Éú³ÉÁË "); builder.append(size); builder.append("´Î"); for
+		 * builder.append("å…±ç”Ÿæˆäº† "); builder.append(size); builder.append("æ¬¡"); for
 		 * (Entry<Integer, Integer> temp : frequency.entrySet()) {
 		 * builder.append("\r\n"); builder.append(temp.getKey()); builder.append(" : ");
 		 * builder.append(temp.getValue() * 100 / size); builder.append("%"); } String
@@ -142,7 +142,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	class Worker implements Runnable {
 		@Override
 		public void run() {
-			JcqApp.CQ.logInfo("FurryBlack", "jrrp - Worker ÒÑÆô¶¯");
+			JcqApp.CQ.logInfo("FurryBlack", "jrrp - Worker å·²å¯åŠ¨");
 			while (JcqAppAbstract.enable) {
 				try {
 					long time;
