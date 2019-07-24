@@ -174,7 +174,6 @@ public class Executor_jrjp extends ModuleExecutor {
 	class Worker implements Runnable {
 		@Override
 		public void run() {
-			JcqApp.CQ.logInfo("FurryBlack", "jrjp - Worker 已启动");
 			while (JcqAppAbstract.enable) {
 				try {
 					long time;

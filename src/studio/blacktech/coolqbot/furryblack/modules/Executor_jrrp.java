@@ -4,7 +4,6 @@ import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.entry;
@@ -142,7 +141,6 @@ public class Executor_jrrp extends ModuleExecutor {
 	class Worker implements Runnable {
 		@Override
 		public void run() {
-			JcqApp.CQ.logInfo("FurryBlack", "jrrp - Worker 已启动");
 			while (JcqAppAbstract.enable) {
 				try {
 					long time;

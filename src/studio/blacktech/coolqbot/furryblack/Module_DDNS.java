@@ -7,7 +7,6 @@ import java.net.URLConnection;
 import java.security.SecureRandom;
 import java.util.Date;
 
-import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
@@ -231,7 +230,6 @@ public class Module_DDNS extends Module {
 
 		@Override
 		public void run() {
-			JcqApp.CQ.logInfo("FurryBlack", "DDNS - Worker 已启动");
 			long time;
 			Date date;
 			while (JcqAppAbstract.enable) {

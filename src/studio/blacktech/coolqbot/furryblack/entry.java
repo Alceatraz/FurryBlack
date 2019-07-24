@@ -154,11 +154,11 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-			System.out.println(logger.make(3));
+			JcqApp.CQ.logInfo("FurryBlack", logger.make(3));
+			getMessage().adminInfo(logger.make(0));
 
 			// ==========================================================================================================================
 
-			getMessage().adminInfo(logger.make(0));
 
 		} catch (Exception exce) {
 			exce.printStackTrace();

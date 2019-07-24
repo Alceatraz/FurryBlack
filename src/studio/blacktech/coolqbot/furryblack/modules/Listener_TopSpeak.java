@@ -558,7 +558,6 @@ public class Listener_TopSpeak extends ModuleListener {
 	class Worker implements Runnable {
 		@Override
 		public void run() {
-			JcqApp.CQ.logInfo("FurryBlack", "TopSpeak - Worker 已启动");
 			while (JcqAppAbstract.enable) {
 				try {
 					long time;
