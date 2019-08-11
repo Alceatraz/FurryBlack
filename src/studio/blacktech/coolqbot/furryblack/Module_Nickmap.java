@@ -88,7 +88,7 @@ public class Module_Nickmap extends Module {
 		}
 		reader.close();
 
-		logger.seek("[Nickmap] 昵称替换：", this.ENABLE_REPLACE ? "启用" : "禁用");
+		logger.seek("[Nickmap] 昵称替换", this.ENABLE_REPLACE ? "启用" : "禁用");
 
 	}
 

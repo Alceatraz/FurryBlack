@@ -154,12 +154,11 @@ public class Executor_jrrp extends ModuleExecutor {
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
 						time = time - 5;
+						System.out.println("[计划任务] Executor_jrrp 启动延迟 " + time);
 						Thread.sleep(time);
 						// =======================================================
+						System.out.println("[计划任务] Executor_jrrp 定时清空");
 						Executor_jrrp.this.JRRP.clear();
-						// =======================================================
-						SecureRandom random = new SecureRandom();
-						Thread.sleep(random.nextInt(3600000));
 						// =======================================================
 					}
 				} catch (InterruptedException exception) {

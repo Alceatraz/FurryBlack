@@ -71,13 +71,10 @@ public class Executor_admin extends ModuleExecutor {
 		if (!entry.getMessage().isAdmin(userid)) { return false; }
 
 		if (message.getSection() == 0) {
-
 			entry.getSystemd().sendSystemsReport(0, 0);
 			entry.getSystemd().sendModulesReport(0, 0);
 			return true;
-
 		} else {
-
 			switch (message.getSegment()[0]) {
 			case "debug":
 				entry.getMessage().adminInfo("DEBUG → " + entry.switchDEBUG());
@@ -86,7 +83,6 @@ public class Executor_admin extends ModuleExecutor {
 				entry.getSystemd().sendModuleReport(message);
 				return true;
 			}
-
 			return false;
 		}
 	}
@@ -101,12 +97,10 @@ public class Executor_admin extends ModuleExecutor {
 		if (!entry.getMessage().isAdmin(userid)) { return false; }
 
 		if (message.getSection() == 0) {
-			entry.getSystemd().sendSystemsReport(0, 0);
-			entry.getSystemd().sendModulesReport(0, 0);
+			entry.getSystemd().sendSystemsReport(3, gropid);
+			entry.getSystemd().sendModulesReport(3, gropid);
 			return true;
-
 		} else {
-
 			switch (message.getSegment()[0]) {
 			case "say":
 				entry.getMessage().gropInfo(gropid, message.join(1));
@@ -122,7 +116,6 @@ public class Executor_admin extends ModuleExecutor {
 			case "report":
 				entry.getSystemd().sendModuleReport(message);
 				return true;
-
 			}
 
 			return false;

@@ -159,7 +159,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-
 		} catch (Exception exce) {
 			exce.printStackTrace();
 			JcqAppAbstract.enable = false;
@@ -260,6 +259,10 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	@Override
 	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
+		if (userid == 1000000) {
+			entry.getMessage().adminInfo("官方通知 - （" + gropid + "）" + message);
+			return IMsg.MSG_IGNORE;
+		}
 		try {
 			entry.SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exce) {
@@ -359,6 +362,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int friendAdd(int typeid, int sendTime, long userid) {
 		JcqApp.CQ.sendPrivateMsg(userid, "你好，在下人工智障");
+		JcqApp.CQ.sendPrivateMsg(userid, "使用即表示同意最终用户许可，由/eula查看");
+		JcqApp.CQ.sendPrivateMsg(userid, "为了礼貌和避免打扰，本BOT不接入聊天功能");
+		JcqApp.CQ.sendPrivateMsg(userid, "输入/help获取帮助");
 		getMessage().sendHelp(userid);
 		getMessage().sendEula(userid);
 		return 0;

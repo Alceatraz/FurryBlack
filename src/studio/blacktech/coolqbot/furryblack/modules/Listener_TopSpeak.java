@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -563,21 +562,20 @@ public class Listener_TopSpeak extends ModuleListener {
 					long time;
 					Date date;
 					while (true) {
-						time = 86405L;
+						time = 43205L;
 						date = new Date();
 						time = time - date.getSeconds();
 						time = time - date.getMinutes() * 65;
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
 						time = time - 5;
+						if (time < 0) { time = time + 84600L; }
+						System.out.println("[计划任务] TopSpeak 启动延迟 " + time);
 						Thread.sleep(time);
-
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {
+							System.out.println("[计划任务] TopSpeak 定时报告 " + temp);
 							if (Listener_TopSpeak.this.GROUP_REPORT.contains(temp)) { entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp)); }
 						}
-
-						SecureRandom random = new SecureRandom();
-						Thread.sleep(random.nextInt(3600000));
 					}
 				} catch (InterruptedException exception) {
 				}

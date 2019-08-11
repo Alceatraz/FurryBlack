@@ -36,7 +36,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "jrjp";
 	private static String MODULE_DISPLAYNAME = "祭祀";
 	private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "1.1";
 	private static String[] MODULE_USAGE = new String[] {
 			"/jrjp - 查看今日祭品"
 	};
@@ -68,6 +68,7 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	private Thread flush;
 
+	private SecureRandom random = new SecureRandom();
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -109,10 +110,12 @@ public class Executor_jrjp extends ModuleExecutor {
 			ArrayList<Long> tempMembers = this.MEMBERS.get(group.getId());
 			ArrayList<Long> tempIgnores = this.IGNORES.get(group.getId());
 			for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
-				if (entry.getMessage().isAdmin(member.getQqId())) { continue; }
+				if (entry.getMessage().isMyself(member.getQqId())) { continue; }
 				if (tempIgnores.contains(member.getQqId())) { continue; }
 				tempMembers.add(member.getQqId());
 			}
+			Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(this.random.nextInt(tempMembers.size())));
+			Executor_jrjp.this.AVCODE.put(group.getId(), (long) this.random.nextInt(60000000));
 		}
 
 		this.ENABLE_USER = false;
@@ -186,17 +189,21 @@ public class Executor_jrjp extends ModuleExecutor {
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
 						time = time - 5;
+						System.out.println("[计划任务] Executor_jrjp 启动延迟 " + time);
 						Thread.sleep(time);
 						Executor_jrjp.this.AVCODE.clear();
 						Executor_jrjp.this.VICTIM.clear();
 						ArrayList<Long> temp;
-						SecureRandom random = new SecureRandom();
-						for (long gropid : Executor_jrjp.this.MEMBERS.keySet()) {
-							temp = Executor_jrjp.this.MEMBERS.get(gropid);
-							Executor_jrjp.this.AVCODE.put(gropid, (long) random.nextInt(60000000));
-							Executor_jrjp.this.VICTIM.put(gropid, temp.get(random.nextInt(temp.size())));
+						long victim;
+						long avcode;
+						for (Long group : Executor_jrjp.this.MEMBERS.keySet()) {
+							temp = Executor_jrjp.this.MEMBERS.get(group);
+							victim = temp.get(Executor_jrjp.this.random.nextInt(temp.size()));
+							avcode = Executor_jrjp.this.random.nextInt(60000000);
+							Executor_jrjp.this.VICTIM.put(group, victim);
+							Executor_jrjp.this.AVCODE.put(group, avcode);
+							System.out.println("[计划任务] Executor_jrjp 定时刷新 " + group + " - " + " AV" + avcode);
 						}
-						Thread.sleep(random.nextInt(3600000));
 					}
 				} catch (InterruptedException exception) {
 				}

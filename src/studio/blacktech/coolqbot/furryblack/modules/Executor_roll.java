@@ -22,7 +22,7 @@ public class Executor_roll extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "roll";
 	private static String MODULE_DISPLAYNAME = "生成随机数";
 	private static String MODULE_DESCRIPTION = "生成随机数";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "1.1";
 	private static String[] MODULE_USAGE = new String[] {
 			"/roll - 抽取真假",
 			"/roll 数字 - 从零到给定数字任选一个数字",
@@ -113,7 +113,7 @@ public class Executor_roll extends ModuleExecutor {
 
 		// ============================================================
 
-		case 1:
+		case 0:
 			if (random.nextBoolean()) {
 				this.mode_fucker++;
 				res = "1";
@@ -126,7 +126,7 @@ public class Executor_roll extends ModuleExecutor {
 
 		// ============================================================
 
-		case 2:
+		case 1:
 			int range = 100;
 			try {
 				range = Integer.parseInt(message.getSegment()[0]);
@@ -147,7 +147,7 @@ public class Executor_roll extends ModuleExecutor {
 
 		// ============================================================
 
-		case 3:
+		case 2:
 			int min = 100;
 			int max = 200;
 			try {

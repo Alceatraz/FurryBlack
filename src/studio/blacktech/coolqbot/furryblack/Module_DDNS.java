@@ -102,11 +102,11 @@ public class Module_DDNS extends Module {
 			} else {
 				this.ADDRESS = response;
 				response = this.delegate.setDDNSAddress(this.ADDRESS);
-				logger.mini("[DDNS] 设置地址成功", response);
+				logger.info("[DDNS] 设置地址成功", response);
 			}
 		} else {
 			this.ADDRESS = response.split(" ")[1];
-			logger.mini("[DDNS] 刷新地址成功", response);
+			logger.info("[DDNS] 刷新地址成功", response);
 		}
 
 		this.thread = new Thread(new WorkerProcerss());
