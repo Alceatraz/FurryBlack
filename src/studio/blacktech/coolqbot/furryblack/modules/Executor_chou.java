@@ -73,6 +73,8 @@ public class Executor_chou extends ModuleExecutor {
 	@Override
 	public void init(LoggerX logger) throws Exception {
 
+		this.initConfFolder();
+
 		this.MEMBERS = new HashMap<>();
 		this.IGNORES = new HashMap<>();
 

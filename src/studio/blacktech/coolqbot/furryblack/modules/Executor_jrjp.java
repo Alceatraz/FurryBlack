@@ -58,11 +58,11 @@ public class Executor_jrjp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private HashMap<Long, Long> AVCODE = new HashMap<>();
-	private HashMap<Long, Long> VICTIM = new HashMap<>();
+	private HashMap<Long, Long> AVCODE;
+	private HashMap<Long, Long> VICTIM;
 
-	private HashMap<Long, ArrayList<Long>> MEMBERS = new HashMap<>();
-	private HashMap<Long, ArrayList<Long>> IGNORES = new HashMap<>();
+	private HashMap<Long, ArrayList<Long>> MEMBERS;
+	private HashMap<Long, ArrayList<Long>> IGNORES;
 
 	private File USER_IGNORE;
 
@@ -81,6 +81,13 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
+		this.initConfFolder();
+
+		this.AVCODE = new HashMap<>();
+		this.VICTIM = new HashMap<>();
+		this.MEMBERS = new HashMap<>();
+		this.IGNORES = new HashMap<>();
 
 		this.USER_IGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 

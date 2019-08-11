@@ -39,7 +39,7 @@ public class Module_Nickmap extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	private static TreeMap<Long, String> NICKNAME = new TreeMap<>();
+	private static TreeMap<Long, String> NICKNAME;
 
 	private boolean ENABLE_REPLACE = false;
 
@@ -59,6 +59,12 @@ public class Module_Nickmap extends Module {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
+		this.initConfFolder();
+		this.initCofigurtion();
+
+		NICKNAME = new TreeMap<>();
+
 		if (this.NEW_CONFIG) {
 			logger.seek("[Nickmap] 配置文件不存在 - 生成默认配置");
 			this.CONFIG.setProperty("enable_nickname_replace", "false");

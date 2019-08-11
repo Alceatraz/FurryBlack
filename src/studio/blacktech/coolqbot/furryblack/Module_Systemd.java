@@ -92,20 +92,20 @@ public class Module_Systemd extends Module {
 	private String[] LIST_EXECUTOR_DISZ = {};
 	private String[] LIST_EXECUTOR_GROP = {};
 
-	private TreeMap<String, ModuleTrigger> TRIGGER_INSTANCE = new TreeMap<>();
-	private ArrayList<ModuleTrigger> TRIGGER_USER = new ArrayList<>(100);
-	private ArrayList<ModuleTrigger> TRIGGER_DISZ = new ArrayList<>(100);
-	private ArrayList<ModuleTrigger> TRIGGER_GROP = new ArrayList<>(100);
+	private TreeMap<String, ModuleTrigger> TRIGGER_INSTANCE;
+	private ArrayList<ModuleTrigger> TRIGGER_USER;
+	private ArrayList<ModuleTrigger> TRIGGER_DISZ;
+	private ArrayList<ModuleTrigger> TRIGGER_GROP;
 
-	private TreeMap<String, ModuleListener> LISTENER_INSTANCE = new TreeMap<>();
-	private ArrayList<ModuleListener> LISTENER_USER = new ArrayList<>(100);
-	private ArrayList<ModuleListener> LISTENER_DISZ = new ArrayList<>(100);
-	private ArrayList<ModuleListener> LISTENER_GROP = new ArrayList<>(100);
+	private TreeMap<String, ModuleListener> LISTENER_INSTANCE;
+	private ArrayList<ModuleListener> LISTENER_USER;
+	private ArrayList<ModuleListener> LISTENER_DISZ;
+	private ArrayList<ModuleListener> LISTENER_GROP;
 
-	private TreeMap<String, ModuleExecutor> EXECUTOR_INSTANCE = new TreeMap<>();
-	private TreeMap<String, ModuleExecutor> EXECUTOR_USER = new TreeMap<>();
-	private TreeMap<String, ModuleExecutor> EXECUTOR_DISZ = new TreeMap<>();
-	private TreeMap<String, ModuleExecutor> EXECUTOR_GROP = new TreeMap<>();
+	private TreeMap<String, ModuleExecutor> EXECUTOR_INSTANCE;
+	private TreeMap<String, ModuleExecutor> EXECUTOR_USER;
+	private TreeMap<String, ModuleExecutor> EXECUTOR_DISZ;
+	private TreeMap<String, ModuleExecutor> EXECUTOR_GROP;
 
 	// ==========================================================================================================================================================
 	//
@@ -119,6 +119,25 @@ public class Module_Systemd extends Module {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
+		this.initConfFolder();
+		this.initCofigurtion();
+
+		this.TRIGGER_INSTANCE = new TreeMap<>();
+		this.TRIGGER_USER = new ArrayList<>(100);
+		this.TRIGGER_DISZ = new ArrayList<>(100);
+		this.TRIGGER_GROP = new ArrayList<>(100);
+
+		this.LISTENER_INSTANCE = new TreeMap<>();
+		this.LISTENER_USER = new ArrayList<>(100);
+		this.LISTENER_DISZ = new ArrayList<>(100);
+		this.LISTENER_GROP = new ArrayList<>(100);
+
+		this.EXECUTOR_INSTANCE = new TreeMap<>();
+		this.EXECUTOR_USER = new TreeMap<>();
+		this.EXECUTOR_DISZ = new TreeMap<>();
+		this.EXECUTOR_GROP = new TreeMap<>();
+
 		if (this.NEW_CONFIG) {
 			logger.seek("[Systemd] 配置文件不存在 - 生成默认配置");
 			this.CONFIG.setProperty("trigger_user", "none");

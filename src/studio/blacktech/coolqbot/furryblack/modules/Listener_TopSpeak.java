@@ -60,9 +60,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	//
 	// ==========================================================================================================================================================
 
-	private ArrayList<Long> GROUP_REPORT = new ArrayList<>();
+	private ArrayList<Long> GROUP_REPORT;
 
-	private HashMap<Long, GroupStatus> GROUP_STATUS = new HashMap<>();
+	private HashMap<Long, GroupStatus> GROUP_STATUS;
 
 	private Thread worker;
 
@@ -80,6 +80,11 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
+		this.initConfFolder();
+
+		this.GROUP_REPORT = new ArrayList<>();
+		this.GROUP_STATUS = new HashMap<>();
 
 		this.CONFIG_GROUP_REPORT = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "grop_report.txt").toFile();
 

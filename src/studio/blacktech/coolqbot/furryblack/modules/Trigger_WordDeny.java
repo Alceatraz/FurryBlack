@@ -45,7 +45,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	//
 	// ==========================================================================================================================================================
 
-	private ArrayList<String> BLACKLIST = new ArrayList<>(100);
+	private ArrayList<String> BLACKLIST;
 
 	private int DENY_USER_COUNT = 0;
 	private int DENY_DISZ_COUNT = 0;
@@ -65,6 +65,11 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
+		this.initConfFolder();
+		this.initCofigurtion();
+
+		this.BLACKLIST = new ArrayList<>(100);
 
 		if (this.NEW_CONFIG) {
 			this.CONFIG.setProperty("enable_user", "false");

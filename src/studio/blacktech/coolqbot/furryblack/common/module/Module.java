@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.NotAFolderException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -35,6 +36,8 @@ public abstract class Module {
 
 	protected boolean NEW_CONFIG = false;
 
+	private boolean init_conf_folder = false;
+
 	public Module(String MODULE_PACKAGENAME, String MODULE_COMMANDNAME, String MODULE_DISPLAYNAME, String MODULE_DESCRIPTION, String MODULE_VERSION, String[] MODULE_USAGE, String[] MODULE_PRIVACY_TRIGER, String[] MODULE_PRIVACY_LISTEN, String[] MODULE_PRIVACY_STORED, String[] MODULE_PRIVACY_CACHED, String[] MODULE_PRIVACY_OBTAIN) throws Exception {
 
 		this.MODULE_PACKAGENAME = MODULE_PACKAGENAME;
@@ -51,20 +54,30 @@ public abstract class Module {
 
 		this.MODULE_FULLHELP = this.genFullHelp();
 
+	}
+
+	public void initConfFolder() throws Exception {
 		this.FOLDER_CONF = Paths.get(entry.FOLDER_CONF().getAbsolutePath(), this.MODULE_PACKAGENAME).toFile();
-		this.FOLDER_DATA = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), this.MODULE_PACKAGENAME).toFile();
-
-		this.FILE_CONFIG = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
-
 		if (!this.FOLDER_CONF.exists()) { this.FOLDER_CONF.mkdirs(); }
-		if (!this.FOLDER_DATA.exists()) { this.FOLDER_DATA.mkdirs(); }
-
 		if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + this.FOLDER_CONF.getAbsolutePath()); }
-		if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + this.FOLDER_DATA.getAbsolutePath()); }
+		this.init_conf_folder = true;
+	}
 
-		if (!this.FILE_CONFIG.exists()) {
-			this.FILE_CONFIG.createNewFile();
-			this.NEW_CONFIG = true;
+	public void initDataFolder() throws Exception {
+		this.FOLDER_DATA = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), this.MODULE_PACKAGENAME).toFile();
+		if (!this.FOLDER_DATA.exists()) { this.FOLDER_DATA.mkdirs(); }
+		if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + this.FOLDER_DATA.getAbsolutePath()); }
+	}
+
+	public void initCofigurtion() throws Exception {
+		if (this.init_conf_folder) {
+			this.FILE_CONFIG = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
+			if (!this.FILE_CONFIG.exists()) {
+				this.FILE_CONFIG.createNewFile();
+				this.NEW_CONFIG = true;
+			}
+		} else {
+			throw new InitializationException("还未对配置目录初始化");
 		}
 	}
 

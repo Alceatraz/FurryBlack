@@ -59,6 +59,10 @@ public class Module_DDNS extends Module {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
+		this.initConfFolder();
+		this.initCofigurtion();
+
 		if (this.NEW_CONFIG) {
 			logger.seek("[DDNS] 配置文件不存在 - 生成默认配置");
 			this.CONFIG.setProperty("enable_ddnsclient", "false");
@@ -68,13 +72,13 @@ public class Module_DDNS extends Module {
 			this.CONFIG.setProperty("ddnsapi_hostname", "");
 			this.CONFIG.setProperty("ddnsapi_password", "");
 			this.saveConfig();
+		} else {
+			this.loadConfig();
 		}
 	}
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-
-		this.loadConfig();
 
 		this.ENABLE = Boolean.parseBoolean(this.CONFIG.getProperty("enable_ddnsclient", "false"));
 

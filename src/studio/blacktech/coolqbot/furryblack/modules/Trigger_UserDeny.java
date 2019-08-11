@@ -45,9 +45,9 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	//
 	// ==========================================================================================================================================================
 
-	private ArrayList<Long> USER_IGNORE = new ArrayList<>(100);
-	private TreeMap<Long, ArrayList<Long>> DISZ_IGNORE = new TreeMap<>();
-	private TreeMap<Long, ArrayList<Long>> GROP_IGNORE = new TreeMap<>();
+	private ArrayList<Long> USER_IGNORE;
+	private TreeMap<Long, ArrayList<Long>> DISZ_IGNORE;
+	private TreeMap<Long, ArrayList<Long>> GROP_IGNORE;
 
 	private int DENY_USER_COUNT = 0;
 	private int DENY_DISZ_COUNT = 0;
@@ -69,6 +69,13 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
+		this.initConfFolder();
+		this.initCofigurtion();
+
+		this.USER_IGNORE = new ArrayList<>(100);
+		this.DISZ_IGNORE = new TreeMap<>();
+		this.GROP_IGNORE = new TreeMap<>();
 
 		if (this.NEW_CONFIG) {
 			this.CONFIG.setProperty("enable_user", "false");

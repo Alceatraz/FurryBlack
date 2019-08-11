@@ -46,7 +46,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private HashMap<Long, Integer> JRRP = new HashMap<>();
+	private HashMap<Long, Integer> JRRP;
 
 	private Thread flush;
 
@@ -62,6 +62,9 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
+		this.JRRP = new HashMap<>();
+
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;
 		this.ENABLE_GROP = true;

@@ -58,7 +58,7 @@ public class Module_Message extends Module {
 	private String MESSAGE_LIST_DISZ;
 	private String MESSAGE_LIST_GROP;
 
-	private TreeMap<Long, LinkedList<Integer>> MESSAGE_HISTORY_GROP = new TreeMap<>();
+	private TreeMap<Long, LinkedList<Integer>> MESSAGE_HISTORY_GROP;
 	private MessageDelegate delegate = new MessageDelegate();
 
 	private long USERID_CQBOT = 0;
@@ -78,6 +78,11 @@ public class Module_Message extends Module {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
+		this.initConfFolder();
+		this.initCofigurtion();
+
+		this.MESSAGE_HISTORY_GROP = new TreeMap<>();
 
 		if (this.NEW_CONFIG) {
 			logger.seek("[Message] 配置文件不存在 - 生成默认配置");
