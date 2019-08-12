@@ -197,7 +197,9 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-
+		// 为了提升性能 不应该每次执行event都获取成员 应启动时先读取群成员列表 生成相关的内容 使用时直接获取
+		// QQ系统通知为
+		if (userid == 1000000) { entry.getMessage().adminInfo("系统消息 - （" + gropid + "）"); }
 	}
 
 	/***

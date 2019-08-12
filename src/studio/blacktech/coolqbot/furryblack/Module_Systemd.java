@@ -754,6 +754,7 @@ public class Module_Systemd extends Module {
 
 	private String doGenerateSystemsReport() {
 
+		String[] result;
 		StringBuilder builder = new StringBuilder();
 
 		// ===============================================================================
@@ -773,10 +774,10 @@ public class Module_Systemd extends Module {
 
 		// ========================================================================================================================
 
-		builder.append(LoggerX.time());
-		builder.append(" - 状态简报\r\n运行时间: ");
+		builder.append(LoggerX.datetime());
+		builder.append(" 简报\r\n运行时间: ");
 		builder.append(uptimedd);
-		builder.append(" - ");
+		builder.append("天");
 		builder.append(uptimehh);
 		builder.append(":");
 		builder.append(uptimemm);
@@ -793,29 +794,40 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("\r\n调用-私聊： ");
+		builder.append("\r\n私聊消息数： ");
 		builder.append(this.COUNT_USER_MESSAGE);
-		builder.append("次\r\n调用-组聊： ");
+		builder.append("次\r\n组聊消息数： ");
 		builder.append(this.COUNT_DISZ_MESSAGE);
-		builder.append("次\r\n调用-群聊： ");
+		builder.append("次\r\n群聊消息数： ");
 		builder.append(this.COUNT_GROP_MESSAGE);
 		builder.append("次");
 
-		return builder.toString();
-	}
-
-	// ========================================================================================================================
-
-	private String[] doGenerateModulesReport() {
-
-		StringBuilder builder;
-		String[] result;
-
-		String[] report = new String[3];
-
 		// ===============================================================================
 
-		builder = new StringBuilder();
+		builder.append("\r\n触发器： ");
+		builder.append(TRIGGER_USER.size());
+		builder.append("/");
+		builder.append(TRIGGER_DISZ.size());
+		builder.append("/");
+		builder.append(TRIGGER_GROP.size());
+
+		builder.append("\r\n监听器： ");
+
+		builder.append(LISTENER_USER.size());
+		builder.append("/");
+		builder.append(LISTENER_DISZ.size());
+		builder.append("/");
+		builder.append(LISTENER_GROP.size());
+
+		builder.append("\r\n执行器： ");
+
+		builder.append(EXECUTOR_USER.size());
+		builder.append("/");
+		builder.append(EXECUTOR_DISZ.size());
+		builder.append("/");
+		builder.append(EXECUTOR_GROP.size());
+
+		// ===============================================================================
 
 		for (String temp : this.TRIGGER_INSTANCE.keySet()) {
 			ModuleTrigger instance = this.TRIGGER_INSTANCE.get(temp);
@@ -835,8 +847,7 @@ public class Module_Systemd extends Module {
 			builder.append("\r\n");
 		}
 
-		report[0] = builder.toString();
-		builder = new StringBuilder();
+		// ===============================================================================
 
 		for (String temp : this.LISTENER_INSTANCE.keySet()) {
 			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
@@ -856,9 +867,6 @@ public class Module_Systemd extends Module {
 			builder.append("\r\n");
 		}
 
-		report[1] = builder.toString();
-		builder = new StringBuilder();
-
 		for (String temp : this.LISTENER_INSTANCE.keySet()) {
 			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
 			result = instance.generateReport(0, null, null, null);
@@ -877,9 +885,7 @@ public class Module_Systemd extends Module {
 			builder.append("\r\n");
 		}
 
-		report[2] = builder.toString();
-
-		return report;
+		return builder.toString();
 	}
 
 	// ===============================================================================
@@ -931,28 +937,6 @@ public class Module_Systemd extends Module {
 			break;
 		case 3:
 			entry.getMessage().gropInfo(destid, this.doGenerateSystemsReport());
-		}
-	}
-
-	/***
-	 * 生成并发送模块报告
-	 *
-	 * @param logdest
-	 * @param destid
-	 */
-	public void doSendModulesReport(int logdest, long destid) {
-		switch (logdest) {
-		case 0:
-			entry.getMessage().adminInfo(this.doGenerateModulesReport());
-			break;
-		case 1:
-			entry.getMessage().userInfo(destid, this.doGenerateModulesReport());
-			break;
-		case 2:
-			entry.getMessage().diszInfo(destid, this.doGenerateModulesReport());
-			break;
-		case 3:
-			entry.getMessage().gropInfo(destid, this.doGenerateModulesReport());
 		}
 	}
 
@@ -1010,10 +994,6 @@ public class Module_Systemd extends Module {
 
 		public void sendSystemsReport(int logdest, long destid) {
 			Module_Systemd.this.doSendSystemsReport(logdest, destid);
-		}
-
-		public void sendModulesReport(int logdest, long destid) {
-			Module_Systemd.this.doSendModulesReport(logdest, destid);
 		}
 
 		public void sendModuleReport(Message message) {

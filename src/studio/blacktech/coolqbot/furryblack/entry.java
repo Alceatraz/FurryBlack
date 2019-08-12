@@ -227,7 +227,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(userid);
 			builder.append("\r\n 消息:");
 			builder.append(message);
-			builder.append("\r\n 消息:");
+			builder.append("\r\n 长度:");
 			builder.append(message.length());
 			builder.append("\r\n 原因:");
 			builder.append(exce.getMessage());
@@ -253,7 +253,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(userid);
 			builder.append("\r\n 消息:");
 			builder.append(message);
-			builder.append("\r\n 消息:");
+			builder.append("\r\n 长度:");
 			builder.append(message.length());
 			builder.append("\r\n 原因:");
 			builder.append(exce.getMessage());
@@ -265,30 +265,27 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	@Override
 	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
-		if (userid == 1000000) {
-			entry.getMessage().adminInfo("系统消息 - （" + gropid + "）" + message + " " + anonymous);
-		} else {
-			try {
-				entry.SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
-			} catch (Exception exce) {
-				exce.printStackTrace();
-				StringBuilder builder = new StringBuilder();
-				builder.append(LoggerX.time());
-				builder.append(" [群聊消息异常] - ");
-				builder.append(messageid);
-				builder.append("\r\n 群号:");
-				builder.append(gropid);
-				builder.append("\r\n 用户:");
-				builder.append(userid);
-				builder.append("\r\n 消息:");
-				builder.append(message);
-				builder.append("\r\n 消息:");
-				builder.append(message.length());
-				builder.append("\r\n 原因:");
-				builder.append(exce.getMessage());
-				System.out.println(builder.toString());
-				getMessage().adminInfo(builder.toString());
-			}
+
+		try {
+			entry.SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
+		} catch (Exception exce) {
+			exce.printStackTrace();
+			StringBuilder builder = new StringBuilder();
+			builder.append(LoggerX.time());
+			builder.append(" [群聊消息异常] - ");
+			builder.append(messageid);
+			builder.append("\r\n 群号:");
+			builder.append(gropid);
+			builder.append("\r\n 用户:");
+			builder.append(userid);
+			builder.append("\r\n 消息:");
+			builder.append(message);
+			builder.append("\r\n 长度:");
+			builder.append(message.length());
+			builder.append("\r\n 原因:");
+			builder.append(exce.getMessage());
+			System.out.println(builder.toString());
+			getMessage().adminInfo(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}

@@ -72,7 +72,6 @@ public class Executor_admin extends ModuleExecutor {
 
 		if (message.getSection() == 0) {
 			entry.getSystemd().sendSystemsReport(0, 0);
-			entry.getSystemd().sendModulesReport(0, 0);
 			return true;
 		} else {
 			switch (message.getSegment()[0]) {
@@ -98,7 +97,6 @@ public class Executor_admin extends ModuleExecutor {
 
 		if (message.getSection() == 0) {
 			entry.getSystemd().sendSystemsReport(3, gropid);
-			entry.getSystemd().sendModulesReport(3, gropid);
 			return true;
 		} else {
 			switch (message.getSegment()[0]) {
