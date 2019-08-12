@@ -32,21 +32,18 @@
 
 ## 警告×2
 
-$是环境变量的意思
-
-例如 `$NAME` 意思是这里是名字而不是照抄"`$NAME`"
+$是环境变量的意思 例如 `$NAME` 意思是这里是名字而不是照抄"`$NAME`"
 
 ## 文件结构
 
 **PACKAGENAME即名称**
 
-conf：所有配置文件的目录
-data：所有数据文件的目录
 
-conf/module：所有模块的配置文件，其下按照模块名称生成目录
-data/module：所有模块的数据文件，其下按照模块名称生成目录
-
-conf/module/$NAME/config.properties：Module自动为每个模块生成的配置文件
+`conf/`：所有模块的配置文件，其下按照模块名称生成目录  
+`data/`：所有模块的数据文件，其下按照模块名称生成目录  
+只有执行了`initConfFolder()`才会生成`/conf/$PACKAGE_NAME`目录  
+只有执行了`initDataFolder()`才会生成`/data/$PACKAGE_NAME`目录  
+只有执行了`initConfigurtion()`才会生成`/data/config.properties`目录  
 
 ## 框架
 
@@ -70,3 +67,9 @@ entry为入口文件，目前共有四个核心模块（`extends Module`）：
 - DDNSAPI：一个动态域名的客户端
 
 核心模块由于安全问题，仅在entry中有其实例，使用`getSystemd()`可返回其代理子类，子类只对需要公开的方法进行调用转发
+
+
+**如何开发**
+
+`executor_DEMO`内含完整注释  
+`executor_NULL`为负责模板  
