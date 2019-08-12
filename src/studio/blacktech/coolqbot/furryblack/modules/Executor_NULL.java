@@ -19,28 +19,13 @@ public class Executor_NULL extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "null";
 	private static String MODULE_DISPLAYNAME = "实例模块";
 	private static String MODULE_DESCRIPTION = "实例模块";
-	private static String MODULE_VERSION = "1.0.0";
-	private static String[] MODULE_USAGE = new String[] {
-			"命令1 - 命令用法1",
-			"命令2 - 命令用法2",
-			"命令3 - 命令用法3",
-			"命令4 - 命令用法4",
-	};
-	public static String[] MODULE_PRIVACY_TRIGER = new String[] {
-			"触发器 - 功能"
-	};
-	public static String[] MODULE_PRIVACY_LISTEN = new String[] {
-			"监听器 - 功能"
-	};
-	public static String[] MODULE_PRIVACY_STORED = new String[] {
-			"隐私级别 - 用途"
-	};
-	public static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"隐私级别 - 用途"
-	};
-	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"隐私级别 - 用途"
-	};
+	private static String MODULE_VERSION = "1.0";
+	private static String[] MODULE_USAGE = new String[] {};
+	public static String[] MODULE_PRIVACY_TRIGER = new String[] {};
+	public static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+	public static String[] MODULE_PRIVACY_STORED = new String[] {};
+	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
+	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//
@@ -54,20 +39,10 @@ public class Executor_NULL extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	/***
-	 * 调用模块实例化方法 此处不应执行任何代码
-	 *
-	 * @throws Exception
-	 */
 	public Executor_NULL() throws Exception {
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
-	/***
-	 * 初始化阶段 应
-	 *
-	 * 1：如果没有生成默认配置 2：生成所有内存结构 3：读取配置 4：分析 ENABLE_MODE
-	 */
 	@Override
 	public void init(LoggerX logger) throws Exception {
 
@@ -86,24 +61,15 @@ public class Executor_NULL extends ModuleExecutor {
 		this.ENABLE_GROP = false;
 	}
 
-	/***
-	 * 如果ENABLE_MODE=false则不会注册 则不会执行boot的内容
-	 */
 	@Override
 	public void boot(LoggerX logger) throws Exception {
 
 	}
 
-	/***
-	 * 应在此处运行关闭逻辑
-	 */
 	@Override
 	public void shut(LoggerX logger) throws Exception {
 	}
 
-	/***
-	 * 重载配置使用
-	 */
 	@Override
 	public void reload(LoggerX logger) throws Exception {
 	}
