@@ -72,4 +72,4 @@ entry为入口文件，目前共有四个核心模块（`extends Module`）：
 **如何开发**
 
 `executor_DEMO`内含完整注释  
-`executor_NULL`为负责模板  
+`executor_NULL`为复制模板  
