@@ -32,25 +32,18 @@
 
 ## 警告×2
 
-$是环境变量的意思
-
-例如 `$NAME` 意思是这里是名字而不是照抄"`$NAME`"
+$是环境变量的意思 例如 `$NAME` 意思是这里是名字而不是照抄"`$NAME`"
 
 ## 文件结构
 
 **PACKAGENAME即名称**
 
 
-`conf/`：所有模块的配置文件，其下按照模块名称生成目录
-
-`data/`：所有模块的数据文件，其下按照模块名称生成目录
-
-只有执行了`initConfFolder()`才会生成`/conf/$PACKAGE_NAME`目录
-
-只有执行了`initDataFolder()`才会生成`/data/$PACKAGE_NAME`目录
-
-只有执行了`initConfigurtion()`才会生成`/data/config.properties`目录
-
+`conf/`：所有模块的配置文件，其下按照模块名称生成目录  
+`data/`：所有模块的数据文件，其下按照模块名称生成目录  
+只有执行了`initConfFolder()`才会生成`/conf/$PACKAGE_NAME`目录  
+只有执行了`initDataFolder()`才会生成`/data/$PACKAGE_NAME`目录  
+只有执行了`initConfigurtion()`才会生成`/data/config.properties`目录  
 
 ## 框架
 
@@ -78,5 +71,5 @@ entry为入口文件，目前共有四个核心模块（`extends Module`）：
 
 **如何开发**
 
-参照executor_NULL内容
+参照executor_NULL内容  
 
