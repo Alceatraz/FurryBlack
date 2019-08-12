@@ -111,7 +111,6 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 		while ((line = readerUser.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			if (line.indexOf(":") < 0) { continue; }
 			this.USER_IGNORE.add(Long.parseLong(line));
 		}
 

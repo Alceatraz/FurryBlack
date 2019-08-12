@@ -26,6 +26,12 @@ public class LoggerX {
 		return this.info(message);
 	}
 
+	public String rawmini(String message) {
+		this.builder_mini.append("\r\n");
+		this.builder_mini.append(message);
+		return this.rawinfo(message);
+	}
+
 	public String info(String message) {
 		this.builder_info.append("\r\n");
 		this.builder_info.append("[");
@@ -33,6 +39,12 @@ public class LoggerX {
 		this.builder_info.append("] ");
 		this.builder_info.append(message);
 		return this.seek(message);
+	}
+
+	public String rawinfo(String message) {
+		this.builder_info.append("\r\n");
+		this.builder_info.append(message);
+		return this.rawseek(message);
 	}
 
 	public String seek(String message) {
@@ -44,11 +56,23 @@ public class LoggerX {
 		return this.full(message);
 	}
 
+	public String rawseek(String message) {
+		this.builder_seek.append("\r\n");
+		this.builder_seek.append(message);
+		return this.rawfull(message);
+	}
+
 	public String full(String message) {
 		this.builder_full.append("\r\n");
 		this.builder_full.append("[");
 		this.builder_full.append(time());
 		this.builder_full.append("] ");
+		this.builder_full.append(message);
+		return message;
+	}
+
+	public String rawfull(String message) {
+		this.builder_full.append("\r\n");
 		this.builder_full.append(message);
 		return message;
 	}
@@ -205,12 +229,12 @@ public class LoggerX {
 		return formater.format(date);
 	}
 
-	public static String time(String formate) {
+	public static String datetime(String formate) {
 		SimpleDateFormat formater = new SimpleDateFormat(formate);
 		return formater.format(new Date());
 	}
 
-	public static String time(String formate, Date date) {
+	public static String datetime(String formate, Date date) {
 		SimpleDateFormat formater = new SimpleDateFormat(formate);
 		return formater.format(date);
 	}

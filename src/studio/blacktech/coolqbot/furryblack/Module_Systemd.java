@@ -817,151 +817,64 @@ public class Module_Systemd extends Module {
 
 		builder = new StringBuilder();
 
-		builder.append("[触发器] 私聊: ");
-		builder.append(this.TRIGGER_USER.size());
-		builder.append("个");
-		for (ModuleTrigger temp : this.TRIGGER_USER) {
-			if (temp.COUNT_USER == 0) { continue; }
-			builder.append("\r\n");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_USER);
-			builder.append("次");
-		}
-
-		builder.append("\r\n[触发器] 组聊: ");
-		builder.append(this.TRIGGER_DISZ.size());
-		builder.append("个");
-		for (ModuleTrigger temp : this.TRIGGER_DISZ) {
-			if (temp.COUNT_DISZ == 0) { continue; }
-			builder.append("\r\n");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_DISZ);
-			builder.append("次");
-		}
-
-		builder.append("\r\n[触发器] 群聊: ");
-		builder.append(this.TRIGGER_GROP.size());
-		builder.append("个");
-		for (ModuleTrigger temp : this.TRIGGER_GROP) {
-			if (temp.COUNT_GROP == 0) { continue; }
-			builder.append("\r\n");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_GROP);
-			builder.append("次");
-		}
-
 		for (String temp : this.TRIGGER_INSTANCE.keySet()) {
 			ModuleTrigger instance = this.TRIGGER_INSTANCE.get(temp);
 			result = instance.generateReport(0, null, null, null);
+			builder.append(instance.MODULE_PACKAGENAME());
+			builder.append(" ");
+			builder.append(instance.COUNT_USER);
+			builder.append("/");
+			builder.append(instance.COUNT_DISZ);
+			builder.append("/");
+			builder.append(instance.COUNT_GROP);
 			if (result == null) { continue; }
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
 			}
+			builder.append("\r\n");
 		}
 
 		report[0] = builder.toString();
 		builder = new StringBuilder();
 
-		builder.append("[监听器] 私聊: ");
-		builder.append(this.LISTENER_USER.size());
-		builder.append("个");
-		for (ModuleListener temp : this.LISTENER_USER) {
-			if (temp.COUNT_USER == 0) { continue; }
-			builder.append("\r\n");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_USER);
-			builder.append("次");
-		}
-
-		builder.append("\r\n[监听器] 组聊: ");
-		builder.append(this.LISTENER_DISZ.size());
-		builder.append("个");
-		for (ModuleListener temp : this.LISTENER_DISZ) {
-			if (temp.COUNT_DISZ == 0) { continue; }
-			builder.append("\r\n");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_DISZ);
-			builder.append("次");
-		}
-
-		builder.append("\r\n[监听器] 群聊: ");
-		builder.append(this.LISTENER_GROP.size());
-		builder.append("个");
-		for (ModuleListener temp : this.LISTENER_GROP) {
-			if (temp.COUNT_GROP == 0) { continue; }
-			builder.append("\r\n");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_GROP);
-			builder.append("次");
-		}
-
 		for (String temp : this.LISTENER_INSTANCE.keySet()) {
 			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
 			result = instance.generateReport(0, null, null, null);
+			builder.append(instance.MODULE_PACKAGENAME());
+			builder.append(" ");
+			builder.append(instance.COUNT_USER);
+			builder.append("/");
+			builder.append(instance.COUNT_DISZ);
+			builder.append("/");
+			builder.append(instance.COUNT_GROP);
 			if (result == null) { continue; }
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
 			}
+			builder.append("\r\n");
 		}
 
 		report[1] = builder.toString();
 		builder = new StringBuilder();
 
-		builder.append("[执行器] 私聊: ");
-		builder.append(this.EXECUTOR_USER.size());
-		builder.append("个");
-		for (String name : this.EXECUTOR_USER.keySet()) {
-			ModuleExecutor temp = this.EXECUTOR_USER.get(name);
-			if (temp.COUNT_USER == 0) { continue; }
-			builder.append("\r\n模块 ");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_USER);
-			builder.append("次");
-		}
-
-		builder.append("\r\n[执行器] 组聊: ");
-		builder.append(this.EXECUTOR_DISZ.size());
-		builder.append("个");
-		for (String name : this.EXECUTOR_DISZ.keySet()) {
-			ModuleExecutor temp = this.EXECUTOR_DISZ.get(name);
-			if (temp.COUNT_DISZ == 0) { continue; }
-			builder.append("\r\n模块 ");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_DISZ);
-			builder.append("次");
-		}
-
-		builder.append("\r\n[执行器] 群聊: ");
-		builder.append(this.EXECUTOR_GROP.size());
-		builder.append("个");
-		for (String name : this.EXECUTOR_GROP.keySet()) {
-			ModuleExecutor temp = this.EXECUTOR_GROP.get(name);
-			if (temp.COUNT_GROP == 0) { continue; }
-			builder.append("\r\n模块 ");
-			builder.append(temp.MODULE_PACKAGENAME());
-			builder.append(": ");
-			builder.append(temp.COUNT_GROP);
-			builder.append("次");
-		}
-
 		for (String temp : this.LISTENER_INSTANCE.keySet()) {
 			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
 			result = instance.generateReport(0, null, null, null);
+			builder.append(instance.MODULE_PACKAGENAME());
+			builder.append(" ");
+			builder.append(instance.COUNT_USER);
+			builder.append("/");
+			builder.append(instance.COUNT_DISZ);
+			builder.append("/");
+			builder.append(instance.COUNT_GROP);
 			if (result == null) { continue; }
 			for (String line : result) {
 				builder.append("\r\n");
 				builder.append(line);
 			}
+			builder.append("\r\n");
 		}
 
 		report[2] = builder.toString();

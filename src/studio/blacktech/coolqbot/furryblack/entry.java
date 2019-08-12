@@ -32,7 +32,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "7.3 2019-08-11 (09:00)";
+	public final static String VerID = "7.5 2019-08-12 (09:30)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 
@@ -96,7 +96,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 		try {
 
-			logger.mini("[CORE] 启动", LoggerX.datetime());
+			logger.rawmini(LoggerX.datetime());
 
 			// ==========================================================================================================================
 
@@ -150,7 +150,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-			logger.mini("[CORE] 启动完成", "耗时" + (System.currentTimeMillis() - BOOTTIME) + "ms");
+			logger.mini("[CORE] 启动", "耗时" + (System.currentTimeMillis() - BOOTTIME) + "ms");
 
 			// ==========================================================================================================================
 
@@ -172,13 +172,16 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int disable() {
-		JcqAppAbstract.enable = false;
 		LoggerX logger = new LoggerX();
 		try {
+			logger.mini(LoggerX.datetime());
+			logger.mini("[CORE] 关闭");
+			JcqAppAbstract.enable = false;
 			DDNSAPI.shut(logger);
 			SYSTEMD.shut(logger);
-		} catch (Exception exception) {
-			exception.printStackTrace();
+		} catch (Exception exce) {
+			exce.printStackTrace();
+			JcqAppAbstract.enable = false;
 			getMessage().adminInfo(logger.make(3));
 		}
 		return 0;
@@ -189,13 +192,16 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int exit() {
-		JcqAppAbstract.enable = false;
 		LoggerX logger = new LoggerX();
 		try {
+			logger.mini(LoggerX.datetime());
+			logger.mini("[CORE] 关闭");
+			JcqAppAbstract.enable = false;
 			DDNSAPI.shut(logger);
 			SYSTEMD.shut(logger);
-		} catch (Exception exception) {
-			exception.printStackTrace();
+		} catch (Exception exce) {
+			exce.printStackTrace();
+			JcqAppAbstract.enable = false;
 			getMessage().adminInfo(logger.make(3));
 		}
 		return 0;
@@ -260,29 +266,29 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
 		if (userid == 1000000) {
-			entry.getMessage().adminInfo("官方通知 - （" + gropid + "）" + message);
-			return IMsg.MSG_IGNORE;
-		}
-		try {
-			entry.SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
-		} catch (Exception exce) {
-			exce.printStackTrace();
-			StringBuilder builder = new StringBuilder();
-			builder.append(LoggerX.time());
-			builder.append(" [群聊消息异常] - ");
-			builder.append(messageid);
-			builder.append("\r\n 群号:");
-			builder.append(gropid);
-			builder.append("\r\n 用户:");
-			builder.append(userid);
-			builder.append("\r\n 消息:");
-			builder.append(message);
-			builder.append("\r\n 消息:");
-			builder.append(message.length());
-			builder.append("\r\n 原因:");
-			builder.append(exce.getMessage());
-			System.out.println(builder.toString());
-			getMessage().adminInfo(builder.toString());
+			entry.getMessage().adminInfo("系统消息 - （" + gropid + "）" + message + " " + anonymous);
+		} else {
+			try {
+				entry.SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
+			} catch (Exception exce) {
+				exce.printStackTrace();
+				StringBuilder builder = new StringBuilder();
+				builder.append(LoggerX.time());
+				builder.append(" [群聊消息异常] - ");
+				builder.append(messageid);
+				builder.append("\r\n 群号:");
+				builder.append(gropid);
+				builder.append("\r\n 用户:");
+				builder.append(userid);
+				builder.append("\r\n 消息:");
+				builder.append(message);
+				builder.append("\r\n 消息:");
+				builder.append(message.length());
+				builder.append("\r\n 原因:");
+				builder.append(exce.getMessage());
+				System.out.println(builder.toString());
+				getMessage().adminInfo(builder.toString());
+			}
 		}
 		return IMsg.MSG_IGNORE;
 	}
