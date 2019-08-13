@@ -32,7 +32,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "7.8 2019-08-13 (11:30)";
+	public final static String VerID = "7.9 2019-08-13 (14:30)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 
@@ -96,7 +96,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 		try {
 
-			logger.rawmini(LoggerX.datetime());
+			logger.rawmini("[CORE] - " + LoggerX.datetime());
 
 			// ==========================================================================================================================
 
@@ -220,16 +220,17 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		} catch (Exception exce) {
 			exce.printStackTrace();
 			StringBuilder builder = new StringBuilder();
+			builder.append("[私聊消息异常]");
 			builder.append(LoggerX.time());
-			builder.append(" [私聊消息异常] - ");
+			builder.append("\r\n序号：");
 			builder.append(messageid);
-			builder.append("\r\n 用户:");
+			builder.append("\r\n用户：");
 			builder.append(userid);
-			builder.append("\r\n 消息:");
+			builder.append("\r\n消息:");
 			builder.append(message);
-			builder.append("\r\n 长度:");
+			builder.append("\r\n长度：");
 			builder.append(message.length());
-			builder.append("\r\n 原因:");
+			builder.append("\r\n原因：");
 			builder.append(exce.getMessage());
 			System.out.println(builder.toString());
 			getMessage().adminInfo(builder.toString());
@@ -244,18 +245,19 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		} catch (Exception exce) {
 			exce.printStackTrace();
 			StringBuilder builder = new StringBuilder();
+			builder.append("[组聊消息异常]");
 			builder.append(LoggerX.time());
-			builder.append(" [讨论组消息异常] - ");
+			builder.append("\r\n序号：");
 			builder.append(messageid);
-			builder.append("\r\n 组号:");
+			builder.append("\r\n组号：");
 			builder.append(diszid);
-			builder.append("\r\n 用户:");
+			builder.append("\r\n用户：");
 			builder.append(userid);
-			builder.append("\r\n 消息:");
+			builder.append("\r\n消息:");
 			builder.append(message);
-			builder.append("\r\n 长度:");
+			builder.append("\r\n长度：");
 			builder.append(message.length());
-			builder.append("\r\n 原因:");
+			builder.append("\r\n原因：");
 			builder.append(exce.getMessage());
 			System.out.println(builder.toString());
 			getMessage().adminInfo(builder.toString());
@@ -265,24 +267,24 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	@Override
 	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
-
 		try {
 			entry.SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exce) {
 			exce.printStackTrace();
 			StringBuilder builder = new StringBuilder();
+			builder.append("[群聊消息异常]");
 			builder.append(LoggerX.time());
-			builder.append(" [群聊消息异常] - ");
+			builder.append("\r\n序号：");
 			builder.append(messageid);
-			builder.append("\r\n 群号:");
+			builder.append("\r\n群号：");
 			builder.append(gropid);
-			builder.append("\r\n 用户:");
+			builder.append("\r\n用户：");
 			builder.append(userid);
-			builder.append("\r\n 消息:");
+			builder.append("\r\n消息:");
 			builder.append(message);
-			builder.append("\r\n 长度:");
+			builder.append("\r\n长度：");
 			builder.append(message.length());
-			builder.append("\r\n 原因:");
+			builder.append("\r\n原因：");
 			builder.append(exce.getMessage());
 			System.out.println(builder.toString());
 			getMessage().adminInfo(builder.toString());
@@ -303,18 +305,19 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		} catch (Exception exce) {
 			exce.printStackTrace();
 			StringBuilder builder = new StringBuilder();
+			builder.append("[成员增加异常]");
 			builder.append(LoggerX.time());
-			builder.append(" [成员增加异常]");
+			builder.append("\r\n时间:");
 			builder.append(sendtime);
-			builder.append("\r\n 原因:");
+			builder.append("\r\n类型:");
 			builder.append(typeid == 1 ? "自主申请" : "邀请进群");
-			builder.append("\r\n 群号:");
+			builder.append("\r\n群号:");
 			builder.append(gropid);
-			builder.append("\r\n 管理:");
+			builder.append("\r\n管理:");
 			builder.append(operid);
-			builder.append("\r\n 成员:");
+			builder.append("\r\n成员:");
 			builder.append(userid);
-			builder.append("\r\n 原因:");
+			builder.append("\r\n原因:");
 			builder.append(exce.getMessage());
 			getMessage().adminInfo(builder.toString());
 		}
@@ -328,18 +331,19 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		} catch (Exception exce) {
 			exce.printStackTrace();
 			StringBuilder builder = new StringBuilder();
+			builder.append("[成员减少异常]");
 			builder.append(LoggerX.time());
-			builder.append(" [成员减少异常]");
+			builder.append("\r\n时间:");
 			builder.append(sendtime);
-			builder.append("\r\n 原因:");
-			builder.append(typeid == 1 ? "自主申请" : "邀请进群");
-			builder.append("\r\n 群号:");
+			builder.append("\r\n类型:");
+			builder.append(typeid == 1 ? "自主退群" : "管理踢出");
+			builder.append("\r\n群号:");
 			builder.append(gropid);
-			builder.append("\r\n 管理:");
+			builder.append("\r\n管理:");
 			builder.append(operid);
-			builder.append("\r\n 成员:");
+			builder.append("\r\n成员:");
 			builder.append(userid);
-			builder.append("\r\n 原因:");
+			builder.append("\r\n原因:");
 			builder.append(exce.getMessage());
 			getMessage().adminInfo(builder.toString());
 		}
@@ -352,39 +356,81 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	//
 	// ==========================================================================================================================================================
 
-	/***
-	 * 同意好友邀请
-	 */
-	@Override
-	public int requestAddFriend(int type, int time, long qqid, String message, String flag) {
-		JcqApp.CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, String.valueOf(JcqApp.CQ.getStrangerInfo(qqid).getQqId()));
-		getMessage().adminInfo(LoggerX.time() + "[FurryBlack] 好友申请 " + qqid + " : " + message);
-		return 0;
-	}
-
 	@Override
 	public int friendAdd(int typeid, int sendTime, long userid) {
-		JcqApp.CQ.sendPrivateMsg(userid, "你好，在下人工智障");
-		JcqApp.CQ.sendPrivateMsg(userid, "使用即表示同意最终用户许可，由/eula查看");
-		JcqApp.CQ.sendPrivateMsg(userid, "为了礼貌和避免打扰，本BOT不接入聊天功能");
-		JcqApp.CQ.sendPrivateMsg(userid, "输入/help获取帮助");
 		getMessage().sendHelp(userid);
 		getMessage().sendEula(userid);
+		JcqApp.CQ.sendPrivateMsg(userid, "你好，在下人工智障");
+		JcqApp.CQ.sendPrivateMsg(userid, "使用即表示同意最终用户许可，已自动发送");
+		JcqApp.CQ.sendPrivateMsg(userid, "为了礼貌和避免打扰，本BOT不接入聊天功能");
+		JcqApp.CQ.sendPrivateMsg(userid, "输入/help获取通用帮助");
+		JcqApp.CQ.sendPrivateMsg(userid, "输入/list列出可用命令");
 		return 0;
 	}
 
 	@Override
-	public int requestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
-		// sub type
-		// 1 -> 作为管理时收到了用户加入申请
-		// 2 -> 收到好友邀请加入某群的邀请
-		if (subtype == 1) {
-			getMessage().adminInfo(LoggerX.time() + "[FurryBlack] 加群申请 - 群号:" + fromGroup + " 申请者:" + fromQQ);
-		} else if (subtype == 2) {
-			getMessage().adminInfo(LoggerX.time() + "[FurryBlack] 收到邀请 - 群号:" + fromGroup + " 邀请者:" + fromQQ);
-			// 同意邀请进群
-			JcqApp.CQ.setGroupAddRequest(responseFlag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
+	public int requestAddFriend(int typeid, int sendtime, long userid, String message, String flag) {
+
+		StringBuilder builder = new StringBuilder();
+		builder.append("[添加好友请求]");
+		builder.append(LoggerX.time());
+		builder.append("\r\n时间:");
+		builder.append(sendtime);
+		builder.append("\r\n用户:");
+		builder.append(entry.getNickmap().getNickname(userid));
+		builder.append("(");
+		builder.append(userid);
+		builder.append(")\r\n消息:");
+		builder.append(message);
+		getMessage().adminInfo(builder.toString());
+
+		JcqApp.CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, String.valueOf(userid));
+
+		return 0;
+	}
+
+	@Override
+	public int requestAddGroup(int typeid, int sendtime, long gropid, long userid, String message, String flag) {
+
+		StringBuilder builder = new StringBuilder();
+
+		switch (typeid) {
+
+		case 1:
+			builder.append("[申请入群]");
+			builder.append(LoggerX.time());
+			builder.append("\r\n时间:");
+			builder.append(sendtime);
+			builder.append("\r\n群号:");
+			builder.append(gropid);
+			builder.append("\r\n用户:");
+			builder.append(entry.getNickmap().getNickname(userid));
+			builder.append("(");
+			builder.append(userid);
+			builder.append(")\r\n消息:");
+			builder.append(message);
+			break;
+
+		case 2:
+			builder.append("[邀请加群]");
+			builder.append(LoggerX.time());
+			builder.append("\r\n时间:");
+			builder.append(sendtime);
+			builder.append("\r\n群号:");
+			builder.append(gropid);
+			builder.append("\r\n用户:");
+			builder.append(entry.getNickmap().getNickname(userid));
+			builder.append("(");
+			builder.append(userid);
+			builder.append(")\r\n消息:");
+			builder.append(message);
+
+			JcqApp.CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
+
+			break;
 		}
+
+		getMessage().adminInfo(builder.toString());
 		return 0;
 	}
 

@@ -447,12 +447,26 @@ public class Module_Systemd extends Module {
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
-		LoggerX logger = new LoggerX();
-		logger.info("[加群]", typeid == 1 ? "自主申请" : "邀请加群");
-		logger.info("群号", gropid);
-		logger.info("管理", JcqApp.CQ.getStrangerInfo(operid).getNick() + "(" + operid + ")");
-		logger.info("成员", JcqApp.CQ.getStrangerInfo(userid).getNick() + "(" + userid + ")");
-		entry.getMessage().adminInfo(logger.make(1));
+
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("\r\n[加群]");
+		builder.append(LoggerX.datetime());
+		builder.append("\r\n类型：");
+		builder.append(typeid == 1 ? "自主申请" : "邀请加群");
+		builder.append("\r\n群号");
+		builder.append(gropid);
+		builder.append("\r\n管理");
+		builder.append(entry.getNickmap().getNickname(operid));
+		builder.append("(");
+		builder.append(operid);
+		builder.append(")\r\n成员");
+		builder.append(entry.getNickmap().getNickname(userid));
+		builder.append("(");
+		builder.append(operid);
+		builder.append(")");
+
+		entry.getMessage().adminInfo(builder.toString());
 
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
 			this.TRIGGER_INSTANCE.get(name).groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
@@ -467,12 +481,26 @@ public class Module_Systemd extends Module {
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
-		LoggerX logger = new LoggerX();
-		logger.info("[退群]", typeid == 1 ? "自主退群" : "管理踢出");
-		logger.info("群号", gropid);
-		logger.info("管理", JcqApp.CQ.getStrangerInfo(operid).getNick() + "(" + operid + ")");
-		logger.info("成员", JcqApp.CQ.getStrangerInfo(userid).getNick() + "(" + userid + ")");
-		entry.getMessage().adminInfo(logger.make(1));
+
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("[退群]");
+		builder.append(LoggerX.datetime());
+		builder.append("\r\n类型：");
+		builder.append(typeid == 1 ? "自主退群" : "管理踢出");
+		builder.append("\r\n群号：");
+		builder.append(gropid);
+		builder.append("\r\n管理：");
+		builder.append(entry.getNickmap().getNickname(operid));
+		builder.append("(");
+		builder.append(operid);
+		builder.append(")r\n成员：");
+		builder.append(entry.getNickmap().getNickname(userid));
+		builder.append("(");
+		builder.append(operid);
+		builder.append(")");
+
+		entry.getMessage().adminInfo(builder.toString());
 
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
 			this.TRIGGER_INSTANCE.get(name).groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
