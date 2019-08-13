@@ -18,8 +18,8 @@ public class Executor_admin extends ModuleExecutor {
 
 	private static String MODULE_PACKAGENAME = "executor_admin";
 	private static String MODULE_COMMANDNAME = "admin";
-	private static String MODULE_DISPLAYNAME = "shell";
-	private static String MODULE_DESCRIPTION = "管理员shell";
+	private static String MODULE_DISPLAYNAME = "管理工具";
+	private static String MODULE_DESCRIPTION = "管理员控制台";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};

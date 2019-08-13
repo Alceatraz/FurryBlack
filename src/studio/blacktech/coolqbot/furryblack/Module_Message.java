@@ -285,38 +285,51 @@ public class Module_Message extends Module {
 	) {
 		if (this.GEN_LOCK) { return; }
 
+		StringBuilder preBuilder;
+
 		// =========================================================
 		// =========================================================
 		// =========================================================
 
-		StringBuilder preBuilder = new StringBuilder();
+		preBuilder = new StringBuilder();
 
-		preBuilder.append("启用的触发器： ");
+		preBuilder.append("=================");
+		preBuilder.append("\r\n启用的触发器： ");
+
 		if (TRIGGER_USER.size() == 0) {
 			preBuilder.append("无");
 		} else {
 			preBuilder.append(TRIGGER_USER.size());
 			for (ModuleTrigger temp : TRIGGER_USER) {
 				preBuilder.append("\r\n");
+				preBuilder.append(temp.MODULE_COMMANDNAME());
+				preBuilder.append(" > ");
 				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append(" : ");
+				preBuilder.append("：");
 				preBuilder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
+		preBuilder.append("\r\n=================");
 		preBuilder.append("\r\n启用的监听器： ");
+
 		if (LISTENER_USER.size() == 0) {
 			preBuilder.append("无");
 		} else {
 			preBuilder.append(LISTENER_USER.size());
 			for (ModuleListener temp : LISTENER_USER) {
 				preBuilder.append("\r\n");
+				preBuilder.append(temp.MODULE_COMMANDNAME());
+				preBuilder.append(" > ");
 				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append(" : ");
+				preBuilder.append("：");
 				preBuilder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
+
+		preBuilder.append("\r\n=================");
 		preBuilder.append("\r\n可用的执行器： ");
+
 		if (EXECUTOR_USER.size() == 0) {
 			preBuilder.append("无");
 		} else {
@@ -325,46 +338,61 @@ public class Module_Message extends Module {
 				ModuleExecutor module = EXECUTOR_USER.get(temp);
 				module.genFullHelp();
 				preBuilder.append("\r\n");
+				preBuilder.append(module.MODULE_COMMANDNAME());
+				preBuilder.append(" > ");
 				preBuilder.append(module.MODULE_DISPLAYNAME());
-				preBuilder.append(" : ");
+				preBuilder.append("：");
 				preBuilder.append(module.MODULE_DESCRIPTION());
 			}
 		}
 
+		preBuilder.append("\r\n=================");
+
+		this.MESSAGE_LIST_USER = preBuilder.toString();
+
 		// =========================================================
 		// =========================================================
 		// =========================================================
 
-		this.MESSAGE_LIST_USER = preBuilder.toString();
 		preBuilder = new StringBuilder();
+
+		preBuilder.append("=================");
+		preBuilder.append("\r\n启用的触发器： ");
 
 		if (TRIGGER_DISZ.size() == 0) {
 			preBuilder.append("无");
 		} else {
-			preBuilder.append("可用的触发器： ");
 			preBuilder.append(TRIGGER_DISZ.size());
 			for (ModuleTrigger temp : TRIGGER_DISZ) {
 				preBuilder.append("\r\n");
+				preBuilder.append(temp.MODULE_COMMANDNAME());
+				preBuilder.append(" > ");
 				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append(" : ");
+				preBuilder.append("：");
 				preBuilder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n可用的监听器： ");
+		preBuilder.append("\r\n=================");
+		preBuilder.append("\r\n启用的监听器： ");
+
 		if (LISTENER_DISZ.size() == 0) {
 			preBuilder.append("无");
 		} else {
 			preBuilder.append(LISTENER_DISZ.size());
 			for (ModuleListener temp : LISTENER_DISZ) {
 				preBuilder.append("\r\n");
+				preBuilder.append(temp.MODULE_COMMANDNAME());
+				preBuilder.append(" > ");
 				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append(" : ");
+				preBuilder.append("：");
 				preBuilder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
+		preBuilder.append("\r\n=================");
 		preBuilder.append("\r\n可用的执行器： ");
+
 		if (EXECUTOR_DISZ.size() == 0) {
 			preBuilder.append("无");
 		} else {
@@ -373,46 +401,61 @@ public class Module_Message extends Module {
 				ModuleExecutor module = EXECUTOR_DISZ.get(temp);
 				module.genFullHelp();
 				preBuilder.append("\r\n");
+				preBuilder.append(module.MODULE_COMMANDNAME());
+				preBuilder.append(" > ");
 				preBuilder.append(module.MODULE_DISPLAYNAME());
-				preBuilder.append(" : ");
+				preBuilder.append("：");
 				preBuilder.append(module.MODULE_DESCRIPTION());
 			}
 		}
 
+		preBuilder.append("\r\n=================");
+
+		this.MESSAGE_LIST_USER = preBuilder.toString();
+
 		// =========================================================
 		// =========================================================
 		// =========================================================
 
-		this.MESSAGE_LIST_DISZ = preBuilder.toString();
 		preBuilder = new StringBuilder();
 
-		preBuilder.append("可用的触发器： ");
+		preBuilder.append("=================");
+		preBuilder.append("\r\n启用的触发器： ");
+
 		if (TRIGGER_GROP.size() == 0) {
 			preBuilder.append("无");
 		} else {
 			preBuilder.append(TRIGGER_GROP.size());
 			for (ModuleTrigger temp : TRIGGER_GROP) {
 				preBuilder.append("\r\n");
+				preBuilder.append(temp.MODULE_COMMANDNAME());
+				preBuilder.append(" > ");
 				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append(" : ");
+				preBuilder.append("：");
 				preBuilder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n可用的监听器： ");
+		preBuilder.append("\r\n=================");
+		preBuilder.append("\r\n启用的监听器： ");
+
 		if (LISTENER_GROP.size() == 0) {
 			preBuilder.append("无");
 		} else {
 			preBuilder.append(LISTENER_GROP.size());
-			for (ModuleListener temp : LISTENER_GROP) {
+			for (ModuleListener temp : LISTENER_USER) {
 				preBuilder.append("\r\n");
+				preBuilder.append(temp.MODULE_COMMANDNAME());
+				preBuilder.append(" > ");
 				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append(" : ");
+				preBuilder.append("：");
 				preBuilder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
+		preBuilder.append("\r\n=================");
 		preBuilder.append("\r\n可用的执行器： ");
+
 		if (EXECUTOR_GROP.size() == 0) {
 			preBuilder.append("无");
 		} else {
@@ -421,12 +464,18 @@ public class Module_Message extends Module {
 				ModuleExecutor module = EXECUTOR_GROP.get(temp);
 				module.genFullHelp();
 				preBuilder.append("\r\n");
+				preBuilder.append(module.MODULE_COMMANDNAME());
+				preBuilder.append(" > ");
 				preBuilder.append(module.MODULE_DISPLAYNAME());
-				preBuilder.append(" : ");
+				preBuilder.append("：");
 				preBuilder.append(module.MODULE_DESCRIPTION());
 			}
 		}
-		this.MESSAGE_LIST_GROP = preBuilder.toString();
+
+		preBuilder.append("\r\n=================");
+
+		this.MESSAGE_LIST_USER = preBuilder.toString();
+
 	}
 
 	public MessageDelegate getDelegate() {

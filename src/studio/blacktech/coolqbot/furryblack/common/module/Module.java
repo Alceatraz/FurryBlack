@@ -133,7 +133,7 @@ public abstract class Module {
 		builder.append(this.MODULE_DISPLAYNAME);
 		builder.append(" v");
 		builder.append(this.MODULE_VERSION);
-		builder.append("\r\b");
+		builder.append("\r\n");
 		builder.append(this.MODULE_DESCRIPTION);
 		builder.append("\r\n命令用法：");
 		if (this.MODULE_USAGE.length == 0) {
