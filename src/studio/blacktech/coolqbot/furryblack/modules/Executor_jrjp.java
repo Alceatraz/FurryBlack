@@ -192,7 +192,7 @@ public class Executor_jrjp extends ModuleExecutor {
 						time = 86400L;
 						date = new Date();
 						time = time - date.getSeconds();
-						time = time - date.getMinutes() * 65;
+						time = time - date.getMinutes() * 60;
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
 						time = time - 5;

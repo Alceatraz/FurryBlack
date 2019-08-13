@@ -570,11 +570,11 @@ public class Listener_TopSpeak extends ModuleListener {
 						time = 43205L;
 						date = new Date();
 						time = time - date.getSeconds();
-						time = time - date.getMinutes() * 65;
+						time = time - date.getMinutes() * 60;
 						time = time - date.getHours() * 3600;
+						if (time < 0) { time = time + 84600L; }
 						time = time * 1000;
 						time = time - 5;
-						if (time < 0) { time = time + 84600L; }
 						System.out.println("[计划任务] TopSpeak 启动延迟 " + time);
 						Thread.sleep(time);
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {

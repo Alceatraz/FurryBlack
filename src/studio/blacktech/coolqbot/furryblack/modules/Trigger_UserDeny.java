@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
@@ -27,7 +28,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	private static String MODULE_COMMANDNAME = "userdeny";
 	private static String MODULE_DISPLAYNAME = "过滤器";
 	private static String MODULE_DESCRIPTION = "用户过滤器";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "2.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {
 			"获取ID号码 - 用于过滤"
@@ -49,13 +50,17 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	private TreeMap<Long, ArrayList<Long>> DISZ_IGNORE;
 	private TreeMap<Long, ArrayList<Long>> GROP_IGNORE;
 
-	private int DENY_USER_COUNT = 0;
-	private int DENY_DISZ_COUNT = 0;
-	private int DENY_GROP_COUNT = 0;
+	private TreeMap<Long, Integer> DENY_USER_COUNT;
+	private TreeMap<Long, TreeMap<Long, Integer>> DENY_DISZ_COUNT;
+	private TreeMap<Long, TreeMap<Long, Integer>> DENY_GROP_COUNT;
 
 	private File FILE_USERIGNORE;
 	private File FILE_DISZIGNORE;
 	private File FILE_GROPIGNORE;
+
+	private int COUNT_USER = 0;
+	private int COUNT_DISZ = 0;
+	private int COUNT_GROP = 0;
 
 	// ==========================================================================================================================================================
 	//
@@ -76,6 +81,10 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		this.USER_IGNORE = new ArrayList<>(100);
 		this.DISZ_IGNORE = new TreeMap<>();
 		this.GROP_IGNORE = new TreeMap<>();
+
+		this.DENY_USER_COUNT = new TreeMap<>();
+		this.DENY_DISZ_COUNT = new TreeMap<>();
+		this.DENY_GROP_COUNT = new TreeMap<>();
 
 		if (this.NEW_CONFIG) {
 			this.CONFIG.setProperty("enable_user", "false");
@@ -142,6 +151,28 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		this.ENABLE_DISZ = this.ENABLE_DISZ && this.DISZ_IGNORE.size() > 0;
 		this.ENABLE_GROP = this.ENABLE_GROP && this.GROP_IGNORE.size() > 0;
 
+		for (Long tempuserid : this.USER_IGNORE) {
+			this.DENY_USER_COUNT.put(tempuserid, 0);
+		}
+
+		for (Long tempdiszid : this.DISZ_IGNORE.keySet()) {
+			TreeMap<Long, Integer> tempcount = new TreeMap<>();
+			ArrayList<Long> tempdisz = this.DISZ_IGNORE.get(tempdiszid);
+			for (Long tempuserid : tempdisz) {
+				tempcount.put(tempuserid, 0);
+			}
+			this.DENY_DISZ_COUNT.put(tempdiszid, tempcount);
+		}
+
+		for (Long tempgropid : this.GROP_IGNORE.keySet()) {
+			TreeMap<Long, Integer> tempcount = new TreeMap<>();
+			ArrayList<Long> tempgrop = this.DISZ_IGNORE.get(tempgropid);
+			for (Long tempuserid : tempgrop) {
+				tempcount.put(tempuserid, 0);
+			}
+			this.DENY_GROP_COUNT.put(tempgropid, tempcount);
+		}
+
 	}
 
 	@Override
@@ -167,7 +198,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		if (this.USER_IGNORE.contains(userid)) {
-			this.DENY_USER_COUNT++;
+			this.DENY_USER_COUNT.put(userid, this.DENY_USER_COUNT.get(userid) + 1);
 			return true;
 		} else {
 			return false;
@@ -177,7 +208,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		if (this.DISZ_IGNORE.containsKey(diszid) && this.DISZ_IGNORE.get(diszid).contains(userid)) {
-			this.DENY_DISZ_COUNT++;
+			TreeMap<Long, Integer> temp = this.DENY_DISZ_COUNT.get(diszid);
+			temp.put(userid, temp.get(userid) + 1);
 			return true;
 		} else {
 			return false;
@@ -187,7 +219,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		if (this.GROP_IGNORE.containsKey(gropid) && this.GROP_IGNORE.get(gropid).contains(userid)) {
-			this.DENY_GROP_COUNT++;
+			TreeMap<Long, Integer> temp = this.DENY_GROP_COUNT.get(gropid);
+			temp.put(userid, temp.get(userid) + 1);
 			return true;
 		} else {
 			return false;
@@ -196,16 +229,89 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
+
+		this.COUNT_USER = 0;
+		this.COUNT_DISZ = 0;
+		this.COUNT_GROP = 0;
+
+		for (long userid : this.DENY_USER_COUNT.keySet()) {
+			this.COUNT_USER = this.COUNT_USER + this.DENY_USER_COUNT.get(userid);
+		}
+		for (long diszid : this.DENY_DISZ_COUNT.keySet()) {
+			TreeMap<Long, Integer> disz = this.DENY_DISZ_COUNT.get(diszid);
+			for (long userid : disz.keySet()) {
+				this.COUNT_DISZ = this.COUNT_DISZ + disz.get(userid);
+			}
+		}
+		for (long gropid : this.DENY_GROP_COUNT.keySet()) {
+			TreeMap<Long, Integer> grop = this.DENY_GROP_COUNT.get(gropid);
+			for (long userid : grop.keySet()) {
+				this.COUNT_GROP = this.COUNT_GROP + grop.get(userid);
+			}
+		}
+
+		if (this.COUNT_USER == 0 && this.COUNT_DISZ == 0 && this.COUNT_GROP == 0) { return null; }
+
 		StringBuilder builder = new StringBuilder();
-		builder.append("拦截私聊：");
-		builder.append(this.DENY_USER_COUNT);
-		builder.append("\r\n拦截组聊：");
-		builder.append(this.DENY_DISZ_COUNT);
-		builder.append("\r\n拦截群聊：");
-		builder.append(this.DENY_GROP_COUNT);
+
+		if (this.COUNT_USER == 0) {
+			builder.append("拦截私聊：0");
+		} else {
+			builder.append("拦截私聊：");
+			builder.append(this.COUNT_USER);
+			for (long userid : this.DENY_USER_COUNT.keySet()) {
+				builder.append("\r\n");
+				builder.append(entry.getNickmap().getNickname(userid));
+				builder.append(" (");
+				builder.append(userid);
+				builder.append(") ");
+				builder.append(this.DENY_USER_COUNT.get(userid));
+			}
+		}
+
+		if (this.COUNT_DISZ == 0) {
+			builder.append("\r\n拦截组聊：0");
+		} else {
+			builder.append("\r\n拦截组聊：");
+			builder.append(this.COUNT_DISZ);
+			builder.append("\r\n");
+			for (long diszid : this.DENY_DISZ_COUNT.keySet()) {
+				TreeMap<Long, Integer> disz = this.DENY_DISZ_COUNT.get(diszid);
+				builder.append("组号：");
+				builder.append(diszid);
+				for (long userid : disz.keySet()) {
+					builder.append("\r\n");
+					builder.append(entry.getNickmap().getNickname(userid));
+					builder.append(" (");
+					builder.append(userid);
+					builder.append(") ");
+					builder.append(disz.get(userid));
+				}
+			}
+		}
+
+		if (this.COUNT_GROP == 0) {
+			builder.append("\r\n拦截群聊：0");
+		} else {
+			builder.append("\r\n拦截群聊：");
+			builder.append(this.COUNT_GROP);
+			builder.append("\r\n");
+			for (long gropid : this.DENY_GROP_COUNT.keySet()) {
+				TreeMap<Long, Integer> grop = this.DENY_GROP_COUNT.get(gropid);
+				builder.append(" 群号：");
+				builder.append(gropid);
+				for (long userid : grop.keySet()) {
+					builder.append("\r\n");
+					builder.append(entry.getNickmap().getNickname(userid));
+					builder.append(" (");
+					builder.append(userid);
+					builder.append(") ");
+					builder.append(grop.get(userid));
+				}
+			}
+		}
 		String res[] = new String[1];
 		res[0] = builder.toString();
 		return res;
 	}
-
 }

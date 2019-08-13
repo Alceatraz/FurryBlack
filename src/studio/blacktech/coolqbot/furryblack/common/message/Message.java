@@ -1,10 +1,13 @@
 package studio.blacktech.coolqbot.furryblack.common.message;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 
 public class Message {
 
@@ -260,7 +263,10 @@ public class Message {
 		builder.append(this.messageFt);
 
 		builder.append("\nSendTime: ");
+		builder.append(LoggerX.datetime(new Date(this.sendTime)));
+		builder.append("(");
 		builder.append(this.sendTime);
+		builder.append(")");
 
 		builder.append("\nRAW-CONTENT: ");
 		builder.append(this.rawMessage);

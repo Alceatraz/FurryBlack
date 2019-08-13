@@ -775,9 +775,9 @@ public class Module_Systemd extends Module {
 		// ========================================================================================================================
 
 		builder.append(LoggerX.datetime());
-		builder.append(" 简报\r\n运行时间: ");
+		builder.append("\r\n\r\n运行时间：");
 		builder.append(uptimedd);
-		builder.append("天");
+		builder.append(" - ");
 		builder.append(uptimehh);
 		builder.append(":");
 		builder.append(uptimemm);
@@ -786,103 +786,113 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("\r\n系统内存: ");
+		builder.append("\r\n系统内存：");
 		builder.append(totalMemory - freeMemory);
-		builder.append("KB /");
+		builder.append("KB/");
 		builder.append(totalMemory);
 		builder.append("KB");
 
 		// ===============================================================================
 
-		builder.append("\r\n私聊消息数： ");
+		builder.append("\r\n\r\n私聊：");
 		builder.append(this.COUNT_USER_MESSAGE);
-		builder.append("次\r\n组聊消息数： ");
+		builder.append("次\r\n组聊：");
 		builder.append(this.COUNT_DISZ_MESSAGE);
-		builder.append("次\r\n群聊消息数： ");
+		builder.append("次\r\n群聊：");
 		builder.append(this.COUNT_GROP_MESSAGE);
 		builder.append("次");
 
 		// ===============================================================================
 
-		builder.append("\r\n触发器： ");
-		builder.append(TRIGGER_USER.size());
+		builder.append("\r\n\r\n触发器：");
+		builder.append(this.TRIGGER_USER.size());
 		builder.append("/");
-		builder.append(TRIGGER_DISZ.size());
+		builder.append(this.TRIGGER_DISZ.size());
 		builder.append("/");
-		builder.append(TRIGGER_GROP.size());
+		builder.append(this.TRIGGER_GROP.size());
 
-		builder.append("\r\n监听器： ");
+		builder.append("\r\n监听器：");
 
-		builder.append(LISTENER_USER.size());
+		builder.append(this.LISTENER_USER.size());
 		builder.append("/");
-		builder.append(LISTENER_DISZ.size());
+		builder.append(this.LISTENER_DISZ.size());
 		builder.append("/");
-		builder.append(LISTENER_GROP.size());
+		builder.append(this.LISTENER_GROP.size());
 
-		builder.append("\r\n执行器： ");
+		builder.append("\r\n执行器：");
 
-		builder.append(EXECUTOR_USER.size());
+		builder.append(this.EXECUTOR_USER.size());
 		builder.append("/");
-		builder.append(EXECUTOR_DISZ.size());
+		builder.append(this.EXECUTOR_DISZ.size());
 		builder.append("/");
-		builder.append(EXECUTOR_GROP.size());
+		builder.append(this.EXECUTOR_GROP.size());
 
 		// ===============================================================================
+
+		builder.append("\r\n触发器：");
 
 		for (String temp : this.TRIGGER_INSTANCE.keySet()) {
 			ModuleTrigger instance = this.TRIGGER_INSTANCE.get(temp);
-			result = instance.generateReport(0, null, null, null);
-			builder.append(instance.MODULE_PACKAGENAME());
-			builder.append(" ");
-			builder.append(instance.COUNT_USER);
-			builder.append("/");
-			builder.append(instance.COUNT_DISZ);
-			builder.append("/");
-			builder.append(instance.COUNT_GROP);
-			if (result == null) { continue; }
-			for (String line : result) {
+			if (instance.ENABLE_USER || instance.ENABLE_USER || instance.ENABLE_USER) {
 				builder.append("\r\n");
-				builder.append(line);
+				result = instance.generateReport(0, null, null, null);
+				builder.append(instance.MODULE_PACKAGENAME());
+				builder.append("：");
+				builder.append(instance.COUNT_USER);
+				builder.append("/");
+				builder.append(instance.COUNT_DISZ);
+				builder.append("/");
+				builder.append(instance.COUNT_GROP);
+				if (result == null) { continue; }
+				builder.append("\r\n");
+				for (String line : result) {
+					builder.append(line);
+				}
 			}
-			builder.append("\r\n");
 		}
 
-		// ===============================================================================
+		builder.append("\r\n监听器：");
 
 		for (String temp : this.LISTENER_INSTANCE.keySet()) {
 			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
-			result = instance.generateReport(0, null, null, null);
-			builder.append(instance.MODULE_PACKAGENAME());
-			builder.append(" ");
-			builder.append(instance.COUNT_USER);
-			builder.append("/");
-			builder.append(instance.COUNT_DISZ);
-			builder.append("/");
-			builder.append(instance.COUNT_GROP);
-			if (result == null) { continue; }
-			for (String line : result) {
+			if (instance.ENABLE_USER || instance.ENABLE_USER || instance.ENABLE_USER) {
 				builder.append("\r\n");
-				builder.append(line);
+				result = instance.generateReport(0, null, null, null);
+				builder.append(instance.MODULE_PACKAGENAME());
+				builder.append("： ");
+				builder.append(instance.COUNT_USER);
+				builder.append("/");
+				builder.append(instance.COUNT_DISZ);
+				builder.append("/");
+				builder.append(instance.COUNT_GROP);
+				if (result == null) { continue; }
+				builder.append("\r\n");
+				for (String line : result) {
+					builder.append(line);
+				}
 			}
-			builder.append("\r\n");
 		}
 
-		for (String temp : this.LISTENER_INSTANCE.keySet()) {
-			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
-			result = instance.generateReport(0, null, null, null);
-			builder.append(instance.MODULE_PACKAGENAME());
-			builder.append(" ");
-			builder.append(instance.COUNT_USER);
-			builder.append("/");
-			builder.append(instance.COUNT_DISZ);
-			builder.append("/");
-			builder.append(instance.COUNT_GROP);
-			if (result == null) { continue; }
-			for (String line : result) {
+		builder.append("\r\n执行器：");
+
+		for (String temp : this.EXECUTOR_INSTANCE.keySet()) {
+			ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(temp);
+			if (instance.ENABLE_USER || instance.ENABLE_USER || instance.ENABLE_USER) {
 				builder.append("\r\n");
-				builder.append(line);
+				result = instance.generateReport(0, null, null, null);
+				builder.append(instance.MODULE_PACKAGENAME());
+				builder.append(": ");
+				builder.append(instance.COUNT_USER);
+				builder.append("/");
+				builder.append(instance.COUNT_DISZ);
+				builder.append("/");
+				builder.append(instance.COUNT_GROP);
+				if (result == null) { continue; }
+				builder.append("\r\n");
+				for (String line : result) {
+					builder.append(line);
+				}
 			}
-			builder.append("\r\n");
 		}
 
 		return builder.toString();
