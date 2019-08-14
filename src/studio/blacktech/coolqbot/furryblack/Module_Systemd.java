@@ -650,14 +650,17 @@ public class Module_Systemd extends Module {
 			switch (message.parseCommand().getCommand()) {
 			// ===============================================================================================================================
 			case "info":
+				entry.getMessage().diszInfo(diszid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
 				entry.getMessage().sendInfo(userid);
 				break;
 			// ===============================================================================================================================
 			case "eula":
+				entry.getMessage().diszInfo(diszid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
 				entry.getMessage().sendEula(userid);
 				break;
 			// ===============================================================================================================================
 			case "list":
+				entry.getMessage().diszInfo(diszid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
 				entry.getMessage().sendListDisz(userid);
 				break;
 			// ===============================================================================================================================
@@ -668,7 +671,8 @@ public class Module_Systemd extends Module {
 					if (this.EXECUTOR_INSTANCE.containsKey(message.getSegment()[0])) {
 						entry.getMessage().sendHelp(userid, this.EXECUTOR_INSTANCE.get(message.getSegment()[0]));
 					} else {
-						entry.getMessage().sendHelp(userid);
+						entry.getMessage().gropInfo(diszid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
+						entry.getMessage().sendListDisz(userid);
 					}
 				}
 				break;
@@ -677,7 +681,8 @@ public class Module_Systemd extends Module {
 				if (this.ENABLE_EXECUTOR_DISZ && this.EXECUTOR_DISZ.containsKey(message.getCommand())) {
 					this.EXECUTOR_DISZ.get(message.getCommand()).executeDiszMessage(diszid, userid, message, messageid, messagefont);
 				} else {
-					entry.getMessage().userInfo(userid, "没有此插件");
+					entry.getMessage().gropInfo(diszid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
+					entry.getMessage().sendListDisz(userid);
 				}
 				break;
 			}
@@ -723,14 +728,17 @@ public class Module_Systemd extends Module {
 			switch (message.parseCommand().getCommand()) {
 			// ===============================================================================================================================
 			case "info":
+				entry.getMessage().gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
 				entry.getMessage().sendInfo(userid);
 				break;
 			// ===============================================================================================================================
 			case "eula":
+				entry.getMessage().gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
 				entry.getMessage().sendEula(userid);
 				break;
 			// ===============================================================================================================================
 			case "list":
+				entry.getMessage().gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
 				entry.getMessage().sendListGrop(userid);
 				break;
 			// ===============================================================================================================================
@@ -741,7 +749,8 @@ public class Module_Systemd extends Module {
 					if (this.EXECUTOR_INSTANCE.containsKey(message.getSegment()[0])) {
 						entry.getMessage().sendHelp(userid, this.EXECUTOR_INSTANCE.get(message.getSegment()[0]));
 					} else {
-						entry.getMessage().userInfo(userid, "没有此插件");
+						entry.getMessage().gropInfo(gropid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
+						entry.getMessage().sendListGrop(userid);
 					}
 				}
 				break;
@@ -750,7 +759,8 @@ public class Module_Systemd extends Module {
 				if (this.ENABLE_EXECUTOR_GROP && this.EXECUTOR_GROP.containsKey(message.getCommand())) {
 					this.EXECUTOR_GROP.get(message.getCommand()).executeGropMessage(gropid, userid, message, messageid, messagefont);
 				} else {
-					entry.getMessage().sendHelp(userid);
+					entry.getMessage().gropInfo(gropid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
+					entry.getMessage().sendListGrop(userid);
 				}
 				break;
 			}
@@ -857,7 +867,7 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("\r\n触发器：");
+		builder.append("\r\n");
 
 		for (String temp : this.TRIGGER_INSTANCE.keySet()) {
 			ModuleTrigger instance = this.TRIGGER_INSTANCE.get(temp);
@@ -879,8 +889,6 @@ public class Module_Systemd extends Module {
 			}
 		}
 
-		builder.append("\r\n监听器：");
-
 		for (String temp : this.LISTENER_INSTANCE.keySet()) {
 			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
 			if (instance.ENABLE_USER || instance.ENABLE_USER || instance.ENABLE_USER) {
@@ -900,8 +908,6 @@ public class Module_Systemd extends Module {
 				}
 			}
 		}
-
-		builder.append("\r\n执行器：");
 
 		for (String temp : this.EXECUTOR_INSTANCE.keySet()) {
 			ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(temp);

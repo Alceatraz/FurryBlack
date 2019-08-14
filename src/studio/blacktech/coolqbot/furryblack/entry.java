@@ -32,7 +32,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "7.9 2019-08-13 (14:30)";
+	public final static String VerID = "7.10 2019-08-14 (10:30)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 
@@ -358,13 +358,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	@Override
 	public int friendAdd(int typeid, int sendTime, long userid) {
-		getMessage().sendHelp(userid);
+		JcqApp.CQ.sendPrivateMsg(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入聊天功能也不支持@。使用即表示同意最终用户许可。\r\n输入/help获取通用帮助\r\n输入/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
 		getMessage().sendEula(userid);
-		JcqApp.CQ.sendPrivateMsg(userid, "你好，在下人工智障");
-		JcqApp.CQ.sendPrivateMsg(userid, "使用即表示同意最终用户许可，已自动发送");
-		JcqApp.CQ.sendPrivateMsg(userid, "为了礼貌和避免打扰，本BOT不接入聊天功能");
-		JcqApp.CQ.sendPrivateMsg(userid, "输入/help获取通用帮助");
-		JcqApp.CQ.sendPrivateMsg(userid, "输入/list列出可用命令");
+		getMessage().sendHelp(userid);
+		getMessage().sendListUser(userid);
+		getMessage().sendListDisz(userid);
+		getMessage().sendListGrop(userid);
 		return 0;
 	}
 

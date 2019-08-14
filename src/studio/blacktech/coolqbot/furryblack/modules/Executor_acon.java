@@ -31,7 +31,7 @@ public class Executor_acon extends ModuleExecutor {
 			"/acon dry - 除湿",
 			"/acon cold - 制冰模式",
 			"/acon cool - 制冷模式",
-			"/acon warn - 制热模式",
+			"/acon warm - 制热模式",
 			"/acon bake - 烘烤模式",
 			"/acon burn - 烧烤模式",
 			"/acon fire - 焚化模式",
@@ -46,7 +46,8 @@ public class Executor_acon extends ModuleExecutor {
 			"/acon ibnova - Ib级超新星吸积引燃",
 			"/acon icnova - Ic级超新星吸积引燃",
 			"/acon iinova - II级超新星吸积引燃",
-			"/acon ~!C??? - Fy:????"
+			"/acon ~!C??? - Fy:????",
+			"/acon ~!R[?? - FT//s??"
 	};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
@@ -168,7 +169,7 @@ public class Executor_acon extends ModuleExecutor {
 				this.WORKINGMODE.put(gropid, 7350L);
 				break;
 
-			case "warn":
+			case "warm":
 				entry.getMessage().gropInfo(gropid, "切换至制热模式 23°");
 				this.WORKINGMODE.put(gropid, 7350L);
 				break;
@@ -245,6 +246,11 @@ public class Executor_acon extends ModuleExecutor {
 
 			case "samrage":
 				entry.getMessage().gropInfo(gropid, "父王之怒 10,000,000,000,000,000,000,000,000,000°");
+				this.WORKINGMODE.put(gropid, 73500000000L);
+				break;
+
+			case "samrape":
+				entry.getMessage().gropInfo(gropid, "父王之怒 -273.16°");
 				this.WORKINGMODE.put(gropid, 73500000000L);
 				break;
 
