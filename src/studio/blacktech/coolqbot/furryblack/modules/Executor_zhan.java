@@ -219,7 +219,7 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append("%");
 		}
 		String res[] = new String[1];
-		res[0] = builder.toString();
+		res[0] = builder.toString().substring(2);
 		return res;
 	}
 

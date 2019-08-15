@@ -51,10 +51,6 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	private ArrayList<String> BLACKLIST;
 
-	private int COUNT_USER = 0;
-	private int COUNT_DISZ = 0;
-	private int COUNT_GROP = 0;
-
 	private File FILE_BLACKLIST;
 
 	private TreeMap<String, LinkedList<MessageUser>> BLOCK_USER;

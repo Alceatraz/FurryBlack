@@ -58,10 +58,6 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	private File FILE_DISZIGNORE;
 	private File FILE_GROPIGNORE;
 
-	private int COUNT_USER = 0;
-	private int COUNT_DISZ = 0;
-	private int COUNT_GROP = 0;
-
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数

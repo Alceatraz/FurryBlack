@@ -36,13 +36,53 @@ public abstract class ModuleTrigger extends Module {
 	}
 	// @formatter:on
 
-	public int COUNT_USER = 0;
-	public int COUNT_DISZ = 0;
-	public int COUNT_GROP = 0;
+	protected int COUNT_USER = 0;
+	protected int COUNT_DISZ = 0;
+	protected int COUNT_GROP = 0;
 
-	public boolean ENABLE_USER = false;
-	public boolean ENABLE_DISZ = false;
-	public boolean ENABLE_GROP = false;
+	protected int BLOCK_USER = 0;
+	protected int BLOCK_DISZ = 0;
+	protected int BLOCK_GROP = 0;
+
+	protected boolean ENABLE_USER = false;
+	protected boolean ENABLE_DISZ = false;
+	protected boolean ENABLE_GROP = false;
+
+	public int COUNT_USER() {
+		return COUNT_USER;
+	}
+
+	public int COUNT_DISZ() {
+		return COUNT_DISZ;
+	}
+
+	public int COUNT_GROP() {
+		return COUNT_GROP;
+	}
+
+	public int BLOCK_USER() {
+		return BLOCK_USER;
+	}
+
+	public int BLOCK_DISZ() {
+		return BLOCK_DISZ;
+	}
+
+	public int BLOCK_GROP() {
+		return BLOCK_GROP;
+	}
+
+	public boolean ENABLE_USER() {
+		return ENABLE_USER;
+	}
+
+	public boolean ENABLE_DISZ() {
+		return ENABLE_DISZ;
+	}
+
+	public boolean ENABLE_GROP() {
+		return ENABLE_GROP;
+	}
 
 	public abstract boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception;
 

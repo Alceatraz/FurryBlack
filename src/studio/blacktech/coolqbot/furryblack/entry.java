@@ -58,7 +58,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		demo.startup();
 		demo.enable();
 
-		demo.privateMsg(1, 1, 1752384244, "/admin", 1);
+		demo.requestAddGroup(1, 456456546, 482394723, 54890237, "在吗有1吗", "234234234234");
 
 		demo.disable();
 		demo.exit();

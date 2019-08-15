@@ -75,52 +75,55 @@ public class Module_DDNS extends Module {
 		} else {
 			this.loadConfig();
 		}
+
+		this.ENABLE = Boolean.parseBoolean(this.CONFIG.getProperty("enable_ddnsclient", "false"));
+
+		if (this.ENABLE) {
+
+			this.API_GETADDRESS = this.CONFIG.getProperty("ddnsapi_getaddress", "");
+			this.API_SETADDRESS = this.CONFIG.getProperty("ddnsapi_setaddress", "");
+			this.CLIENTUA = this.CONFIG.getProperty("ddnsapi_clientua", "BTSCoolQ/1.0");
+			this.HOSTNAME = this.CONFIG.getProperty("ddnsapi_hostname", "");
+			this.PASSWORD = this.CONFIG.getProperty("ddnsapi_password", "");
+
+			logger.seek("[DDNS] 开关", this.ENABLE ? "启用" : "禁用");
+			logger.seek("[DDNS] 获取地址", this.API_GETADDRESS);
+			logger.seek("[DDNS] 设置域名", this.API_SETADDRESS);
+			logger.seek("[DDNS] 表示", this.CLIENTUA);
+			logger.seek("[DDNS] 域名", this.HOSTNAME);
+			logger.seek("[DDNS] 密码", this.PASSWORD);
+
+			String response = this.delegate.updateDDNSIP();
+
+			if (response == null) {
+				response = this.delegate.getIPAddress();
+				if (response == null) {
+					logger.mini("[DDNS] 设置地址失败", "需要手动介入");
+				} else {
+					this.ADDRESS = response;
+					response = this.delegate.setDDNSAddress(this.ADDRESS);
+					logger.info("[DDNS] 设置地址成功", response);
+				}
+			} else {
+				this.ADDRESS = response.split(" ")[1];
+				logger.info("[DDNS] 刷新地址成功", response);
+			}
+
+		}
+
 	}
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-
-		this.ENABLE = Boolean.parseBoolean(this.CONFIG.getProperty("enable_ddnsclient", "false"));
-
-		if (!this.ENABLE) { return; }
-
-		this.API_GETADDRESS = this.CONFIG.getProperty("ddnsapi_getaddress", "");
-		this.API_SETADDRESS = this.CONFIG.getProperty("ddnsapi_setaddress", "");
-		this.CLIENTUA = this.CONFIG.getProperty("ddnsapi_clientua", "BTSCoolQ/1.0");
-		this.HOSTNAME = this.CONFIG.getProperty("ddnsapi_hostname", "");
-		this.PASSWORD = this.CONFIG.getProperty("ddnsapi_password", "");
-
-		logger.seek("[DDNS] 开关", this.ENABLE ? "启用" : "禁用");
-		logger.seek("[DDNS] 获取地址", this.API_GETADDRESS);
-		logger.seek("[DDNS] 设置域名", this.API_SETADDRESS);
-		logger.seek("[DDNS] 表示", this.CLIENTUA);
-		logger.seek("[DDNS] 域名", this.HOSTNAME);
-		logger.seek("[DDNS] 密码", this.PASSWORD);
-
-		String response = this.delegate.updateDDNSIP();
-
-		if (response == null) {
-			response = this.delegate.getIPAddress();
-			if (response == null) {
-				logger.mini("[DDNS] 设置地址失败", "需要手动介入");
-			} else {
-				this.ADDRESS = response;
-				response = this.delegate.setDDNSAddress(this.ADDRESS);
-				logger.info("[DDNS] 设置地址成功", response);
-			}
-		} else {
-			this.ADDRESS = response.split(" ")[1];
-			logger.info("[DDNS] 刷新地址成功", response);
+		if (this.ENABLE) {
+			this.thread = new Thread(new WorkerProcerss());
+			this.thread.start();
 		}
-
-		this.thread = new Thread(new WorkerProcerss());
-		this.thread.start();
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
-		if (!this.ENABLE) { return; }
-		this.thread.interrupt();
+		if (this.ENABLE) { this.thread.interrupt(); }
 	}
 
 	@Override
