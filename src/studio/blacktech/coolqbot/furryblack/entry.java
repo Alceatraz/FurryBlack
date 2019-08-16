@@ -473,9 +473,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return NICKMAP.getDelegate();
 	}
 
-	public static boolean switchDEBUG() {
+	public static String switchDEBUG() {
 		DEBUG = !DEBUG;
-		return DEBUG;
+		return DEBUG ? "ENABLE" : "DISABLE";
 	}
 
 	public static boolean DEBUG() {

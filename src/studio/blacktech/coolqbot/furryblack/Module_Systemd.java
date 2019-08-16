@@ -614,7 +614,7 @@ public class Module_Systemd extends Module {
 			entry.getMessage().userInfo(userid, "未识别的内容，本BOT没有聊天功能，请使用/help查看帮助。");
 		}
 
-		if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.toString()); }
+		if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.anaylys().toString()); }
 	}
 
 	// ==========================================================================================================================================================
@@ -690,7 +690,7 @@ public class Module_Systemd extends Module {
 			// ===============================================================================================================================
 		}
 
-		if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.toString()); }
+		if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.anaylys().toString()); }
 
 		return;
 	}
@@ -768,7 +768,7 @@ public class Module_Systemd extends Module {
 			// ===============================================================================================================================
 		}
 
-		if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.toString()); }
+		if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.anaylys().toString()); }
 
 		return;
 	}
@@ -873,7 +873,7 @@ public class Module_Systemd extends Module {
 
 		for (String temp : this.TRIGGER_INSTANCE.keySet()) {
 			ModuleTrigger instance = this.TRIGGER_INSTANCE.get(temp);
-			if (instance.ENABLE_USER() || instance.ENABLE_USER() || instance.ENABLE_USER()) {
+			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) {
 				builder.append("\r\n");
 				result = instance.generateReport(0, null, null, null);
 				builder.append(instance.MODULE_PACKAGENAME());
@@ -894,7 +894,7 @@ public class Module_Systemd extends Module {
 
 		for (String temp : this.LISTENER_INSTANCE.keySet()) {
 			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
-			if (instance.ENABLE_USER() || instance.ENABLE_USER() || instance.ENABLE_USER()) {
+			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) {
 				builder.append("\r\n");
 				result = instance.generateReport(0, null, null, null);
 				builder.append(instance.MODULE_PACKAGENAME());
@@ -914,7 +914,7 @@ public class Module_Systemd extends Module {
 
 		for (String temp : this.EXECUTOR_INSTANCE.keySet()) {
 			ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(temp);
-			if (instance.ENABLE_USER() || instance.ENABLE_USER() || instance.ENABLE_USER()) {
+			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) {
 				builder.append("\r\n");
 				result = instance.generateReport(0, null, null, null);
 				builder.append(instance.MODULE_PACKAGENAME());

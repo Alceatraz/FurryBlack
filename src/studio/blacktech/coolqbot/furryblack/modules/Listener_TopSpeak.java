@@ -575,7 +575,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						if (time < 0) { time = time + 84600L; }
 						time = time * 1000;
 						time = time - 5;
-						System.out.println("[计划任务] TopSpeak 启动延迟 " + time);
+						System.out.println("[计划任务] Listener_TopSpeak 启动延迟 " + time);
 						Thread.sleep(time);
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {
 							System.out.println("[计划任务] TopSpeak 定时报告 " + temp);

@@ -99,7 +99,11 @@ public class Executor_admin extends ModuleExecutor {
 			entry.getSystemd().sendSystemsReport(3, gropid);
 			return true;
 		} else {
+
 			switch (message.getSegment()[0]) {
+			case "debug":
+				entry.getMessage().gropInfo(gropid, "DEBUG → " + entry.switchDEBUG());
+				return true;
 			case "say":
 				entry.getMessage().gropInfo(gropid, message.join(1));
 				return true;
