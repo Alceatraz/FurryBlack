@@ -46,27 +46,27 @@ public abstract class ModuleExecutor extends Module {
 	protected boolean ENABLE_GROP = false;
 
 	public int COUNT_USER() {
-		return COUNT_USER;
+		return this.COUNT_USER;
 	}
 
 	public int COUNT_DISZ() {
-		return COUNT_DISZ;
+		return this.COUNT_DISZ;
 	}
 
 	public int COUNT_GROP() {
-		return COUNT_GROP;
+		return this.COUNT_GROP;
 	}
 
 	public boolean ENABLE_USER() {
-		return ENABLE_USER;
+		return this.ENABLE_USER;
 	}
 
 	public boolean ENABLE_DISZ() {
-		return ENABLE_DISZ;
+		return this.ENABLE_DISZ;
 	}
 
 	public boolean ENABLE_GROP() {
-		return ENABLE_GROP;
+		return this.ENABLE_GROP;
 	}
 
 	public abstract void init(LoggerX logger) throws Exception;

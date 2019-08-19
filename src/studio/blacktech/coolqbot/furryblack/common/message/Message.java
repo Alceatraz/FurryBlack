@@ -52,12 +52,20 @@ public class Message {
 	// ===================================================================================
 
 	public Message anaylys() {
+
+		// 居然因为这么一条鬼消息出BUG了 -> /招手[CQ:at,qq=XXXXXXXX]
+
+		if (this.rawMessage.charAt(0) != '/') { return this; }
 		this.rawLength = this.rawMessage.length();
-		if (this.rawMessage.charAt(0) == '/' && this.rawLength > 1) { this.isCommand = true; }
+		if (this.rawLength == 1) { return this; }
+		if (this.rawMessage.matches("/[a-z]+.*")) { this.isCommand = true; }
 		return this;
 	}
 
 	public Message parseCommand() {
+
+		// 如果不是/开头则还未统计消息长度
+		if (!this.isCommand) { this.rawLength = this.rawMessage.length(); }
 
 		// 去掉 /
 		// 去掉首尾多余空格
@@ -121,6 +129,9 @@ public class Message {
 	private final static String REGEX_CCODE = "\\[CQ:.+\\]";
 
 	public Message parseMessage() {
+
+		// 如果不是/开头则还未统计消息长度
+		if (!this.isCommand) { this.rawLength = this.rawMessage.length(); }
 
 		if (this.rawMessage.startsWith("&#91;闪照&#93;")) {
 			this.isSnappic = true;

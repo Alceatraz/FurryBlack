@@ -64,7 +64,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	private HashMap<Long, GroupStatus> GROUP_STATUS;
 
-	private Thread worker;
+	private Thread thread;
 
 	private File CONFIG_GROUP_REPORT;
 
@@ -107,6 +107,8 @@ public class Listener_TopSpeak extends ModuleListener {
 			this.GROUP_STATUS.put(group.getId(), groupStatus);
 		}
 
+		this.thread = new Thread(new Worker());
+
 		this.ENABLE_USER = false;
 		this.ENABLE_DISZ = false;
 		this.ENABLE_GROP = true;
@@ -114,13 +116,13 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-		this.worker = new Thread(new Worker());
-		this.worker.start();
+		this.thread.start();
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
-		this.worker.interrupt();
+		this.thread.interrupt();
+		this.thread.join();
 	}
 
 	@Override
@@ -422,15 +424,27 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE);
 					builder.append("句/");
 					builder.append(userStatus.USER_CHARACTER);
-					builder.append("字/");
-					builder.append(userStatus.USER_PICTURES.size());
-					builder.append("图/");
-					builder.append(userStatus.USER_SNAPSHOT);
-					builder.append("闪/");
-					builder.append(userStatus.USER_TAPVIDEO);
-					builder.append("片/");
-					builder.append(userStatus.USER_HONGBAOS);
-					builder.append("包");
+					builder.append("字");
+					if (userStatus.USER_PICTURES.size() > 0) {
+						builder.append("/");
+						builder.append(userStatus.USER_PICTURES.size());
+						builder.append("图");
+					}
+					if (userStatus.USER_SNAPSHOT > 0) {
+						builder.append("/");
+						builder.append(userStatus.USER_SNAPSHOT);
+						builder.append("闪");
+					}
+					if (userStatus.USER_TAPVIDEO > 0) {
+						builder.append("/");
+						builder.append(userStatus.USER_TAPVIDEO);
+						builder.append("片");
+					}
+					if (userStatus.USER_HONGBAOS > 0) {
+						builder.append("/");
+						builder.append(userStatus.USER_HONGBAOS);
+						builder.append("包");
+					}
 				}
 				i = i + tempSet.size();
 			}
@@ -544,10 +558,10 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(JcqApp.CC.getCQImage(picture).getUrl());
 					report.add(builder.toString());
 					limit++;
-					if (limit > 5) { break; }
+					if (limit > 2) { break; }
 				}
 				order = order + tempSet.size();
-				if (limit > 5) { break; }
+				if (limit > 2) { break; }
 			}
 		} else {
 			builder.append("（4/4）图片排行：没有重复过的图片");
@@ -562,27 +576,38 @@ public class Listener_TopSpeak extends ModuleListener {
 	class Worker implements Runnable {
 		@Override
 		public void run() {
+			long time;
+			Date date;
 			while (JcqAppAbstract.enable) {
 				try {
-					long time;
-					Date date;
+					// =======================================================
 					while (true) {
-						time = 43205L;
 						date = new Date();
+						// 假设72000秒后运行
+						time = 72000L;
+						// 减去当前秒数 在 xx:xx:00 执行
 						time = time - date.getSeconds();
+						// 减去当前分钟 在 xx:00:00 执行
 						time = time - date.getMinutes() * 60;
+						// 减去当前分钟 在 00:00:00 执行
 						time = time - date.getHours() * 3600;
-						if (time < 0) { time = time + 84600L; }
+						// 如果启动时间晚于20:00:00 则会出现负数
+						if (time < 0) { time = time + 864000; }
+						// 转换为毫秒
 						time = time * 1000;
-						time = time - 5;
-						System.out.println("[计划任务] Listener_TopSpeak 启动延迟 " + time);
+						// 计算以上流程大约为7毫秒 视性能不同时间也不同
+						time = time - 7;
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 休眠：" + time);
 						Thread.sleep(time);
+						// =======================================================
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {
-							System.out.println("[计划任务] TopSpeak 定时报告 " + temp);
 							if (Listener_TopSpeak.this.GROUP_REPORT.contains(temp)) { entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp)); }
 						}
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 结果");
+						// =======================================================
 					}
 				} catch (InterruptedException exception) {
+					JcqApp.CQ.logWarning("FurryBlackWorker", "[Listener_TopSpeak] 中断 - " + (JcqAppAbstract.enable ? "关闭" : "异常"));
 				}
 			}
 		}

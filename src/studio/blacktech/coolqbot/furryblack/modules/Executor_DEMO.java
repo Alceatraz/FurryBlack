@@ -89,9 +89,11 @@ public class Executor_DEMO extends ModuleExecutor {
 	// 错误：HashMap<String,String> MAP = new HashMap<>();
 	// 正确：HashMap<String,String> MAP ;
 
-	HashMap<String, String> MAP;
+	private HashMap<String, String> MAP;
 
 	private File FILE_CUSTOM;
+
+	private Thread thread;
 
 	private boolean ENABLE_DEMO = false;
 
@@ -113,7 +115,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	/***
 	 * 初始化阶段
 	 *
-	 * 1：初始化配置及数据文件 2：生成所有内存结构 3：读取配置 4：分析 ENABLE_MODE
+	 * 1：初始化配置及数据文件 2：生成所有内存结构 3：读取配置并应用 4：分析 ENABLE_MODE
 	 */
 	@Override
 	public void init(LoggerX logger) throws Exception {
@@ -155,6 +157,10 @@ public class Executor_DEMO extends ModuleExecutor {
 
 		this.ENABLE_DEMO = Boolean.parseBoolean(this.CONFIG.getProperty("enable"));
 
+		MAP.put("1", "1");
+
+		this.thread = new Thread(new Worker());
+
 		// ==================================================================================
 		// 4：分析 ENABLE_MODE
 		// ENABLE_MODE = false 时，由systemd注册插件时将不会注册
@@ -182,6 +188,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	@Override
 	public void shut(LoggerX logger) throws Exception {
 		// 如果包含子线程 应在此时中断
+		// 如有需要，应在此处join 主线程将会等待shut方法执行完成
 	}
 
 	/***
@@ -248,6 +255,12 @@ public class Executor_DEMO extends ModuleExecutor {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
+	}
+
+	class Worker implements Runnable {
+		@Override
+		public void run() {
+		}
 	}
 
 }

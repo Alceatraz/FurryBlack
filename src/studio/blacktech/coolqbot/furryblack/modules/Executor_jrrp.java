@@ -4,6 +4,7 @@ import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.entry;
@@ -48,7 +49,7 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	private HashMap<Long, Integer> JRRP;
 
-	private Thread flush;
+	private Thread thread;
 
 	// ==========================================================================================================================================================
 	//
@@ -65,6 +66,8 @@ public class Executor_jrrp extends ModuleExecutor {
 
 		this.JRRP = new HashMap<>();
 
+		this.thread = new Thread(new Worker());
+
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;
 		this.ENABLE_GROP = true;
@@ -72,13 +75,13 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-		this.flush = new Thread(new Worker());
-		this.flush.start();
+		this.thread.start();
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
-		this.flush.interrupt();
+		this.thread.interrupt();
+		this.thread.join();
 	}
 
 	@Override
@@ -144,27 +147,35 @@ public class Executor_jrrp extends ModuleExecutor {
 	class Worker implements Runnable {
 		@Override
 		public void run() {
+			long time;
+			Date date;
 			while (JcqAppAbstract.enable) {
 				try {
-					long time;
-					Date date;
 					while (true) {
 						// =======================================================
-						time = 86400L;
 						date = new Date();
+						// 假设86400秒后运行
+						time = 86400L;
+						// 减去当前秒数 在 xx:xx:00 执行
 						time = time - date.getSeconds();
+						// 减去当前分钟 在 xx:00:00 执行
 						time = time - date.getMinutes() * 60;
+						// 减去当前分钟 在 00:00:00 执行
 						time = time - date.getHours() * 3600;
+						// 转换为毫秒
 						time = time * 1000;
+						// 计算以上流程大约为5毫秒 视性能不同时间也不同
 						time = time - 5;
-						System.out.println("[计划任务] Executor_jrrp 启动延迟 " + time);
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_jrrp] 休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						System.out.println("[计划任务] Executor_jrrp 定时清空");
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_jrrp] 执行");
 						Executor_jrrp.this.JRRP.clear();
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_jrrp] 结果");
 						// =======================================================
 					}
 				} catch (InterruptedException exception) {
+					JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_jrrp] 中断 - " + (JcqAppAbstract.enable ? "关闭" : "异常"));
 				}
 			}
 		}

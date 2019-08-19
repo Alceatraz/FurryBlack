@@ -15,6 +15,7 @@ import studio.blacktech.coolqbot.furryblack.Module_Message.MessageDelegate;
 import studio.blacktech.coolqbot.furryblack.Module_Nickmap.NicknameDelegate;
 import studio.blacktech.coolqbot.furryblack.Module_Systemd.SystemdDelegate;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerXDummy;
 import studio.blacktech.coolqbot.furryblack.common.NotAFolderException;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -172,17 +173,17 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int disable() {
-		LoggerX logger = new LoggerX();
-		try {
-			logger.mini(LoggerX.datetime());
-			logger.mini("[CORE] 关闭");
+		LoggerXDummy logger = new LoggerXDummy();
+		if (JcqAppAbstract.enable) {
 			JcqAppAbstract.enable = false;
-			DDNSAPI.shut(logger);
-			SYSTEMD.shut(logger);
-		} catch (Exception exce) {
-			exce.printStackTrace();
-			JcqAppAbstract.enable = false;
-			getMessage().adminInfo(logger.make(3));
+			try {
+				logger.mini(LoggerX.datetime());
+				logger.mini("[CORE] 关闭");
+				DDNSAPI.shut(logger);
+				SYSTEMD.shut(logger);
+			} catch (Exception exce) {
+				exce.printStackTrace();
+			}
 		}
 		return 0;
 	}
@@ -192,19 +193,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int exit() {
-		LoggerX logger = new LoggerX();
-		try {
-			logger.mini(LoggerX.datetime());
-			logger.mini("[CORE] 关闭");
-			JcqAppAbstract.enable = false;
-			DDNSAPI.shut(logger);
-			SYSTEMD.shut(logger);
-		} catch (Exception exce) {
-			exce.printStackTrace();
-			JcqAppAbstract.enable = false;
-			getMessage().adminInfo(logger.make(3));
-		}
-		return 0;
+		return this.disable();
 	}
 
 	// ==========================================================================================================================================================

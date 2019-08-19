@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.SecureRandom;
 import java.util.Date;
 
+import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
@@ -123,7 +123,10 @@ public class Module_DDNS extends Module {
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
-		if (this.ENABLE) { this.thread.interrupt(); }
+		if (this.ENABLE) {
+			this.thread.interrupt();
+			this.thread.join();
+		}
 	}
 
 	@Override
@@ -242,31 +245,39 @@ public class Module_DDNS extends Module {
 			while (JcqAppAbstract.enable) {
 				try {
 					// =======================================================
-					date = new Date();
-					time = 605L;
-					time = time - date.getSeconds();
-					time = time - date.getMinutes() % 10 * 60;
-					if (time < 60) { time = time + 600; }
-					time = time * 1000;
-					time = time - 5;
-					Thread.sleep(time);
-					// =======================================================
-					String response = Module_DDNS.this.delegate.updateDDNSIP();
-					if (response == null) {
-						entry.getMessage().adminInfo("[DDNS] 更新失败：更新新地址失败");
-					} else {
-						response = response.split(" ")[1];
-						if (!Module_DDNS.this.ADDRESS.equals(response)) {
-							entry.getMessage().adminInfo("[DDNS] 检测到地址变更： " + LoggerX.time() + "\r\n旧地址：" + Module_DDNS.this.ADDRESS + "\r\n新地址：" + response);
-							Module_DDNS.this.ADDRESS = response;
+					while (true) {
+						date = new Date();
+						// 假设600秒后运行
+						time = 600L;
+						// 减去当前秒数 在 xx:00 执行
+						time = time - date.getSeconds();
+						// 减去当前分钟 在 00:00 10:00 20:00 30:00 40:00 50:00 执行
+						time = time - date.getMinutes() % 10 * 60;
+						// 间隔小于1分钟则跳过本次
+						if (time < 60) { time = time + 600; }
+						// 转换为毫秒
+						time = time * 1000;
+						// 计算以上流程大约为5毫秒 视性能不同时间也不同
+						time = time - 5;
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[DDNSClient] 休眠：" + time);
+						Thread.sleep(time);
+						// =======================================================
+						JcqApp.CQ.logWarning("FurryBlackWorker", "[DDNSClient] 执行");
+						String response = Module_DDNS.this.delegate.updateDDNSIP();
+						if (response == null) {
+							entry.getMessage().adminInfo("[DDNS] 更新失败：更新新地址失败");
+						} else {
+							response = response.split(" ")[1];
+							if (!Module_DDNS.this.ADDRESS.equals(response)) {
+								entry.getMessage().adminInfo("[DDNS] 检测到地址变更： " + LoggerX.time() + "\r\n旧地址：" + Module_DDNS.this.ADDRESS + "\r\n新地址：" + response);
+								Module_DDNS.this.ADDRESS = response;
+							}
 						}
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[DDNSClient] 结果：" + response);
+						// =======================================================
 					}
-					// =======================================================
-					SecureRandom random = new SecureRandom();
-					Thread.sleep(random.nextInt(60000));
-					// =======================================================
 				} catch (InterruptedException exception) {
-
+					JcqApp.CQ.logWarning("FurryBlackWorker", "[DDNSClient] 中断 - " + (JcqAppAbstract.enable ? "关闭" : "异常"));
 				}
 			}
 		}

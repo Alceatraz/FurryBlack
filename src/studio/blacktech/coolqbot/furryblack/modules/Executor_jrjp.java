@@ -1,3 +1,4 @@
+
 package studio.blacktech.coolqbot.furryblack.modules;
 
 import java.io.BufferedReader;
@@ -66,7 +67,7 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	private File USER_IGNORE;
 
-	private Thread flush;
+	private Thread thread;
 
 	private SecureRandom random = new SecureRandom();
 	// ==========================================================================================================================================================
@@ -125,6 +126,8 @@ public class Executor_jrjp extends ModuleExecutor {
 			Executor_jrjp.this.AVCODE.put(group.getId(), (long) this.random.nextInt(60000000));
 		}
 
+		this.thread = new Thread(new Worker());
+
 		this.ENABLE_USER = false;
 		this.ENABLE_DISZ = false;
 		this.ENABLE_GROP = true;
@@ -132,13 +135,13 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-		this.flush = new Thread(new Worker());
-		this.flush.start();
+		this.thread.start();
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
-		this.flush.interrupt();
+		this.thread.interrupt();
+		this.thread.join();
 	}
 
 	@Override
@@ -184,35 +187,48 @@ public class Executor_jrjp extends ModuleExecutor {
 	class Worker implements Runnable {
 		@Override
 		public void run() {
+			long time;
+			Date date;
 			while (JcqAppAbstract.enable) {
 				try {
-					long time;
-					Date date;
+					// =======================================================
 					while (true) {
-						time = 86400L;
 						date = new Date();
+						// 假设86400秒后运行
+						time = 86400L;
+						// 减去当前秒数 在 xx:xx:00 执行
 						time = time - date.getSeconds();
+						// 减去当前分钟 在 xx:00:00 执行
 						time = time - date.getMinutes() * 60;
+						// 减去当前分钟 在 00:00:00 执行
 						time = time - date.getHours() * 3600;
+						// 转换为毫秒
 						time = time * 1000;
+						// 计算以上流程大约为5毫秒 视性能不同时间也不同
 						time = time - 5;
-						System.out.println("[计划任务] Executor_jrjp 启动延迟 " + time);
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRJP] 休眠：" + time);
 						Thread.sleep(time);
+						// =======================================================
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRJP] 执行");
 						Executor_jrjp.this.AVCODE.clear();
 						Executor_jrjp.this.VICTIM.clear();
 						ArrayList<Long> temp;
 						long victim;
 						long avcode;
+						StringBuilder builder = new StringBuilder();
+						builder.append("[计划任务] Executor_jrjp 定时刷新");
 						for (Long group : Executor_jrjp.this.MEMBERS.keySet()) {
 							temp = Executor_jrjp.this.MEMBERS.get(group);
 							victim = temp.get(Executor_jrjp.this.random.nextInt(temp.size()));
 							avcode = Executor_jrjp.this.random.nextInt(60000000);
 							Executor_jrjp.this.VICTIM.put(group, victim);
 							Executor_jrjp.this.AVCODE.put(group, avcode);
-							System.out.println("[计划任务] Executor_jrjp 定时刷新 " + group + " - " + " AV" + avcode);
+							builder.append("\r\n" + group + " - " + " AV" + avcode);
 						}
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRJP] 结果" + builder.toString());
 					}
 				} catch (InterruptedException exception) {
+					JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_JRJP] 中断 - " + (JcqAppAbstract.enable ? "关闭" : "异常"));
 				}
 			}
 		}

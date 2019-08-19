@@ -572,6 +572,8 @@ public class Module_Systemd extends Module {
 
 		if (message.anaylys().isCommand()) {
 
+			if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.anaylys().toString()); }
+
 			switch (message.parseCommand().getCommand()) {
 
 			// ===============================================================================================================================
@@ -614,7 +616,6 @@ public class Module_Systemd extends Module {
 			entry.getMessage().userInfo(userid, "未识别的内容，本BOT没有聊天功能，请使用/help查看帮助。");
 		}
 
-		if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.anaylys().toString()); }
 	}
 
 	// ==========================================================================================================================================================
@@ -646,6 +647,8 @@ public class Module_Systemd extends Module {
 		// ===============================================================================================================================
 
 		if (message.anaylys().isCommand()) {
+
+			if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.anaylys().toString()); }
 
 			switch (message.parseCommand().getCommand()) {
 			// ===============================================================================================================================
@@ -690,8 +693,6 @@ public class Module_Systemd extends Module {
 			// ===============================================================================================================================
 		}
 
-		if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.anaylys().toString()); }
-
 		return;
 	}
 
@@ -724,6 +725,8 @@ public class Module_Systemd extends Module {
 		// ===============================================================================================================================
 
 		if (message.anaylys().isCommand()) {
+
+			if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.anaylys().toString()); }
 
 			switch (message.parseCommand().getCommand()) {
 			// ===============================================================================================================================
@@ -767,8 +770,6 @@ public class Module_Systemd extends Module {
 
 			// ===============================================================================================================================
 		}
-
-		if (entry.DEBUG()) { JcqApp.CQ.logDebug("FurryBlack", message.anaylys().toString()); }
 
 		return;
 	}
