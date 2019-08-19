@@ -2,7 +2,11 @@ package studio.blacktech.coolqbot.furryblack.modules;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.HashMap;
+
+import com.sobte.cqp.jcq.event.JcqApp;
+import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
@@ -106,13 +110,14 @@ public class Executor_DEMO extends ModuleExecutor {
 	/***
 	 * 调用模块实例化方法 此处不应执行任何代码
 	 *
-	 * @throws Exception
+	 * @throws Exception 发生任何错误应扔出
 	 */
 	public Executor_DEMO() throws Exception {
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
-	/***
+	/**
+	 *
 	 * 初始化阶段
 	 *
 	 * 1：初始化配置及数据文件 2：生成所有内存结构 3：读取配置并应用 4：分析 ENABLE_MODE
@@ -157,7 +162,7 @@ public class Executor_DEMO extends ModuleExecutor {
 
 		this.ENABLE_DEMO = Boolean.parseBoolean(this.CONFIG.getProperty("enable"));
 
-		MAP.put("1", "1");
+		this.MAP.put("1", "1");
 
 		this.thread = new Thread(new Worker());
 
@@ -179,7 +184,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-		// 如果包含子线程 应在此时启动
+		this.thread.start();
 	}
 
 	/***
@@ -188,7 +193,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	@Override
 	public void shut(LoggerX logger) throws Exception {
 		// 如果包含子线程 应在此时中断
-		// 如有需要，应在此处join 主线程将会等待shut方法执行完成
+		this.thread.interrupt();
+		this.thread.join();
 	}
 
 	/***
@@ -250,7 +256,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	/***
-	 * 生成模块报告
+	 * 生成模块报告 数组每个元素就会产生一条消息 避免消息过长
 	 */
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
@@ -258,8 +264,63 @@ public class Executor_DEMO extends ModuleExecutor {
 	}
 
 	class Worker implements Runnable {
+
+		/**
+		 * 必须按照此格式写Worker
+		 */
+		@SuppressWarnings("deprecation")
 		@Override
 		public void run() {
+
+			// 成员变量
+			long time;
+			Date date;
+
+			// 最外层循环用于处理发生异常时是否继续运行
+			// enable = false 时则结束
+			while (JcqAppAbstract.enable) {
+
+				// 休眠被打断会产生InterruptedException
+				try {
+
+					// 实际工作循环
+					while (true) {
+
+						// 这是一个比较简约的延时计算
+						date = new Date();
+						// 假设86400秒后运行
+						time = 86400L;
+						// 减去当前秒数 在 xx:xx:00 执行
+						time = time - date.getSeconds();
+						// 减去当前分钟 在 xx:00:00 执行
+						time = time - date.getMinutes() * 60;
+						// 减去当前分钟 在 00:00:00 执行
+						time = time - date.getHours() * 3600;
+						// 转换为毫秒
+						time = time * 1000;
+						// 计算以上流程大约为5毫秒 视性能不同时间也不同
+						time = time - 5;
+
+						// 应该输出消息提醒
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 休眠：" + time);
+						Thread.sleep(time);
+
+						// 应该输出消息提醒
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 执行");
+
+						// 实际逻辑
+
+						// 应该输出消息提醒
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 结果");
+						// =======================================================
+					}
+
+				} catch (InterruptedException exception) {
+					// 应该输出消息提醒
+					JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_DEMO] 中断 - " + (JcqAppAbstract.enable ? "关闭" : "异常"));
+				}
+			}
+
 		}
 	}
 

@@ -102,7 +102,8 @@ public class Executor_admin extends ModuleExecutor {
 
 			switch (message.getSegment()[0]) {
 			case "debug":
-				entry.getMessage().gropInfo(gropid, "DEBUG → " + entry.switchDEBUG());
+				String temp = entry.switchDEBUG() ? "ENABLE" : "DISABLE";
+				entry.getMessage().gropInfo(gropid, "DEBUG → " + temp);
 				return true;
 			case "say":
 				entry.getMessage().gropInfo(gropid, message.join(1));

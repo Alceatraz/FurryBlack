@@ -111,6 +111,9 @@ public class Message {
 
 	// ===================================================================================
 
+	private final static String REGEX_IMAGE = "\\[CQ:image,file=\\w{32}\\.\\w{3}\\]";
+	private final static String REGEX_CCODE = "\\[CQ:.+\\]";
+
 	/***
 	 * 分析消息内容 1：闪照 2：视频 3：红包
 	 *
@@ -122,12 +125,8 @@ public class Message {
 	 *
 	 * "&#91;视频&#93;你的QQ暂不支持查看视频短片，请升级到最新版本后查看。"
 	 *
-	 * @return
+	 * @return this 方便用于单行写法
 	 */
-
-	private final static String REGEX_IMAGE = "\\[CQ:image,file=\\w{32}\\.\\w{3}\\]";
-	private final static String REGEX_CCODE = "\\[CQ:.+\\]";
-
 	public Message parseMessage() {
 
 		// 如果不是/开头则还未统计消息长度

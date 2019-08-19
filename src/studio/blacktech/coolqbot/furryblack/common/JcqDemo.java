@@ -27,15 +27,11 @@ import com.sobte.cqp.jcq.event.JcqAppAbstract;
  * 例：appid(com.example.demo) 则加载类 com.example.Demo<br>
  * 文档地址： https://gitee.com/Sobte/JCQ-CoolQ <br>
  * 帖子：https://cqp.cc/t/37318 <br>
- * 辅助开发变量: {@link JcqAppAbstract#CQ CQ}({@link com.sobte.cqp.jcq.entity.CoolQ
- * 酷Q核心操作类}), {@link JcqAppAbstract#CC
- * CC}({@link com.sobte.cqp.jcq.entity.CQCode 酷Q码操作类}), 具体功能可以查看文档
  */
 public class JcqDemo extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	/**
-	 * 用main方法调试可以最大化的加快开发效率，检测和定位错误位置<br/>
-	 * 以下就是使用Main方法进行测试的一个简易案例
+	 * 用main方法调试可以最大化的加快开发效率，检测和定位错误位置 以下就是使用Main方法进行测试的一个简易案例
 	 *
 	 * @param args 系统参数
 	 */

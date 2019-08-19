@@ -2,6 +2,7 @@
 .metadata
 bin/
 tmp/
+doc/
 export/studio.blacktech.coolqbot.furryblack.entry_lib/
 lib/
 *.tmp

@@ -21,6 +21,14 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 
+/**
+ * JcqApp的入口类文件
+ *
+ * Jcq将会调用约定的生命周期函数
+ *
+ * @author Alceatraz Warprays
+ *
+ */
 public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	// ==========================================================================================================================================================
@@ -33,7 +41,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "7.10 2019-08-14 (10:30)";
+	public final static String VerID = "7.11 2019-08-19 (20:30)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 
@@ -53,14 +61,16 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	private static Module_Message MESSAGE;
 	private static Module_DDNS DDNSAPI;
 
+	/**
+	 * JcqDebug 模式从此处执行
+	 *
+	 * @param args 启动参数 不应传入任何参数
+	 */
 	public static void main(String[] args) {
 		JcqApp.CQ = new CQDebug();
 		entry demo = new entry();
 		demo.startup();
 		demo.enable();
-
-		demo.requestAddGroup(1, 456456546, 482394723, 54890237, "在吗有1吗", "234234234234");
-
 		demo.disable();
 		demo.exit();
 
@@ -79,16 +89,16 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	}
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	/***
-	 * 启动时调用
+	/**
+	 * 生命周期函数：CoolQ启动
 	 */
 	@Override
 	public int startup() {
 		return 0;
 	}
 
-	/***
-	 * 加载时调用
+	/**
+	 * 生命周期函数：JcqApp启动
 	 */
 	@Override
 	public int enable() {
@@ -168,8 +178,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return 0;
 	}
 
-	/***
-	 * 卸载时调用
+	/**
+	 * 生命周期函数：JcqApp卸载
 	 */
 	@Override
 	public int disable() {
@@ -188,8 +198,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return 0;
 	}
 
-	/***
-	 * 关闭时调用
+	/**
+	 * 生命周期函数：CoolQ关闭
 	 */
 	@Override
 	public int exit() {
@@ -202,6 +212,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	//
 	// ==========================================================================================================================================================
 
+	/**
+	 * 私聊消息处理方法 不应该在此处修改任何内容
+	 */
 	@Override
 	public int privateMsg(int typeid, int messageid, long userid, String message, int messagefont) {
 		try {
@@ -227,6 +240,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return IMsg.MSG_IGNORE;
 	}
 
+	/**
+	 * 组聊消息处理方法 不应该在此处修改任何内容
+	 */
 	@Override
 	public int discussMsg(int typeid, int messageid, long diszid, long userid, String message, int messagefont) {
 		try {
@@ -254,6 +270,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return IMsg.MSG_IGNORE;
 	}
 
+	/**
+	 * 群聊消息处理方法 不应该在此处修改任何内容
+	 */
 	@Override
 	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
 		try {
@@ -287,6 +306,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	//
 	// ==========================================================================================================================================================
 
+	/**
+	 * 成员加群处理方法 不应该在此处修改任何内容
+	 */
 	@Override
 	public int groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		try {
@@ -313,6 +335,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return IMsg.MSG_IGNORE;
 	}
 
+	/**
+	 * 成员退群处理方法 不应该在此处修改任何内容
+	 */
 	@Override
 	public int groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		try {
@@ -345,9 +370,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	//
 	// ==========================================================================================================================================================
 
+	/**
+	 * 好友添加成功的处理函数
+	 */
 	@Override
 	public int friendAdd(int typeid, int sendTime, long userid) {
-		JcqApp.CQ.sendPrivateMsg(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入聊天功能也不支持@。使用即表示同意最终用户许可。\r\n输入/help获取通用帮助\r\n输入/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
+		getMessage().userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入聊天功能也不支持@。使用即表示同意最终用户许可。\r\n输入/help获取通用帮助\r\n输入/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
 		getMessage().sendEula(userid);
 		getMessage().sendHelp(userid);
 		getMessage().sendListUser(userid);
@@ -356,6 +384,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return 0;
 	}
 
+	/**
+	 * 好友添加请求
+	 */
 	@Override
 	public int requestAddFriend(int typeid, int sendtime, long userid, String message, String flag) {
 
@@ -377,6 +408,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return 0;
 	}
 
+	/**
+	 * 群组添加请求
+	 */
 	@Override
 	public int requestAddGroup(int typeid, int sendtime, long gropid, long userid, String message, String flag) {
 
@@ -438,35 +472,75 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	//
 	// ==========================================================================================================================================================
 
+	/**
+	 * 获取配置文件根目录
+	 *
+	 * @return 配置文件根目录
+	 */
 	public static File FOLDER_CONF() {
 		return entry.FOLDER_CONF;
 	}
 
+	/**
+	 * 获取数据文件根目录
+	 *
+	 * @return 数据文件根目录
+	 */
 	public static File FOLDER_DATA() {
 		return entry.FOLDER_DATA;
 	}
 
+	/**
+	 * 获取Systemd的代理对象
+	 *
+	 * @return Systemd的代理对象
+	 */
 	public static SystemdDelegate getSystemd() {
 		return SYSTEMD.getDelegate();
 	}
 
+	/**
+	 * 获取DDNSApi的代理对象
+	 *
+	 * @return DDNSApi的代理对象
+	 */
 	public static DDNSapiDelegate getDDNSAPI() {
 		return DDNSAPI.getDelegate();
 	}
 
+	/**
+	 * 获取DDNSApi的代理对象
+	 *
+	 * @return DDNSApi的代理对象
+	 */
 	public static MessageDelegate getMessage() {
 		return MESSAGE.getDelegate();
 	}
 
+	/**
+	 * 获取DDNSApi的代理对象
+	 *
+	 * @return DDNSApi的代理对象
+	 */
 	public static NicknameDelegate getNickmap() {
 		return NICKMAP.getDelegate();
 	}
 
-	public static String switchDEBUG() {
+	/**
+	 * 切换DEBUG模式
+	 *
+	 * @return 是否开启DEBUG模式
+	 */
+	public static boolean switchDEBUG() {
 		DEBUG = !DEBUG;
-		return DEBUG ? "ENABLE" : "DISABLE";
+		return DEBUG;
 	}
 
+	/**
+	 * 获取是否开启DEBUG模式
+	 *
+	 * @return 是否开启DEBUG模式
+	 */
 	public static boolean DEBUG() {
 		return DEBUG;
 	}

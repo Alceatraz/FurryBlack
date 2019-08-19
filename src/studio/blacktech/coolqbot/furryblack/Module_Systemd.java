@@ -969,8 +969,8 @@ public class Module_Systemd extends Module {
 	/***
 	 * 生成并发送系统报告
 	 *
-	 * @param logdest
-	 * @param destid
+	 * @param logdest 发送的目的 0：管理员 1：私聊 2： 3：群聊
+	 * @param destid  目的地
 	 */
 	public void doSendSystemsReport(int logdest, long destid) {
 		switch (logdest) {
