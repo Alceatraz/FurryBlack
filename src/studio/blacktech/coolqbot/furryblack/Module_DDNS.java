@@ -259,10 +259,10 @@ public class Module_DDNS extends Module {
 						time = time * 1000;
 						// 计算以上流程大约为5毫秒 视性能不同时间也不同
 						time = time - 5;
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[DDNSClient] 休眠：" + time);
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[DDNSClient] 休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						JcqApp.CQ.logWarning("FurryBlackWorker", "[DDNSClient] 执行");
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[DDNSClient] 执行");
 						String response = Module_DDNS.this.delegate.updateDDNSIP();
 						if (response == null) {
 							entry.getMessage().adminInfo("[DDNS] 更新失败：更新新地址失败");
@@ -273,7 +273,7 @@ public class Module_DDNS extends Module {
 								Module_DDNS.this.ADDRESS = response;
 							}
 						}
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[DDNSClient] 结果：" + response);
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[DDNSClient] 结果：" + response);
 						// =======================================================
 					}
 				} catch (InterruptedException exception) {

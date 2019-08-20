@@ -166,12 +166,12 @@ public class Executor_jrrp extends ModuleExecutor {
 						time = time * 1000;
 						// 计算以上流程大约为5毫秒 视性能不同时间也不同
 						time = time - 5;
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_jrrp] 休眠：" + time);
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_jrrp] 休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_jrrp] 执行");
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_jrrp] 执行");
 						Executor_jrrp.this.JRRP.clear();
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_jrrp] 结果");
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_jrrp] 结果");
 						// =======================================================
 					}
 				} catch (InterruptedException exception) {

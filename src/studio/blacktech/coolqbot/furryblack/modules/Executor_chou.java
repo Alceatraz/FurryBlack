@@ -143,13 +143,24 @@ public class Executor_chou extends ModuleExecutor {
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-		ArrayList<Long> tempMembers = this.MEMBERS.get(gropid);
-		ArrayList<Long> tempIgnores = this.IGNORES.get(gropid);
-		if (tempIgnores.contains(userid)) {
-			return;
+
+		ArrayList<Long> tempMembers = new ArrayList<>();
+
+		if (this.IGNORES.containsKey(gropid)) {
+			ArrayList<Long> tempIgnores = this.IGNORES.get(gropid);
+			for (Member tempUserid : JcqApp.CQ.getGroupMemberList(gropid)) {
+				if (tempIgnores.contains(tempUserid.getQqId())) {
+					continue;
+				} else {
+					tempMembers.add(tempUserid.getQqId());
+				}
+			}
 		} else {
-			tempMembers.add(userid);
+			for (Member tempUserid : JcqApp.CQ.getGroupMemberList(gropid)) {
+				tempMembers.add(tempUserid.getQqId());
+			}
 		}
+		this.MEMBERS.put(gropid, tempMembers);
 	}
 
 	@Override

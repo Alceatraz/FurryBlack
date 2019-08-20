@@ -597,13 +597,14 @@ public class Listener_TopSpeak extends ModuleListener {
 						time = time * 1000;
 						// 计算以上流程大约为7毫秒 视性能不同时间也不同
 						time = time - 7;
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 休眠：" + time);
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Listener_TopSpeak] 休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Listener_TopSpeak] 执行");
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {
 							if (Listener_TopSpeak.this.GROUP_REPORT.contains(temp)) { entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp)); }
 						}
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 结果");
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Listener_TopSpeak] 结果");
 						// =======================================================
 					}
 				} catch (InterruptedException exception) {
