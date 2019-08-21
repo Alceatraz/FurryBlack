@@ -3,7 +3,11 @@ package studio.blacktech.coolqbot.furryblack.modules;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,8 +30,9 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
 
-@SuppressWarnings("unused")
 public class Listener_TopSpeak extends ModuleListener {
+
+	private static final long serialVersionUID = 1L;
 
 	// ==========================================================================================================================================================
 	//
@@ -39,7 +44,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群统计";
 	private static String MODULE_DESCRIPTION = "水群统计";
-	private static String MODULE_VERSION = "18.0";
+	private static String MODULE_VERSION = "20.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {
@@ -68,6 +73,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	private File CONFIG_GROUP_REPORT;
 
+	private File GROUP_STATUS_SERIAL;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -78,36 +85,49 @@ public class Listener_TopSpeak extends ModuleListener {
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init(LoggerX logger) throws Exception {
 
 		this.initConfFolder();
+		this.initDataFolder();
 
 		this.GROUP_REPORT = new ArrayList<>();
-		this.GROUP_STATUS = new HashMap<>();
 
 		this.CONFIG_GROUP_REPORT = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "grop_report.txt").toFile();
+		this.GROUP_STATUS_SERIAL = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeak.serial").toFile();
 
-		if (!this.CONFIG_GROUP_REPORT.exists()) { this.CONFIG_GROUP_REPORT.createNewFile(); }
-
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_GROUP_REPORT), "UTF-8"));
-		String line;
-		while ((line = reader.readLine()) != null) {
-			if (line.startsWith("#")) { continue; }
-			this.GROUP_REPORT.add(Long.parseLong(line));
-		}
-		reader.close();
-
-		List<Group> groups = JcqApp.CQ.getGroupList();
-		for (Group group : groups) {
-			GroupStatus groupStatus = new GroupStatus(group.getId());
-			for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
-				groupStatus.USER_STATUS.put(member.getQqId(), new UserStatus(member.getQqId()));
+		// 每日报告白名单
+		if (this.CONFIG_GROUP_REPORT.exists()) {
+			// 存在则读取
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_GROUP_REPORT), "UTF-8"));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				if (line.startsWith("#")) { continue; }
+				this.GROUP_REPORT.add(Long.parseLong(line));
 			}
-			this.GROUP_STATUS.put(group.getId(), groupStatus);
+			reader.close();
+		} else {
+			// 不存在则创建
+			this.CONFIG_GROUP_REPORT.createNewFile();
 		}
 
-		this.thread = new Thread(new Worker());
+		// 序列化后的GroupStatus
+		if (this.GROUP_STATUS_SERIAL.exists()) {
+			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(this.GROUP_STATUS_SERIAL));
+			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
+			loader.close();
+		} else {
+			this.GROUP_STATUS = new HashMap<>();
+			List<Group> groups = JcqApp.CQ.getGroupList();
+			for (Group group : groups) {
+				GroupStatus groupStatus = new GroupStatus(group.getId());
+				for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
+					groupStatus.USER_STATUS.put(member.getQqId(), new UserStatus(member.getQqId()));
+				}
+				this.GROUP_STATUS.put(group.getId(), groupStatus);
+			}
+		}
 
 		this.ENABLE_USER = false;
 		this.ENABLE_DISZ = false;
@@ -116,13 +136,26 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
+		logger.info(this.MODULE_PACKAGENAME(), "启动工作线程");
+		this.thread = new Thread(new Worker());
 		this.thread.start();
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+		logger.info(this.MODULE_PACKAGENAME(), "终止工作线程");
 		this.thread.interrupt();
 		this.thread.join();
+	}
+
+	@Override
+	public void save(LoggerX logger) throws Exception {
+		logger.info(this.MODULE_PACKAGENAME(), "初始化容器");
+		this.GROUP_STATUS_SERIAL.delete();
+		ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(this.GROUP_STATUS_SERIAL));
+		logger.info(this.MODULE_PACKAGENAME(), "数据序列化");
+		saver.writeObject(this.GROUP_STATUS);
+		saver.close();
 	}
 
 	@Override
@@ -179,162 +212,6 @@ public class Listener_TopSpeak extends ModuleListener {
 	//
 	// ==========================================================================================================================================================
 
-	private class GroupStatus {
-
-		public long gropid = 0;
-
-		public HashMap<Long, UserStatus> USER_STATUS = new HashMap<>();
-
-		public LinkedList<String> GROP_SENTENCE;
-		public LinkedList<String> GROP_COMMANDS;
-		public LinkedList<String> GROP_PICTURES;
-
-		public int GROP_SNAPSHOT = 0;
-		public int GROP_HONGBAOS = 0;
-		public int GROP_TAPVIDEO = 0;
-
-		public int GROP_MESSAGES = 0;
-
-		public int GROP_CHARACTER = 0;
-		public int GROP_PURECCODE = 0;
-
-		public GroupStatus(long gropid) {
-			this.gropid = gropid;
-		}
-
-		public void say(long userid, MessageGrop message) {
-			this.USER_STATUS.get(userid).say(message);
-		}
-
-		public GroupStatus sum() {
-
-			this.GROP_SENTENCE = new LinkedList<>();
-			this.GROP_COMMANDS = new LinkedList<>();
-			this.GROP_PICTURES = new LinkedList<>();
-
-			this.GROP_SNAPSHOT = 0;
-			this.GROP_HONGBAOS = 0;
-			this.GROP_TAPVIDEO = 0;
-
-			this.GROP_MESSAGES = 0;
-
-			this.GROP_CHARACTER = 0;
-			this.GROP_PURECCODE = 0;
-
-			for (long userid : this.USER_STATUS.keySet()) {
-
-				UserStatus userStauts = this.USER_STATUS.get(userid).sum();
-
-				this.GROP_SENTENCE.addAll(userStauts.USER_SENTENCE);
-				this.GROP_COMMANDS.addAll(userStauts.USER_COMMANDS);
-				this.GROP_PICTURES.addAll(userStauts.USER_PICTURES);
-
-				this.GROP_SNAPSHOT = this.GROP_SNAPSHOT + userStauts.USER_SNAPSHOT;
-				this.GROP_HONGBAOS = this.GROP_HONGBAOS + userStauts.USER_HONGBAOS;
-				this.GROP_TAPVIDEO = this.GROP_TAPVIDEO + userStauts.USER_TAPVIDEO;
-
-				this.GROP_MESSAGES = this.GROP_MESSAGES + userStauts.MESSAGES.size();
-
-				this.GROP_CHARACTER = this.GROP_CHARACTER + userStauts.USER_CHARACTER;
-				this.GROP_PURECCODE = this.GROP_PURECCODE + userStauts.USER_PURECCODE;
-
-			}
-
-			return this;
-		}
-	}
-
-	// ==========================================================================================================================
-
-	private class UserStatus {
-
-		public long userid = 0;
-
-		public LinkedList<MessageGrop> MESSAGES = new LinkedList<>();
-
-		public LinkedList<String> USER_COMMANDS;
-		public LinkedList<String> USER_SENTENCE;
-		public LinkedList<String> USER_PICTURES;
-
-		public int USER_SNAPSHOT = 0;
-		public int USER_HONGBAOS = 0;
-		public int USER_TAPVIDEO = 0;
-
-		public int USER_CHARACTER = 0;
-		public int USER_PURECCODE = 0;
-
-		public UserStatus(long userid) {
-			this.userid = userid;
-		}
-
-		public void say(MessageGrop message) {
-			this.MESSAGES.add(message);
-		}
-
-		public UserStatus sum() {
-
-			this.USER_SENTENCE = new LinkedList<>();
-			this.USER_COMMANDS = new LinkedList<>();
-			this.USER_PICTURES = new LinkedList<>();
-			this.USER_SNAPSHOT = 0;
-			this.USER_HONGBAOS = 0;
-			this.USER_TAPVIDEO = 0;
-			this.USER_CHARACTER = 0;
-			this.USER_PURECCODE = 0;
-
-			for (MessageGrop temp : this.MESSAGES) {
-
-				if (temp.isCommand()) {
-					this.USER_COMMANDS.add(temp.getCommand());
-					continue;
-				}
-
-				temp.parseMessage();
-
-				if (temp.isSnappic()) {
-					this.USER_SNAPSHOT++;
-					continue;
-				}
-
-				if (temp.isHongbao()) {
-					this.USER_HONGBAOS++;
-					continue;
-				}
-
-				if (temp.isQQVideo()) {
-					this.USER_TAPVIDEO++;
-					continue;
-				}
-
-				if (temp.hasPicture()) {
-					for (String image : temp.getPicture()) {
-						this.USER_PICTURES.add(image);
-					}
-				}
-
-				// 纯CQ Code的消息会被替换为 "" 按 1句1字计算
-				// 不能直接按照一句添加进 SENTENCE
-				// 否则会出现大量占位的 ""
-				// 必须独立存储一个数字
-				if (temp.isPureCQS()) {
-					this.USER_PURECCODE++;
-					this.USER_CHARACTER++;
-				} else {
-					this.USER_SENTENCE.add(temp.getResMessage());
-					this.USER_CHARACTER = this.USER_CHARACTER + temp.getResLength();
-				}
-			}
-
-			return this;
-		}
-	}
-
-	// ==========================================================================================================================================================
-	//
-	//
-	//
-	// ==========================================================================================================================================================
-
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 		switch (mode) {
@@ -365,9 +242,9 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		// ===========================================================
 
-		builder.append("（1/4）水群统计");
-
-		builder.append("\r\n总消息数：");
+		builder.append("（1/4）水群统计\r\n自 ");
+		builder.append(LoggerX.datetime(new Date(groupStatus.initdt)));
+		builder.append("以来\r\n总消息数：");
 		builder.append(groupStatus.GROP_MESSAGES);
 		builder.append("\r\n发言条数：");
 		builder.append(groupStatus.GROP_SENTENCE.size() + groupStatus.GROP_PURECCODE);
@@ -583,19 +460,12 @@ public class Listener_TopSpeak extends ModuleListener {
 					// =======================================================
 					while (true) {
 						date = new Date();
-						// 假设72000秒后运行
 						time = 72000L;
-						// 减去当前秒数 在 xx:xx:00 执行
 						time = time - date.getSeconds();
-						// 减去当前分钟 在 xx:00:00 执行
 						time = time - date.getMinutes() * 60;
-						// 减去当前分钟 在 00:00:00 执行
 						time = time - date.getHours() * 3600;
-						// 如果启动时间晚于20:00:00 则会出现负数
 						if (time < 0) { time = time + 864000; }
-						// 转换为毫秒
 						time = time * 1000;
-						// 计算以上流程大约为7毫秒 视性能不同时间也不同
 						time = time - 7;
 						JcqApp.CQ.logDebug("FurryBlackWorker", "[Listener_TopSpeak] 休眠：" + time);
 						Thread.sleep(time);
@@ -607,11 +477,129 @@ public class Listener_TopSpeak extends ModuleListener {
 						JcqApp.CQ.logDebug("FurryBlackWorker", "[Listener_TopSpeak] 结果");
 						// =======================================================
 					}
-				} catch (InterruptedException exception) {
-					JcqApp.CQ.logWarning("FurryBlackWorker", "[Listener_TopSpeak] 中断 - " + (JcqAppAbstract.enable ? "关闭" : "异常"));
+				} catch (Exception exception) {
+					JcqApp.CQ.logWarning("FurryBlackWorker", "[Listener_TopSpeak] 中断 - " + (JcqAppAbstract.enable ? "异常" : "关闭"));
 				}
 			}
 		}
 	}
+}
 
+class GroupStatus implements Serializable {
+	private static final long serialVersionUID = 1L;
+	public long gropid = 0;
+	public long initdt = 0;
+	public HashMap<Long, UserStatus> USER_STATUS = new HashMap<>();
+	public LinkedList<String> GROP_SENTENCE;
+	public LinkedList<String> GROP_COMMANDS;
+	public LinkedList<String> GROP_PICTURES;
+	public int GROP_SNAPSHOT = 0;
+	public int GROP_HONGBAOS = 0;
+	public int GROP_TAPVIDEO = 0;
+	public int GROP_MESSAGES = 0;
+	public int GROP_CHARACTER = 0;
+	public int GROP_PURECCODE = 0;
+
+	public GroupStatus(long gropid) {
+		this.gropid = gropid;
+		this.initdt = System.currentTimeMillis();
+	}
+
+	public void say(long userid, MessageGrop message) {
+		this.USER_STATUS.get(userid).say(message);
+	}
+
+	public GroupStatus sum() {
+		this.GROP_SENTENCE = new LinkedList<>();
+		this.GROP_COMMANDS = new LinkedList<>();
+		this.GROP_PICTURES = new LinkedList<>();
+		this.GROP_SNAPSHOT = 0;
+		this.GROP_HONGBAOS = 0;
+		this.GROP_TAPVIDEO = 0;
+		this.GROP_MESSAGES = 0;
+		this.GROP_CHARACTER = 0;
+		this.GROP_PURECCODE = 0;
+		for (long userid : this.USER_STATUS.keySet()) {
+			UserStatus userStauts = this.USER_STATUS.get(userid).sum();
+			this.GROP_SENTENCE.addAll(userStauts.USER_SENTENCE);
+			this.GROP_COMMANDS.addAll(userStauts.USER_COMMANDS);
+			this.GROP_PICTURES.addAll(userStauts.USER_PICTURES);
+			this.GROP_SNAPSHOT = this.GROP_SNAPSHOT + userStauts.USER_SNAPSHOT;
+			this.GROP_HONGBAOS = this.GROP_HONGBAOS + userStauts.USER_HONGBAOS;
+			this.GROP_TAPVIDEO = this.GROP_TAPVIDEO + userStauts.USER_TAPVIDEO;
+			this.GROP_MESSAGES = this.GROP_MESSAGES + userStauts.MESSAGES.size();
+			this.GROP_CHARACTER = this.GROP_CHARACTER + userStauts.USER_CHARACTER;
+			this.GROP_PURECCODE = this.GROP_PURECCODE + userStauts.USER_PURECCODE;
+		}
+		return this;
+	}
+}
+
+class UserStatus implements Serializable {
+	private static final long serialVersionUID = 1L;
+	public long userid = 0;
+	public LinkedList<MessageGrop> MESSAGES = new LinkedList<>();
+	public LinkedList<String> USER_COMMANDS;
+	public LinkedList<String> USER_SENTENCE;
+	public LinkedList<String> USER_PICTURES;
+	public int USER_SNAPSHOT = 0;
+	public int USER_HONGBAOS = 0;
+	public int USER_TAPVIDEO = 0;
+	public int USER_CHARACTER = 0;
+	public int USER_PURECCODE = 0;
+
+	public UserStatus(long userid) {
+		this.userid = userid;
+	}
+
+	public void say(MessageGrop message) {
+		this.MESSAGES.add(message);
+	}
+
+	public UserStatus sum() {
+		this.USER_SENTENCE = new LinkedList<>();
+		this.USER_COMMANDS = new LinkedList<>();
+		this.USER_PICTURES = new LinkedList<>();
+		this.USER_SNAPSHOT = 0;
+		this.USER_HONGBAOS = 0;
+		this.USER_TAPVIDEO = 0;
+		this.USER_CHARACTER = 0;
+		this.USER_PURECCODE = 0;
+		for (MessageGrop temp : this.MESSAGES) {
+			if (temp.isCommand()) {
+				this.USER_COMMANDS.add(temp.getCommand());
+				continue;
+			}
+			temp.parseMessage();
+			if (temp.isSnappic()) {
+				this.USER_SNAPSHOT++;
+				continue;
+			}
+			if (temp.isHongbao()) {
+				this.USER_HONGBAOS++;
+				continue;
+			}
+			if (temp.isQQVideo()) {
+				this.USER_TAPVIDEO++;
+				continue;
+			}
+			if (temp.hasPicture()) {
+				for (String image : temp.getPicture()) {
+					this.USER_PICTURES.add(image);
+				}
+			}
+			// 纯CQ Code的消息会被替换为 "" 按 1句1字计算
+			// 不能直接按照一句添加进 SENTENCE
+			// 否则会出现大量占位的 ""
+			// 必须独立存储一个数字
+			if (temp.isPureCQS()) {
+				this.USER_PURECCODE++;
+				this.USER_CHARACTER++;
+			} else {
+				this.USER_SENTENCE.add(temp.getResMessage());
+				this.USER_CHARACTER = this.USER_CHARACTER + temp.getResLength();
+			}
+		}
+		return this;
+	}
 }

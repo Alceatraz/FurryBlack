@@ -18,6 +18,8 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_DEMO extends ModuleExecutor {
 
+	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 此模块为模板模块
@@ -195,6 +197,14 @@ public class Executor_DEMO extends ModuleExecutor {
 		// 如果包含子线程 应在此时中断
 		this.thread.interrupt();
 		this.thread.join();
+	}
+
+	/**
+	 * 保存数据使用
+	 */
+	@Override
+	public void save(LoggerX logger) throws Exception {
+		// admin init 4 将会调用所有模块的save方法
 	}
 
 	/***

@@ -3,16 +3,19 @@ package studio.blacktech.coolqbot.furryblack.common.module;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.Properties;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.NotAFolderException;
+import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
+import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 
-public abstract class Module {
+public abstract class Module implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String MODULE_PACKAGENAME;
 	private String MODULE_COMMANDNAME;
@@ -86,6 +89,8 @@ public abstract class Module {
 	public abstract void boot(LoggerX logger) throws Exception;
 
 	public abstract void shut(LoggerX logger) throws Exception;
+
+	public abstract void save(LoggerX logger) throws Exception;
 
 	public abstract void reload(LoggerX logger) throws Exception;
 

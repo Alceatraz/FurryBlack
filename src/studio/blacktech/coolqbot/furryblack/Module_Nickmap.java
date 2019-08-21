@@ -15,6 +15,8 @@ import studio.blacktech.coolqbot.furryblack.common.module.Module;
 
 public class Module_Nickmap extends Module {
 
+	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
@@ -100,6 +102,10 @@ public class Module_Nickmap extends Module {
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void save(LoggerX logger) throws Exception {
 	}
 
 	@Override

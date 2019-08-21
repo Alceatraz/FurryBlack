@@ -10,6 +10,8 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_admin extends ModuleExecutor {
 
+	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
@@ -55,6 +57,10 @@ public class Executor_admin extends ModuleExecutor {
 	}
 
 	@Override
+	public void save(LoggerX logger) throws Exception {
+	}
+
+	@Override
 	public void reload(LoggerX logger) throws Exception {
 	}
 
@@ -75,6 +81,13 @@ public class Executor_admin extends ModuleExecutor {
 			return true;
 		} else {
 			switch (message.getSegment()[0]) {
+			case "init":
+				if (message.getSection() == 1) {
+					entry.getMessage().adminInfo("init 0 关闭\r\ninit 1 初始化\r\ninit2 预留\r\ninit3 启动\r\ninit4 保存\r\ninit5 预留\r\ninit6 重启");
+				} else {
+					entry.getSystemd().init(message.getSegment()[1]);
+				}
+				return true;
 			case "debug":
 				entry.getMessage().adminInfo("DEBUG → " + entry.switchDEBUG());
 				return true;

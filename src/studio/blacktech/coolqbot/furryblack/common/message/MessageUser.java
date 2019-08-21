@@ -2,6 +2,8 @@ package studio.blacktech.coolqbot.furryblack.common.message;
 
 public class MessageUser extends Message {
 
+	private static final long serialVersionUID = 1L;
+
 	private long typeid = 0;
 	private long userid = 0;
 

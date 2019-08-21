@@ -10,6 +10,8 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_kong extends ModuleExecutor {
 
+	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
@@ -61,6 +63,10 @@ public class Executor_kong extends ModuleExecutor {
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void save(LoggerX logger) throws Exception {
 	}
 
 	@Override

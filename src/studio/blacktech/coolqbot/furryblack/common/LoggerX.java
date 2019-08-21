@@ -224,17 +224,22 @@ public class LoggerX {
 		return formater.format(new Date());
 	}
 
+	public static String time(Date date) {
+		SimpleDateFormat formater = new SimpleDateFormat("HH:mm:ss");
+		return formater.format(date);
+	}
+
 	public static String datetime(Date date) {
 		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return formater.format(date);
 	}
 
-	public static String datetime(String formate) {
+	public static String time(String formate) {
 		SimpleDateFormat formater = new SimpleDateFormat(formate);
 		return formater.format(new Date());
 	}
 
-	public static String datetime(String formate, Date date) {
+	public static String time(String formate, Date date) {
 		SimpleDateFormat formater = new SimpleDateFormat(formate);
 		return formater.format(date);
 	}

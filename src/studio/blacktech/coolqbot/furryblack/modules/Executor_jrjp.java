@@ -27,6 +27,8 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_jrjp extends ModuleExecutor {
 
+	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
@@ -126,8 +128,6 @@ public class Executor_jrjp extends ModuleExecutor {
 			Executor_jrjp.this.AVCODE.put(group.getId(), (long) this.random.nextInt(60000000));
 		}
 
-		this.thread = new Thread(new Worker());
-
 		this.ENABLE_USER = false;
 		this.ENABLE_DISZ = false;
 		this.ENABLE_GROP = true;
@@ -135,13 +135,20 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
+		logger.info(this.MODULE_PACKAGENAME(), "启动工作线程");
+		this.thread = new Thread(new Worker());
 		this.thread.start();
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+		logger.info(this.MODULE_PACKAGENAME(), "终止工作线程");
 		this.thread.interrupt();
 		this.thread.join();
+	}
+
+	@Override
+	public void save(LoggerX logger) throws Exception {
 	}
 
 	@Override
@@ -228,7 +235,11 @@ public class Executor_jrjp extends ModuleExecutor {
 						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRJP] 结果" + builder.toString());
 					}
 				} catch (InterruptedException exception) {
-					JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_JRJP] 中断 - " + (JcqAppAbstract.enable ? "关闭" : "异常"));
+					if (JcqAppAbstract.enable) {
+						JcqApp.CQ.logWarning("FurryBlackWorker", "[Module_DDNSClient] 关闭");
+					} else {
+						JcqApp.CQ.logWarning("FurryBlackWorker", "[Module_DDNSClient] 异常");
+					}
 				}
 			}
 		}

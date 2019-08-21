@@ -1,5 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.common.message;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -9,7 +10,9 @@ import java.util.regex.Pattern;
 
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 
-public class Message {
+public class Message implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private int messageId = 0;
 	private int messageFt = 0;

@@ -89,7 +89,7 @@ public class LoggerXDummy extends LoggerX {
 	}
 
 	public String make(int level) {
-		return "LoggerX Dummy";
+		return "LoggerXDummy";
 	}
 
 }

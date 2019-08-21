@@ -17,6 +17,8 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_jrrp extends ModuleExecutor {
 
+	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
@@ -66,8 +68,6 @@ public class Executor_jrrp extends ModuleExecutor {
 
 		this.JRRP = new HashMap<>();
 
-		this.thread = new Thread(new Worker());
-
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;
 		this.ENABLE_GROP = true;
@@ -75,13 +75,20 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
+		logger.info(this.MODULE_PACKAGENAME(), "启动工作线程");
+		this.thread = new Thread(new Worker());
 		this.thread.start();
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+		logger.info(this.MODULE_PACKAGENAME(), "终止工作线程");
 		this.thread.interrupt();
 		this.thread.join();
+	}
+
+	@Override
+	public void save(LoggerX logger) throws Exception {
 	}
 
 	@Override
@@ -166,16 +173,16 @@ public class Executor_jrrp extends ModuleExecutor {
 						time = time * 1000;
 						// 计算以上流程大约为5毫秒 视性能不同时间也不同
 						time = time - 5;
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_jrrp] 休眠：" + time);
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRRP] 休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_jrrp] 执行");
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRRP] 执行");
 						Executor_jrrp.this.JRRP.clear();
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_jrrp] 结果");
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRRP] 结果");
 						// =======================================================
 					}
-				} catch (InterruptedException exception) {
-					JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_jrrp] 中断 - " + (JcqAppAbstract.enable ? "关闭" : "异常"));
+				} catch (Exception exception) {
+					JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_JRRP] 中断 - " + (JcqAppAbstract.enable ? "异常" : "关闭"));
 				}
 			}
 		}

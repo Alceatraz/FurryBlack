@@ -32,6 +32,8 @@ import studio.blacktech.coolqbot.furryblack.modules.Trigger_WordDeny;
 
 public class Module_Systemd extends Module {
 
+	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
@@ -420,14 +422,33 @@ public class Module_Systemd extends Module {
 	}
 
 	@Override
+	public void save(LoggerX logger) throws Exception {
+		for (String name : this.TRIGGER_INSTANCE.keySet()) {
+			logger.full("[Systemd] 保存触发器", name);
+			this.TRIGGER_INSTANCE.get(name).save(logger);
+		}
+		for (String name : this.LISTENER_INSTANCE.keySet()) {
+			logger.full("[Systemd] 保存监听器", name);
+			this.LISTENER_INSTANCE.get(name).save(logger);
+		}
+		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
+			logger.full("[Systemd] 保存执行器", name);
+			this.EXECUTOR_INSTANCE.get(name).save(logger);
+		}
+	}
+
+	@Override
 	public void shut(LoggerX logger) throws Exception {
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
+			logger.full("[Systemd] 关闭触发器", name);
 			this.TRIGGER_INSTANCE.get(name).shut(logger);
 		}
 		for (String name : this.LISTENER_INSTANCE.keySet()) {
+			logger.full("[Systemd] 关闭监听器", name);
 			this.LISTENER_INSTANCE.get(name).shut(logger);
 		}
 		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
+			logger.full("[Systemd] 关闭执行器", name);
 			this.EXECUTOR_INSTANCE.get(name).shut(logger);
 		}
 	}
@@ -1036,6 +1057,8 @@ public class Module_Systemd extends Module {
 
 	public class SystemdDelegate {
 
+		private TestDelegate testDelegate = new TestDelegate();
+
 		public void sendModuleFullHelp(int logdest, long destid, String name) {
 			Module_Systemd.this.doSendModuleFullHelp(logdest, destid, name);
 		}
@@ -1048,6 +1071,49 @@ public class Module_Systemd extends Module {
 			Module_Systemd.this.doSendModuleReport(message);
 		}
 
-	}
+		public void init(String level) throws Exception {
+			LoggerX logger = new LoggerX();
+			logger.info(LoggerX.datetime());
+			switch (level) {
+			case "0":
+				logger.info("init 0：关闭");
+				Module_Systemd.this.save(logger);
+				Module_Systemd.this.shut(logger);
+				break;
+			case "1":
+				logger.info("init 1：初始化");
+				Module_Systemd.this.init(logger);
+				break;
+			case "2":
+				logger.info("init 2");
+				break;
+			case "3":
+				logger.info("init 3：启动");
+				Module_Systemd.this.boot(logger);
+				break;
+			case "4":
+				logger.info("init 4：保存");
+				Module_Systemd.this.save(logger);
+				break;
+			case "5":
+				logger.info("init 5");
+				break;
+			case "6":
+				logger.info("init 6：重启");
+				Module_Systemd.this.save(logger);
+				Module_Systemd.this.shut(logger);
+				Module_Systemd.this.boot(logger);
+				break;
+			}
+			entry.getMessage().adminInfo(logger.make(3));
+		}
 
+		public TestDelegate test() {
+			return this.testDelegate;
+		}
+
+		public class TestDelegate {
+		}
+
+	}
 }

@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.common;
+package studio.blacktech.coolqbot.furryblack.common.exception;
 
 public class InitializationException extends Exception {
 

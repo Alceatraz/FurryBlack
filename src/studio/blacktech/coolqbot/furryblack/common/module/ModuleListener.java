@@ -6,6 +6,8 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 
 public abstract class ModuleListener extends Module {
 
+	private static final long serialVersionUID = 1L;
+
 	// @formatter:off
 	public ModuleListener(
 			String MODULE_PACKAGENAME,

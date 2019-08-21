@@ -18,6 +18,8 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 
 public class Trigger_UserDeny extends ModuleTrigger {
 
+	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
@@ -177,6 +179,10 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void save(LoggerX logger) throws Exception {
 	}
 
 	@Override

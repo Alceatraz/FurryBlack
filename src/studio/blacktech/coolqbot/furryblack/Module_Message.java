@@ -22,6 +22,8 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 
 public class Module_Message extends Module {
 
+	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
@@ -149,6 +151,10 @@ public class Module_Message extends Module {
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void save(LoggerX logger) throws Exception {
 	}
 
 	@Override
