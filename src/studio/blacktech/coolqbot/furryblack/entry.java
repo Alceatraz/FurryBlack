@@ -10,7 +10,7 @@ import com.sobte.cqp.jcq.entity.IRequest;
 import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
-import studio.blacktech.coolqbot.furryblack.Module_DDNS.DDNSapiDelegate;
+import studio.blacktech.coolqbot.furryblack.Module_Dynamic.DDNSapiDelegate;
 import studio.blacktech.coolqbot.furryblack.Module_Message.MessageDelegate;
 import studio.blacktech.coolqbot.furryblack.Module_Nickmap.NicknameDelegate;
 import studio.blacktech.coolqbot.furryblack.Module_Systemd.SystemdDelegate;
@@ -40,7 +40,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "8.0 2019-08-21 (17:00)";
+	public final static String VerID = "8.1 2019-08-22 (22:00)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 
@@ -58,7 +58,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	private static Module_Systemd SYSTEMD;
 	private static Module_Nickmap NICKMAP;
 	private static Module_Message MESSAGE;
-	private static Module_DDNS DDNSAPI;
+	private static Module_Dynamic DDNSAPI;
+
+	private static LoggerX bootLoggerX;
 
 	/**
 	 * JcqDebug 模式从此处执行
@@ -102,15 +104,17 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int enable() {
 
-		LoggerX logger = new LoggerX();
+		bootLoggerX = new LoggerX();
+
+		LoggerX logger = bootLoggerX;
 
 		try {
 
-			logger.rawmini("[CORE] - " + LoggerX.datetime());
+			logger.rawmini(LoggerX.datetime());
+			logger.rawmini("[FurryBlack] - 启动 ");
 
 			// ==========================================================================================================================
 
-			JcqAppAbstract.enable = true;
 			JcqAppAbstract.appDirectory = JcqApp.CQ.getAppDirectory();
 
 			// ==========================================================================================================================
@@ -143,7 +147,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-			entry.DDNSAPI = new Module_DDNS();
+			entry.DDNSAPI = new Module_Dynamic();
 			entry.MESSAGE = new Module_Message();
 			entry.NICKMAP = new Module_Nickmap();
 			entry.SYSTEMD = new Module_Systemd();
@@ -160,7 +164,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-			logger.mini("[CORE] 启动", "耗时" + (System.currentTimeMillis() - BOOTTIME) + "ms");
+			logger.rawmini("[FurryBlack] - 完成" + (System.currentTimeMillis() - BOOTTIME) + "ms");
 
 			// ==========================================================================================================================
 
@@ -169,9 +173,11 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
+			JcqAppAbstract.enable = true;
+
 		} catch (Exception exce) {
-			exce.printStackTrace();
 			JcqAppAbstract.enable = false;
+			exce.printStackTrace();
 			getMessage().adminInfo(logger.make(3));
 		}
 		return 0;
@@ -552,6 +558,16 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	public static boolean DEBUG() {
 		return DEBUG;
+	}
+
+	/**
+	 * 获取启动日志
+	 * 
+	 * @param level 日志级别
+	 * @return 启动日志
+	 */
+	public static String getBootLogger(int level) {
+		return bootLoggerX.make(level);
 	}
 
 }

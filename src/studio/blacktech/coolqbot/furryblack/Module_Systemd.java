@@ -373,15 +373,15 @@ public class Module_Systemd extends Module {
 		logger.info("  组聊", this.ENABLE_TRIGGER_DISZ ? "启用 - " + this.TRIGGER_DISZ.size() + "个" : "禁用");
 		logger.info("  群聊", this.ENABLE_TRIGGER_GROP ? "启用 - " + this.TRIGGER_GROP.size() + "个" : "禁用");
 
-		logger.seek("[Systemd] 监听器");
-		logger.seek("  私聊", this.ENABLE_LISENTER_USER ? "启用 - " + this.LISTENER_DISZ.size() + "个" : "禁用");
-		logger.seek("  组聊", this.ENABLE_LISENTER_DISZ ? "启用 - " + this.LISTENER_DISZ.size() + "个" : "禁用");
-		logger.seek("  群聊", this.ENABLE_LISENTER_GROP ? "启用 - " + this.LISTENER_GROP.size() + "个" : "禁用");
+		logger.info("[Systemd] 监听器");
+		logger.info("  私聊", this.ENABLE_LISENTER_USER ? "启用 - " + this.LISTENER_DISZ.size() + "个" : "禁用");
+		logger.info("  组聊", this.ENABLE_LISENTER_DISZ ? "启用 - " + this.LISTENER_DISZ.size() + "个" : "禁用");
+		logger.info("  群聊", this.ENABLE_LISENTER_GROP ? "启用 - " + this.LISTENER_GROP.size() + "个" : "禁用");
 
-		logger.seek("[Systemd] 执行器");
-		logger.seek("  私聊", this.ENABLE_EXECUTOR_USER ? "启用 - " + this.EXECUTOR_USER.size() + "个" : "禁用");
-		logger.seek("  组聊", this.ENABLE_EXECUTOR_DISZ ? "启用 - " + this.EXECUTOR_DISZ.size() + "个" : "禁用");
-		logger.seek("  群聊", this.ENABLE_EXECUTOR_GROP ? "启用 - " + this.EXECUTOR_GROP.size() + "个" : "禁用");
+		logger.info("[Systemd] 执行器");
+		logger.info("  私聊", this.ENABLE_EXECUTOR_USER ? "启用 - " + this.EXECUTOR_USER.size() + "个" : "禁用");
+		logger.info("  组聊", this.ENABLE_EXECUTOR_DISZ ? "启用 - " + this.EXECUTOR_DISZ.size() + "个" : "禁用");
+		logger.info("  群聊", this.ENABLE_EXECUTOR_GROP ? "启用 - " + this.EXECUTOR_GROP.size() + "个" : "禁用");
 
 		// =======================================================================================================================
 		//
@@ -1071,7 +1071,7 @@ public class Module_Systemd extends Module {
 			Module_Systemd.this.doSendModuleReport(message);
 		}
 
-		public void init(String level) throws Exception {
+		public LoggerX init(String level) throws Exception {
 			LoggerX logger = new LoggerX();
 			logger.info(LoggerX.datetime());
 			switch (level) {
@@ -1105,7 +1105,7 @@ public class Module_Systemd extends Module {
 				Module_Systemd.this.boot(logger);
 				break;
 			}
-			entry.getMessage().adminInfo(logger.make(3));
+			return logger;
 		}
 
 		public TestDelegate test() {

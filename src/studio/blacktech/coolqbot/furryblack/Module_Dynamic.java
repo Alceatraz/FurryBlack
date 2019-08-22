@@ -13,7 +13,7 @@ import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.Module;
 
-public class Module_DDNS extends Module {
+public class Module_Dynamic extends Module {
 
 	private static final long serialVersionUID = 1L;
 
@@ -55,7 +55,7 @@ public class Module_DDNS extends Module {
 	private Thread thread;
 	private DDNSapiDelegate delegate = new DDNSapiDelegate();
 
-	public Module_DDNS() throws Exception {
+	public Module_Dynamic() throws Exception {
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
@@ -66,7 +66,7 @@ public class Module_DDNS extends Module {
 		this.initCofigurtion();
 
 		if (this.NEW_CONFIG) {
-			logger.seek("[DDNS] 配置文件不存在 - 生成默认配置");
+			logger.seek("[Dynamic] 配置文件不存在 - 生成默认配置");
 			this.CONFIG.setProperty("enable_ddnsclient", "false");
 			this.CONFIG.setProperty("ddnsapi_getaddress", "");
 			this.CONFIG.setProperty("ddnsapi_setaddress", "");
@@ -88,36 +88,35 @@ public class Module_DDNS extends Module {
 			this.HOSTNAME = this.CONFIG.getProperty("ddnsapi_hostname", "");
 			this.PASSWORD = this.CONFIG.getProperty("ddnsapi_password", "");
 
-			logger.seek("[DDNS] 开关", this.ENABLE ? "启用" : "禁用");
-			logger.seek("[DDNS] 获取地址", this.API_GETADDRESS);
-			logger.seek("[DDNS] 设置域名", this.API_SETADDRESS);
-			logger.seek("[DDNS] 表示", this.CLIENTUA);
-			logger.seek("[DDNS] 域名", this.HOSTNAME);
-			logger.seek("[DDNS] 密码", this.PASSWORD);
+			logger.seek("[Dynamic] ", this.ENABLE ? "启用" : "禁用");
+			logger.seek("[Dynamic] 获取", this.API_GETADDRESS);
+			logger.seek("[Dynamic] 刷新", this.API_SETADDRESS);
+			logger.seek("[Dynamic] 标识", this.CLIENTUA);
+			logger.seek("[Dynamic] 域名", this.HOSTNAME);
+			logger.seek("[Dynamic] 密码", this.PASSWORD);
 
 			String response = this.delegate.updateDDNSIP();
 
 			if (response == null) {
 				response = this.delegate.getIPAddress();
 				if (response == null) {
-					logger.mini("[DDNS] 设置地址失败", "需要手动介入");
+					logger.mini("[Dynamic] 设置地址失败", "需要手动介入");
 				} else {
 					this.ADDRESS = response;
 					response = this.delegate.setDDNSAddress(this.ADDRESS);
-					logger.info("[DDNS] 设置地址成功", response);
+					logger.seek("[Dynamic] 设置地址成功", response);
 				}
 			} else {
 				this.ADDRESS = response.split(" ")[1];
-				logger.info("[DDNS] 刷新地址成功", response);
+				logger.seek("[Dynamic] 刷新地址成功", response);
 			}
-
 		}
-
 	}
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
 		if (this.ENABLE) {
+			logger.info(this.MODULE_PACKAGENAME(), "启动工作线程");
 			this.thread = new Thread(new WorkerProcerss());
 			this.thread.start();
 		}
@@ -126,6 +125,7 @@ public class Module_DDNS extends Module {
 	@Override
 	public void shut(LoggerX logger) throws Exception {
 		if (this.ENABLE) {
+			logger.info(this.MODULE_PACKAGENAME(), "终止工作线程");
 			this.thread.interrupt();
 			this.thread.join();
 		}
@@ -173,7 +173,7 @@ public class Module_DDNS extends Module {
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.getMessage().adminInfo("[DDNS]获取异常" + exception.getMessage());
+			entry.getMessage().adminInfo("[Dynamic]获取异常" + exception.getMessage());
 			return null;
 		}
 	}
@@ -194,7 +194,7 @@ public class Module_DDNS extends Module {
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.getMessage().adminInfo("[DDNS]获取异常" + exception.getMessage());
+			entry.getMessage().adminInfo("[Dynamic]获取异常" + exception.getMessage());
 			return null;
 		}
 	}
@@ -216,7 +216,7 @@ public class Module_DDNS extends Module {
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.getMessage().adminInfo("[DDNS]获取异常" + exception.getMessage());
+			entry.getMessage().adminInfo("[Dynamic]获取异常" + exception.getMessage());
 			return null;
 		}
 	}
@@ -228,15 +228,15 @@ public class Module_DDNS extends Module {
 	public class DDNSapiDelegate {
 
 		public String getIPAddress() {
-			return Module_DDNS.this.doGetIPAddress();
+			return Module_Dynamic.this.doGetIPAddress();
 		}
 
 		public String updateDDNSIP() {
-			return Module_DDNS.this.doUpdateDDNSIP();
+			return Module_Dynamic.this.doUpdateDDNSIP();
 		}
 
 		public String setDDNSAddress(String address) {
-			return Module_DDNS.this.doSetDDNSAddress(address);
+			return Module_Dynamic.this.doSetDDNSAddress(address);
 		}
 
 	}
@@ -253,40 +253,34 @@ public class Module_DDNS extends Module {
 					// =======================================================
 					while (true) {
 						date = new Date();
-						// 假设600秒后运行
 						time = 600L;
-						// 减去当前秒数 在 xx:00 执行
 						time = time - date.getSeconds();
-						// 减去当前分钟 在 00:00 10:00 20:00 30:00 40:00 50:00 执行
 						time = time - date.getMinutes() % 10 * 60;
-						// 间隔小于1分钟则跳过本次
 						if (time < 60) { time = time + 600; }
-						// 转换为毫秒
 						time = time * 1000;
-						// 计算以上流程大约为5毫秒 视性能不同时间也不同
 						time = time - 5;
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Module_DDNSClient] 休眠：" + time);
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Module_Dynamic] 休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Module_DDNSClient] 执行");
-						String response = Module_DDNS.this.delegate.updateDDNSIP();
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Module_Dynamic] 执行");
+						String response = Module_Dynamic.this.delegate.updateDDNSIP();
 						if (response == null) {
-							entry.getMessage().adminInfo("[DDNS] 更新失败：更新新地址失败");
+							entry.getMessage().adminInfo("[Dynamic] 更新失败：更新新地址失败");
 						} else {
 							response = response.split(" ")[1];
-							if (!Module_DDNS.this.ADDRESS.equals(response)) {
-								entry.getMessage().adminInfo("[DDNS] 检测到地址变更： " + LoggerX.time() + "\r\n旧地址：" + Module_DDNS.this.ADDRESS + "\r\n新地址：" + response);
-								Module_DDNS.this.ADDRESS = response;
+							if (!Module_Dynamic.this.ADDRESS.equals(response)) {
+								entry.getMessage().adminInfo("[DDNS] 检测到地址变更： " + LoggerX.time() + "\r\n旧地址：" + Module_Dynamic.this.ADDRESS + "\r\n新地址：" + response);
+								Module_Dynamic.this.ADDRESS = response;
 							}
 						}
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Module_DDNSClient] 结果：" + response);
+						JcqApp.CQ.logDebug("FurryBlackWorker", "[Module_Dynamic] 结果：" + response);
 						// =======================================================
 					}
 				} catch (InterruptedException exception) {
 					if (JcqAppAbstract.enable) {
-						JcqApp.CQ.logWarning("FurryBlackWorker", "[Module_DDNSClient] 关闭");
+						JcqApp.CQ.logWarning("FurryBlackWorker", "[Module_DDynamic] 异常");
 					} else {
-						JcqApp.CQ.logWarning("FurryBlackWorker", "[Module_DDNSClient] 异常");
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Module_Dynamic] 关闭");
 					}
 				}
 			}

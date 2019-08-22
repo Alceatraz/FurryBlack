@@ -102,6 +102,7 @@ public class Executor_chou extends ModuleExecutor {
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.indexOf(":") < 0) { continue; }
+			logger.seek(this.MODULE_PACKAGENAME(), "排除用户 " + line);
 			temp = line.split(":");
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);

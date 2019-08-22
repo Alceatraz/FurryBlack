@@ -73,17 +73,13 @@ public class Module_Nickmap extends Module {
 			this.saveConfig();
 		} else {
 			this.loadConfig();
-
 		}
-	}
 
-	@Override
-	public void boot(LoggerX logger) throws Exception {
+		this.ENABLE_REPLACE = Boolean.parseBoolean(this.CONFIG.getProperty("enable_nickname_replace", "false"));
+		logger.seek("[Nickmap] " + (this.ENABLE_REPLACE ? "启用" : "禁用"));
 
 		this.FILE_NICKNAME = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "user_nickname.txt").toFile();
 		if (!this.FILE_NICKNAME.exists()) { this.FILE_NICKNAME.createNewFile(); }
-
-		this.ENABLE_REPLACE = Boolean.parseBoolean(this.CONFIG.getProperty("enable_nickname_replace", "false"));
 
 		String line;
 		String temp[];
@@ -95,8 +91,10 @@ public class Module_Nickmap extends Module {
 			NICKNAME.put(Long.parseLong(temp[0]), temp[1]);
 		}
 		reader.close();
+	}
 
-		logger.seek("[Nickmap] 昵称替换", this.ENABLE_REPLACE ? "启用" : "禁用");
+	@Override
+	public void boot(LoggerX logger) throws Exception {
 
 	}
 

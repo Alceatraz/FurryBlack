@@ -161,17 +161,11 @@ public class Executor_jrrp extends ModuleExecutor {
 					while (true) {
 						// =======================================================
 						date = new Date();
-						// 假设86400秒后运行
 						time = 86400L;
-						// 减去当前秒数 在 xx:xx:00 执行
 						time = time - date.getSeconds();
-						// 减去当前分钟 在 xx:00:00 执行
 						time = time - date.getMinutes() * 60;
-						// 减去当前分钟 在 00:00:00 执行
 						time = time - date.getHours() * 3600;
-						// 转换为毫秒
 						time = time * 1000;
-						// 计算以上流程大约为5毫秒 视性能不同时间也不同
 						time = time - 5;
 						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRRP] 休眠：" + time);
 						Thread.sleep(time);
@@ -182,7 +176,11 @@ public class Executor_jrrp extends ModuleExecutor {
 						// =======================================================
 					}
 				} catch (Exception exception) {
-					JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_JRRP] 中断 - " + (JcqAppAbstract.enable ? "异常" : "关闭"));
+					if (JcqAppAbstract.enable) {
+						JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_JRRP] 异常");
+					} else {
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRRP] 关闭");
+					}
 				}
 			}
 		}

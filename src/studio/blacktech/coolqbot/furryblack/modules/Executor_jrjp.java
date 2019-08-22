@@ -109,6 +109,7 @@ public class Executor_jrjp extends ModuleExecutor {
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.indexOf(":") < 0) { continue; }
+			logger.seek(this.MODULE_PACKAGENAME(), "排除用户 " + line);
 			temp = line.split(":");
 			long gropid = Long.parseLong(temp[0]);
 			long userid = Long.parseLong(temp[1]);
@@ -201,17 +202,11 @@ public class Executor_jrjp extends ModuleExecutor {
 					// =======================================================
 					while (true) {
 						date = new Date();
-						// 假设86400秒后运行
 						time = 86400L;
-						// 减去当前秒数 在 xx:xx:00 执行
 						time = time - date.getSeconds();
-						// 减去当前分钟 在 xx:00:00 执行
 						time = time - date.getMinutes() * 60;
-						// 减去当前分钟 在 00:00:00 执行
 						time = time - date.getHours() * 3600;
-						// 转换为毫秒
 						time = time * 1000;
-						// 计算以上流程大约为5毫秒 视性能不同时间也不同
 						time = time - 5;
 						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRJP] 休眠：" + time);
 						Thread.sleep(time);
@@ -236,9 +231,9 @@ public class Executor_jrjp extends ModuleExecutor {
 					}
 				} catch (InterruptedException exception) {
 					if (JcqAppAbstract.enable) {
-						JcqApp.CQ.logWarning("FurryBlackWorker", "[Module_DDNSClient] 关闭");
+						JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_JRJP] 异常");
 					} else {
-						JcqApp.CQ.logWarning("FurryBlackWorker", "[Module_DDNSClient] 异常");
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRJP] 关闭");
 					}
 				}
 			}

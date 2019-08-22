@@ -99,9 +99,12 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		if (!this.FILE_BLACKLIST.exists()) { this.FILE_BLACKLIST.createNewFile(); }
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_BLACKLIST), "UTF-8"));
+
 		String line;
 		while ((line = reader.readLine()) != null) {
+			if (line.startsWith("#")) { continue; }
 			this.BLACKLIST.add(line);
+			logger.seek(this.MODULE_PACKAGENAME(), "过滤规则 " + line);
 		}
 		reader.close();
 

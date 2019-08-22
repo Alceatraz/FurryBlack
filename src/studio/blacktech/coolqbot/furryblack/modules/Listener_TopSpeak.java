@@ -97,26 +97,41 @@ public class Listener_TopSpeak extends ModuleListener {
 		this.CONFIG_GROUP_REPORT = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "grop_report.txt").toFile();
 		this.GROUP_STATUS_SERIAL = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeak.serial").toFile();
 
-		// 每日报告白名单
 		if (this.CONFIG_GROUP_REPORT.exists()) {
-			// 存在则读取
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_GROUP_REPORT), "UTF-8"));
 			String line;
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("#")) { continue; }
 				this.GROUP_REPORT.add(Long.parseLong(line));
+				logger.seek(this.MODULE_PACKAGENAME(), "每日汇报 " + line);
 			}
 			reader.close();
 		} else {
-			// 不存在则创建
 			this.CONFIG_GROUP_REPORT.createNewFile();
 		}
 
-		// 序列化后的GroupStatus
 		if (this.GROUP_STATUS_SERIAL.exists()) {
+
+			// 加载序列化后的GroupStatus
 			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(this.GROUP_STATUS_SERIAL));
 			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
 			loader.close();
+
+			logger.seek(this.MODULE_PACKAGENAME(), "读取存档 " + GROUP_STATUS.size());
+
+			// 如果存档和成员不一致
+			List<Group> groups = JcqApp.CQ.getGroupList();
+			for (Group group : groups) {
+				if (this.GROUP_STATUS.containsKey(group.getId())) { continue; }
+				GroupStatus groupStatus = new GroupStatus(group.getId());
+				for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
+					groupStatus.USER_STATUS.put(member.getQqId(), new UserStatus(member.getQqId()));
+				}
+				this.GROUP_STATUS.put(group.getId(), groupStatus);
+
+				logger.seek(this.MODULE_PACKAGENAME(), "添加新群 " + group.getName() + "(" + group.getId() + ")");
+			}
+
 		} else {
 			this.GROUP_STATUS = new HashMap<>();
 			List<Group> groups = JcqApp.CQ.getGroupList();

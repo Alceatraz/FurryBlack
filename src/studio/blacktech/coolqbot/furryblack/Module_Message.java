@@ -134,8 +134,8 @@ public class Module_Message extends Module {
 
 		if (this.USERID_ADMIN == 0) { throw new Exception("管理员账号配置错误"); }
 
-		logger.full("[Message] 机器人账号", this.USERID_CQBOT);
-		logger.full("[Message] 管理员账号", this.USERID_ADMIN);
+		logger.seek("[Message] 机器人账号", this.USERID_CQBOT);
+		logger.seek("[Message] 管理员账号", this.USERID_ADMIN);
 
 		List<Group> groups = JcqApp.CQ.getGroupList();
 		for (Group group : groups) {
