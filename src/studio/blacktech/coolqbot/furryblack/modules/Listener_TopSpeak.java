@@ -117,7 +117,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
 			loader.close();
 
-			logger.seek(this.MODULE_PACKAGENAME(), "读取存档 " + GROUP_STATUS.size());
+			logger.seek(this.MODULE_PACKAGENAME(), "读取存档 " + this.GROUP_STATUS.size());
 
 			// 如果存档和成员不一致
 			List<Group> groups = JcqApp.CQ.getGroupList();

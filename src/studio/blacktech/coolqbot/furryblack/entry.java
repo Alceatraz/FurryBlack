@@ -40,7 +40,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "8.1 2019-08-22 (22:00)";
+	public final static String VerID = "8.2 2019-08-23 (09:00)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 
@@ -562,12 +562,15 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	/**
 	 * 获取启动日志
-	 * 
+	 *
 	 * @param level 日志级别
 	 * @return 启动日志
 	 */
 	public static String getBootLogger(int level) {
 		return bootLoggerX.make(level);
+	}
+
+	public static void ReverseEnableStatus() {
 	}
 
 }

@@ -85,7 +85,7 @@ public class Executor_admin extends ModuleExecutor {
 				if (message.getSection() == 2) {
 					entry.getMessage().adminInfo(entry.getBootLogger(Integer.parseInt(message.getSegment()[1])));
 				} else {
-					entry.getMessage().adminInfo("Logger Level\r\n0 mini - 必须介入的消息\r\n1 info 需要知晓的消息\r\n2 seek - 自动执行的消息\r\n3 full - 所有消息");
+					entry.getMessage().adminInfo("Logger Level\r\n0 mini - 必须介入的消息\r\n1 info - 需要知晓的消息\r\n2 seek - 自动执行的消息\r\n3 full - 所有消息");
 				}
 				return true;
 			case "init":
@@ -126,7 +126,7 @@ public class Executor_admin extends ModuleExecutor {
 				if (message.getSection() == 2) {
 					entry.getMessage().gropInfo(gropid, entry.getBootLogger(Integer.parseInt(message.getSegment()[1])));
 				} else {
-					entry.getMessage().gropInfo(gropid, "Logger Level\r\n0 mini - 必须介入的消息\r\n1 info 需要知晓的消息\r\n2 seek - 自动执行的消息\r\n3 full - 所有消息");
+					entry.getMessage().gropInfo(gropid, "Logger Level\r\n0 mini - 必须介入的消息\r\n1 info - 需要知晓的消息\r\n2 seek - 自动执行的消息\r\n3 full - 所有消息");
 				}
 				return true;
 			case "init":

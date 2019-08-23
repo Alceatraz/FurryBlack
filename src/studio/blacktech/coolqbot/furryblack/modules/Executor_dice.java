@@ -1,5 +1,7 @@
 package studio.blacktech.coolqbot.furryblack.modules;
 
+import java.security.SecureRandom;
+
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -84,19 +86,22 @@ public class Executor_dice extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().userInfo(userid, message.getSection() == 1 ? "[CQ:dice]" : message.getOptions() + "[CQ:dice]");
+// 		entry.getMessage().userInfo(userid, message.getOptions() + "[CQ:dice]");
+		entry.getMessage().userInfo(userid, message.getOptions() + "[CQ:emoji,id=100000" + String.valueOf(new SecureRandom().nextInt(5) + 49) + "]");
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().diszInfo(diszid, userid, message.getSection() == 1 ? "[CQ:dice]" : message.getOptions() + "[CQ:dice]");
+//		entry.getMessage().diszInfo(diszid, userid,  message.getOptions() + "[CQ:dice]");
+		entry.getMessage().diszInfo(diszid, userid, message.getOptions() + "[CQ:emoji,id=100000" + String.valueOf(new SecureRandom().nextInt(5) + 49) + "]");
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().gropInfo(gropid, userid, message.getSection() == 1 ? "[CQ:dice]" : message.getOptions() + "[CQ:dice]");
+//		entry.getMessage().gropInfo(gropid, userid, message.getOptions() + "[CQ:dice]");
+		entry.getMessage().gropInfo(gropid, userid, message.getOptions() + "[CQ:emoji,id=100000" + String.valueOf(new SecureRandom().nextInt(5) + 49) + "]");
 		return true;
 	}
 

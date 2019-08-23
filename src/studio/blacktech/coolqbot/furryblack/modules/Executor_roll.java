@@ -122,10 +122,10 @@ public class Executor_roll extends ModuleExecutor {
 		case 0:
 			if (random.nextBoolean()) {
 				this.mode_fucker++;
-				res = "1";
+				res = " [CQ:emoji,id=10000049]";
 			} else {
 				this.mode_fucked++;
-				res = "0";
+				res = " [CQ:emoji,id=10000048]";
 			}
 			this.mode_1++;
 			break;
@@ -139,13 +139,13 @@ public class Executor_roll extends ModuleExecutor {
 				res = Integer.toString(random.nextInt(range));
 				this.mode_2++;
 			} catch (Exception exce) {
-				res = message.getSegment()[0] + "是";
+				res = message.getOptions() + " 是 ";
 				if (random.nextBoolean()) {
 					this.mode_fucker++;
-					res = res + "1";
+					res = res + "[CQ:emoji,id=10000049]";
 				} else {
 					this.mode_fucked++;
-					res = res + "0";
+					res = res + "[CQ:emoji,id=10000048]";
 				}
 				this.mode_1++;
 			}
