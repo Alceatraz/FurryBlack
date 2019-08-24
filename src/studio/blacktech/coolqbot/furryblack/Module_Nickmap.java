@@ -76,7 +76,7 @@ public class Module_Nickmap extends Module {
 		}
 
 		this.ENABLE_REPLACE = Boolean.parseBoolean(this.CONFIG.getProperty("enable_nickname_replace", "false"));
-		logger.seek("[Nickmap] " + (this.ENABLE_REPLACE ? "启用" : "禁用"));
+		logger.seek("[Nickmap] 开关", this.ENABLE_REPLACE ? "启用" : "禁用");
 
 		this.FILE_NICKNAME = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "user_nickname.txt").toFile();
 		if (!this.FILE_NICKNAME.exists()) { this.FILE_NICKNAME.createNewFile(); }

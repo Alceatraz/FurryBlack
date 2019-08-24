@@ -147,19 +147,19 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-			entry.DDNSAPI = new Module_Dynamic();
 			entry.MESSAGE = new Module_Message();
 			entry.NICKMAP = new Module_Nickmap();
+			entry.DDNSAPI = new Module_Dynamic();
 			entry.SYSTEMD = new Module_Systemd();
 
-			DDNSAPI.init(logger);
 			MESSAGE.init(logger);
 			NICKMAP.init(logger);
+			DDNSAPI.init(logger);
 			SYSTEMD.init(logger);
 
-			DDNSAPI.boot(logger);
 			MESSAGE.boot(logger);
 			NICKMAP.boot(logger);
+			DDNSAPI.boot(logger);
 			SYSTEMD.boot(logger);
 
 			// ==========================================================================================================================

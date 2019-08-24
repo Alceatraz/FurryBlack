@@ -72,6 +72,9 @@ public class Executor_admin extends ModuleExecutor {
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
+	private final String MESSAGE_bootlog = "Logger Level\r\n0 mini - 必须介入的消息\r\n1 info - 需要知晓的消息\r\n2 seek - 自动执行的消息\r\n3 full - 所有消息";
+	private final String MESSAGE_init = "init 0 - 切换起停\r\ninit 1 - 初始化\r\ninit 2 - 启动\r\ninit 3 - 保存\r\ninit 4 - 丢弃关闭\r\ninit 5 - 保存关闭\r\ninit 6 - 保存重启";
+
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		if (!entry.getMessage().isAdmin(userid)) { return false; }
@@ -85,14 +88,14 @@ public class Executor_admin extends ModuleExecutor {
 				if (message.getSection() == 2) {
 					entry.getMessage().adminInfo(entry.getBootLogger(Integer.parseInt(message.getSegment()[1])));
 				} else {
-					entry.getMessage().adminInfo("Logger Level\r\n0 mini - 必须介入的消息\r\n1 info - 需要知晓的消息\r\n2 seek - 自动执行的消息\r\n3 full - 所有消息");
+					entry.getMessage().adminInfo(this.MESSAGE_bootlog);
 				}
 				return true;
 			case "init":
 				if (message.getSection() == 2) {
 					entry.getMessage().adminInfo(entry.getSystemd().init(message.getSegment()[1]).make(2));
 				} else {
-					entry.getMessage().adminInfo("init 0 执行save + shut\r\ninit 1 执行init\r\ninit2 预留\r\ninit3 执行boot\r\ninit4 执行save\r\ninit5 预留\r\ninit6 执行save shut boot");
+					entry.getMessage().adminInfo(this.MESSAGE_init);
 				}
 				return true;
 			case "debug":
@@ -126,14 +129,14 @@ public class Executor_admin extends ModuleExecutor {
 				if (message.getSection() == 2) {
 					entry.getMessage().gropInfo(gropid, entry.getBootLogger(Integer.parseInt(message.getSegment()[1])));
 				} else {
-					entry.getMessage().gropInfo(gropid, "Logger Level\r\n0 mini - 必须介入的消息\r\n1 info - 需要知晓的消息\r\n2 seek - 自动执行的消息\r\n3 full - 所有消息");
+					entry.getMessage().gropInfo(gropid, this.MESSAGE_bootlog);
 				}
 				return true;
 			case "init":
 				if (message.getSection() == 2) {
 					entry.getMessage().gropInfo(gropid, entry.getSystemd().init(message.getSegment()[1]).make(2));
 				} else {
-					entry.getMessage().gropInfo(gropid, "init 0 执行save + shut\r\ninit 1 执行init\r\ninit2 预留\r\ninit3 执行boot\r\ninit4 执行save\r\ninit5 预留\r\ninit6 执行save shut boot");
+					entry.getMessage().gropInfo(gropid, this.MESSAGE_init);
 				}
 				return true;
 			case "debug":

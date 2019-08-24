@@ -122,25 +122,18 @@ public class Listener_TopSpeak extends ModuleListener {
 			// 如果存档和成员不一致
 			List<Group> groups = JcqApp.CQ.getGroupList();
 			for (Group group : groups) {
-				if (this.GROUP_STATUS.containsKey(group.getId())) { continue; }
-				GroupStatus groupStatus = new GroupStatus(group.getId());
-				for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
-					groupStatus.USER_STATUS.put(member.getQqId(), new UserStatus(member.getQqId()));
+				if (!this.GROUP_STATUS.containsKey(group.getId())) {
+					this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
+					logger.seek(this.MODULE_PACKAGENAME(), "添加新群 " + group.getName() + "(" + group.getId() + ")");
 				}
-				this.GROUP_STATUS.put(group.getId(), groupStatus);
 
-				logger.seek(this.MODULE_PACKAGENAME(), "添加新群 " + group.getName() + "(" + group.getId() + ")");
 			}
 
 		} else {
 			this.GROUP_STATUS = new HashMap<>();
 			List<Group> groups = JcqApp.CQ.getGroupList();
 			for (Group group : groups) {
-				GroupStatus groupStatus = new GroupStatus(group.getId());
-				for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
-					groupStatus.USER_STATUS.put(member.getQqId(), new UserStatus(member.getQqId()));
-				}
-				this.GROUP_STATUS.put(group.getId(), groupStatus);
+				this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
 			}
 		}
 
@@ -180,11 +173,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		if (entry.getMessage().isMyself(userid)) {
-			GroupStatus groupStatus = new GroupStatus(gropid);
-			for (Member member : JcqApp.CQ.getGroupMemberList(gropid)) {
-				groupStatus.USER_STATUS.put(member.getQqId(), new UserStatus(member.getQqId()));
-			}
-			this.GROUP_STATUS.put(gropid, groupStatus);
+			this.GROUP_STATUS.put(gropid, new GroupStatus(gropid));
 		} else {
 			this.GROUP_STATUS.get(gropid).USER_STATUS.put(userid, new UserStatus(userid));
 		}
@@ -470,7 +459,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		public void run() {
 			long time;
 			Date date;
-			while (JcqAppAbstract.enable) {
+			do {
 				try {
 					// =======================================================
 					while (true) {
@@ -482,20 +471,24 @@ public class Listener_TopSpeak extends ModuleListener {
 						if (time < 0) { time = time + 864000; }
 						time = time * 1000;
 						time = time - 7;
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Listener_TopSpeak] 休眠：" + time);
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Listener_TopSpeak] 执行");
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 执行");
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {
 							if (Listener_TopSpeak.this.GROUP_REPORT.contains(temp)) { entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp)); }
 						}
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Listener_TopSpeak] 结果");
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 结果");
 						// =======================================================
 					}
 				} catch (Exception exception) {
-					JcqApp.CQ.logWarning("FurryBlackWorker", "[Listener_TopSpeak] 中断 - " + (JcqAppAbstract.enable ? "异常" : "关闭"));
+					if (JcqAppAbstract.enable) {
+						JcqApp.CQ.logWarning("FurryBlackWorker", "[Listener_TopSpeak] 异常");
+					} else {
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 关闭");
+					}
 				}
-			}
+			} while (JcqAppAbstract.enable);
 		}
 	}
 }
@@ -516,8 +509,11 @@ class GroupStatus implements Serializable {
 	public int GROP_PURECCODE = 0;
 
 	public GroupStatus(long gropid) {
-		this.gropid = gropid;
 		this.initdt = System.currentTimeMillis();
+		this.gropid = gropid;
+		for (Member member : JcqApp.CQ.getGroupMemberList(gropid)) {
+			this.USER_STATUS.put(member.getQqId(), new UserStatus(member.getQqId()));
+		}
 	}
 
 	public void say(long userid, MessageGrop message) {

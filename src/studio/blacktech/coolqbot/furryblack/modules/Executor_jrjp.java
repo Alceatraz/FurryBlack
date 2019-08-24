@@ -197,7 +197,7 @@ public class Executor_jrjp extends ModuleExecutor {
 		public void run() {
 			long time;
 			Date date;
-			while (JcqAppAbstract.enable) {
+			do {
 				try {
 					// =======================================================
 					while (true) {
@@ -208,10 +208,10 @@ public class Executor_jrjp extends ModuleExecutor {
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
 						time = time - 5;
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRJP] 休眠：" + time);
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRJP] 休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRJP] 执行");
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRJP] 执行");
 						Executor_jrjp.this.AVCODE.clear();
 						Executor_jrjp.this.VICTIM.clear();
 						ArrayList<Long> temp;
@@ -227,7 +227,7 @@ public class Executor_jrjp extends ModuleExecutor {
 							Executor_jrjp.this.AVCODE.put(group, avcode);
 							builder.append("\r\n" + group + " - " + " AV" + avcode);
 						}
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRJP] 结果" + builder.toString());
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRJP] 结果" + builder.toString());
 					}
 				} catch (InterruptedException exception) {
 					if (JcqAppAbstract.enable) {
@@ -236,7 +236,7 @@ public class Executor_jrjp extends ModuleExecutor {
 						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRJP] 关闭");
 					}
 				}
-			}
+			} while (JcqAppAbstract.enable);
 		}
 	}
 }

@@ -156,7 +156,7 @@ public class Executor_jrrp extends ModuleExecutor {
 		public void run() {
 			long time;
 			Date date;
-			while (JcqAppAbstract.enable) {
+			do {
 				try {
 					while (true) {
 						// =======================================================
@@ -167,12 +167,12 @@ public class Executor_jrrp extends ModuleExecutor {
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
 						time = time - 5;
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRRP] 休眠：" + time);
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRRP] 休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRRP] 执行");
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRRP] 执行");
 						Executor_jrrp.this.JRRP.clear();
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Executor_JRRP] 结果");
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRRP] 结果");
 						// =======================================================
 					}
 				} catch (Exception exception) {
@@ -182,7 +182,7 @@ public class Executor_jrrp extends ModuleExecutor {
 						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRRP] 关闭");
 					}
 				}
-			}
+			} while (JcqAppAbstract.enable);
 		}
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import com.sobte.cqp.jcq.event.JcqApp;
+import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -1076,30 +1077,38 @@ public class Module_Systemd extends Module {
 			logger.info(LoggerX.datetime());
 			switch (level) {
 			case "0":
-				logger.info("init 0：关闭");
-				Module_Systemd.this.save(logger);
-				Module_Systemd.this.shut(logger);
+				logger.info("init 0：切换启停");
+				if (JcqAppAbstract.enable) {
+					JcqAppAbstract.enable = false;
+					logger.info("切换至停机");
+				} else {
+					JcqAppAbstract.enable = true;
+					logger.info("切换至运行");
+				}
 				break;
 			case "1":
 				logger.info("init 1：初始化");
 				Module_Systemd.this.init(logger);
 				break;
 			case "2":
-				logger.info("init 2");
-				break;
-			case "3":
-				logger.info("init 3：启动");
+				logger.info("init 2：启动");
 				Module_Systemd.this.boot(logger);
 				break;
-			case "4":
-				logger.info("init 4：保存");
+			case "3":
+				logger.info("init 3：保存");
 				Module_Systemd.this.save(logger);
 				break;
+			case "4":
+				logger.info("init 4：关闭丢弃");
+				Module_Systemd.this.shut(logger);
+				break;
 			case "5":
-				logger.info("init 5");
+				logger.info("init 5：保存关闭");
+				Module_Systemd.this.save(logger);
+				Module_Systemd.this.shut(logger);
 				break;
 			case "6":
-				logger.info("init 6：重启");
+				logger.info("init 6：保存重启");
 				Module_Systemd.this.save(logger);
 				Module_Systemd.this.shut(logger);
 				Module_Systemd.this.boot(logger);

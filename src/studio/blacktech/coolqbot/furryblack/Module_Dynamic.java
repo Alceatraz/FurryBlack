@@ -80,6 +80,8 @@ public class Module_Dynamic extends Module {
 
 		this.ENABLE = Boolean.parseBoolean(this.CONFIG.getProperty("enable_ddnsclient", "false"));
 
+		logger.seek("[Dynamic] 开关", this.ENABLE ? "启用" : "禁用");
+
 		if (this.ENABLE) {
 
 			this.API_GETADDRESS = this.CONFIG.getProperty("ddnsapi_getaddress", "");
@@ -88,12 +90,11 @@ public class Module_Dynamic extends Module {
 			this.HOSTNAME = this.CONFIG.getProperty("ddnsapi_hostname", "");
 			this.PASSWORD = this.CONFIG.getProperty("ddnsapi_password", "");
 
-			logger.seek("[Dynamic] ", this.ENABLE ? "启用" : "禁用");
 			logger.seek("[Dynamic] 获取", this.API_GETADDRESS);
 			logger.seek("[Dynamic] 刷新", this.API_SETADDRESS);
 			logger.seek("[Dynamic] 标识", this.CLIENTUA);
 			logger.seek("[Dynamic] 域名", this.HOSTNAME);
-			logger.seek("[Dynamic] 密码", this.PASSWORD);
+			logger.seek("[Dynamic] 密码", this.PASSWORD.substring(6, 12));
 
 			String response = this.delegate.updateDDNSIP();
 
@@ -116,7 +117,7 @@ public class Module_Dynamic extends Module {
 	@Override
 	public void boot(LoggerX logger) throws Exception {
 		if (this.ENABLE) {
-			logger.info(this.MODULE_PACKAGENAME(), "启动工作线程");
+			logger.info("[Dynamic] 启动工作线程");
 			this.thread = new Thread(new WorkerProcerss());
 			this.thread.start();
 		}
@@ -125,7 +126,7 @@ public class Module_Dynamic extends Module {
 	@Override
 	public void shut(LoggerX logger) throws Exception {
 		if (this.ENABLE) {
-			logger.info(this.MODULE_PACKAGENAME(), "终止工作线程");
+			logger.info("[Dynamic] 终止工作线程");
 			this.thread.interrupt();
 			this.thread.join();
 		}
@@ -173,7 +174,7 @@ public class Module_Dynamic extends Module {
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.getMessage().adminInfo("[Dynamic]获取异常" + exception.getMessage());
+			entry.getMessage().adminInfo("[Dynamic] 获取异常" + exception.getMessage());
 			return null;
 		}
 	}
@@ -194,7 +195,7 @@ public class Module_Dynamic extends Module {
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.getMessage().adminInfo("[Dynamic]获取异常" + exception.getMessage());
+			entry.getMessage().adminInfo("[Dynamic] 获取异常" + exception.getMessage());
 			return null;
 		}
 	}
@@ -216,7 +217,7 @@ public class Module_Dynamic extends Module {
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.getMessage().adminInfo("[Dynamic]获取异常" + exception.getMessage());
+			entry.getMessage().adminInfo("[Dynamic] 获取异常" + exception.getMessage());
 			return null;
 		}
 	}
@@ -248,7 +249,7 @@ public class Module_Dynamic extends Module {
 		public void run() {
 			long time;
 			Date date;
-			while (JcqAppAbstract.enable) {
+			do {
 				try {
 					// =======================================================
 					while (true) {
@@ -259,10 +260,10 @@ public class Module_Dynamic extends Module {
 						if (time < 60) { time = time + 600; }
 						time = time * 1000;
 						time = time - 5;
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Module_Dynamic] 休眠：" + time);
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Module_Dynamic] 休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Module_Dynamic] 执行");
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Module_Dynamic] 执行");
 						String response = Module_Dynamic.this.delegate.updateDDNSIP();
 						if (response == null) {
 							entry.getMessage().adminInfo("[Dynamic] 更新失败：更新新地址失败");
@@ -273,7 +274,7 @@ public class Module_Dynamic extends Module {
 								Module_Dynamic.this.ADDRESS = response;
 							}
 						}
-						JcqApp.CQ.logDebug("FurryBlackWorker", "[Module_Dynamic] 结果：" + response);
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Module_Dynamic] 结果：" + response);
 						// =======================================================
 					}
 				} catch (InterruptedException exception) {
@@ -283,7 +284,7 @@ public class Module_Dynamic extends Module {
 						JcqApp.CQ.logInfo("FurryBlackWorker", "[Module_Dynamic] 关闭");
 					}
 				}
-			}
+			} while (JcqAppAbstract.enable);
 		}
 	}
 }
