@@ -56,14 +56,14 @@ public class Message implements Serializable {
 
 	public Message anaylys() {
 
-		// 居然因为这么一条鬼消息出BUG了 -> /招手[CQ:at,qq=XXXXXXXX]
 
+
+		this.rawLength = this.rawMessage.length();
 		// 5.14.10A 版本居然小视频会变成 0长度消息shenmejb
-
 		if (this.rawLength == 0) { rawMessage = "&#91;视频&#93;你的QQ暂不支持查看视频短片，请升级到最新版本后查看。"; }
 		if (this.rawMessage.charAt(0) != '/') { return this; }
-		this.rawLength = this.rawMessage.length();
 		if (this.rawLength == 1) { return this; }
+		// 居然因为这么一条鬼消息出BUG了 -> /招手[CQ:at,qq=XXXXXXXX]
 		if (this.rawMessage.matches("/[a-z]+.*")) { this.isCommand = true; }
 		return this;
 	}
