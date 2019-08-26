@@ -35,20 +35,24 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	// PACKAGENAME 名称为完整名称
 	// 命名规则应为 类型_名称
-	private static String MODULE_PACKAGENAME = "executor_null";
+	private static String MODULE_PACKAGENAME = "executor_demo";
 
 	// COMMANDNAME 名称为命令调用的名称
 	// 应和PACKAGE名称一致
-	private static String MODULE_COMMANDNAME = "null";
+	private static String MODULE_COMMANDNAME = "demo";
 
 	// DISPLAYNAME 名称为人类可读的友好名称 应该在8个字以内
-	private static String MODULE_DISPLAYNAME = "实例模块";
+	private static String MODULE_DISPLAYNAME = "示范模块";
 
 	// DESCRIPTON 为模块功能简介
-	private static String MODULE_DESCRIPTION = "实例模块";
+	private static String MODULE_DESCRIPTION = "示范如何编写模块";
 
 	// 版本号
-	private static String MODULE_VERSION = "1.0.0";
+	// 推荐两段式版本
+	// bug修复加个位
+	// 任何功能更新都加十位
+	// 仅为后个位归零
+	private static String MODULE_VERSION = "1.0";
 
 	// 命令用法，数组的每个元素应为一个参数组合用法及其说明
 	// 减号左右各一个空格
@@ -120,7 +124,7 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	/**
 	 *
-	 * 初始化阶段
+	 * 生命周期函数 初始化阶段
 	 *
 	 * 1：初始化配置及数据文件 2：生成所有内存结构 3：读取配置并应用 4：分析 ENABLE_MODE
 	 */
@@ -130,9 +134,13 @@ public class Executor_DEMO extends ModuleExecutor {
 		// ==================================================================================
 		// 1：初始化配置及数据文件
 
+		// 在系统配置文件夹 内确保MODULE_PACKAGENAME文件夹存在 即FOLDER_CONF对象
 		this.initConfFolder();
+
+		// 在系统数据文件夹 内确保MODULE_PACKAGENAME文件夹存在 即FOLDER_DATA对象
 		this.initDataFolder();
 
+		// 在模块配置文件夹 内确保config.properties文件存在 同时初始化FILE_CONFIG对象
 		this.initCofigurtion();
 
 		// ==================================================================================
@@ -141,7 +149,7 @@ public class Executor_DEMO extends ModuleExecutor {
 
 		this.MAP = new HashMap<>();
 
-		// 关于文件路径：应使用Paths以及内置的 FOLDER_CONF FOLDER_DATA 来表示文件
+		// 关于文件路径：应使用Paths工具类以及内置的 FOLDER_CONF FOLDER_DATA 来表示文件
 		this.FILE_CUSTOM = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "custom.txt").toFile();
 
 		if (!this.FILE_CUSTOM.exists()) { this.FILE_CUSTOM.createNewFile(); }
@@ -151,27 +159,32 @@ public class Executor_DEMO extends ModuleExecutor {
 		// NEW_CONFIG=true 为初始化过程中发现配置不存在 创建了新的配置
 
 		if (this.NEW_CONFIG) {
-			// CONFIG对象为标准Java property对象
+			// CONFIG对象为Java property对象
 			this.CONFIG.setProperty("enable", "true");
 			this.CONFIG.setProperty("config1", "none");
 			this.CONFIG.setProperty("config2", "none");
 			this.CONFIG.setProperty("config3", "none");
 			this.CONFIG.setProperty("config4", "none");
+			// 不要忘记保存
 			this.saveConfig();
 		} else {
 			this.loadConfig();
 		}
 
+		// 按需分析配置文件
 		this.ENABLE_DEMO = Boolean.parseBoolean(this.CONFIG.getProperty("enable"));
 
+		// 按需初始化内存结构
 		this.MAP.put("1", "1");
 
-		this.thread = new Thread(new Worker());
+		// 如果需要包含需要获取所有群成员的功能，不应该在doMessage的时候获取 应通过初始化和增减成员函数来维护一个容器
 
 		// ==================================================================================
 		// 4：分析 ENABLE_MODE
 		// ENABLE_MODE = false 时，由systemd注册插件时将不会注册
-		// 此设计的目的是比如被配置禁用 则直接跳注册阶段，比每次都if判断效率高
+		// 此设计的目的是比如模块被配置禁用
+		// 则直接跳注册阶段
+		// 模块不需要每次doMessage时都判断 if ( enable )
 
 		if (this.ENABLE_DEMO) {
 			this.ENABLE_USER = true;
@@ -181,16 +194,30 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	}
 
-	/***
-	 * 如果ENABLE_MODE=false则不会注册 则不会执行boot的内容
+	/**
+	 * 如果有 应在此处初始化工作线程并运行 如果ENABLE_MODE=false则不会注册 则不会执行boot的内容
 	 */
 	@Override
 	public void boot(LoggerX logger) throws Exception {
+		this.thread = new Thread(new Worker());
 		this.thread.start();
 	}
 
-	/***
-	 * 应在此处运行关闭逻辑
+	/**
+	 * 如果需要保存数据 则应该在此处保存数据 注意 这个函数不意味着结束
+	 */
+	@Override
+	public void save(LoggerX logger) throws Exception {
+
+	}
+
+	/**
+	 * 如果有 应在此处打断工作线程 和剩余的关闭逻辑
+	 *
+	 * 正常关闭情况下执行shut之前将会执行save
+	 *
+	 * 有可能会使用 /admin init X 强制执行生命周期函数 但是此命令不属于正常使用范畴 可以不考虑此情况
+	 *
 	 */
 	@Override
 	public void shut(LoggerX logger) throws Exception {
@@ -200,39 +227,30 @@ public class Executor_DEMO extends ModuleExecutor {
 	}
 
 	/**
-	 * 保存数据使用
-	 */
-	@Override
-	public void save(LoggerX logger) throws Exception {
-		// admin init 4 将会调用所有模块的save方法
-	}
-
-	/***
-	 * 重载配置使用
+	 * 重载配置使用 暂时无用
 	 */
 	@Override
 	public void reload(LoggerX logger) throws Exception {
 		// 暂时不会被调用
 	}
 
-	/***
+	/**
 	 * 群成员增加时执行
 	 */
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-		// 为了提升性能 不应该每次执行event都获取成员 应启动时先读取群成员列表 生成相关的内容 使用时直接获取
 		// QQ系统通知为
 		if (userid == 1000000) { entry.getMessage().adminInfo("系统消息 - （" + gropid + "）"); }
 	}
 
-	/***
+	/**
 	 * 群成员减少时执行
 	 */
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	/***
+	/**
 	 * 用户发送私聊时执行
 	 */
 	@Override
@@ -240,7 +258,7 @@ public class Executor_DEMO extends ModuleExecutor {
 		return true;
 	}
 
-	/***
+	/**
 	 * 讨论组消息时执行
 	 */
 	@Override
@@ -276,7 +294,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	class Worker implements Runnable {
 
 		/**
-		 * 必须按照此格式写Worker
+		 * 模块应当自己负责计划任务 框架不提供统一的计划任务 必须按照此格式写Worker
 		 */
 		@SuppressWarnings("deprecation")
 		@Override
@@ -287,10 +305,9 @@ public class Executor_DEMO extends ModuleExecutor {
 			Date date;
 
 			// 最外层循环用于处理发生异常时是否继续运行
-			// enable = false 时则结束
-			while (JcqAppAbstract.enable) {
+			// 休眠被打断会产生InterruptedException
+			do {
 
-				// 休眠被打断会产生InterruptedException
 				try {
 
 					// 实际工作循环
@@ -298,40 +315,51 @@ public class Executor_DEMO extends ModuleExecutor {
 
 						// 这是一个比较简约的延时计算
 						date = new Date();
-						// 假设86400秒后运行
+
+						// 假设00:00:00(24:00:00)运行
+
+						// 从00:00:00多少秒后运行
 						time = 86400L;
-						// 减去当前秒数 在 xx:xx:00 执行
+						// 减去当前秒数 以对齐秒 使其能在 xx:xx:00 执行
 						time = time - date.getSeconds();
-						// 减去当前分钟 在 xx:00:00 执行
+						// 减去当前分钟 以对齐分 使其能在 xx:00:00 执行
 						time = time - date.getMinutes() * 60;
-						// 减去当前分钟 在 00:00:00 执行
+						// 减去当前分钟 以对齐时 使其能在 00:00:00 执行
 						time = time - date.getHours() * 3600;
+
 						// 转换为毫秒
 						time = time * 1000;
-						// 计算以上流程大约为5毫秒 视性能不同时间也不同
-						time = time - 5;
 
-						// 应该输出消息提醒
+						// 计算以上流程大约为5毫秒 视性能不同时间也不同
+						// time = time - 5;
+
+						// 应当输出log以便于观察定时任务的状况
 						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 休眠：" + time);
+
 						Thread.sleep(time);
 
-						// 应该输出消息提醒
+						// 应当输出log以便于观察定时任务的状况
 						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 执行");
 
-						// 实际逻辑
+						// 此处执行实际任务
 
-						// 应该输出消息提醒
+						// 应当输出log以便于观察定时任务的状况
 						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 结果");
-						// =======================================================
+
 					}
 
-				} catch (InterruptedException exception) {
-					// 应该输出消息提醒
-					JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_DEMO] 中断 - " + (JcqAppAbstract.enable ? "关闭" : "异常"));
+				} catch (Exception exception) {
+					// shut时 应打断休眠此时会产生异常
+					// 如果框架关闭，则并非真的异常 此时将会跳出主循环 结束worker
+					// 如果框架运行中，则遇到了真正意义上的异常，应观察发生了什么
+					if (JcqAppAbstract.enable) {
+						JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_DEMO] 异常");
+						exception.printStackTrace();
+					} else {
+						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 关闭");
+					}
 				}
-			}
-
+			} while (JcqAppAbstract.enable);
 		}
 	}
-
 }

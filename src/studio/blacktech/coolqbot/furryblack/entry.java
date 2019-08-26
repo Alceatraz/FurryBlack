@@ -40,7 +40,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "8.2 2019-08-23 (09:00)";
+	public final static String VerID = "8.3 2019-08-26 (11:00)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 
@@ -390,7 +390,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		} catch (InterruptedException exception) {
 			exception.printStackTrace();
 		}
-		getMessage().userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入聊天功能也不支持@。使用即表示同意最终用户许可。\r\n输入/help获取通用帮助\r\n输入/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
+		getMessage().userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持@。使用即表示同意最终用户许可。\r\n输入/help获取通用帮助\r\n输入/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
 		getMessage().sendEula(userid);
 		getMessage().sendHelp(userid);
 		getMessage().sendListUser(userid);

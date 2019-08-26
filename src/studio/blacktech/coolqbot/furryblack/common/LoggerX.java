@@ -214,13 +214,13 @@ public class LoggerX {
 		}
 	}
 
-	public static String time() {
-		SimpleDateFormat formater = new SimpleDateFormat("HH:mm:ss");
+	public static String now(String format) {
+		SimpleDateFormat formater = new SimpleDateFormat(format);
 		return formater.format(new Date());
 	}
 
-	public static String datetime() {
-		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static String time() {
+		SimpleDateFormat formater = new SimpleDateFormat("HH:mm:ss");
 		return formater.format(new Date());
 	}
 
@@ -229,19 +229,32 @@ public class LoggerX {
 		return formater.format(date);
 	}
 
+	public static String time(Date date, String format) {
+		SimpleDateFormat formater = new SimpleDateFormat(format);
+		return formater.format(date);
+	}
+
+	public static String datetime() {
+		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return formater.format(new Date());
+	}
+
 	public static String datetime(Date date) {
 		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return formater.format(date);
 	}
 
-	public static String time(String formate) {
-		SimpleDateFormat formater = new SimpleDateFormat(formate);
-		return formater.format(new Date());
-	}
-
-	public static String time(String formate, Date date) {
-		SimpleDateFormat formater = new SimpleDateFormat(formate);
+	public static String datetime(Date date, String format) {
+		SimpleDateFormat formater = new SimpleDateFormat(format);
 		return formater.format(date);
 	}
 
+	public static String dumpUnicode(String raw) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < raw.length(); i++) {
+			builder.append("\\u");
+			builder.append(Integer.toHexString(raw.charAt(i) & 0xffff));
+		}
+		return builder.toString();
+	}
 }

@@ -20,4 +20,16 @@ public class MessageUser extends Message {
 	public long userid() {
 		return this.userid;
 	}
+
+	public String toString() {
+
+		StringBuilder builder = new StringBuilder();
+		builder.append("Type ID: ");
+		builder.append(this.typeid);
+		builder.append("\nUser ID: ");
+		builder.append(this.userid);
+		builder.append("\n");
+		builder.append(super.toString());
+		return builder.toString();
+	}
 }

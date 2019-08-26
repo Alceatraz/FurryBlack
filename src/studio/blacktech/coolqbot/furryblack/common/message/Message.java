@@ -12,6 +12,8 @@ import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 
 public class Message implements Serializable {
 
+	private final static String REGEX_IMAGE = "\\[CQ:image,file=\\w{32}\\.\\w{3}\\]";
+
 	private static final long serialVersionUID = 1L;
 
 	private int messageId = 0;
@@ -36,7 +38,9 @@ public class Message implements Serializable {
 	private boolean isSnappic = false;
 	private boolean isQQVideo = false;
 	private boolean isHongbao = false;
-	private boolean isPureCQS = false;
+	private boolean isPureCQC = false;
+
+	private boolean parsed = false;
 
 	private LinkedList<String> segmentParts;
 	private TreeMap<String, String> switchs;
@@ -54,24 +58,48 @@ public class Message implements Serializable {
 
 	// ===================================================================================
 
+	/**
+	 * 分析消息内容 此步骤将判断出是否为命令 框架已经执行过此函数 模块中永远不需要执行
+	 *
+	 * @return this
+	 */
 	public Message anaylys() {
 
-
-
 		this.rawLength = this.rawMessage.length();
-		// 5.14.10A 版本居然小视频会变成 0长度消息shenmejb
-		if (this.rawLength == 0) { rawMessage = "&#91;视频&#93;你的QQ暂不支持查看视频短片，请升级到最新版本后查看。"; }
-		if (this.rawMessage.charAt(0) != '/') { return this; }
-		if (this.rawLength == 1) { return this; }
-		// 居然因为这么一条鬼消息出BUG了 -> /招手[CQ:at,qq=XXXXXXXX]
-		if (this.rawMessage.matches("/[a-z]+.*")) { this.isCommand = true; }
+
+// 		因为发生了下边的BUG 直接利用正则确定是不是命令
+//		if (this.rawMessage.charAt(0) != '/') {
+//			// 不是命令
+//			// 开头不是 /
+//			return this;
+//		}
+
+// 		因为发生了下边的BUG 直接利用正则确定是不是命令
+//		if (this.rawLength == 1) {
+//			// 不是命令
+//			// 只有一个 /
+//			return this;
+//		}
+
+		if (this.rawLength == 0) {
+			// 5.14.10A 版本居然小视频会变成 0长度消息
+			// 之前则是 "[视频]你的QQ暂不支持查看视频短片，请升级到最新版本后查看。"
+			// CoolQ what the fuck
+			this.rawMessage = "&#91;视频&#93;你的QQ暂不支持查看视频短片，请升级到最新版本后查看。";
+		} else if (this.rawMessage.matches("/[a-z]+.*")) {
+			// 居然因为这么一条鬼消息出BUG了 -> /招手[CQ:at,qq=XXXXXXXX]
+			this.isCommand = true;
+		}
+
 		return this;
 	}
 
+	/**
+	 * 分析命令内容 框架已经执行过此函数 模块中永远不需要执行 为了效率甚至不判断是否为命令就直接分析 包含不安全的代码
+	 *
+	 * @return
+	 */
 	public Message parseCommand() {
-
-		// 如果不是/开头则还未统计消息长度
-		if (!this.isCommand) { this.rawLength = this.rawMessage.length(); }
 
 		// 去掉 /
 		// 去掉首尾多余空格
@@ -82,7 +110,7 @@ public class Message implements Serializable {
 
 		int indexOfSpace = this.cmdMessage.indexOf(' ');
 
-		// 是否空命令
+		// 是否无参数命令
 		if (indexOfSpace < 0) {
 			this.command = this.cmdMessage;
 		} else {
@@ -117,26 +145,18 @@ public class Message implements Serializable {
 
 	// ===================================================================================
 
-	private final static String REGEX_IMAGE = "\\[CQ:image,file=\\w{32}\\.\\w{3}\\]";
-	private final static String REGEX_CCODE = "\\[CQ:.+\\]";
-
-	/***
-	 * 分析消息内容 1：闪照 2：视频 3：红包
-	 *
-	 * 如果包含图片则取出所有图片并生成纯文本及其长度
-	 *
-	 * "&#91;闪照&#93;请使用新版手机QQ查看闪照。"
-	 *
-	 * "&#91;QQ红包&#93;请使用新版手机QQ查收红包。"
-	 *
-	 * "&#91;视频&#93;你的QQ暂不支持查看视频短片，请升级到最新版本后查看。"
+	/**
+	 * 分析消息内容
 	 *
 	 * @return this 方便用于单行写法
 	 */
 	public Message parseMessage() {
 
-		// 如果不是/开头则还未统计消息长度
-		if (!this.isCommand) { this.rawLength = this.rawMessage.length(); }
+		if (parsed) {
+			return this;
+		} else {
+			parsed = true;
+		}
 
 		if (this.rawMessage.startsWith("&#91;闪照&#93;")) {
 			this.isSnappic = true;
@@ -145,29 +165,33 @@ public class Message implements Serializable {
 		} else if (this.rawMessage.startsWith("&#91;QQ红包&#93;")) {
 			this.isHongbao = true;
 		} else {
-			// 移动端用户数量非常大, 通常包含图片的消息都是单张图片（表情包）
 			Pattern pattern = Pattern.compile(Message.REGEX_IMAGE);
 			Matcher matcher = pattern.matcher(this.rawMessage);
 			ArrayList<String> temp = new ArrayList<>(1);
 			if (matcher.find()) {
 				this.hasPicture = true;
-				temp.add(matcher.group());
-				// 这里一般都是false
-				while (matcher.find()) {
+				do {
 					temp.add(matcher.group());
-				}
+				} while (matcher.find());
 				this.picture = new String[temp.size()];
 				temp.toArray(this.picture);
 			}
-			this.resMessage = this.rawMessage.replaceAll(Message.REGEX_CCODE, "");
+			this.resMessage = this.resMessage.replaceAll("\\[CQ:.+\\]", "");
 			this.resLength = this.resMessage.length();
-			if (this.resLength == 0) { this.isPureCQS = true; }
+			if (this.resLength == 0) { this.isPureCQC = true; }
+
 		}
 		return this;
 	}
 
 	// ===================================================================================
 
+	/**
+	 * 将消息去掉命令以后 从指定位置拼接
+	 *
+	 * @param i
+	 * @return
+	 */
 	public String join(int i) {
 		if (this.section == 0) {
 			return "";
@@ -183,86 +207,197 @@ public class Message implements Serializable {
 
 	// ===================================================================================
 
+	/**
+	 * 获取消息ID
+	 *
+	 * @return
+	 */
 	public int getMessageId() {
 		return this.messageId;
 	}
 
+	/**
+	 * 获取消息字体
+	 *
+	 * @return
+	 */
 	public int getMessageFont() {
 		return this.messageFt;
 	}
 
+	/**
+	 * 获取消息发送时间 毫秒时间戳
+	 *
+	 * @return
+	 */
 	public long getSendtime() {
 		return this.sendTime;
 	}
 
+	/**
+	 * 获取消息发送时间 Date对象
+	 *
+	 * @return
+	 */
+	public Date getSendDate() {
+		return new Date(this.sendTime);
+	}
+
+	/**
+	 * 获取原始消息
+	 *
+	 * @return
+	 */
 	public String getRawMessage() {
 		return this.rawMessage;
 	}
 
+	/**
+	 * 获取原始消息长度
+	 *
+	 * @return
+	 */
 	public int getRawLength() {
 		return this.rawLength;
 	}
 
+	/**
+	 * 获取分析后的消息
+	 *
+	 * @return
+	 */
 	public String getResMessage() {
 		return this.resMessage;
+
 	}
 
+	/**
+	 * 获取分析后的消息长度
+	 *
+	 * @return
+	 */
 	public int getResLength() {
 		return this.resLength;
 	}
 
+	/**
+	 * 获取消息中的所有图片
+	 *
+	 * @return CQImage码
+	 */
 	public String[] getPicture() {
 		return this.picture;
 	}
 
 	// ===================================================================================
 
-	public String getCommand() {
-		return this.command;
-	}
-
+	/**
+	 * 获取命令内容 即去掉/ 如果不是命令则为null 执行器以外的地方不应执行这个函数
+	 *
+	 * @return
+	 */
 	public String getCmdMessage() {
 		return this.cmdMessage;
 	}
 
+	/**
+	 * 获取命令 即去掉/以空格切分的[0] 如果不是命令则为null 执行器以外的地方不应执行这个函数
+	 *
+	 * @return
+	 */
+	public String getCommand() {
+		return this.command;
+	}
+
+	/**
+	 * 获取参数 即去掉/以后按空格切分的[1:] 如果不是命令则为null 执行器以外的地方不应执行这个函数
+	 *
+	 * @return
+	 */
 	public String getOptions() {
 		return this.options;
 	}
 
+	/**
+	 * 获取参数长度 即去掉/以后按空格切分的[1:]的元素数量 如果不是命令则为0 执行器以外的地方不应执行这个函数
+	 *
+	 * @return
+	 */
 	public int getSection() {
 		return this.section;
 	}
 
+	/**
+	 * 获取所有的参数 即去掉/以后按空格切分的[1:]的元素 如果不是命令则为null 执行器以外的地方不应执行这个函数
+	 *
+	 * @return
+	 */
 	public String[] getSegment() {
 		return this.segment;
 	}
 
+	/**
+	 * 获取开关的值 --name=value 形式的参数为开关 如果不是命令或不存在此参数则为null 执行器以外的地方不应执行这个函数
+	 *
+	 * @param name
+	 * @return
+	 */
 	public String getSwitch(String name) {
 		return this.switchs.get(name);
 	}
 
 	// ===================================================================================
 
+	/**
+	 * 消息是否为命令
+	 *
+	 * @return
+	 */
 	public boolean isCommand() {
 		return this.isCommand;
 	}
 
+	/**
+	 * 消息是否为红包
+	 *
+	 * @return
+	 */
 	public boolean isHongbao() {
 		return this.isHongbao;
 	}
 
+	/**
+	 * 消息是否为短视频
+	 *
+	 * @return
+	 */
 	public boolean isQQVideo() {
 		return this.isQQVideo;
 	}
 
+	/**
+	 * 消息是否为闪照
+	 *
+	 * @return
+	 */
 	public boolean isSnappic() {
 		return this.isSnappic;
 	}
 
-	public boolean isPureCQS() {
-		return this.isPureCQS;
+	/**
+	 * 消息是否为纯CQ码
+	 *
+	 * @return
+	 */
+	public boolean isPureCQC() {
+		return this.isPureCQC;
 	}
 
+	/**
+	 * 消息是否包含图片
+	 *
+	 * @return
+	 */
 	public boolean hasPicture() {
 		return this.hasPicture;
 	}
@@ -286,6 +421,11 @@ public class Message implements Serializable {
 
 		builder.append("\nRAW-CONTENT: ");
 		builder.append(this.rawMessage);
+		builder.append("\nUNI-CONTENT: ");
+		for (int i = 0; i < this.rawLength; i++) {
+			builder.append("\\u");
+			builder.append(Integer.toHexString(this.rawMessage.charAt(i) & 0xffff));
+		}
 		builder.append("\nRAW-LENGTH: ");
 		builder.append(this.rawLength);
 
@@ -296,12 +436,15 @@ public class Message implements Serializable {
 
 		builder.append("\nisCommand: ");
 		builder.append(this.isCommand ? "True" : "False");
+
 		builder.append("\nisSnappic: ");
 		builder.append(this.isSnappic ? "True" : "False");
 		builder.append("\nisQQVideo: ");
 		builder.append(this.isQQVideo ? "True" : "False");
 		builder.append("\nisHongbao: ");
 		builder.append(this.isHongbao ? "True" : "False");
+		builder.append("\nisPureCCode: ");
+		builder.append(this.isPureCQC ? "True" : "False");
 
 		builder.append("\nhasPicture: ");
 		builder.append(this.hasPicture ? "True" : "False");

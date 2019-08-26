@@ -44,7 +44,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群统计";
 	private static String MODULE_DESCRIPTION = "水群统计";
-	private static String MODULE_VERSION = "20.0";
+	private static String MODULE_VERSION = "21.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {
@@ -111,22 +111,16 @@ public class Listener_TopSpeak extends ModuleListener {
 		}
 
 		if (this.GROUP_STATUS_SERIAL.exists()) {
-
-			// 加载序列化后的GroupStatus
 			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(this.GROUP_STATUS_SERIAL));
 			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
 			loader.close();
-
 			logger.seek(this.MODULE_PACKAGENAME(), "读取存档 " + this.GROUP_STATUS.size());
-
-			// 如果存档和成员不一致
 			List<Group> groups = JcqApp.CQ.getGroupList();
 			for (Group group : groups) {
 				if (!this.GROUP_STATUS.containsKey(group.getId())) {
 					this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
 					logger.seek(this.MODULE_PACKAGENAME(), "添加新群 " + group.getName() + "(" + group.getId() + ")");
 				}
-
 			}
 
 		} else {
@@ -238,6 +232,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		StringBuilder builder;
 		LinkedList<String> report = new LinkedList<>();
+
 		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid).sum();
 
 		// ===========================================================
@@ -247,7 +242,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		// ===========================================================
 
 		builder.append("（1/4）水群统计\r\n自 ");
-		builder.append(LoggerX.datetime(new Date(groupStatus.initdt)));
+		builder.append(LoggerX.datetime(new Date(groupStatus.initdt), "yyyy-MM-dd"));
 		builder.append("以来\r\n总消息数：");
 		builder.append(groupStatus.GROP_MESSAGES);
 		builder.append("\r\n发言条数：");
@@ -277,7 +272,9 @@ public class Listener_TopSpeak extends ModuleListener {
 		for (long userid : groupStatus.USER_STATUS.keySet()) {
 			userStatus = groupStatus.USER_STATUS.get(userid);
 			int userCharacter = userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE;
+			// 没说过话不统计
 			if (userCharacter > 0) {
+				// 发言次数一样
 				if (allMemberRank.containsKey(userCharacter)) {
 					allMemberRank.get(userCharacter).add(userid);
 				} else {
@@ -341,17 +338,34 @@ public class Listener_TopSpeak extends ModuleListener {
 		for (String message : groupStatus.GROP_SENTENCE) {
 
 			// 合并常见内容
-			if (message.equals("?")) { message = "？"; }
-			if (message.equals("wky")) { message = "我可以"; }
-			if (message.equals("whl")) { message = "我好了"; }
-			if (message.equals("hso")) { message = "好骚哦"; }
-			if (message.equals("tql")) { message = "太强了"; }
-			if (message.equals("tfl")) { message = "太富了"; }
-			// 合并常见内容
-
-			// 消除BUG
-			if (message.equals("")) { continue; }
-			// 消除BUG
+			if (message.equals("?")) {
+				message = "？";
+			} else if (message.equals("??")) {
+				message = "？？";
+			} else if (message.equals("???")) {
+				message = "？？？";
+			} else if (message.equals("????")) {
+				message = "？？？？";
+			} else if (message.equals("wky")) {
+				message = "我可以";
+			} else if (message.equals("whl")) {
+				message = "我好了";
+			} else if (message.equals("hso")) {
+				message = "好骚哦";
+			} else if (message.equals("tql")) {
+				message = "太强了";
+			} else if (message.equals("tfl")) {
+				message = "太富了";
+			} else if (message.equals("草")) {
+				message = "草";
+			} else if (message.equals("操")) {
+				message = "草";
+			} else if (message.equals("艹")) {
+				message = "草";
+			} else if (message.equals("")) {
+				// 不管为什么产生的空消息
+				continue;
+			}
 
 			if (allMessageRankTemp.containsKey(message)) {
 				allMessageRankTemp.put(message, allMessageRankTemp.get(message) + 1);
@@ -435,7 +449,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(order);
 					builder.append(" - ");
 					builder.append(pictureRank);
-					builder.append("次：\r\n");
+					builder.append("次：");
 					builder.append(JcqApp.CC.getCQImage(picture).getUrl());
 					report.add(builder.toString());
 					limit++;
@@ -476,7 +490,11 @@ public class Listener_TopSpeak extends ModuleListener {
 						// =======================================================
 						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 执行");
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {
-							if (Listener_TopSpeak.this.GROUP_REPORT.contains(temp)) { entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp)); }
+							if (Listener_TopSpeak.this.GROUP_REPORT.contains(temp)) {
+								entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp));
+							} else {
+								continue;
+							}
 						}
 						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 结果");
 						// =======================================================
@@ -571,44 +589,39 @@ class UserStatus implements Serializable {
 		this.USER_SENTENCE = new LinkedList<>();
 		this.USER_COMMANDS = new LinkedList<>();
 		this.USER_PICTURES = new LinkedList<>();
-		this.USER_SNAPSHOT = 0;
-		this.USER_HONGBAOS = 0;
-		this.USER_TAPVIDEO = 0;
 		this.USER_CHARACTER = 0;
 		this.USER_PURECCODE = 0;
+		this.USER_SNAPSHOT = 0;
+		this.USER_TAPVIDEO = 0;
+		this.USER_HONGBAOS = 0;
 		for (MessageGrop temp : this.MESSAGES) {
 			if (temp.isCommand()) {
 				this.USER_COMMANDS.add(temp.getCommand());
-				continue;
-			}
-			temp.parseMessage();
-			if (temp.isSnappic()) {
-				this.USER_SNAPSHOT++;
-				continue;
-			}
-			if (temp.isHongbao()) {
-				this.USER_HONGBAOS++;
-				continue;
-			}
-			if (temp.isQQVideo()) {
-				this.USER_TAPVIDEO++;
-				continue;
-			}
-			if (temp.hasPicture()) {
-				for (String image : temp.getPicture()) {
-					this.USER_PICTURES.add(image);
-				}
-			}
-			// 纯CQ Code的消息会被替换为 "" 按 1句1字计算
-			// 不能直接按照一句添加进 SENTENCE
-			// 否则会出现大量占位的 ""
-			// 必须独立存储一个数字
-			if (temp.isPureCQS()) {
-				this.USER_PURECCODE++;
-				this.USER_CHARACTER++;
 			} else {
-				this.USER_SENTENCE.add(temp.getResMessage());
-				this.USER_CHARACTER = this.USER_CHARACTER + temp.getResLength();
+				temp.parseMessage();
+				if (temp.isSnappic()) {
+					this.USER_SNAPSHOT++;
+				} else if (temp.isHongbao()) {
+					this.USER_HONGBAOS++;
+				} else if (temp.isQQVideo()) {
+					this.USER_TAPVIDEO++;
+				} else if (temp.isPureCQC()) {
+					this.USER_PURECCODE++;
+					this.USER_CHARACTER++;
+				} else {
+					if (temp.hasPicture()) {
+						for (String image : temp.getPicture()) {
+							this.USER_PICTURES.add(image);
+						}
+					}
+					if (temp.isPureCQC()) {
+						this.USER_PURECCODE++;
+						this.USER_CHARACTER++;
+					} else {
+						this.USER_SENTENCE.add(temp.getResMessage());
+						this.USER_CHARACTER = this.USER_CHARACTER + temp.getResLength();
+					}
+				}
 			}
 		}
 		return this;

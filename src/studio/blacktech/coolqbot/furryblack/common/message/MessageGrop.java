@@ -20,4 +20,16 @@ public class MessageGrop extends Message {
 	public long userid() {
 		return this.userid;
 	}
+
+	public String toString() {
+
+		StringBuilder builder = new StringBuilder();
+		builder.append("Grop ID: ");
+		builder.append(this.gropid);
+		builder.append("\nUser ID: ");
+		builder.append(this.userid);
+		builder.append("\n");
+		builder.append(super.toString());
+		return builder.toString();
+	}
 }
