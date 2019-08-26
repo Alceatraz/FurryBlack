@@ -115,19 +115,14 @@ public class Listener_TopSpeak extends ModuleListener {
 			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
 			loader.close();
 			logger.seek(this.MODULE_PACKAGENAME(), "读取存档 " + this.GROUP_STATUS.size());
-			List<Group> groups = JcqApp.CQ.getGroupList();
-			for (Group group : groups) {
-				if (!this.GROUP_STATUS.containsKey(group.getId())) {
-					this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
-					logger.seek(this.MODULE_PACKAGENAME(), "添加新群 " + group.getName() + "(" + group.getId() + ")");
-				}
-			}
-
 		} else {
 			this.GROUP_STATUS = new HashMap<>();
-			List<Group> groups = JcqApp.CQ.getGroupList();
-			for (Group group : groups) {
+		}
+		List<Group> groups = JcqApp.CQ.getGroupList();
+		for (Group group : groups) {
+			if (!this.GROUP_STATUS.containsKey(group.getId())) {
 				this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
+				logger.seek(this.MODULE_PACKAGENAME(), "添加新群 " + group.getName() + "(" + group.getId() + ")");
 			}
 		}
 
@@ -242,7 +237,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		// ===========================================================
 
 		builder.append("（1/4）水群统计\r\n自 ");
-		builder.append(LoggerX.datetime(new Date(groupStatus.initdt), "yyyy-MM-dd"));
+		builder.append(LoggerX.datetime(new Date(groupStatus.initdt)));
+//		builder.append(LoggerX.datetime(new Date(groupStatus.initdt), "yyyy-MM-dd"));
 		builder.append("以来\r\n总消息数：");
 		builder.append(groupStatus.GROP_MESSAGES);
 		builder.append("\r\n发言条数：");
@@ -264,8 +260,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		// ===========================================================
 
-		builder = new StringBuilder();
-
 		UserStatus userStatus;
 		TreeMap<Integer, HashSet<Long>> allMemberRank = new TreeMap<>((a, b) -> b - a);
 
@@ -286,6 +280,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		}
 
 		if (allMemberRank.size() > 0) {
+			builder = new StringBuilder();
 			builder.append("（2/4）成员排行：");
 			int i = 1;
 			for (int userRank : allMemberRank.keySet()) {
@@ -327,45 +322,45 @@ public class Listener_TopSpeak extends ModuleListener {
 				i = i + tempSet.size();
 			}
 			report.add(builder.toString());
+		} else {
+			report.add("（2/4）成员排行：没有成员发言过");
 		}
 
 		// ===========================================================
-
-		builder = new StringBuilder();
 
 		HashMap<String, Integer> allMessageRankTemp = new HashMap<>();
 
 		for (String message : groupStatus.GROP_SENTENCE) {
 
-			// 合并常见内容
-			if (message.equals("?")) {
-				message = "？";
-			} else if (message.equals("??")) {
-				message = "？？";
-			} else if (message.equals("???")) {
-				message = "？？？";
-			} else if (message.equals("????")) {
-				message = "？？？？";
-			} else if (message.equals("wky")) {
-				message = "我可以";
-			} else if (message.equals("whl")) {
-				message = "我好了";
-			} else if (message.equals("hso")) {
-				message = "好骚哦";
-			} else if (message.equals("tql")) {
-				message = "太强了";
-			} else if (message.equals("tfl")) {
-				message = "太富了";
-			} else if (message.equals("草")) {
-				message = "草";
-			} else if (message.equals("操")) {
-				message = "草";
-			} else if (message.equals("艹")) {
-				message = "草";
-			} else if (message.equals("")) {
-				// 不管为什么产生的空消息
-				continue;
-			}
+//			// 合并常见内容
+//			if (message.equals("?")) {
+//				message = "？";
+//			} else if (message.equals("??")) {
+//				message = "？？";
+//			} else if (message.equals("???")) {
+//				message = "？？？";
+//			} else if (message.equals("????")) {
+//				message = "？？？？";
+//			} else if (message.equals("wky")) {
+//				message = "我可以";
+//			} else if (message.equals("whl")) {
+//				message = "我好了";
+//			} else if (message.equals("hso")) {
+//				message = "好骚哦";
+//			} else if (message.equals("tql")) {
+//				message = "太强了";
+//			} else if (message.equals("tfl")) {
+//				message = "太富了";
+//			} else if (message.equals("草")) {
+//				message = "草";
+//			} else if (message.equals("操")) {
+//				message = "草";
+//			} else if (message.equals("艹")) {
+//				message = "草";
+//			} else if (message.equals("")) {
+//				// 不管为什么产生的空消息
+//				continue;
+//			}
 
 			if (allMessageRankTemp.containsKey(message)) {
 				allMessageRankTemp.put(message, allMessageRankTemp.get(message) + 1);
@@ -389,6 +384,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		allMessageRank.remove(1);
 
 		if (allMessageRank.size() > 0) {
+			builder = new StringBuilder();
 			builder.append("（3/4）整句排行：");
 			int order = 1;
 			int limit = 0;
@@ -409,7 +405,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			}
 			report.add(builder.toString());
 		} else {
-			builder.append("（3/4）整句排行：没有重复过的整句");
+			report.add("（3/4）整句排行：没有重复过的整句");
 		}
 
 		// ===========================================================
@@ -438,7 +434,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		allPictureRank.remove(1);
 
 		if (allPictureRank.size() > 0) {
-			report.add("（4/4）图片排行：");
+			report.add("（4/4）图片排行");
 			int order = 1;
 			int limit = 0;
 			for (int pictureRank : allPictureRank.keySet()) {
@@ -459,7 +455,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				if (limit > 2) { break; }
 			}
 		} else {
-			builder.append("（4/4）图片排行：没有重复过的图片");
+			report.add("（4/4）图片排行：没有重复过的图片");
 		}
 
 		// ===========================================================
@@ -595,33 +591,41 @@ class UserStatus implements Serializable {
 		this.USER_TAPVIDEO = 0;
 		this.USER_HONGBAOS = 0;
 		for (MessageGrop temp : this.MESSAGES) {
+
 			if (temp.isCommand()) {
 				this.USER_COMMANDS.add(temp.getCommand());
-			} else {
-				temp.parseMessage();
-				if (temp.isSnappic()) {
-					this.USER_SNAPSHOT++;
-				} else if (temp.isHongbao()) {
-					this.USER_HONGBAOS++;
-				} else if (temp.isQQVideo()) {
-					this.USER_TAPVIDEO++;
-				} else if (temp.isPureCQC()) {
-					this.USER_PURECCODE++;
-					this.USER_CHARACTER++;
-				} else {
-					if (temp.hasPicture()) {
-						for (String image : temp.getPicture()) {
-							this.USER_PICTURES.add(image);
-						}
-					}
-					if (temp.isPureCQC()) {
-						this.USER_PURECCODE++;
-						this.USER_CHARACTER++;
-					} else {
-						this.USER_SENTENCE.add(temp.getResMessage());
-						this.USER_CHARACTER = this.USER_CHARACTER + temp.getResLength();
-					}
+				continue;
+			}
+
+			temp.parseMessage();
+
+			if (temp.isSnappic()) {
+				this.USER_SNAPSHOT++;
+				continue;
+			}
+
+			if (temp.isQQVideo()) {
+				this.USER_TAPVIDEO++;
+				continue;
+			}
+
+			if (temp.isHongbao()) {
+				this.USER_HONGBAOS++;
+				continue;
+			}
+
+			if (temp.hasPicture()) {
+				for (String image : temp.getPicture()) {
+					this.USER_PICTURES.add(image);
 				}
+			}
+
+			if (temp.isPureCQC()) {
+				this.USER_PURECCODE++;
+				this.USER_CHARACTER++;
+			} else {
+				this.USER_SENTENCE.add(temp.getResMessage());
+				this.USER_CHARACTER = this.USER_CHARACTER + temp.getResLength();
 			}
 		}
 		return this;

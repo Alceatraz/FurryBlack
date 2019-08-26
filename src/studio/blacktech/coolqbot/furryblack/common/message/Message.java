@@ -152,35 +152,33 @@ public class Message implements Serializable {
 	 */
 	public Message parseMessage() {
 
-		if (parsed) {
-			return this;
-		} else {
+		if (!parsed) {
 			parsed = true;
-		}
+			if (this.rawMessage.startsWith("&#91;闪照&#93;")) {
+				this.isSnappic = true;
+			} else if (this.rawMessage.startsWith("&#91;视频&#93;")) {
+				this.isQQVideo = true;
+			} else if (this.rawMessage.startsWith("&#91;QQ红包&#93;")) {
+				this.isHongbao = true;
+			} else {
+				Pattern pattern = Pattern.compile(Message.REGEX_IMAGE);
+				Matcher matcher = pattern.matcher(this.rawMessage);
+				ArrayList<String> temp = new ArrayList<>(1);
+				if (matcher.find()) {
+					this.hasPicture = true;
+					do {
+						temp.add(matcher.group());
+					} while (matcher.find());
+					this.picture = new String[temp.size()];
+					temp.toArray(this.picture);
+				}
+				this.resMessage = this.rawMessage.replaceAll("\\[CQ:.+\\]", "");
+				this.resLength = this.resMessage.length();
+				if (this.resLength == 0) { this.isPureCQC = true; }
 
-		if (this.rawMessage.startsWith("&#91;闪照&#93;")) {
-			this.isSnappic = true;
-		} else if (this.rawMessage.startsWith("&#91;视频&#93;")) {
-			this.isQQVideo = true;
-		} else if (this.rawMessage.startsWith("&#91;QQ红包&#93;")) {
-			this.isHongbao = true;
-		} else {
-			Pattern pattern = Pattern.compile(Message.REGEX_IMAGE);
-			Matcher matcher = pattern.matcher(this.rawMessage);
-			ArrayList<String> temp = new ArrayList<>(1);
-			if (matcher.find()) {
-				this.hasPicture = true;
-				do {
-					temp.add(matcher.group());
-				} while (matcher.find());
-				this.picture = new String[temp.size()];
-				temp.toArray(this.picture);
 			}
-			this.resMessage = this.resMessage.replaceAll("\\[CQ:.+\\]", "");
-			this.resLength = this.resMessage.length();
-			if (this.resLength == 0) { this.isPureCQC = true; }
-
 		}
+
 		return this;
 	}
 
@@ -225,6 +223,8 @@ public class Message implements Serializable {
 		return this.messageFt;
 	}
 
+	// ===================================================================================
+
 	/**
 	 * 获取消息发送时间 毫秒时间戳
 	 *
@@ -243,6 +243,8 @@ public class Message implements Serializable {
 		return new Date(this.sendTime);
 	}
 
+	// ===================================================================================
+
 	/**
 	 * 获取原始消息
 	 *
@@ -259,34 +261,6 @@ public class Message implements Serializable {
 	 */
 	public int getRawLength() {
 		return this.rawLength;
-	}
-
-	/**
-	 * 获取分析后的消息
-	 *
-	 * @return
-	 */
-	public String getResMessage() {
-		return this.resMessage;
-
-	}
-
-	/**
-	 * 获取分析后的消息长度
-	 *
-	 * @return
-	 */
-	public int getResLength() {
-		return this.resLength;
-	}
-
-	/**
-	 * 获取消息中的所有图片
-	 *
-	 * @return CQImage码
-	 */
-	public String[] getPicture() {
-		return this.picture;
 	}
 
 	// ===================================================================================
@@ -402,23 +376,49 @@ public class Message implements Serializable {
 		return this.hasPicture;
 	}
 
+	/**
+	 * 获取消息中的所有图片
+	 *
+	 * @return CQImage码
+	 */
+	public String[] getPicture() {
+		return this.picture;
+	}
+
+	// ===================================================================================
+
+	/**
+	 * 获取分析后的消息
+	 *
+	 * @return
+	 */
+	public String getResMessage() {
+		return this.resMessage;
+
+	}
+
+	/**
+	 * 获取分析后的消息长度
+	 *
+	 * @return
+	 */
+	public int getResLength() {
+		return this.resLength;
+	}
+
 	// ===================================================================================
 
 	public String toString() {
-
 		StringBuilder builder = new StringBuilder();
-
 		builder.append("Message ID: ");
 		builder.append(this.messageId);
 		builder.append("\nMessage Font: ");
 		builder.append(this.messageFt);
-
 		builder.append("\nSendTime: ");
 		builder.append(LoggerX.datetime(new Date(this.sendTime)));
 		builder.append("(");
 		builder.append(this.sendTime);
 		builder.append(")");
-
 		builder.append("\nRAW-CONTENT: ");
 		builder.append(this.rawMessage);
 		builder.append("\nUNI-CONTENT: ");
@@ -428,15 +428,12 @@ public class Message implements Serializable {
 		}
 		builder.append("\nRAW-LENGTH: ");
 		builder.append(this.rawLength);
-
 		builder.append("\nRES-CONTENT: ");
 		builder.append(this.resMessage);
 		builder.append("\nRES-LENGTH: ");
 		builder.append(this.resLength);
-
 		builder.append("\nisCommand: ");
 		builder.append(this.isCommand ? "True" : "False");
-
 		builder.append("\nisSnappic: ");
 		builder.append(this.isSnappic ? "True" : "False");
 		builder.append("\nisQQVideo: ");
@@ -445,10 +442,8 @@ public class Message implements Serializable {
 		builder.append(this.isHongbao ? "True" : "False");
 		builder.append("\nisPureCCode: ");
 		builder.append(this.isPureCQC ? "True" : "False");
-
 		builder.append("\nhasPicture: ");
 		builder.append(this.hasPicture ? "True" : "False");
-
 		if (this.hasPicture) {
 			builder.append("\nPicture: ");
 			for (String temp : this.picture) {
@@ -456,21 +451,15 @@ public class Message implements Serializable {
 				builder.append(temp);
 			}
 		}
-
 		if (this.isCommand) {
-
 			builder.append("\ncmdMessage: ");
 			builder.append(this.cmdMessage);
-
 			builder.append("\ncommand: ");
 			builder.append(this.command);
-
 			builder.append("\noptions: ");
 			builder.append(this.options);
-
 			builder.append("\nsection: ");
 			builder.append(this.section);
-
 			if (this.section > 0) {
 				builder.append("\nsegment: ");
 				for (String temp : this.segment) {
@@ -478,7 +467,6 @@ public class Message implements Serializable {
 					builder.append(temp);
 				}
 			}
-
 			if (this.switchs != null) {
 				builder.append("\nFlags:");
 				for (String name : this.switchs.keySet()) {

@@ -189,19 +189,17 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int disable() {
 		LoggerX logger = new LoggerX();
-		if (JcqAppAbstract.enable) {
-			JcqAppAbstract.enable = false;
-			try {
-				logger.mini(LoggerX.datetime());
-				DDNSAPI.shut(logger);
-				logger.mini("[CORE] 保存");
-				SYSTEMD.save(logger);
-				logger.mini("[CORE] 结束");
-				SYSTEMD.shut(logger);
-				getMessage().adminInfo(logger.make(0));
-			} catch (Exception exception) {
-				logger.mini(exception.getMessage());
-			}
+		JcqAppAbstract.enable = false;
+		try {
+			logger.mini(LoggerX.datetime());
+			DDNSAPI.shut(logger);
+			logger.mini("[CORE] 保存");
+			SYSTEMD.save(logger);
+			logger.mini("[CORE] 结束");
+			SYSTEMD.shut(logger);
+			getMessage().adminInfo(logger.make(0));
+		} catch (Exception exception) {
+			logger.mini(exception.getMessage());
 		}
 		return 0;
 	}
