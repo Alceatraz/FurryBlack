@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.modules;
+package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import java.security.SecureRandom;
 import java.util.Date;
@@ -75,14 +75,14 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-		logger.info(this.MODULE_PACKAGENAME(), "启动工作线程");
+		logger.info(MODULE_PACKAGENAME, "启动工作线程");
 		this.thread = new Thread(new Worker());
 		this.thread.start();
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
-		logger.info(this.MODULE_PACKAGENAME(), "终止工作线程");
+		logger.info(MODULE_PACKAGENAME, "终止工作线程");
 		this.thread.interrupt();
 		this.thread.join();
 	}
@@ -93,6 +93,10 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	@Override
 	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
 	}
 
 	@Override
@@ -166,20 +170,19 @@ public class Executor_jrrp extends ModuleExecutor {
 						time = time - date.getMinutes() * 60;
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
-						time = time - 5;
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRRP] 休眠：" + time);
+						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
 						Thread.sleep(time);
 						// =======================================================
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRRP] 执行");
+						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "执行"); }
 						Executor_jrrp.this.JRRP.clear();
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRRP] 结果");
+						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "结果"); }
 						// =======================================================
 					}
 				} catch (Exception exception) {
 					if (JcqAppAbstract.enable) {
-						JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_JRRP] 异常");
+						JcqApp.CQ.logWarning(MODULE_PACKAGENAME, "异常");
 					} else {
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_JRRP] 关闭");
+						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "关闭");
 					}
 				}
 			} while (JcqAppAbstract.enable);

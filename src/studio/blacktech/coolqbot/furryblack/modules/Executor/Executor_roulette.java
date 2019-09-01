@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.modules;
+package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -95,6 +95,10 @@ public class Executor_roulette extends ModuleExecutor {
 
 	@Override
 	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
 	}
 
 	@Override

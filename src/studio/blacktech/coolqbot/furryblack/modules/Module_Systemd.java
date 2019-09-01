@@ -1,10 +1,12 @@
-package studio.blacktech.coolqbot.furryblack;
+package studio.blacktech.coolqbot.furryblack.modules;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
@@ -13,22 +15,24 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.Module;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_acon;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_admin;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_chou;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_dice;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_echo;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_jrjp;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_jrrp;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_kong;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_mine;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_roll;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_roulette;
-import studio.blacktech.coolqbot.furryblack.modules.Executor_zhan;
-import studio.blacktech.coolqbot.furryblack.modules.Listener_TopSpeak;
-import studio.blacktech.coolqbot.furryblack.modules.Trigger_UserDeny;
-import studio.blacktech.coolqbot.furryblack.modules.Trigger_WordDeny;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_acon;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_admin;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_chou;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_dice;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_echo;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_jrjp;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_jrrp;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_kong;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_mine;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_roll;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_roulette;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_zhan;
+import studio.blacktech.coolqbot.furryblack.modules.Listener.Listener_TopSpeak;
+import studio.blacktech.coolqbot.furryblack.modules.Scheduler.Scheduler_Dynamic;
+import studio.blacktech.coolqbot.furryblack.modules.Trigger.Trigger_UserDeny;
+import studio.blacktech.coolqbot.furryblack.modules.Trigger.Trigger_WordDeny;
 
 public class Module_Systemd extends Module {
 
@@ -41,7 +45,7 @@ public class Module_Systemd extends Module {
 	// ==========================================================================================================================================================
 
 	private static String MODULE_PACKAGENAME = "core_systemd";
-	private static String MODULE_COMMANDNAME = "system";
+	private static String MODULE_COMMANDNAME = "systemd";
 	private static String MODULE_DISPLAYNAME = "核心模块";
 	private static String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
 	private static String MODULE_VERSION = "22.0";
@@ -64,6 +68,7 @@ public class Module_Systemd extends Module {
 	private int COUNT_DISZ_MESSAGE = 0;
 	private int COUNT_GROP_MESSAGE = 0;
 
+	private boolean ENABLE_SCHEDULER = false;
 	private boolean ENABLE_TRIGGER_USER = false;
 	private boolean ENABLE_TRIGGER_DISZ = false;
 	private boolean ENABLE_TRIGGER_GROP = false;
@@ -74,6 +79,7 @@ public class Module_Systemd extends Module {
 	private boolean ENABLE_EXECUTOR_DISZ = false;
 	private boolean ENABLE_EXECUTOR_GROP = false;
 
+	private String CONFIG_SCHEDULER;
 	private String CONFIG_TRIGGER_USER;
 	private String CONFIG_TRIGGER_DISZ;
 	private String CONFIG_TRIGGER_GROP;
@@ -84,6 +90,7 @@ public class Module_Systemd extends Module {
 	private String CONFIG_EXECUTOR_DISZ;
 	private String CONFIG_EXECUTOR_GROP;
 
+	private String[] LIST_SCHEDULER = {};
 	private String[] LIST_TRIGGER_USER = {};
 	private String[] LIST_TRIGGER_DISZ = {};
 	private String[] LIST_TRIGGER_GROP = {};
@@ -93,6 +100,9 @@ public class Module_Systemd extends Module {
 	private String[] LIST_EXECUTOR_USER = {};
 	private String[] LIST_EXECUTOR_DISZ = {};
 	private String[] LIST_EXECUTOR_GROP = {};
+
+	private TreeMap<String, ModuleScheduler> SCHEDULER_INSTANCE;
+	private ArrayList<ModuleScheduler> SCHEDULER_ENABLED;
 
 	private TreeMap<String, ModuleTrigger> TRIGGER_INSTANCE;
 	private ArrayList<ModuleTrigger> TRIGGER_USER;
@@ -125,6 +135,9 @@ public class Module_Systemd extends Module {
 		this.initConfFolder();
 		this.initCofigurtion();
 
+		this.SCHEDULER_INSTANCE = new TreeMap<>();
+		this.SCHEDULER_ENABLED = new ArrayList<>(100);
+
 		this.TRIGGER_INSTANCE = new TreeMap<>();
 		this.TRIGGER_USER = new ArrayList<>(100);
 		this.TRIGGER_DISZ = new ArrayList<>(100);
@@ -142,6 +155,7 @@ public class Module_Systemd extends Module {
 
 		if (this.NEW_CONFIG) {
 			logger.seek("[Systemd] 配置文件不存在 - 生成默认配置");
+			this.CONFIG.setProperty("scheduler", "none");
 			this.CONFIG.setProperty("trigger_user", "none");
 			this.CONFIG.setProperty("trigger_disz", "none");
 			this.CONFIG.setProperty("trigger_grop", "none");
@@ -159,6 +173,13 @@ public class Module_Systemd extends Module {
 		// =======================================================================================================================
 		//
 		//
+		// =======================================================================================================================
+
+		// =======================================================================================================================
+		// 实例化定时器
+
+		this.instantiationScheduler(new Scheduler_Dynamic());
+
 		// =======================================================================================================================
 		// 实例化触发器
 
@@ -190,10 +211,19 @@ public class Module_Systemd extends Module {
 		//
 		//
 		// =======================================================================================================================
+
+		// =======================================================================================================================
+		// 初始化定时器
+		for (String name : this.SCHEDULER_INSTANCE.keySet()) {
+			logger.full("[Systemd]", "初始化定时器 " + name);
+			this.SCHEDULER_INSTANCE.get(name).init(logger);
+		}
+
+		// =======================================================================================================================
 		// 初始化触发器
 
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
-			logger.full("[Systemd] 初始化触发器", name);
+			logger.full("[Systemd]", "初始化触发器 " + name);
 			this.TRIGGER_INSTANCE.get(name).init(logger);
 		}
 
@@ -201,7 +231,7 @@ public class Module_Systemd extends Module {
 		// 初始化监听器
 
 		for (String name : this.LISTENER_INSTANCE.keySet()) {
-			logger.full("[Systemd] 初始化监听器", name);
+			logger.full("[Systemd]", "初始化监听器 " + name);
 			this.LISTENER_INSTANCE.get(name).init(logger);
 		}
 
@@ -209,7 +239,7 @@ public class Module_Systemd extends Module {
 		// 初始化执行器
 
 		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
-			logger.full("[Systemd] 初始化执行器", name);
+			logger.full("[Systemd]", "初始化执行器 " + name);
 			this.EXECUTOR_INSTANCE.get(name).init(logger);
 		}
 
@@ -217,15 +247,26 @@ public class Module_Systemd extends Module {
 		//
 		//
 		// =======================================================================================================================
+
+		// =======================================================================================================================
+		// 读取定时器配置
+
+		this.CONFIG_SCHEDULER = this.CONFIG.getProperty("scheduler", "none");
+
+		logger.seek("[Systemd]", "定时器配置 全局 " + this.CONFIG_SCHEDULER);
+
+		this.LIST_SCHEDULER = this.CONFIG_SCHEDULER.equals("none") ? new String[0] : this.CONFIG_SCHEDULER.split(",");
+
+		// =======================================================================================================================
 		// 读取触发器配置
 
 		this.CONFIG_TRIGGER_USER = this.CONFIG.getProperty("trigger_user", "none");
 		this.CONFIG_TRIGGER_DISZ = this.CONFIG.getProperty("trigger_disz", "none");
 		this.CONFIG_TRIGGER_GROP = this.CONFIG.getProperty("trigger_grop", "none");
 
-		logger.seek("[Systemd] 触发器：私聊" + this.CONFIG_TRIGGER_USER);
-		logger.seek("[Systemd] 触发器：组聊" + this.CONFIG_TRIGGER_DISZ);
-		logger.seek("[Systemd] 触发器：群聊" + this.CONFIG_TRIGGER_GROP);
+		logger.seek("[Systemd]", "触发器配置 私聊 " + this.CONFIG_TRIGGER_USER);
+		logger.seek("[Systemd]", "触发器配置 组聊 " + this.CONFIG_TRIGGER_DISZ);
+		logger.seek("[Systemd]", "触发器配置 群聊 " + this.CONFIG_TRIGGER_GROP);
 
 		this.LIST_TRIGGER_USER = this.CONFIG_TRIGGER_USER.equals("none") ? new String[0] : this.CONFIG_TRIGGER_USER.split(",");
 		this.LIST_TRIGGER_DISZ = this.CONFIG_TRIGGER_DISZ.equals("none") ? new String[0] : this.CONFIG_TRIGGER_DISZ.split(",");
@@ -238,9 +279,9 @@ public class Module_Systemd extends Module {
 		this.CONFIG_LISENTER_DISZ = this.CONFIG.getProperty("listener_disz", "none");
 		this.CONFIG_LISENTER_GROP = this.CONFIG.getProperty("listener_grop", "none");
 
-		logger.seek("[Systemd] 监听器：私聊" + this.CONFIG_LISENTER_USER);
-		logger.seek("[Systemd] 监听器：组聊" + this.CONFIG_LISENTER_DISZ);
-		logger.seek("[Systemd] 监听器：群聊" + this.CONFIG_LISENTER_GROP);
+		logger.seek("[Systemd]", "监听器配置 私聊 " + this.CONFIG_LISENTER_USER);
+		logger.seek("[Systemd]", "监听器配置 组聊 " + this.CONFIG_LISENTER_DISZ);
+		logger.seek("[Systemd]", "监听器配置 群聊 " + this.CONFIG_LISENTER_GROP);
 
 		this.LIST_LISENTER_USER = this.CONFIG_LISENTER_USER.equals("none") ? new String[0] : this.CONFIG_LISENTER_USER.split(",");
 		this.LIST_LISENTER_DISZ = this.CONFIG_LISENTER_DISZ.equals("none") ? new String[0] : this.CONFIG_LISENTER_DISZ.split(",");
@@ -253,9 +294,9 @@ public class Module_Systemd extends Module {
 		this.CONFIG_EXECUTOR_DISZ = this.CONFIG.getProperty("executor_disz", "none");
 		this.CONFIG_EXECUTOR_GROP = this.CONFIG.getProperty("executor_grop", "none");
 
-		logger.seek("[Systemd] 执行器：私聊" + this.CONFIG_EXECUTOR_USER);
-		logger.seek("[Systemd] 执行器：组聊" + this.CONFIG_EXECUTOR_DISZ);
-		logger.seek("[Systemd] 执行器：群聊" + this.CONFIG_EXECUTOR_GROP);
+		logger.seek("[Systemd]", "执行器配置 私聊 " + this.CONFIG_EXECUTOR_USER);
+		logger.seek("[Systemd]", "执行器配置 组聊 " + this.CONFIG_EXECUTOR_DISZ);
+		logger.seek("[Systemd]", "执行器配置 群聊 " + this.CONFIG_EXECUTOR_GROP);
 
 		this.LIST_EXECUTOR_USER = this.CONFIG_EXECUTOR_USER.equals("none") ? new String[0] : this.CONFIG_EXECUTOR_USER.split(",");
 		this.LIST_EXECUTOR_DISZ = this.CONFIG_EXECUTOR_DISZ.equals("none") ? new String[0] : this.CONFIG_EXECUTOR_DISZ.split(",");
@@ -265,12 +306,34 @@ public class Module_Systemd extends Module {
 		//
 		//
 		// =======================================================================================================================
+
+		// =======================================================================================================================
+		// 注册定时器
+
+		for (String name : this.LIST_SCHEDULER) {
+			if (this.SCHEDULER_INSTANCE.containsKey(name)) {
+				ModuleScheduler instance = this.SCHEDULER_INSTANCE.get(name);
+				if (instance.ENABLE()) {
+					logger.full("[Systemd]", "注册定时器 " + instance.MODULE_PACKAGENAME());
+					this.SCHEDULER_ENABLED.add(instance);
+				}
+			} else {
+				logger.mini("[Systemd] 配置错误", "定时器不存在 " + name);
+			}
+		}
+
+		this.ENABLE_SCHEDULER = this.SCHEDULER_ENABLED.size() > 0;
+
+		// =======================================================================================================================
 		// 注册触发器
 
 		for (String name : this.LIST_TRIGGER_USER) {
 			if (this.TRIGGER_INSTANCE.containsKey(name)) {
 				ModuleTrigger instance = this.TRIGGER_INSTANCE.get(name);
-				if (instance.ENABLE_USER()) { this.TRIGGER_USER.add(instance); }
+				if (instance.ENABLE_USER()) {
+					logger.full("[Systemd]", "注册触发器：私聊 " + instance.MODULE_PACKAGENAME());
+					this.TRIGGER_USER.add(instance);
+				}
 			} else {
 				logger.mini("[Systemd] 配置错误", "私聊触发器不存在 " + name);
 			}
@@ -279,7 +342,10 @@ public class Module_Systemd extends Module {
 		for (String name : this.LIST_TRIGGER_DISZ) {
 			if (this.TRIGGER_INSTANCE.containsKey(name)) {
 				ModuleTrigger instance = this.TRIGGER_INSTANCE.get(name);
-				if (instance.ENABLE_DISZ()) { this.TRIGGER_DISZ.add(instance); }
+				if (instance.ENABLE_DISZ()) {
+					logger.full("[Systemd]", "注册触发器：组聊 " + instance.MODULE_PACKAGENAME());
+					this.TRIGGER_DISZ.add(instance);
+				}
 			} else {
 				logger.mini("[Systemd] 配置错误", "组聊触发器不存在 " + name);
 			}
@@ -288,7 +354,10 @@ public class Module_Systemd extends Module {
 		for (String name : this.LIST_TRIGGER_GROP) {
 			if (this.TRIGGER_INSTANCE.containsKey(name)) {
 				ModuleTrigger instance = this.TRIGGER_INSTANCE.get(name);
-				if (instance.ENABLE_GROP()) { this.TRIGGER_GROP.add(instance); }
+				if (instance.ENABLE_GROP()) {
+					logger.full("[Systemd]", "注册触发器：群聊 " + instance.MODULE_PACKAGENAME());
+					this.TRIGGER_GROP.add(instance);
+				}
 			} else {
 				logger.mini("[Systemd] 配置错误", "群聊触发器不存在 " + name);
 			}
@@ -304,7 +373,10 @@ public class Module_Systemd extends Module {
 		for (String name : this.LIST_LISENTER_USER) {
 			if (this.LISTENER_INSTANCE.containsKey(name)) {
 				ModuleListener instance = this.LISTENER_INSTANCE.get(name);
-				if (instance.ENABLE_USER()) { this.LISTENER_USER.add(instance); }
+				if (instance.ENABLE_USER()) {
+					logger.full("[Systemd]", "注册监听器：私聊 " + instance.MODULE_PACKAGENAME());
+					this.LISTENER_USER.add(instance);
+				}
 			} else {
 				logger.mini("[Systemd] 配置错误", "私聊监听器不存在 " + name);
 			}
@@ -313,7 +385,10 @@ public class Module_Systemd extends Module {
 		for (String name : this.LIST_LISENTER_DISZ) {
 			if (this.LISTENER_INSTANCE.containsKey(name)) {
 				ModuleListener instance = this.LISTENER_INSTANCE.get(name);
-				if (instance.ENABLE_DISZ()) { this.LISTENER_DISZ.add(instance); }
+				if (instance.ENABLE_DISZ()) {
+					logger.full("[Systemd]", "注册监听器：组聊 " + instance.MODULE_PACKAGENAME());
+					this.LISTENER_DISZ.add(instance);
+				}
 			} else {
 				logger.mini("[Systemd] 配置错误", "组聊监听器不存在 " + name);
 			}
@@ -322,7 +397,10 @@ public class Module_Systemd extends Module {
 		for (String name : this.LIST_LISENTER_GROP) {
 			if (this.LISTENER_INSTANCE.containsKey(name)) {
 				ModuleListener instance = this.LISTENER_INSTANCE.get(name);
-				if (instance.ENABLE_GROP()) { this.LISTENER_GROP.add(instance); }
+				if (instance.ENABLE_GROP()) {
+					logger.full("[Systemd]", "注册监听器：群聊 " + instance.MODULE_PACKAGENAME());
+					this.LISTENER_GROP.add(instance);
+				}
 			} else {
 				logger.mini("[Systemd] 配置错误", "群聊监听器不存在 " + name);
 			}
@@ -338,7 +416,10 @@ public class Module_Systemd extends Module {
 		for (String name : this.LIST_EXECUTOR_USER) {
 			if (this.EXECUTOR_INSTANCE.containsKey(name)) {
 				ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(name);
-				if (instance.ENABLE_USER()) { this.EXECUTOR_USER.put(instance.MODULE_COMMANDNAME(), instance); }
+				if (instance.ENABLE_USER()) {
+					logger.full("[Systemd]", "注册执行器：私聊 " + instance.MODULE_PACKAGENAME());
+					this.EXECUTOR_USER.put(instance.MODULE_COMMANDNAME(), instance);
+				}
 			} else {
 				logger.mini("[Systemd] 配置错误", "组聊执行器不存在 " + name);
 			}
@@ -347,7 +428,10 @@ public class Module_Systemd extends Module {
 		for (String name : this.LIST_EXECUTOR_DISZ) {
 			if (this.EXECUTOR_INSTANCE.containsKey(name)) {
 				ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(name);
-				if (instance.ENABLE_DISZ()) { this.EXECUTOR_DISZ.put(instance.MODULE_COMMANDNAME(), instance); }
+				if (instance.ENABLE_DISZ()) {
+					logger.full("[Systemd]", "注册执行器：组聊 " + instance.MODULE_PACKAGENAME());
+					this.EXECUTOR_DISZ.put(instance.MODULE_COMMANDNAME(), instance);
+				}
 			} else {
 				logger.mini("[Systemd] 配置错误", "组聊执行器不存在 " + name);
 			}
@@ -356,7 +440,10 @@ public class Module_Systemd extends Module {
 		for (String name : this.LIST_EXECUTOR_GROP) {
 			if (this.EXECUTOR_INSTANCE.containsKey(name)) {
 				ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(name);
-				if (instance.ENABLE_GROP()) { this.EXECUTOR_GROP.put(instance.MODULE_COMMANDNAME(), instance); }
+				if (instance.ENABLE_GROP()) {
+					logger.full("[Systemd]", "注册执行器：群聊 " + instance.MODULE_PACKAGENAME());
+					this.EXECUTOR_GROP.put(instance.MODULE_COMMANDNAME(), instance);
+				}
 			} else {
 				logger.mini("[Systemd] 配置错误", "组聊执行器不存在 " + name);
 			}
@@ -367,6 +454,9 @@ public class Module_Systemd extends Module {
 		this.ENABLE_EXECUTOR_GROP = this.EXECUTOR_GROP.size() > 0;
 
 		// =======================================================================================================================
+
+		logger.info("[Systemd] 定时器");
+		logger.info("  全局", this.ENABLE_SCHEDULER ? "启用 - " + this.SCHEDULER_ENABLED.size() + "个" : "禁用");
 
 		logger.info("[Systemd] 触发器");
 		logger.info("  私聊", this.ENABLE_TRIGGER_USER ? "启用 - " + this.TRIGGER_USER.size() + "个" : "禁用");
@@ -396,11 +486,20 @@ public class Module_Systemd extends Module {
 	public void boot(LoggerX logger) throws Exception {
 
 		// =======================================================================================================================
+		// 启动定时器
+
+		for (ModuleScheduler instance : this.SCHEDULER_ENABLED) {
+			logger.full("[Systemd] 启动定时器 ", instance.MODULE_PACKAGENAME());
+			instance.boot(logger);
+		}
+
+		// =======================================================================================================================
 		// 启动触发器
 
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
 			logger.full("[Systemd] 启动触发器", name);
-			this.TRIGGER_INSTANCE.get(name).boot(logger);
+			ModuleTrigger instance = this.TRIGGER_INSTANCE.get(name);
+			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { instance.boot(logger); }
 		}
 
 		// =======================================================================================================================
@@ -408,7 +507,8 @@ public class Module_Systemd extends Module {
 
 		for (String name : this.LISTENER_INSTANCE.keySet()) {
 			logger.full("[Systemd] 启动监听器", name);
-			this.LISTENER_INSTANCE.get(name).boot(logger);
+			ModuleListener instance = this.LISTENER_INSTANCE.get(name);
+			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { instance.boot(logger); }
 		}
 
 		// =======================================================================================================================
@@ -416,13 +516,18 @@ public class Module_Systemd extends Module {
 
 		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
 			logger.full("[Systemd] 启动执行器", name);
-			this.EXECUTOR_INSTANCE.get(name).boot(logger);
+			ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(name);
+			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { instance.boot(logger); }
 		}
 
 	}
 
 	@Override
 	public void save(LoggerX logger) throws Exception {
+		for (String name : this.SCHEDULER_INSTANCE.keySet()) {
+			logger.full("[Systemd] 保存定时器", name);
+			this.SCHEDULER_INSTANCE.get(name).save(logger);
+		}
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
 			logger.full("[Systemd] 保存触发器", name);
 			this.TRIGGER_INSTANCE.get(name).save(logger);
@@ -439,6 +544,10 @@ public class Module_Systemd extends Module {
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+		for (String name : this.SCHEDULER_INSTANCE.keySet()) {
+			logger.full("[Systemd] 关闭定时器", name);
+			this.SCHEDULER_INSTANCE.get(name).shut(logger);
+		}
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
 			logger.full("[Systemd] 关闭触发器", name);
 			this.TRIGGER_INSTANCE.get(name).shut(logger);
@@ -464,6 +573,10 @@ public class Module_Systemd extends Module {
 		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
 			this.EXECUTOR_INSTANCE.get(name).reload(logger);
 		}
+	}
+
+	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
 	}
 
 	@Override
@@ -539,6 +652,10 @@ public class Module_Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
+	private void instantiationScheduler(ModuleScheduler instance) {
+		this.SCHEDULER_INSTANCE.put(instance.MODULE_COMMANDNAME(), instance);
+	}
+
 	private void instantiationTrigger(ModuleTrigger instance) {
 		this.TRIGGER_INSTANCE.put(instance.MODULE_COMMANDNAME(), instance);
 	}
@@ -569,7 +686,7 @@ public class Module_Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	protected void doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public void doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		this.COUNT_USER_MESSAGE++;
 
@@ -636,13 +753,13 @@ public class Module_Systemd extends Module {
 		}
 
 		// >>>>> DEBUG
-//		if (entry.DEBUG()) {
-//			if (message.isCommand()) {
-//				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
-//			} else {
-//				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
-//			}
-//		}
+		if (entry.DEBUG()) {
+			if (message.isCommand()) {
+				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
+			} else {
+				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
+			}
+		}
 		// >>>>> DEBUG
 
 	}
@@ -653,7 +770,7 @@ public class Module_Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	protected void doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public void doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		this.COUNT_DISZ_MESSAGE++;
 
@@ -721,13 +838,13 @@ public class Module_Systemd extends Module {
 		}
 
 		// >>>>> DEBUG
-//		if (entry.DEBUG()) {
-//			if (message.isCommand()) {
-//				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
-//			} else {
-//				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
-//			}
-//		}
+		if (entry.DEBUG()) {
+			if (message.isCommand()) {
+				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
+			} else {
+				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
+			}
+		}
 		// >>>>> DEBUG
 
 		return;
@@ -739,7 +856,7 @@ public class Module_Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	protected void doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public void doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		this.COUNT_GROP_MESSAGE++;
 
@@ -807,13 +924,13 @@ public class Module_Systemd extends Module {
 		}
 
 		// >>>>> DEBUG
-//		if (entry.DEBUG()) {
-//			if (message.isCommand()) {
-//				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
-//			} else {
-//				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
-//			}
-//		}
+		if (entry.DEBUG()) {
+			if (message.isCommand()) {
+				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
+			} else {
+				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
+			}
+		}
 		// >>>>> DEBUG
 
 		return;
@@ -1075,6 +1192,89 @@ public class Module_Systemd extends Module {
 		}
 	}
 
+	public LoggerX doInit(String level) throws Exception {
+		LoggerX logger = new LoggerX();
+		logger.info(LoggerX.datetime());
+		switch (level) {
+		case "0":
+			logger.info("init 0：切换启停");
+			if (JcqAppAbstract.enable) {
+				JcqAppAbstract.enable = false;
+				logger.info("切换至停机");
+			} else {
+				JcqAppAbstract.enable = true;
+				logger.info("切换至运行");
+			}
+			break;
+		case "1":
+			logger.info("init 1：初始化");
+			Module_Systemd.this.init(logger);
+			break;
+		case "2":
+			logger.info("init 2：启动");
+			Module_Systemd.this.boot(logger);
+			break;
+		case "3":
+			logger.info("init 3：保存");
+			Module_Systemd.this.save(logger);
+			break;
+		case "4":
+			logger.info("init 4：关闭丢弃");
+			Module_Systemd.this.shut(logger);
+			break;
+		case "5":
+			logger.info("init 5：保存关闭");
+			Module_Systemd.this.save(logger);
+			Module_Systemd.this.shut(logger);
+			break;
+		case "6":
+			logger.info("init 6：保存重启");
+			Module_Systemd.this.save(logger);
+			Module_Systemd.this.shut(logger);
+			Module_Systemd.this.boot(logger);
+			break;
+		}
+		return logger;
+	}
+
+	public LoggerX doExec(Message message) throws Exception {
+
+		LoggerX logger = new LoggerX();
+		logger.info(LoggerX.datetime());
+
+		String module = message.getSwitch("module");
+
+		if (module == null) {
+			logger.info("参数错误 --module 为空");
+			return logger;
+		}
+
+		// /admin exec --mode=eval System.out.println("EVAL");
+
+		if (module.equals("eval")) {
+			logger.info("eval", message.getOptions());
+		} else if (module.equals("nickmap")) {
+		} else if (module.equals("message")) {
+		} else if (module.equals("systemd")) {
+		} else if (this.SCHEDULER_INSTANCE.containsKey(module)) {
+			logger.info("定时器", module);
+			this.SCHEDULER_INSTANCE.get(module).exec(logger, message);
+		} else if (this.TRIGGER_INSTANCE.containsKey(module)) {
+			logger.info("触发器", module);
+			this.TRIGGER_INSTANCE.get(module).exec(logger, message);
+		} else if (this.LISTENER_INSTANCE.containsKey(module)) {
+			logger.info("监听器", module);
+			this.LISTENER_INSTANCE.get(module).exec(logger, message);
+		} else if (this.EXECUTOR_INSTANCE.containsKey(module)) {
+			logger.info("执行器", module);
+			this.EXECUTOR_INSTANCE.get(module).exec(logger, message);
+		} else {
+			logger.mini("模块不存在");
+		}
+
+		return logger;
+	}
+
 // ========================================================================================================================
 // ========================================================================================================================
 // ========================================================================================================================
@@ -1095,50 +1295,15 @@ public class Module_Systemd extends Module {
 			Module_Systemd.this.doSendModuleReport(message);
 		}
 
-		public LoggerX init(String level) throws Exception {
-			LoggerX logger = new LoggerX();
-			logger.info(LoggerX.datetime());
-			switch (level) {
-			case "0":
-				logger.info("init 0：切换启停");
-				if (JcqAppAbstract.enable) {
-					JcqAppAbstract.enable = false;
-					logger.info("切换至停机");
-				} else {
-					JcqAppAbstract.enable = true;
-					logger.info("切换至运行");
-				}
-				break;
-			case "1":
-				logger.info("init 1：初始化");
-				Module_Systemd.this.init(logger);
-				break;
-			case "2":
-				logger.info("init 2：启动");
-				Module_Systemd.this.boot(logger);
-				break;
-			case "3":
-				logger.info("init 3：保存");
-				Module_Systemd.this.save(logger);
-				break;
-			case "4":
-				logger.info("init 4：关闭丢弃");
-				Module_Systemd.this.shut(logger);
-				break;
-			case "5":
-				logger.info("init 5：保存关闭");
-				Module_Systemd.this.save(logger);
-				Module_Systemd.this.shut(logger);
-				break;
-			case "6":
-				logger.info("init 6：保存重启");
-				Module_Systemd.this.save(logger);
-				Module_Systemd.this.shut(logger);
-				Module_Systemd.this.boot(logger);
-				break;
-			}
-			return logger;
+		public LoggerX exec(Message message) throws Exception {
+			return Module_Systemd.this.doExec(message);
 		}
+
+		public LoggerX init(String string) throws Exception {
+			return Module_Systemd.this.doInit(string);
+		}
+
+		// ========================================================================================================================
 
 		public TestDelegate test() {
 			return this.testDelegate;

@@ -110,7 +110,29 @@ public class LoggerX {
 		return this.full(name, message);
 	}
 
+	public String seek(long name, String message) {
+		this.builder_seek.append("\r\n");
+		this.builder_seek.append("[");
+		this.builder_seek.append(time());
+		this.builder_seek.append("] ");
+		this.builder_seek.append(name);
+		this.builder_seek.append(": ");
+		this.builder_seek.append(message);
+		return this.full(name, message);
+	}
+
 	public String full(String name, String message) {
+		this.builder_full.append("\r\n");
+		this.builder_full.append("[");
+		this.builder_full.append(time());
+		this.builder_full.append("] ");
+		this.builder_full.append(name);
+		this.builder_full.append(": ");
+		this.builder_full.append(message);
+		return message;
+	}
+
+	public String full(long name, String message) {
 		this.builder_full.append("\r\n");
 		this.builder_full.append("[");
 		this.builder_full.append(time());
@@ -249,7 +271,15 @@ public class LoggerX {
 		return formater.format(date);
 	}
 
-	public static String dumpUnicode(String raw) {
+	public static String unicodeid(String raw) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < raw.length(); i++) {
+			builder.append(Integer.toHexString(raw.charAt(i) & 0xffff));
+		}
+		return builder.toString();
+	}
+
+	public static String unicode(String raw) {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < raw.length(); i++) {
 			builder.append("\\u");

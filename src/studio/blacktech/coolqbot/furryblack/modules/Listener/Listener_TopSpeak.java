@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.modules;
+package studio.blacktech.coolqbot.furryblack.modules.Listener;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -103,7 +103,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("#")) { continue; }
 				this.GROUP_REPORT.add(Long.parseLong(line));
-				logger.seek(this.MODULE_PACKAGENAME(), "每日汇报 " + line);
+				logger.seek(MODULE_PACKAGENAME, "每日汇报 " + line);
 			}
 			reader.close();
 		} else {
@@ -114,7 +114,11 @@ public class Listener_TopSpeak extends ModuleListener {
 			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(this.GROUP_STATUS_SERIAL));
 			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
 			loader.close();
-			logger.seek(this.MODULE_PACKAGENAME(), "读取存档 " + this.GROUP_STATUS.size());
+			logger.seek(MODULE_PACKAGENAME, "读取存档 " + (this.GROUP_STATUS == null ? "空" : this.GROUP_STATUS.size()));
+			for (long gropid : this.GROUP_STATUS.keySet()) {
+				long time = this.GROUP_STATUS.get(gropid).initdt;
+				logger.seek(gropid, LoggerX.datetime(new Date(time)) + "(" + time + ")");
+			}
 		} else {
 			this.GROUP_STATUS = new HashMap<>();
 		}
@@ -122,7 +126,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		for (Group group : groups) {
 			if (!this.GROUP_STATUS.containsKey(group.getId())) {
 				this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
-				logger.seek(this.MODULE_PACKAGENAME(), "添加新群 " + group.getName() + "(" + group.getId() + ")");
+				logger.seek(MODULE_PACKAGENAME, " 添加新群 " + group.getName() + "(" + group.getId() + ")");
 			}
 		}
 
@@ -133,30 +137,34 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-		logger.info(this.MODULE_PACKAGENAME(), "启动工作线程");
+		logger.info(MODULE_PACKAGENAME, "启动工作线程");
 		this.thread = new Thread(new Worker());
 		this.thread.start();
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
-		logger.info(this.MODULE_PACKAGENAME(), "终止工作线程");
+		logger.info(MODULE_PACKAGENAME, "终止工作线程");
 		this.thread.interrupt();
 		this.thread.join();
 	}
 
 	@Override
 	public void save(LoggerX logger) throws Exception {
-		logger.info(this.MODULE_PACKAGENAME(), "初始化容器");
+		logger.info(MODULE_PACKAGENAME, "初始化容器");
 		this.GROUP_STATUS_SERIAL.delete();
 		ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(this.GROUP_STATUS_SERIAL));
-		logger.info(this.MODULE_PACKAGENAME(), "数据序列化");
+		logger.info(MODULE_PACKAGENAME, "数据序列化");
 		saver.writeObject(this.GROUP_STATUS);
 		saver.close();
 	}
 
 	@Override
 	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
 	}
 
 	@Override
@@ -237,8 +245,11 @@ public class Listener_TopSpeak extends ModuleListener {
 		// ===========================================================
 
 		builder.append("（1/4）水群统计\r\n自 ");
-		builder.append(LoggerX.datetime(new Date(groupStatus.initdt)));
-//		builder.append(LoggerX.datetime(new Date(groupStatus.initdt), "yyyy-MM-dd"));
+		if (entry.DEBUG()) {
+			builder.append(LoggerX.datetime(new Date(groupStatus.initdt)));
+		} else {
+			builder.append(LoggerX.datetime(new Date(groupStatus.initdt), "yyyy-MM-dd"));
+		}
 		builder.append("以来\r\n总消息数：");
 		builder.append(groupStatus.GROP_MESSAGES);
 		builder.append("\r\n发言条数：");
@@ -266,9 +277,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		for (long userid : groupStatus.USER_STATUS.keySet()) {
 			userStatus = groupStatus.USER_STATUS.get(userid);
 			int userCharacter = userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE;
-			// 没说过话不统计
 			if (userCharacter > 0) {
-				// 发言次数一样
 				if (allMemberRank.containsKey(userCharacter)) {
 					allMemberRank.get(userCharacter).add(userid);
 				} else {
@@ -322,8 +331,6 @@ public class Listener_TopSpeak extends ModuleListener {
 				i = i + tempSet.size();
 			}
 			report.add(builder.toString());
-		} else {
-			report.add("（2/4）成员排行：没有成员发言过");
 		}
 
 		// ===========================================================
@@ -332,35 +339,38 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		for (String message : groupStatus.GROP_SENTENCE) {
 
-//			// 合并常见内容
-//			if (message.equals("?")) {
-//				message = "？";
-//			} else if (message.equals("??")) {
-//				message = "？？";
-//			} else if (message.equals("???")) {
-//				message = "？？？";
-//			} else if (message.equals("????")) {
-//				message = "？？？？";
-//			} else if (message.equals("wky")) {
-//				message = "我可以";
-//			} else if (message.equals("whl")) {
-//				message = "我好了";
-//			} else if (message.equals("hso")) {
-//				message = "好骚哦";
-//			} else if (message.equals("tql")) {
-//				message = "太强了";
-//			} else if (message.equals("tfl")) {
-//				message = "太富了";
-//			} else if (message.equals("草")) {
-//				message = "草";
-//			} else if (message.equals("操")) {
-//				message = "草";
-//			} else if (message.equals("艹")) {
-//				message = "草";
-//			} else if (message.equals("")) {
-//				// 不管为什么产生的空消息
-//				continue;
-//			}
+			if (LoggerX.unicodeid(message).equals("20")) {
+				// 这里有BUG
+				// 未知的原因产生了 \u0020 的句子
+				continue;
+			} else if (message.equals("?")) {
+				message = "？";
+			} else if (message.equals("??")) {
+				message = "？？";
+			} else if (message.equals("???")) {
+				message = "？？？";
+			} else if (message.equals("????")) {
+				message = "？？？？";
+			} else if (message.equals("wky")) {
+				message = "我可以";
+			} else if (message.equals("whl")) {
+				message = "我好了";
+			} else if (message.equals("hso")) {
+				message = "好骚哦";
+			} else if (message.equals("tql")) {
+				message = "太强了";
+			} else if (message.equals("tfl")) {
+				message = "太富了";
+			} else if (message.equals("草")) {
+				message = "草";
+			} else if (message.equals("操")) {
+				message = "草";
+			} else if (message.equals("艹")) {
+				message = "草";
+			} else {
+				// SAM IS RAGE
+				// SAM IS RAGE
+			}
 
 			if (allMessageRankTemp.containsKey(message)) {
 				allMessageRankTemp.put(message, allMessageRankTemp.get(message) + 1);
@@ -398,14 +408,14 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(messageRank);
 					builder.append("次：");
 					builder.append(message);
+					if (entry.DEBUG()) { builder.append(LoggerX.unicode(message)); }
+					JcqApp.CQ.logDebug("FurryBlackDebug", message + " > " + LoggerX.unicode(message));
 					if (limit > 20) { break; }
 				}
 				order = order + tempSet.size();
 				if (limit > 20) { break; }
 			}
 			report.add(builder.toString());
-		} else {
-			report.add("（3/4）整句排行：没有重复过的整句");
 		}
 
 		// ===========================================================
@@ -434,7 +444,6 @@ public class Listener_TopSpeak extends ModuleListener {
 		allPictureRank.remove(1);
 
 		if (allPictureRank.size() > 0) {
-			report.add("（4/4）图片排行");
 			int order = 1;
 			int limit = 0;
 			for (int pictureRank : allPictureRank.keySet()) {
@@ -454,8 +463,6 @@ public class Listener_TopSpeak extends ModuleListener {
 				order = order + tempSet.size();
 				if (limit > 2) { break; }
 			}
-		} else {
-			report.add("（4/4）图片排行：没有重复过的图片");
 		}
 
 		// ===========================================================
@@ -480,11 +487,10 @@ public class Listener_TopSpeak extends ModuleListener {
 						time = time - date.getHours() * 3600;
 						if (time < 0) { time = time + 864000; }
 						time = time * 1000;
-						time = time - 7;
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 休眠：" + time);
+						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
 						Thread.sleep(time);
 						// =======================================================
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 执行");
+						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "执行"); }
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {
 							if (Listener_TopSpeak.this.GROUP_REPORT.contains(temp)) {
 								entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp));
@@ -492,19 +498,20 @@ public class Listener_TopSpeak extends ModuleListener {
 								continue;
 							}
 						}
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 结果");
+						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "结果"); }
 						// =======================================================
 					}
 				} catch (Exception exception) {
 					if (JcqAppAbstract.enable) {
-						JcqApp.CQ.logWarning("FurryBlackWorker", "[Listener_TopSpeak] 异常");
+						JcqApp.CQ.logWarning(MODULE_PACKAGENAME, "异常");
 					} else {
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Listener_TopSpeak] 关闭");
+						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "关闭");
 					}
 				}
 			} while (JcqAppAbstract.enable);
 		}
 	}
+
 }
 
 class GroupStatus implements Serializable {

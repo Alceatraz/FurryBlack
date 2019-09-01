@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.modules;
+package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -110,7 +110,7 @@ public class Executor_zhan extends ModuleExecutor {
 		this.CARD.put(43, "XXI. THE WORLD 世界正位\r\n成功 道路 航程 换位");
 		this.CARD.put(44, "XXI. THE WORLD 世界逆位\r\n惯性 固执 停滞 持久");
 
-		// 为什么不写循环？ 因为写死运行快
+		// 为什么不写循环？ 因为写死运行快 塔罗牌永远就那么多
 		// @formatter:off
 		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
 		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
@@ -141,6 +141,10 @@ public class Executor_zhan extends ModuleExecutor {
 
 	@Override
 	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
 	}
 
 	@Override

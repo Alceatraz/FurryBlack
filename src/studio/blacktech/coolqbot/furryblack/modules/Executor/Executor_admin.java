@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.modules;
+package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
@@ -65,6 +65,10 @@ public class Executor_admin extends ModuleExecutor {
 	}
 
 	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
+	}
+
+	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
@@ -86,14 +90,17 @@ public class Executor_admin extends ModuleExecutor {
 			switch (message.getSegment()[0]) {
 			case "bootlog":
 				if (message.getSection() == 2) {
-					entry.getMessage().adminInfo(entry.getBootLogger(Integer.parseInt(message.getSegment()[1])));
+					entry.getMessage().adminInfo(entry.getBootLogger(Integer.parseInt(message.getSegment(1))));
 				} else {
 					entry.getMessage().adminInfo(this.MESSAGE_bootlog);
 				}
 				return true;
+			case "exec":
+				entry.getMessage().adminInfo(entry.getSystemd().exec(message.toMessage()).make(3));
+				return true;
 			case "init":
 				if (message.getSection() == 2) {
-					entry.getMessage().adminInfo(entry.getSystemd().init(message.getSegment()[1]).make(2));
+					entry.getMessage().adminInfo(entry.getSystemd().init(message.getSegment(1)).make(3));
 				} else {
 					entry.getMessage().adminInfo(this.MESSAGE_init);
 				}
@@ -127,14 +134,14 @@ public class Executor_admin extends ModuleExecutor {
 
 			case "bootlog":
 				if (message.getSection() == 2) {
-					entry.getMessage().gropInfo(gropid, entry.getBootLogger(Integer.parseInt(message.getSegment()[1])));
+					entry.getMessage().gropInfo(gropid, entry.getBootLogger(Integer.parseInt(message.getSegment(1))));
 				} else {
 					entry.getMessage().gropInfo(gropid, this.MESSAGE_bootlog);
 				}
 				return true;
 			case "init":
 				if (message.getSection() == 2) {
-					entry.getMessage().gropInfo(gropid, entry.getSystemd().init(message.getSegment()[1]).make(2));
+					entry.getMessage().gropInfo(gropid, entry.getSystemd().init(message.getSegment(1)).make(3));
 				} else {
 					entry.getMessage().gropInfo(gropid, this.MESSAGE_init);
 				}

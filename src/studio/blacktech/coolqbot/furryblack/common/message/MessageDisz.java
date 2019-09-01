@@ -32,4 +32,8 @@ public class MessageDisz extends Message {
 		builder.append(super.toString());
 		return builder.toString();
 	}
+
+	public Message toMessage() {
+		return this;
+	}
 }

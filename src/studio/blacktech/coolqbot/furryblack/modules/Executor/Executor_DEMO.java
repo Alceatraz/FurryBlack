@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.modules;
+package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -235,6 +235,13 @@ public class Executor_DEMO extends ModuleExecutor {
 	}
 
 	/**
+	 * 用于管理和debug /admin exec --module=demo xxx xxxx xxx xxxx xxxxx xxxxxxx
+	 */
+	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
+	}
+
+	/**
 	 * 群成员增加时执行
 	 */
 	@Override
@@ -334,17 +341,17 @@ public class Executor_DEMO extends ModuleExecutor {
 						// time = time - 5;
 
 						// 应当输出log以便于观察定时任务的状况
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 休眠：" + time);
+						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 休眠：" + time);
 
 						Thread.sleep(time);
 
 						// 应当输出log以便于观察定时任务的状况
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 执行");
+						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 执行");
 
 						// 此处执行实际任务
 
 						// 应当输出log以便于观察定时任务的状况
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 结果");
+						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 结果");
 
 					}
 
@@ -353,10 +360,10 @@ public class Executor_DEMO extends ModuleExecutor {
 					// 如果框架关闭，则并非真的异常 此时将会跳出主循环 结束worker
 					// 如果框架运行中，则遇到了真正意义上的异常，应观察发生了什么
 					if (JcqAppAbstract.enable) {
-						JcqApp.CQ.logWarning("FurryBlackWorker", "[Executor_DEMO] 异常");
+						JcqApp.CQ.logWarning(MODULE_PACKAGENAME, "[Executor_DEMO] 异常");
 						exception.printStackTrace();
 					} else {
-						JcqApp.CQ.logInfo("FurryBlackWorker", "[Executor_DEMO] 关闭");
+						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 关闭");
 					}
 				}
 			} while (JcqAppAbstract.enable);

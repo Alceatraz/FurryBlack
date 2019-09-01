@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 
 public class Message implements Serializable {
@@ -152,8 +153,8 @@ public class Message implements Serializable {
 	 */
 	public Message parseMessage() {
 
-		if (!parsed) {
-			parsed = true;
+		if (!this.parsed) {
+			this.parsed = true;
 			if (this.rawMessage.startsWith("&#91;闪照&#93;")) {
 				this.isSnappic = true;
 			} else if (this.rawMessage.startsWith("&#91;视频&#93;")) {
@@ -174,7 +175,10 @@ public class Message implements Serializable {
 				}
 				this.resMessage = this.rawMessage.replaceAll("\\[CQ:.+\\]", "");
 				this.resLength = this.resMessage.length();
+
 				if (this.resLength == 0) { this.isPureCQC = true; }
+
+				if (LoggerX.unicodeid(this.resMessage).equals("20")) { entry.getMessage().adminInfo(this.toString()); }
 
 			}
 		}
@@ -308,6 +312,10 @@ public class Message implements Serializable {
 	 */
 	public String[] getSegment() {
 		return this.segment;
+	}
+
+	public String getSegment(int index) {
+		return this.segment[index];
 	}
 
 	/**

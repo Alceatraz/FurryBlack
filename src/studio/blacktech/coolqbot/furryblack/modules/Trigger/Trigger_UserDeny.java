@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.modules;
+package studio.blacktech.coolqbot.furryblack.modules.Trigger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -118,14 +118,14 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 		while ((line = readerUser.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			logger.seek(this.MODULE_PACKAGENAME(), "禁止私聊用户 " + line);
+			logger.seek(MODULE_PACKAGENAME, "禁止私聊用户 " + line);
 			this.USER_IGNORE.add(Long.parseLong(line));
 		}
 
 		while ((line = readerDisz.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.indexOf(":") < 0) { continue; }
-			logger.seek(this.MODULE_PACKAGENAME(), "禁止组聊用户 " + line);
+			logger.seek(MODULE_PACKAGENAME, "禁止组聊用户 " + line);
 			temp = line.split(":");
 			diszid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
@@ -136,7 +136,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		while ((line = readerGrop.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.indexOf(":") < 0) { continue; }
-			logger.seek(this.MODULE_PACKAGENAME(), "禁止群聊用户 " + line);
+			logger.seek(MODULE_PACKAGENAME, "禁止群聊用户 " + line);
 			temp = line.split(":");
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
@@ -190,6 +190,10 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	@Override
 	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
 	}
 
 	@Override

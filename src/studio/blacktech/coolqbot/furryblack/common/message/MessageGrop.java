@@ -32,4 +32,8 @@ public class MessageGrop extends Message {
 		builder.append(super.toString());
 		return builder.toString();
 	}
+
+	public Message toMessage() {
+		return this;
+	}
 }

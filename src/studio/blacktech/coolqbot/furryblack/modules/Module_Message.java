@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack;
+package studio.blacktech.coolqbot.furryblack.modules;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import com.sobte.cqp.jcq.entity.Group;
 import com.sobte.cqp.jcq.event.JcqApp;
 
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.Module;
@@ -159,6 +160,10 @@ public class Module_Message extends Module {
 
 	@Override
 	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
 	}
 
 	@Override

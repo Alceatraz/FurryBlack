@@ -90,5 +90,4 @@ public abstract class ModuleListener extends Module {
 		this.COUNT_GROP++;
 		return this.doGropMessage(gropid, userid, message, messageid, messagefont);
 	}
-
 }

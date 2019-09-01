@@ -10,15 +10,17 @@ import com.sobte.cqp.jcq.entity.IRequest;
 import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
-import studio.blacktech.coolqbot.furryblack.Module_Dynamic.DDNSapiDelegate;
-import studio.blacktech.coolqbot.furryblack.Module_Message.MessageDelegate;
-import studio.blacktech.coolqbot.furryblack.Module_Nickmap.NicknameDelegate;
-import studio.blacktech.coolqbot.furryblack.Module_Systemd.SystemdDelegate;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.modules.Module_Message;
+import studio.blacktech.coolqbot.furryblack.modules.Module_Message.MessageDelegate;
+import studio.blacktech.coolqbot.furryblack.modules.Module_Nickmap;
+import studio.blacktech.coolqbot.furryblack.modules.Module_Nickmap.NicknameDelegate;
+import studio.blacktech.coolqbot.furryblack.modules.Module_Systemd;
+import studio.blacktech.coolqbot.furryblack.modules.Module_Systemd.SystemdDelegate;
 
 /**
  * JcqApp的入口类文件
@@ -40,7 +42,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "8.3 2019-08-26 (11:00)";
+	public final static String VerID = "9.0 2019-09-01 (13:40)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 
@@ -50,7 +52,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	//
 	// ==========================================================================================================================================================
 
-	private static boolean DEBUG = false;
+	private static boolean DEBUG = true;
 
 	private static File FOLDER_CONF;
 	private static File FOLDER_DATA;
@@ -58,7 +60,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	private static Module_Systemd SYSTEMD;
 	private static Module_Nickmap NICKMAP;
 	private static Module_Message MESSAGE;
-	private static Module_Dynamic DDNSAPI;
 
 	private static LoggerX bootLoggerX;
 
@@ -149,17 +150,14 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			entry.MESSAGE = new Module_Message();
 			entry.NICKMAP = new Module_Nickmap();
-			entry.DDNSAPI = new Module_Dynamic();
 			entry.SYSTEMD = new Module_Systemd();
 
 			MESSAGE.init(logger);
 			NICKMAP.init(logger);
-			DDNSAPI.init(logger);
 			SYSTEMD.init(logger);
 
 			MESSAGE.boot(logger);
 			NICKMAP.boot(logger);
-			DDNSAPI.boot(logger);
 			SYSTEMD.boot(logger);
 
 			// ==========================================================================================================================
@@ -174,6 +172,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			// ==========================================================================================================================
 
 			JcqAppAbstract.enable = true;
+
+			entry.DEBUG = false;
 
 		} catch (Exception exce) {
 			JcqAppAbstract.enable = false;
@@ -192,7 +192,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		JcqAppAbstract.enable = false;
 		try {
 			logger.mini(LoggerX.datetime());
-			DDNSAPI.shut(logger);
 			logger.mini("[CORE] 保存");
 			SYSTEMD.save(logger);
 			logger.mini("[CORE] 结束");
@@ -513,27 +512,18 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	}
 
 	/**
-	 * 获取DDNSApi的代理对象
+	 * 获取Message的代理对象
 	 *
-	 * @return DDNSApi的代理对象
-	 */
-	public static DDNSapiDelegate getDDNSAPI() {
-		return DDNSAPI.getDelegate();
-	}
-
-	/**
-	 * 获取DDNSApi的代理对象
-	 *
-	 * @return DDNSApi的代理对象
+	 * @return Message的代理对象
 	 */
 	public static MessageDelegate getMessage() {
 		return MESSAGE.getDelegate();
 	}
 
 	/**
-	 * 获取DDNSApi的代理对象
+	 * 获取Nickmap的代理对象
 	 *
-	 * @return DDNSApi的代理对象
+	 * @return Nickmap的代理对象
 	 */
 	public static NicknameDelegate getNickmap() {
 		return NICKMAP.getDelegate();

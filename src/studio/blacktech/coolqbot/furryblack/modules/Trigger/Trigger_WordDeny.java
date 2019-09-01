@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.modules;
+package studio.blacktech.coolqbot.furryblack.modules.Trigger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -104,7 +104,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			this.BLACKLIST.add(line);
-			logger.seek(this.MODULE_PACKAGENAME(), "过滤规则 " + line);
+			logger.seek(MODULE_PACKAGENAME, "过滤规则 " + line);
 		}
 		reader.close();
 
@@ -136,6 +136,10 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	@Override
 	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
 	}
 
 	@Override

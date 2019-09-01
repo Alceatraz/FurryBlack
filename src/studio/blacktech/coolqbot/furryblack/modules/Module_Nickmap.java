@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack;
+package studio.blacktech.coolqbot.furryblack.modules;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -108,6 +108,10 @@ public class Module_Nickmap extends Module {
 
 	@Override
 	public void reload(LoggerX logger) throws Exception {
+	}
+
+	@Override
+	public void exec(LoggerX logger, Message message) throws Exception {
 	}
 
 	@Override

@@ -94,6 +94,8 @@ public abstract class Module implements Serializable {
 
 	public abstract void reload(LoggerX logger) throws Exception;
 
+	public abstract void exec(LoggerX logger, Message message) throws Exception;
+
 	public abstract void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
 
 	public abstract void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
