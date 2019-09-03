@@ -976,7 +976,7 @@ public class Module_Systemd extends Module {
 		// ========================================================================================================================
 
 		builder.append(LoggerX.datetime());
-		builder.append("\r\n\r\n运行时间：");
+		builder.append("\r\n运行时间：");
 		builder.append(uptimedd);
 		builder.append(" - ");
 		builder.append(uptimehh);
@@ -995,7 +995,7 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("\r\n\r\n私聊：");
+		builder.append("\r\n私聊：");
 		builder.append(this.COUNT_USER_MESSAGE);
 		builder.append("次\r\n组聊：");
 		builder.append(this.COUNT_DISZ_MESSAGE);
@@ -1005,34 +1005,36 @@ public class Module_Systemd extends Module {
 
 		// ===============================================================================
 
-		builder.append("\r\n\r\n触发器：");
+		builder.append("\r\n定时器：");
+		builder.append(this.SCHEDULER_INSTANCE.size());
+		builder.append("个");
+
+		for (String temp : this.SCHEDULER_INSTANCE.keySet()) {
+			ModuleScheduler instance = this.SCHEDULER_INSTANCE.get(temp);
+			if (instance.ENABLE()) {
+				builder.append("\r\n");
+				result = instance.generateReport(0, null, null, null);
+				builder.append(instance.MODULE_PACKAGENAME());
+				builder.append("：");
+				builder.append(instance.COUNT());
+				if (result != null) {
+					builder.append("\r\n");
+					for (String line : result) {
+						builder.append(line);
+					}
+				}
+			}
+		}
+
+		// ===============================================================================
+
+		builder.append("\r\n触发器：");
 		builder.append(this.TRIGGER_USER.size());
 		builder.append("/");
 		builder.append(this.TRIGGER_DISZ.size());
 		builder.append("/");
 		builder.append(this.TRIGGER_GROP.size());
-
-		builder.append("次\r\n监听器：");
-
-		builder.append(this.LISTENER_USER.size());
-		builder.append("/");
-		builder.append(this.LISTENER_DISZ.size());
-		builder.append("/");
-		builder.append(this.LISTENER_GROP.size());
-
-		builder.append("次\r\n执行器：");
-
-		builder.append(this.EXECUTOR_USER.size());
-		builder.append("/");
-		builder.append(this.EXECUTOR_DISZ.size());
-		builder.append("/");
-		builder.append(this.EXECUTOR_GROP.size());
-
-		// ===============================================================================
-
-		builder.append("次\r\n");
-
-		// ===============================================================================
+		builder.append("个");
 
 		for (String temp : this.TRIGGER_INSTANCE.keySet()) {
 			ModuleTrigger instance = this.TRIGGER_INSTANCE.get(temp);
@@ -1055,6 +1057,16 @@ public class Module_Systemd extends Module {
 			}
 		}
 
+		// ===============================================================================
+
+		builder.append("\r\n监听器：");
+		builder.append(this.LISTENER_USER.size());
+		builder.append("/");
+		builder.append(this.LISTENER_DISZ.size());
+		builder.append("/");
+		builder.append(this.LISTENER_GROP.size());
+		builder.append("个");
+
 		for (String temp : this.LISTENER_INSTANCE.keySet()) {
 			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
 			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) {
@@ -1074,6 +1086,16 @@ public class Module_Systemd extends Module {
 				}
 			}
 		}
+
+		// ===============================================================================
+
+		builder.append("\r\n执行器：");
+		builder.append(this.EXECUTOR_USER.size());
+		builder.append("/");
+		builder.append(this.EXECUTOR_DISZ.size());
+		builder.append("/");
+		builder.append(this.EXECUTOR_GROP.size());
+		builder.append("个");
 
 		for (String temp : this.EXECUTOR_INSTANCE.keySet()) {
 			ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(temp);

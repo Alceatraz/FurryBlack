@@ -42,7 +42,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "9.0 2019-09-01 (13:40)";
+	public final static String VerID = "9.1 2019-09-03 (16:00)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 

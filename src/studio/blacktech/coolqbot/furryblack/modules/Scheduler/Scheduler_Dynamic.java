@@ -29,7 +29,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	private static String MODULE_COMMANDNAME = "ddns";
 	private static String MODULE_DISPLAYNAME = "动态域名";
 	private static String MODULE_DESCRIPTION = "动态域名";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "2.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	public static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	public static String[] MODULE_PRIVACY_LISTEN = new String[] {};
@@ -51,6 +51,15 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	private String PASSWORD;
 
 	private Thread thread;
+
+	private int COUNT_GETIP = 0;
+	private int COUNT_SETIP = 0;
+	private int COUNT_FRESH = 0;
+	private int COUNT_GETIP_FAILED = 0;
+	private int COUNT_SETIP_FAILED = 0;
+	private int COUNT_FRESH_FAILED = 0;
+	private int COUNT_CHANGE = 0;
+	private int COUNT_FAILED = 0;
 
 	// ==========================================================================================================================================================
 	//
@@ -173,7 +182,28 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		return null;
+
+		StringBuilder builder = new StringBuilder();
+		builder.append("获取地址：");
+		builder.append(COUNT_GETIP);
+		builder.append("/");
+		builder.append(COUNT_GETIP_FAILED);
+		builder.append("\r\n设置地址：");
+		builder.append(COUNT_SETIP);
+		builder.append("/");
+		builder.append(COUNT_SETIP_FAILED);
+		builder.append("\r\n更新地址：");
+		builder.append(COUNT_FRESH);
+		builder.append("/");
+		builder.append(COUNT_FRESH_FAILED);
+		builder.append("\r\n地址变更：");
+		builder.append(COUNT_CHANGE);
+		builder.append("\r\n访问失败：");
+		builder.append(COUNT_FAILED);
+		String res[] = new String[1];
+		res[0] = builder.toString();
+		return res;
+
 	}
 
 	@SuppressWarnings("deprecation")
@@ -199,6 +229,8 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
 						Thread.sleep(time);
 						// =======================================================
+						COUNT++;
+						// =======================================================
 						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "执行"); }
 						respons = Scheduler_Dynamic.this.setAddress();
 						// 直接更新地址
@@ -209,6 +241,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 							if (address == null) {
 								// 失败的话 增加失败计数
 								failcount++;
+								COUNT_FAILED++;
 							} else {
 								// 成功的话
 								// 利用正则判断是否是正常的ip地址
@@ -219,20 +252,28 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 									if (respons == null) {
 										// 失败的话 增加失败计数
 										failcount++;
+										COUNT_FAILED++;
 									} else {
 										// 成功的话 重置失败计数
 										failcount = 0;
+										if (respons.startsWith("good")) { COUNT_CHANGE++; }
 									}
 								} else {
 									// 不是正常地址 增加失败计数
 									failcount++;
+									COUNT_FAILED++;
 								}
 							}
 						} else {
 							// 成功的话 重置失败计数
 							failcount = 0;
+							// 如果发生改变API返回内容为 good 123.123.123.123
+							if (respons.startsWith("good")) { COUNT_CHANGE++; }
 						}
-						if (failcount > 6) { entry.getMessage().adminInfo("[DDNS] 警告 更新失败\r\n已连续失败六次"); }
+						if (failcount > 6) {
+							failcount = 0;
+							entry.getMessage().adminInfo("[DDNS] 警告 更新失败\r\n需要手动介入\r\n已连续失败六次");
+						}
 						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "结果 " + respons); }
 						// =======================================================
 					}
@@ -259,10 +300,12 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
+			COUNT_GETIP++;
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
 			entry.getMessage().adminInfo(MODULE_PACKAGENAME + " 获取异常 " + exception.getMessage());
+			COUNT_GETIP_FAILED++;
 			return null;
 		}
 	}
@@ -280,8 +323,10 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
+			COUNT_SETIP++;
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
+			COUNT_SETIP_FAILED++;
 			exception.printStackTrace();
 			entry.getMessage().adminInfo(MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;
@@ -301,8 +346,10 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
+			COUNT_FRESH++;
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
+			COUNT_FRESH_FAILED++;
 			exception.printStackTrace();
 			entry.getMessage().adminInfo(MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;

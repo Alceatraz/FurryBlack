@@ -34,10 +34,16 @@ public abstract class ModuleScheduler extends Module {
 	}
 	// @formatter:on
 
+	protected int COUNT = 0;
+
 	protected boolean ENABLE = false;
 
 	public boolean ENABLE() {
 		return this.ENABLE;
+	}
+
+	public int COUNT() {
+		return COUNT;
 	}
 
 }
