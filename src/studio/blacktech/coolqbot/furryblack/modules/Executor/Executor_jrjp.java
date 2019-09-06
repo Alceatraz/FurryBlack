@@ -18,7 +18,7 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -35,7 +35,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_jrjp";
+	private static String MODULE_PACKAGENAME = "Executor_JRJP";
 	private static String MODULE_COMMANDNAME = "jrjp";
 	private static String MODULE_DISPLAYNAME = "祭祀";
 	private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
@@ -109,11 +109,15 @@ public class Executor_jrjp extends ModuleExecutor {
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.indexOf(":") < 0) { continue; }
-			logger.seek(MODULE_PACKAGENAME, "排除用户 " + line);
 			temp = line.split(":");
-			long gropid = Long.parseLong(temp[0]);
-			long userid = Long.parseLong(temp[1]);
-			this.IGNORES.get(gropid).add(userid);
+			if (temp.length != 2) {
+				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
+			} else {
+				long gropid = Long.parseLong(temp[0]);
+				long userid = Long.parseLong(temp[1]);
+				this.IGNORES.get(gropid).add(userid);
+				logger.seek(MODULE_PACKAGENAME, "排除用户", line);
+			}
 		}
 		reader.close();
 
@@ -181,7 +185,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		long victim = this.VICTIM.get(gropid);
-		entry.getMessage().gropInfo(gropid, entry.getNickmap().getNickname(victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.AVCODE.get(gropid));
+		entry.getMessage().gropInfo(gropid, entry.getNickmap().getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.AVCODE.get(gropid));
 		return true;
 	}
 	// ==========================================================================================================================================================

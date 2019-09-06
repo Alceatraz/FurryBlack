@@ -11,7 +11,7 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 
@@ -25,11 +25,11 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "scheduler_dynamic";
-	private static String MODULE_COMMANDNAME = "ddns";
+	private static String MODULE_PACKAGENAME = "Scheduler_Dynamic";
+	private static String MODULE_COMMANDNAME = "dynamic";
 	private static String MODULE_DISPLAYNAME = "动态域名";
 	private static String MODULE_DESCRIPTION = "动态域名";
-	private static String MODULE_VERSION = "2.0";
+	private static String MODULE_VERSION = "4.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	public static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	public static String[] MODULE_PRIVACY_LISTEN = new String[] {};
@@ -92,7 +92,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 		this.ENABLE = Boolean.parseBoolean(this.CONFIG.getProperty("enable", "false"));
 
-		logger.seek(MODULE_PACKAGENAME, "开关 " + (this.ENABLE ? "启用" : "禁用"));
+		logger.seek(MODULE_PACKAGENAME, "开关 ", this.ENABLE ? "启用" : "禁用");
 
 		if (this.ENABLE) {
 
@@ -102,11 +102,11 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			this.HOSTNAME = this.CONFIG.getProperty("hostname", "");
 			this.PASSWORD = this.CONFIG.getProperty("password", "");
 
-			logger.seek(MODULE_PACKAGENAME, "获取 " + this.API_GETADDRESS);
-			logger.seek(MODULE_PACKAGENAME, "刷新 " + this.API_SETADDRESS);
-			logger.seek(MODULE_PACKAGENAME, "标识 " + this.CLIENTUA);
-			logger.seek(MODULE_PACKAGENAME, "域名 " + this.HOSTNAME);
-			logger.seek(MODULE_PACKAGENAME, "密码 " + this.PASSWORD.substring(6, 12));
+			logger.seek(MODULE_PACKAGENAME, "获取", this.API_GETADDRESS);
+			logger.seek(MODULE_PACKAGENAME, "刷新", this.API_SETADDRESS);
+			logger.seek(MODULE_PACKAGENAME, "标识", this.CLIENTUA);
+			logger.seek(MODULE_PACKAGENAME, "域名", this.HOSTNAME);
+			logger.seek(MODULE_PACKAGENAME, "密码", this.PASSWORD.substring(6, 12));
 
 		}
 	}
@@ -137,20 +137,17 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	public void reload(LoggerX logger) throws Exception {
 	}
 
-	// admin exec --module=ddns get
-	// admin exec --module=ddns set
-	// admin exec --module=ddns set 123.123.123.123
+	// admin exec --module=dynamic get
+	// admin exec --module=dynamic set
+	// admin exec --module=dynamic set 123.123.123.123
 
 	@Override
 	public void exec(LoggerX logger, Message message) throws Exception {
-
 		if (message.getSection() < 2) {
 			logger.info(MODULE_PACKAGENAME, "参数不足");
 			return;
 		}
-
 		String command = message.getSegment()[1];
-
 		switch (command) {
 		case "get":
 			logger.info(MODULE_PACKAGENAME, this.getAddress());
@@ -163,7 +160,6 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			}
 			return;
 		}
-
 	}
 
 	@Override
@@ -185,21 +181,21 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("获取地址：");
-		builder.append(COUNT_GETIP);
+		builder.append(this.COUNT_GETIP);
 		builder.append("/");
-		builder.append(COUNT_GETIP_FAILED);
+		builder.append(this.COUNT_GETIP_FAILED);
 		builder.append("\r\n设置地址：");
-		builder.append(COUNT_SETIP);
+		builder.append(this.COUNT_SETIP);
 		builder.append("/");
-		builder.append(COUNT_SETIP_FAILED);
+		builder.append(this.COUNT_SETIP_FAILED);
 		builder.append("\r\n更新地址：");
-		builder.append(COUNT_FRESH);
+		builder.append(this.COUNT_FRESH);
 		builder.append("/");
-		builder.append(COUNT_FRESH_FAILED);
+		builder.append(this.COUNT_FRESH_FAILED);
 		builder.append("\r\n地址变更：");
-		builder.append(COUNT_CHANGE);
+		builder.append(this.COUNT_CHANGE);
 		builder.append("\r\n访问失败：");
-		builder.append(COUNT_FAILED);
+		builder.append(this.COUNT_FAILED);
 		String res[] = new String[1];
 		res[0] = builder.toString();
 		return res;
@@ -229,7 +225,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
 						Thread.sleep(time);
 						// =======================================================
-						COUNT++;
+						Scheduler_Dynamic.this.COUNT++;
 						// =======================================================
 						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "执行"); }
 						respons = Scheduler_Dynamic.this.setAddress();
@@ -241,7 +237,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 							if (address == null) {
 								// 失败的话 增加失败计数
 								failcount++;
-								COUNT_FAILED++;
+								Scheduler_Dynamic.this.COUNT_FAILED++;
 							} else {
 								// 成功的话
 								// 利用正则判断是否是正常的ip地址
@@ -252,23 +248,23 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 									if (respons == null) {
 										// 失败的话 增加失败计数
 										failcount++;
-										COUNT_FAILED++;
+										Scheduler_Dynamic.this.COUNT_FAILED++;
 									} else {
 										// 成功的话 重置失败计数
 										failcount = 0;
-										if (respons.startsWith("good")) { COUNT_CHANGE++; }
+										if (respons.startsWith("good")) { Scheduler_Dynamic.this.COUNT_CHANGE++; }
 									}
 								} else {
 									// 不是正常地址 增加失败计数
 									failcount++;
-									COUNT_FAILED++;
+									Scheduler_Dynamic.this.COUNT_FAILED++;
 								}
 							}
 						} else {
 							// 成功的话 重置失败计数
 							failcount = 0;
 							// 如果发生改变API返回内容为 good 123.123.123.123
-							if (respons.startsWith("good")) { COUNT_CHANGE++; }
+							if (respons.startsWith("good")) { Scheduler_Dynamic.this.COUNT_CHANGE++; }
 						}
 						if (failcount > 6) {
 							failcount = 0;
@@ -300,12 +296,12 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
-			COUNT_GETIP++;
+			this.COUNT_GETIP++;
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
 			entry.getMessage().adminInfo(MODULE_PACKAGENAME + " 获取异常 " + exception.getMessage());
-			COUNT_GETIP_FAILED++;
+			this.COUNT_GETIP_FAILED++;
 			return null;
 		}
 	}
@@ -323,10 +319,10 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
-			COUNT_SETIP++;
+			this.COUNT_SETIP++;
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
-			COUNT_SETIP_FAILED++;
+			this.COUNT_SETIP_FAILED++;
 			exception.printStackTrace();
 			entry.getMessage().adminInfo(MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;
@@ -346,10 +342,10 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
-			COUNT_FRESH++;
+			this.COUNT_FRESH++;
 			return new String(buffer, "UTF-8").trim();
 		} catch (IOException exception) {
-			COUNT_FRESH_FAILED++;
+			this.COUNT_FRESH_FAILED++;
 			exception.printStackTrace();
 			entry.getMessage().adminInfo(MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;

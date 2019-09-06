@@ -3,7 +3,7 @@ package studio.blacktech.coolqbot.furryblack.modules.Executor;
 import java.security.SecureRandom;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -20,7 +20,7 @@ public class Executor_dice extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_dice";
+	private static String MODULE_PACKAGENAME = "Executor_Dice";
 	private static String MODULE_COMMANDNAME = "dice";
 	private static String MODULE_DISPLAYNAME = "掷骰子";
 	private static String MODULE_DESCRIPTION = "发送一个骰子的魔法表情";

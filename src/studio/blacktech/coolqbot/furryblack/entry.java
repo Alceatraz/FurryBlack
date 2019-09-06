@@ -10,14 +10,12 @@ import com.sobte.cqp.jcq.entity.IRequest;
 import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.modules.Module_Message;
 import studio.blacktech.coolqbot.furryblack.modules.Module_Message.MessageDelegate;
-import studio.blacktech.coolqbot.furryblack.modules.Module_Nickmap;
 import studio.blacktech.coolqbot.furryblack.modules.Module_Nickmap.NicknameDelegate;
 import studio.blacktech.coolqbot.furryblack.modules.Module_Systemd;
 import studio.blacktech.coolqbot.furryblack.modules.Module_Systemd.SystemdDelegate;
@@ -27,8 +25,11 @@ import studio.blacktech.coolqbot.furryblack.modules.Module_Systemd.SystemdDelega
  *
  * Jcq将会调用约定的生命周期函数
  *
- * @author Alceatraz Warprays
+ * 我们不用IoC 我们不用DI
  *
+ * 我们只制作高度耦合的专用框架
+ *
+ * @author Alceatraz Warprays
  */
 public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
@@ -58,8 +59,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	private static File FOLDER_DATA;
 
 	private static Module_Systemd SYSTEMD;
-	private static Module_Nickmap NICKMAP;
-	private static Module_Message MESSAGE;
 
 	private static LoggerX bootLoggerX;
 
@@ -106,13 +105,11 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	public int enable() {
 
 		bootLoggerX = new LoggerX();
-
 		LoggerX logger = bootLoggerX;
 
 		try {
 
-			logger.rawmini(LoggerX.datetime());
-			logger.rawmini("[FurryBlack] - 启动 ");
+			logger.info("FurryBlack", "启动", LoggerX.datetime());
 
 			// ==========================================================================================================================
 
@@ -125,19 +122,19 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-			logger.full("[CORE] 工作目录", appDirectory);
-			logger.full("[CORE] 配置文件目录", FOLDER_CONF.getPath());
-			logger.full("[CORE] 数据文件目录", FOLDER_DATA.getPath());
+			logger.full("FurryBlack", "工作目录", appDirectory);
+			logger.full("FurryBlack", "配置文件目录", FOLDER_CONF.getPath());
+			logger.full("FurryBlack", "数据文件目录", FOLDER_DATA.getPath());
 
 			// ==========================================================================================================================
 
 			if (!entry.FOLDER_CONF.exists()) {
-				logger.seek("[CORE] 创建目录", FOLDER_CONF.getName());
+				logger.seek("FurryBlack", "创建目录", FOLDER_CONF.getName());
 				entry.FOLDER_CONF.mkdirs();
 			}
 
 			if (!entry.FOLDER_DATA.exists()) {
-				logger.seek("[CORE] 创建目录", FOLDER_DATA.getName());
+				logger.seek("FurryBlack", "创建目录", FOLDER_DATA.getName());
 				entry.FOLDER_DATA.mkdirs();
 			}
 
@@ -148,25 +145,21 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-			entry.MESSAGE = new Module_Message();
-			entry.NICKMAP = new Module_Nickmap();
 			entry.SYSTEMD = new Module_Systemd();
 
-			MESSAGE.init(logger);
-			NICKMAP.init(logger);
 			SYSTEMD.init(logger);
 
-			MESSAGE.boot(logger);
-			NICKMAP.boot(logger);
 			SYSTEMD.boot(logger);
 
 			// ==========================================================================================================================
 
-			logger.rawmini("[FurryBlack] - 完成" + (System.currentTimeMillis() - BOOTTIME) + "ms");
+			logger.info("FurryBlack", "完成", LoggerX.datetime());
+			logger.info("FurryBlack", "耗时", System.currentTimeMillis() - BOOTTIME + "ms");
 
 			// ==========================================================================================================================
 
 			JcqApp.CQ.logInfo("FurryBlack", logger.make(3));
+
 			getMessage().adminInfo(logger.make(0));
 
 			// ==========================================================================================================================
@@ -192,9 +185,9 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		JcqAppAbstract.enable = false;
 		try {
 			logger.mini(LoggerX.datetime());
-			logger.mini("[CORE] 保存");
+			logger.mini("[FurryBlack] - 保存");
 			SYSTEMD.save(logger);
-			logger.mini("[CORE] 结束");
+			logger.mini("[FurryBlack] - 结束");
 			SYSTEMD.shut(logger);
 			getMessage().adminInfo(logger.make(0));
 		} catch (Exception exception) {
@@ -222,6 +215,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int privateMsg(int typeid, int messageid, long userid, String message, int messagefont) {
+		// QQ小冰
+		if (userid == 2854196306L) { return IMsg.MSG_IGNORE; }
 		try {
 			entry.SYSTEMD.doUserMessage(typeid, userid, new MessageUser(typeid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exce) {
@@ -250,6 +245,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int discussMsg(int typeid, int messageid, long diszid, long userid, String message, int messagefont) {
+		// QQ小冰
+		if (userid == 2854196306L) { return IMsg.MSG_IGNORE; }
 		try {
 			entry.SYSTEMD.doDiszMessage(diszid, userid, new MessageDisz(diszid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exce) {
@@ -280,6 +277,8 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 */
 	@Override
 	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
+		// QQ小冰
+		if (userid == 2854196306L) { return IMsg.MSG_IGNORE; }
 		try {
 			entry.SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exce) {
@@ -517,7 +516,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 * @return Message的代理对象
 	 */
 	public static MessageDelegate getMessage() {
-		return MESSAGE.getDelegate();
+		return SYSTEMD.getMESSAGE();
 	}
 
 	/**
@@ -526,7 +525,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	 * @return Nickmap的代理对象
 	 */
 	public static NicknameDelegate getNickmap() {
-		return NICKMAP.getDelegate();
+		return SYSTEMD.getNICKMAP();
 	}
 
 	/**

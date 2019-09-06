@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;

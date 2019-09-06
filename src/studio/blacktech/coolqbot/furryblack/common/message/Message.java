@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 
 public class Message implements Serializable {
 
@@ -178,7 +178,7 @@ public class Message implements Serializable {
 
 				if (this.resLength == 0) { this.isPureCQC = true; }
 
-				if (LoggerX.unicodeid(this.resMessage).equals("20")) { entry.getMessage().adminInfo(this.toString()); }
+				if (entry.DEBUG() && LoggerX.unicodeid(this.resMessage).equals("20")) { entry.getMessage().adminInfo(this.toString()); }
 
 			}
 		}

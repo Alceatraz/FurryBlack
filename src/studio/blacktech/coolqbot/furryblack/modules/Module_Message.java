@@ -14,7 +14,7 @@ import com.sobte.cqp.jcq.entity.Group;
 import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.Module;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
@@ -31,7 +31,7 @@ public class Module_Message extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "core_message";
+	private static String MODULE_PACKAGENAME = "Core_Message";
 	private static String MODULE_COMMANDNAME = "message";
 	private static String MODULE_DISPLAYNAME = "消息广播";
 	private static String MODULE_DESCRIPTION = "负责发送所有消息";
@@ -88,7 +88,7 @@ public class Module_Message extends Module {
 		this.MESSAGE_HISTORY_GROP = new TreeMap<>();
 
 		if (this.NEW_CONFIG) {
-			logger.seek("[Message] 配置文件不存在 - 生成默认配置");
+			logger.seek(MODULE_PACKAGENAME, "配置文件不存在", "生成默认配置");
 			this.CONFIG.setProperty("logger_level", "0");
 			this.CONFIG.setProperty("userid_admin", "0");
 			this.saveConfig();
@@ -135,8 +135,8 @@ public class Module_Message extends Module {
 
 		if (this.USERID_ADMIN == 0) { throw new Exception("管理员账号配置错误"); }
 
-		logger.seek("[Message] 机器人账号", this.USERID_CQBOT);
-		logger.seek("[Message] 管理员账号", this.USERID_ADMIN);
+		logger.seek(MODULE_PACKAGENAME, "机器人账号", this.USERID_CQBOT);
+		logger.seek(MODULE_PACKAGENAME, "管理员账号", this.USERID_ADMIN);
 
 		List<Group> groups = JcqApp.CQ.getGroupList();
 		for (Group group : groups) {

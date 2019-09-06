@@ -1,7 +1,7 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -18,7 +18,7 @@ public class Executor_echo extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_echo";
+	private static String MODULE_PACKAGENAME = "Executor_Echo";
 	private static String MODULE_COMMANDNAME = "echo";
 	private static String MODULE_DISPLAYNAME = "回显";
 	private static String MODULE_DESCRIPTION = "&0>1";

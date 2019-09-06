@@ -9,7 +9,7 @@ import com.sobte.cqp.jcq.entity.Member;
 import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -26,7 +26,7 @@ public class Executor_roulette extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_roulette";
+	private static String MODULE_PACKAGENAME = "Executor_Roulette";
 	private static String MODULE_COMMANDNAME = "roulette";
 	private static String MODULE_DISPLAYNAME = "俄罗斯轮盘赌";
 	private static String MODULE_DESCRIPTION = "你看这子弹又尖又长，这名单又大又宽";
@@ -158,9 +158,9 @@ public class Executor_roulette extends ModuleExecutor {
 				member = JcqApp.CQ.getGroupMemberInfoV2(gropid, round.player.get(i));
 				if (i == bullet) {
 					this.ROULETTE_FREQ.set(i, this.ROULETTE_FREQ.get(i) + 1);
-					entry.getMessage().gropInfo(gropid, entry.getNickmap().getNickname(member.getQqId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
+					entry.getMessage().gropInfo(gropid, entry.getNickmap().getGropnick(gropid, member.getQqId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
 				} else {
-					entry.getMessage().gropInfo(gropid, entry.getNickmap().getNickname(member.getQqId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
+					entry.getMessage().gropInfo(gropid, entry.getNickmap().getGropnick(gropid, member.getQqId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
 				}
 
 			}

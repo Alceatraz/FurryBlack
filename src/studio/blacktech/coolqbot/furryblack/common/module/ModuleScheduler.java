@@ -43,7 +43,7 @@ public abstract class ModuleScheduler extends Module {
 	}
 
 	public int COUNT() {
-		return COUNT;
+		return this.COUNT;
 	}
 
 }

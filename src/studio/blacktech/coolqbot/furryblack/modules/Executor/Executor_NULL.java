@@ -1,6 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -17,7 +17,7 @@ public class Executor_NULL extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_null";
+	private static String MODULE_PACKAGENAME = "Executor_NULL";
 	private static String MODULE_COMMANDNAME = "null";
 	private static String MODULE_DISPLAYNAME = "实例模块";
 	private static String MODULE_DESCRIPTION = "实例模块";
@@ -65,7 +65,6 @@ public class Executor_NULL extends ModuleExecutor {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-
 	}
 
 	@Override

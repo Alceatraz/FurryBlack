@@ -1,7 +1,7 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -18,7 +18,7 @@ public class Executor_admin extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_admin";
+	private static String MODULE_PACKAGENAME = "Executor_Admin";
 	private static String MODULE_COMMANDNAME = "admin";
 	private static String MODULE_DISPLAYNAME = "管理工具";
 	private static String MODULE_DESCRIPTION = "管理员控制台";

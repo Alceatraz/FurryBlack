@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -21,7 +21,7 @@ public class Executor_acon extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_acon";
+	private static String MODULE_PACKAGENAME = "Executor_Acon";
 	private static String MODULE_COMMANDNAME = "acon";
 	private static String MODULE_DISPLAYNAME = "空调";
 	private static String MODULE_DESCRIPTION = "本群冷气开放";

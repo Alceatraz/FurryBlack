@@ -8,7 +8,7 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -25,7 +25,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_jrrp";
+	private static String MODULE_PACKAGENAME = "Executor_JRRP";
 	private static String MODULE_COMMANDNAME = "jrrp";
 	private static String MODULE_DISPLAYNAME = "今日运气";
 	private static String MODULE_DESCRIPTION = "查看今天的运气值";

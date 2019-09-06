@@ -16,7 +16,7 @@ import com.sobte.cqp.jcq.entity.QQInfo;
 import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -33,7 +33,7 @@ public class Executor_chou extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_chou";
+	private static String MODULE_PACKAGENAME = "Executor_Chou";
 	private static String MODULE_COMMANDNAME = "chou";
 	private static String MODULE_DISPLAYNAME = "随机抽人";
 	private static String MODULE_DESCRIPTION = "从当前群随机选择一个成员";
@@ -102,11 +102,15 @@ public class Executor_chou extends ModuleExecutor {
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.indexOf(":") < 0) { continue; }
-			logger.seek(MODULE_PACKAGENAME, "排除用户 " + line);
 			temp = line.split(":");
-			gropid = Long.parseLong(temp[0]);
-			userid = Long.parseLong(temp[1]);
-			this.IGNORES.get(gropid).add(userid);
+			if (temp.length != 2) {
+				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
+			} else {
+				gropid = Long.parseLong(temp[0]);
+				userid = Long.parseLong(temp[1]);
+				this.IGNORES.get(gropid).add(userid);
+				logger.seek(MODULE_PACKAGENAME, "排除用户", line);
+			}
 		}
 
 		reader.close();
@@ -208,9 +212,9 @@ public class Executor_chou extends ModuleExecutor {
 			} while (chouid == userid);
 			QQInfo member = JcqApp.CQ.getStrangerInfo(chouid);
 			if (message.getSection() == 1) {
-				entry.getMessage().gropInfo(gropid, userid, "随机抽到 " + entry.getNickmap().getNickname(member.getQqId()) + "(" + chouid + ")");
+				entry.getMessage().gropInfo(gropid, userid, "随机抽到 " + entry.getNickmap().getGropnick(gropid, member.getQqId()) + "(" + chouid + ")");
 			} else {
-				entry.getMessage().gropInfo(gropid, userid, "随机抽到 " + entry.getNickmap().getNickname(member.getQqId()) + "(" + chouid + ")： " + message.getOptions());
+				entry.getMessage().gropInfo(gropid, userid, "随机抽到 " + entry.getNickmap().getGropnick(gropid, member.getQqId()) + "(" + chouid + ")： " + message.getOptions());
 			}
 		}
 		return true;

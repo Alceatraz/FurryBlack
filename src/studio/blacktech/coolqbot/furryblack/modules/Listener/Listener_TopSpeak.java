@@ -23,7 +23,7 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -40,11 +40,11 @@ public class Listener_TopSpeak extends ModuleListener {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "listener_topspeak";
+	private static String MODULE_PACKAGENAME = "Listener_TopSpeak";
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群统计";
 	private static String MODULE_DESCRIPTION = "水群统计";
-	private static String MODULE_VERSION = "21.0";
+	private static String MODULE_VERSION = "29.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
 	private static String[] MODULE_PRIVACY_LISTEN = new String[] {
@@ -103,7 +103,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("#")) { continue; }
 				this.GROUP_REPORT.add(Long.parseLong(line));
-				logger.seek(MODULE_PACKAGENAME, "每日汇报 " + line);
+				logger.seek(MODULE_PACKAGENAME, "每日汇报", line);
 			}
 			reader.close();
 		} else {
@@ -114,11 +114,13 @@ public class Listener_TopSpeak extends ModuleListener {
 			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(this.GROUP_STATUS_SERIAL));
 			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
 			loader.close();
-			logger.seek(MODULE_PACKAGENAME, "读取存档 " + (this.GROUP_STATUS == null ? "空" : this.GROUP_STATUS.size()));
+			logger.seek(MODULE_PACKAGENAME, "读取存档", this.GROUP_STATUS == null ? "空" : "包含" + this.GROUP_STATUS.size() + "个群");
 			for (long gropid : this.GROUP_STATUS.keySet()) {
 				long time = this.GROUP_STATUS.get(gropid).initdt;
-				logger.seek(gropid, LoggerX.datetime(new Date(time)) + "(" + time + ")");
+				logger.seek(MODULE_PACKAGENAME, LoggerX.datetime(new Date(time)) + "(" + time + ")", gropid);
 			}
+			File OLD_STORAGE = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeak_" + LoggerX.datetime("yyyy_MM_dd_HH_mm_ss") + ".serial").toFile();
+			this.GROUP_STATUS_SERIAL.renameTo(OLD_STORAGE);
 		} else {
 			this.GROUP_STATUS = new HashMap<>();
 		}
@@ -299,7 +301,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append("\r\nNo.");
 					builder.append(i);
 					builder.append(" - ");
-					builder.append(entry.getNickmap().getNickname(userid));
+					builder.append(entry.getNickmap().getGropnick(gropid, userid));
 					builder.append("(");
 					builder.append(userid);
 					builder.append(") ");

@@ -12,7 +12,7 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -29,7 +29,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "trigger_worddeny";
+	private static String MODULE_PACKAGENAME = "Trigger_WordDeny";
 	private static String MODULE_COMMANDNAME = "worddeny";
 	private static String MODULE_DISPLAYNAME = "过滤器";
 	private static String MODULE_DESCRIPTION = "正则过滤器";
@@ -104,7 +104,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			this.BLACKLIST.add(line);
-			logger.seek(MODULE_PACKAGENAME, "过滤规则 " + line);
+			logger.seek(MODULE_PACKAGENAME, "过滤规则", line);
 		}
 		reader.close();
 

@@ -1,7 +1,7 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -18,7 +18,7 @@ public class Executor_kong extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_kong";
+	private static String MODULE_PACKAGENAME = "Executor_Kong";
 	private static String MODULE_COMMANDNAME = "kong";
 	private static String MODULE_DISPLAYNAME = "变臭";
 	private static String MODULE_DESCRIPTION = "给文字添加空格";
@@ -106,8 +106,8 @@ public class Executor_kong extends ModuleExecutor {
 	private static String kong(Message message) {
 		String temp;
 		temp = message.getOptions();
-		temp = temp.replaceAll("[CQ.*]", "");
 		temp = temp.replaceAll(" ", "");
+		temp = temp.replaceAll("\\[CQ:.+\\]", "");
 		temp = temp.trim();
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < temp.length(); i++) {

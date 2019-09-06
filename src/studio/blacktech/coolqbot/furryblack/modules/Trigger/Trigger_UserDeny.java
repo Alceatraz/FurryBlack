@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -26,7 +26,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "trigger_userdeny";
+	private static String MODULE_PACKAGENAME = "Trigger_UserDeny";
 	private static String MODULE_COMMANDNAME = "userdeny";
 	private static String MODULE_DISPLAYNAME = "过滤器";
 	private static String MODULE_DESCRIPTION = "用户过滤器";
@@ -118,14 +118,14 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 		while ((line = readerUser.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			logger.seek(MODULE_PACKAGENAME, "禁止私聊用户 " + line);
+			logger.seek(MODULE_PACKAGENAME, "禁止私聊用户", line);
 			this.USER_IGNORE.add(Long.parseLong(line));
 		}
 
 		while ((line = readerDisz.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.indexOf(":") < 0) { continue; }
-			logger.seek(MODULE_PACKAGENAME, "禁止组聊用户 " + line);
+			logger.seek(MODULE_PACKAGENAME, "禁止组聊用户", line);
 			temp = line.split(":");
 			diszid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
@@ -136,7 +136,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		while ((line = readerGrop.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.indexOf(":") < 0) { continue; }
-			logger.seek(MODULE_PACKAGENAME, "禁止群聊用户 " + line);
+			logger.seek(MODULE_PACKAGENAME, "禁止群聊用户", line);
 			temp = line.split(":");
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);

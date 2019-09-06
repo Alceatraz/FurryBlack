@@ -9,7 +9,7 @@ import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -35,7 +35,7 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	// PACKAGENAME 名称为完整名称
 	// 命名规则应为 类型_名称
-	private static String MODULE_PACKAGENAME = "executor_demo";
+	private static String MODULE_PACKAGENAME = "Executor_Demo";
 
 	// COMMANDNAME 名称为命令调用的名称
 	// 应和PACKAGE名称一致

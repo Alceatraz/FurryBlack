@@ -3,7 +3,7 @@ package studio.blacktech.coolqbot.furryblack.modules.Executor;
 import java.security.SecureRandom;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -20,7 +20,7 @@ public class Executor_roll extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "executor_roll";
+	private static String MODULE_PACKAGENAME = "Executor_Roll";
 	private static String MODULE_COMMANDNAME = "roll";
 	private static String MODULE_DISPLAYNAME = "生成随机数";
 	private static String MODULE_DESCRIPTION = "生成随机数";
