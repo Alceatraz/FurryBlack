@@ -514,8 +514,8 @@ public class Module_Systemd extends Module {
 	@Override
 	public void boot(LoggerX logger) throws Exception {
 
-		this.NICKMAP.boot(logger);
-		this.MESSAGE.boot(logger);
+//		this.NICKMAP.boot(logger);
+//		this.MESSAGE.boot(logger);
 
 		// =======================================================================================================================
 		// 启动定时器

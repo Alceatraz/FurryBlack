@@ -92,10 +92,10 @@ public class Module_Nickmap extends Module {
 			}
 			NICKNAME.get(Long.parseLong(temp[0])).put(Long.parseLong(temp[1]), temp[2]);
 
-			logger.seek(MODULE_PACKAGENAME, "读取昵称表", NICKNAME.size());
-			for (long nickmap : NICKNAME.keySet()) {
-				logger.seek(MODULE_PACKAGENAME, "群" + nickmap, NICKNAME.get(nickmap).size() + "个");
-			}
+		}
+		logger.seek(MODULE_PACKAGENAME, "读取昵称表", NICKNAME.size());
+		for (long nickmap : NICKNAME.keySet()) {
+			logger.seek(MODULE_PACKAGENAME, "群" + nickmap, NICKNAME.get(nickmap).size() + "个");
 		}
 		reader.close();
 	}

@@ -153,10 +153,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void save(LoggerX logger) throws Exception {
-		logger.info(MODULE_PACKAGENAME, "初始化容器");
-		this.GROUP_STATUS_SERIAL.delete();
-		ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(this.GROUP_STATUS_SERIAL));
 		logger.info(MODULE_PACKAGENAME, "数据序列化");
+		ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(this.GROUP_STATUS_SERIAL));
 		saver.writeObject(this.GROUP_STATUS);
 		saver.close();
 	}
@@ -410,8 +408,6 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(messageRank);
 					builder.append("次：");
 					builder.append(message);
-					if (entry.DEBUG()) { builder.append(LoggerX.unicode(message)); }
-					JcqApp.CQ.logDebug("FurryBlackDebug", message + " > " + LoggerX.unicode(message));
 					if (limit > 20) { break; }
 				}
 				order = order + tempSet.size();
@@ -493,6 +489,10 @@ public class Listener_TopSpeak extends ModuleListener {
 						Thread.sleep(time);
 						// =======================================================
 						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "执行"); }
+						File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), "dailybackup_" + LoggerX.datetime("yyyy_MM_dd_HH_mm_ss") + ".serial").toFile();
+						ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(Listener_TopSpeak.this.GROUP_STATUS_SERIAL));
+						saver.writeObject(DAILY_BACKUP);
+						saver.close();
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {
 							if (Listener_TopSpeak.this.GROUP_REPORT.contains(temp)) {
 								entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp));
