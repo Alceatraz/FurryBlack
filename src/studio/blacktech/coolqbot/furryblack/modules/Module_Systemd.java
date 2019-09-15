@@ -1050,11 +1050,10 @@ public class Module_Systemd extends Module {
 		// ===============================================================================
 
 		builder.append("\r\n定时器：");
-		builder.append(this.SCHEDULER_INSTANCE.size());
+		builder.append(this.SCHEDULER_ENABLED.size());
 		builder.append("个");
 
-		for (String temp : this.SCHEDULER_INSTANCE.keySet()) {
-			ModuleScheduler instance = this.SCHEDULER_INSTANCE.get(temp);
+		for (ModuleScheduler instance : this.SCHEDULER_ENABLED) {
 			if (instance.ENABLE()) {
 				builder.append("\r\n");
 				result = instance.generateReport(0, null, null, null);

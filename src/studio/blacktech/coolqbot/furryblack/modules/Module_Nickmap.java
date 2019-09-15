@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.TreeMap;
 
@@ -16,6 +17,7 @@ import com.sobte.cqp.jcq.entity.Member;
 import com.sobte.cqp.jcq.event.JcqApp;
 
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.Module;
 
@@ -77,14 +79,14 @@ public class Module_Nickmap extends Module {
 		}
 
 		this.FILE_NICKNAME = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "user_nickname.txt").toFile();
-		if (!this.FILE_NICKNAME.exists()) { this.FILE_NICKNAME.createNewFile(); }
+		if (!this.FILE_NICKNAME.exists()) { if (!this.FILE_NICKNAME.createNewFile()) { throw new InitializationException("无法创建文件user_nickname.txt"); } }
 
 		String line;
-		String temp[];
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_NICKNAME), "UTF-8"));
+		String[] temp;
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_NICKNAME), StandardCharsets.UTF_8));
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			if (line.indexOf(":") < 0) { continue; }
+			if (!line.contains(":")) { continue; }
 			temp = line.split(":");
 			if (temp.length != 3) {
 				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
@@ -156,7 +158,7 @@ public class Module_Nickmap extends Module {
 
 			// FileWriter writer = new FileWriter(this.FILE_NICKNAME, true);
 
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_NICKNAME, true), "UTF-8"));
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_NICKNAME, true), StandardCharsets.UTF_8));
 			writer.append(builder.toString().substring(0, builder.length() - 2));
 			writer.flush();
 			writer.close();
@@ -194,10 +196,8 @@ public class Module_Nickmap extends Module {
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 		if (NICKNAME.containsKey(gropid)) {
 			TreeMap<Long, String> temp = NICKNAME.get(gropid);
-			if (temp.containsKey(userid)) {
-				temp.remove(userid);
-				//
-			}
+			//
+			temp.remove(userid);
 		}
 	}
 

@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -103,9 +104,9 @@ public class Executor_jrjp extends ModuleExecutor {
 			this.IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.USER_IGNORE), "UTF-8"));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.USER_IGNORE), StandardCharsets.UTF_8));
 		String line;
-		String temp[];
+		String[] temp;
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.indexOf(":") < 0) { continue; }

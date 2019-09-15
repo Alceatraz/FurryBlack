@@ -174,13 +174,15 @@ public class Executor_roulette extends ModuleExecutor {
 
 	private class RouletteRound {
 
-		public ArrayList<String> chip = new ArrayList<>();
-		public ArrayList<Long> player = new ArrayList<>();
-		public int players = 0;
 		public Date time;
-		public boolean lock = false;
 
-		public RouletteRound() {
+		ArrayList<String> chip = new ArrayList<>();
+		ArrayList<Long> player = new ArrayList<>();
+
+		int players = 0;
+		boolean lock = false;
+
+		RouletteRound() {
 			this.time = new Date();
 		}
 
@@ -212,7 +214,7 @@ public class Executor_roulette extends ModuleExecutor {
 				}
 				entry.getMessage().gropInfo(gropid, buffer.toString());
 			}
-			this.lock = this.players > 5 ? true : false;
+			this.lock = this.players > 5;
 			return this.lock;
 		}
 	}
@@ -252,7 +254,7 @@ public class Executor_roulette extends ModuleExecutor {
 			builder.append(this.ROULETTE_FREQ.get(5) * 100 / this.ROUND_SUCCESS);
 			builder.append("%");
 		}
-		String res[] = new String[1];
+		String[] res = new String[1];
 		res[0] = builder.toString();
 		return res;
 	}

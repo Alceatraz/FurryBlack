@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -91,17 +92,17 @@ public class Executor_chou extends ModuleExecutor {
 			this.IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_IGNORE_USER), "UTF-8"));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_IGNORE_USER), StandardCharsets.UTF_8));
 
 		String line;
-		String temp[];
+		String[] temp;
 
 		long gropid;
 		long userid;
 
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			if (line.indexOf(":") < 0) { continue; }
+			if (!line.contains(":")) { continue; }
 			temp = line.split(":");
 			if (temp.length != 2) {
 				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
@@ -162,11 +163,7 @@ public class Executor_chou extends ModuleExecutor {
 		if (this.IGNORES.containsKey(gropid)) {
 			ArrayList<Long> tempIgnores = this.IGNORES.get(gropid);
 			for (Member tempUserid : JcqApp.CQ.getGroupMemberList(gropid)) {
-				if (tempIgnores.contains(tempUserid.getQqId())) {
-					continue;
-				} else {
-					tempMembers.add(tempUserid.getQqId());
-				}
+				if (!tempIgnores.contains(tempUserid.getQqId())) { tempMembers.add(tempUserid.getQqId()); }
 			}
 		} else {
 			for (Member tempUserid : JcqApp.CQ.getGroupMemberList(gropid)) {
@@ -179,7 +176,7 @@ public class Executor_chou extends ModuleExecutor {
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		ArrayList<Long> tempMembers = this.MEMBERS.get(gropid);
-		if (tempMembers.contains(userid)) { tempMembers.remove(tempMembers.indexOf(userid)); }
+		tempMembers.remove(userid);
 	}
 
 	// ==========================================================================================================================================================

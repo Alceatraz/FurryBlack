@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -104,9 +105,9 @@ public class Module_Message extends Module {
 		if (!this.FILE_MESSAGE_INFO.exists()) { this.FILE_MESSAGE_INFO.createNewFile(); }
 		if (!this.FILE_MESSAGE_EULA.exists()) { this.FILE_MESSAGE_EULA.createNewFile(); }
 
-		BufferedReader readerHelp = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_MESSAGE_HELP), "UTF-8"));
-		BufferedReader readerInfo = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_MESSAGE_INFO), "UTF-8"));
-		BufferedReader readerEula = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_MESSAGE_EULA), "UTF-8"));
+		BufferedReader readerHelp = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_MESSAGE_HELP), StandardCharsets.UTF_8));
+		BufferedReader readerInfo = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_MESSAGE_INFO), StandardCharsets.UTF_8));
+		BufferedReader readerEula = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_MESSAGE_EULA), StandardCharsets.UTF_8));
 
 		String line;
 

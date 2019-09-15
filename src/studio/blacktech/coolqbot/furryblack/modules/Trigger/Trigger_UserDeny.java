@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -109,12 +110,12 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		long diszid;
 		long gropid;
 
-		BufferedReader readerUser = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_USERIGNORE), "UTF-8"));
-		BufferedReader readerDisz = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_DISZIGNORE), "UTF-8"));
-		BufferedReader readerGrop = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_GROPIGNORE), "UTF-8"));
+		BufferedReader readerUser = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_USERIGNORE), StandardCharsets.UTF_8));
+		BufferedReader readerDisz = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_DISZIGNORE), StandardCharsets.UTF_8));
+		BufferedReader readerGrop = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_GROPIGNORE), StandardCharsets.UTF_8));
 
 		String line;
-		String temp[];
+		String[] temp;
 
 		while ((line = readerUser.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
@@ -319,7 +320,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 				}
 			}
 		}
-		String res[] = new String[1];
+		String[] res = new String[1];
 		res[0] = builder.toString();
 		return res;
 	}

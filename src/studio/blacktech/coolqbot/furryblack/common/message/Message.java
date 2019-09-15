@@ -30,8 +30,8 @@ public class Message implements Serializable {
 	private String cmdMessage = "";
 	private String command = "";
 	private String options = "";
-	private String segment[] = {};
-	private String picture[] = {};
+	private String[] segment = {};
+	private String[] picture = {};
 	private int section = 0;
 
 	private boolean hasPicture = false;

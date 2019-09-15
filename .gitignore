@@ -1,3 +1,5 @@
+.idea/
+.project
 .metadata
 .settings/
 bin/
@@ -8,6 +10,7 @@ export/studio.blacktech.coolqbot.furryblack.entry_lib/
 *.swp
 *~.nib
 local.properties
+SB_BOT.iml
 .settings/
 .loadpath
 .recommenders

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -196,7 +197,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		builder.append(this.COUNT_CHANGE);
 		builder.append("\r\n访问失败：");
 		builder.append(this.COUNT_FAILED);
-		String res[] = new String[1];
+		String[] res = new String[1];
 		res[0] = builder.toString();
 		return res;
 
@@ -297,7 +298,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
 			this.COUNT_GETIP++;
-			return new String(buffer, "UTF-8").trim();
+			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
 			entry.getMessage().adminInfo(MODULE_PACKAGENAME + " 获取异常 " + exception.getMessage());
@@ -320,7 +321,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
 			this.COUNT_SETIP++;
-			return new String(buffer, "UTF-8").trim();
+			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {
 			this.COUNT_SETIP_FAILED++;
 			exception.printStackTrace();
@@ -343,7 +344,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
 			this.COUNT_FRESH++;
-			return new String(buffer, "UTF-8").trim();
+			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {
 			this.COUNT_FRESH_FAILED++;
 			exception.printStackTrace();

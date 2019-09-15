@@ -114,7 +114,7 @@ public class Executor_roll extends ModuleExecutor {
 		return true;
 	}
 
-	public String roll(Message message) {
+	private String roll(Message message) {
 
 		String res = null;
 		SecureRandom random = new SecureRandom();
@@ -192,7 +192,7 @@ public class Executor_roll extends ModuleExecutor {
 		builder.append(this.mode_2);
 		builder.append("\r\n模式3 - 双限: ");
 		builder.append(this.mode_3);
-		String res[] = new String[1];
+		String[] res = new String[1];
 		res[0] = builder.toString();
 		return res;
 	}

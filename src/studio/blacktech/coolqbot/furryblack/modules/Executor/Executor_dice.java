@@ -91,21 +91,21 @@ public class Executor_dice extends ModuleExecutor {
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 // 		entry.getMessage().userInfo(userid, message.getOptions() + "[CQ:dice]");
-		entry.getMessage().userInfo(userid, message.getOptions() + "[CQ:emoji,id=100000" + String.valueOf(new SecureRandom().nextInt(5) + 49) + "]");
+		entry.getMessage().userInfo(userid, message.getOptions() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 //		entry.getMessage().diszInfo(diszid, userid,  message.getOptions() + "[CQ:dice]");
-		entry.getMessage().diszInfo(diszid, userid, message.getOptions() + "[CQ:emoji,id=100000" + String.valueOf(new SecureRandom().nextInt(5) + 49) + "]");
+		entry.getMessage().diszInfo(diszid, userid, message.getOptions() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 //		entry.getMessage().gropInfo(gropid, userid, message.getOptions() + "[CQ:dice]");
-		entry.getMessage().gropInfo(gropid, userid, message.getOptions() + "[CQ:emoji,id=100000" + String.valueOf(new SecureRandom().nextInt(5) + 49) + "]");
+		entry.getMessage().gropInfo(gropid, userid, message.getOptions() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
 		return true;
 	}
 

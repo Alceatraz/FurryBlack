@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,7 +99,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		this.GROUP_STATUS_SERIAL = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeak.serial").toFile();
 
 		if (this.CONFIG_GROUP_REPORT.exists()) {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_GROUP_REPORT), "UTF-8"));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_GROUP_REPORT), StandardCharsets.UTF_8));
 			String line;
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("#")) { continue; }

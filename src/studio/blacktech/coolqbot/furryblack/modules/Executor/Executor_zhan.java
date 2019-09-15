@@ -228,7 +228,7 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append(this.FREQ.get(i) * 100 / coverage);
 			builder.append("%");
 		}
-		String res[] = new String[1];
+		String[] res = new String[1];
 		res[0] = builder.toString().substring(2);
 		return res;
 	}

@@ -19,10 +19,11 @@ import com.sobte.cqp.jcq.event.JcqAppAbstract;
  *
  * ===============================================
  */
+
 /**
  * 本文件是JCQ插件的主类<br>
  * <br>
- *
+ * <p>
  * 注意修改json中的class来加载主类，如不设置则利用appid加载，最后一个单词自动大写查找<br>
  * 例：appid(com.example.demo) 则加载类 com.example.Demo<br>
  * 文档地址： https://gitee.com/Sobte/JCQ-CoolQ <br>
