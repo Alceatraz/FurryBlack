@@ -3,7 +3,6 @@ package studio.blacktech.coolqbot.furryblack.modules;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import com.sobte.cqp.jcq.event.JcqApp;
 import com.sobte.cqp.jcq.event.JcqAppAbstract;
 
 import studio.blacktech.coolqbot.furryblack.entry;
@@ -730,13 +729,13 @@ public class Module_Systemd extends Module {
 
 		// >>>>> DEBUG
 
-		if (entry.DEBUG()) {
-			if (message.isCommand()) {
-				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
-			} else {
-				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
-			}
-		}
+//		if (entry.DEBUG()) {
+//			if (message.isCommand()) {
+//				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
+//			} else {
+//				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
+//			}
+//		}
 
 		// >>>>> DEBUG
 
@@ -818,13 +817,13 @@ public class Module_Systemd extends Module {
 
 		// >>>>> DEBUG
 
-		if (entry.DEBUG()) {
-			if (message.isCommand()) {
-				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
-			} else {
-				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
-			}
-		}
+//		if (entry.DEBUG()) {
+//			if (message.isCommand()) {
+//				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
+//			} else {
+//				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
+//			}
+//		}
 
 		// >>>>> DEBUG
 
@@ -906,13 +905,13 @@ public class Module_Systemd extends Module {
 
 		// >>>>> DEBUG
 
-		if (entry.DEBUG()) {
-			if (message.isCommand()) {
-				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
-			} else {
-				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
-			}
-		}
+//		if (entry.DEBUG()) {
+//			if (message.isCommand()) {
+//				JcqApp.CQ.logDebug("FurryBlack", message.parseCommand().toString());
+//			} else {
+//				JcqApp.CQ.logDebug("FurryBlack", message.parseMessage().toString());
+//			}
+//		}
 
 		// >>>>> DEBUG
 

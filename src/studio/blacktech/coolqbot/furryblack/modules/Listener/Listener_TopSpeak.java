@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -340,9 +341,10 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		for (String message : groupStatus.GROP_SENTENCE) {
 
-			if (LoggerX.unicodeid(message).equals("20")) {
-				// 这里有BUG
-				// 未知的原因产生了 \u0020 的句子
+			message = message.trim();
+			
+			if (message.equals(" ")) {
+				// @的原因产生了 \u0020 的句子
 				continue;
 			} else if (message.equals("?")) {
 				message = "？";
@@ -409,6 +411,11 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(messageRank);
 					builder.append("次：");
 					builder.append(message);
+					if (entry.DEBUG()) {
+						String[] unicode = LoggerX.unicodeid(message);
+						JcqApp.CQ.logDebug("shui " + order, Arrays.toString(unicode));
+					}
+
 					if (limit > 20) { break; }
 				}
 				order = order + tempSet.size();

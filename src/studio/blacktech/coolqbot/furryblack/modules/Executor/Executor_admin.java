@@ -106,7 +106,8 @@ public class Executor_admin extends ModuleExecutor {
 				}
 				return true;
 			case "debug":
-				entry.getMessage().adminInfo("DEBUG → " + entry.switchDEBUG());
+				String temp = entry.switchDEBUG() ? "ENABLE" : "DISABLE";
+				entry.getMessage().adminInfo("DEBUG → " + temp);
 				return true;
 			case "report":
 				entry.getSystemd().sendModuleReport(message);

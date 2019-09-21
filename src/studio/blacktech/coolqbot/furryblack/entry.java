@@ -21,15 +21,7 @@ import studio.blacktech.coolqbot.furryblack.modules.Module_Systemd;
 import studio.blacktech.coolqbot.furryblack.modules.Module_Systemd.SystemdDelegate;
 
 /**
- * JcqApp的入口类文件
- * <p>
- * Jcq将会调用约定的生命周期函数
- * <p>
- * 我们不用IoC 我们不用DI
- * <p>
- * 我们只制作高度耦合的专用框架
- * <p>
- * 专用的永远是最好的
+ * JcqApp的入口类文件 Jcq将会调用约定的生命周期函数 我们不用IoC 我们不用DI 我们只制作高度耦合的专用框架 专用的永远是最好的
  *
  * @author Alceatraz Warprays
  */

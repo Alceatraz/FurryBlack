@@ -8,6 +8,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.sobte.cqp.jcq.event.JcqApp;
+
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 
@@ -98,7 +100,7 @@ public class Message implements Serializable {
 	/**
 	 * 分析命令内容 框架已经执行过此函数 模块中永远不需要执行 为了效率甚至不判断是否为命令就直接分析 包含不安全的代码
 	 *
-	 * @return
+	 * @return this
 	 */
 	public Message parseCommand() {
 
@@ -173,13 +175,12 @@ public class Message implements Serializable {
 					this.picture = new String[temp.size()];
 					temp.toArray(this.picture);
 				}
-				this.resMessage = this.rawMessage.replaceAll("\\[CQ:.+\\]", "");
+				this.resMessage = this.rawMessage.replaceAll("\\[CQ:.+\\]", "").trim();
 				this.resLength = this.resMessage.length();
 
+				if (entry.DEBUG()) { JcqApp.CQ.logDebug("ResMessage", LoggerX.unicode(resMessage)); }
+
 				if (this.resLength == 0) { this.isPureCQC = true; }
-
-				if (entry.DEBUG() && LoggerX.unicodeid(this.resMessage).equals("20")) { entry.getMessage().adminInfo(this.toString()); }
-
 			}
 		}
 
@@ -191,8 +192,8 @@ public class Message implements Serializable {
 	/**
 	 * 将消息去掉命令以后 从指定位置拼接
 	 *
-	 * @param i
-	 * @return
+	 * @param i index位置
+	 * @return 拼接后的内容
 	 */
 	public String join(int i) {
 		if (this.section == 0) {
@@ -212,7 +213,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取消息ID
 	 *
-	 * @return
+	 * @return id
 	 */
 	public int getMessageId() {
 		return this.messageId;
@@ -221,7 +222,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取消息字体
 	 *
-	 * @return
+	 * @return fontid
 	 */
 	public int getMessageFont() {
 		return this.messageFt;
@@ -232,7 +233,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取消息发送时间 毫秒时间戳
 	 *
-	 * @return
+	 * @return currentTimeMillis
 	 */
 	public long getSendtime() {
 		return this.sendTime;
@@ -241,7 +242,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取消息发送时间 Date对象
 	 *
-	 * @return
+	 * @return Date(currentTimeMillis)
 	 */
 	public Date getSendDate() {
 		return new Date(this.sendTime);
@@ -252,7 +253,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取原始消息
 	 *
-	 * @return
+	 * @return 原始消息
 	 */
 	public String getRawMessage() {
 		return this.rawMessage;
@@ -261,7 +262,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取原始消息长度
 	 *
-	 * @return
+	 * @return 原始消息长度
 	 */
 	public int getRawLength() {
 		return this.rawLength;
@@ -272,7 +273,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取命令内容 即去掉/ 如果不是命令则为null 执行器以外的地方不应执行这个函数
 	 *
-	 * @return
+	 * @return 去掉/的内容
 	 */
 	public String getCmdMessage() {
 		return this.cmdMessage;
@@ -281,7 +282,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取命令 即去掉/以空格切分的[0] 如果不是命令则为null 执行器以外的地方不应执行这个函数
 	 *
-	 * @return
+	 * @return 获取命令头
 	 */
 	public String getCommand() {
 		return this.command;
@@ -290,7 +291,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取参数 即去掉/以后按空格切分的[1:] 如果不是命令则为null 执行器以外的地方不应执行这个函数
 	 *
-	 * @return
+	 * @return 获取所有参数
 	 */
 	public String getOptions() {
 		return this.options;
@@ -299,7 +300,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取参数长度 即去掉/以后按空格切分的[1:]的元素数量 如果不是命令则为0 执行器以外的地方不应执行这个函数
 	 *
-	 * @return
+	 * @return 获取参数长度
 	 */
 	public int getSection() {
 		return this.section;
@@ -308,12 +309,18 @@ public class Message implements Serializable {
 	/**
 	 * 获取所有的参数 即去掉/以后按空格切分的[1:]的元素 如果不是命令则为null 执行器以外的地方不应执行这个函数
 	 *
-	 * @return
+	 * @return 参数
 	 */
 	public String[] getSegment() {
 		return this.segment;
 	}
 
+	/***
+	 * 获取参数 即去掉/以后按空格切分的index+1, 如果不是命令则为null 执行器以外的地方不应执行这个函数
+	 * 
+	 * @param index 索引号
+	 * @return 获取指定顺序参数
+	 */
 	public String getSegment(int index) {
 		return this.segment[index];
 	}
@@ -321,8 +328,8 @@ public class Message implements Serializable {
 	/**
 	 * 获取开关的值 --name=value 形式的参数为开关 如果不是命令或不存在此参数则为null 执行器以外的地方不应执行这个函数
 	 *
-	 * @param name
-	 * @return
+	 * @param name 名称
+	 * @return 值
 	 */
 	public String getSwitch(String name) {
 		return this.switchs.get(name);
@@ -333,7 +340,7 @@ public class Message implements Serializable {
 	/**
 	 * 消息是否为命令
 	 *
-	 * @return
+	 * @return 是否
 	 */
 	public boolean isCommand() {
 		return this.isCommand;
@@ -342,7 +349,7 @@ public class Message implements Serializable {
 	/**
 	 * 消息是否为红包
 	 *
-	 * @return
+	 * @return 是否
 	 */
 	public boolean isHongbao() {
 		return this.isHongbao;
@@ -351,7 +358,7 @@ public class Message implements Serializable {
 	/**
 	 * 消息是否为短视频
 	 *
-	 * @return
+	 * @return 是否
 	 */
 	public boolean isQQVideo() {
 		return this.isQQVideo;
@@ -360,7 +367,7 @@ public class Message implements Serializable {
 	/**
 	 * 消息是否为闪照
 	 *
-	 * @return
+	 * @return 是否
 	 */
 	public boolean isSnappic() {
 		return this.isSnappic;
@@ -369,7 +376,7 @@ public class Message implements Serializable {
 	/**
 	 * 消息是否为纯CQ码
 	 *
-	 * @return
+	 * @return 是否
 	 */
 	public boolean isPureCQC() {
 		return this.isPureCQC;
@@ -378,7 +385,7 @@ public class Message implements Serializable {
 	/**
 	 * 消息是否包含图片
 	 *
-	 * @return
+	 * @return 是否
 	 */
 	public boolean hasPicture() {
 		return this.hasPicture;
@@ -398,7 +405,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取分析后的消息
 	 *
-	 * @return
+	 * @return 消息
 	 */
 	public String getResMessage() {
 		return this.resMessage;
@@ -408,7 +415,7 @@ public class Message implements Serializable {
 	/**
 	 * 获取分析后的消息长度
 	 *
-	 * @return
+	 * @return 长度
 	 */
 	public int getResLength() {
 		return this.resLength;

@@ -4,6 +4,7 @@
 .settings/
 bin/
 doc/
+javadoc/
 export/studio.blacktech.coolqbot.furryblack.entry_lib/
 *.tmp
 *.bak

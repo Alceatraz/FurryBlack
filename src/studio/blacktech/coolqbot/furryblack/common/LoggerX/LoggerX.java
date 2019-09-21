@@ -2,6 +2,7 @@ package studio.blacktech.coolqbot.furryblack.common.LoggerX;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 
 public class LoggerX {
 
@@ -323,12 +324,14 @@ public class LoggerX {
 		return builder.toString();
 	}
 
-	public static String unicodeid(String raw) {
-		StringBuilder builder = new StringBuilder();
+	public static String[] unicodeid(String raw) {
+		LinkedList<String> tmp = new LinkedList<>();
 		for (int i = 0; i < raw.length(); i++) {
-			builder.append(String.format("01$4s", Integer.toHexString(raw.charAt(i) & 0xffff)).replace(" ", "0"));
+			tmp.add(Integer.toHexString(raw.charAt(i) & 0xffff));
 		}
-		return builder.toString();
+		String[] res = new String[tmp.size()];
+		tmp.toArray(res);
+		return res;
 	}
 
 	// ==================================================================================================
