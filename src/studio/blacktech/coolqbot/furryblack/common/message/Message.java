@@ -178,7 +178,7 @@ public class Message implements Serializable {
 				this.resMessage = this.rawMessage.replaceAll("\\[CQ:.+\\]", "").trim();
 				this.resLength = this.resMessage.length();
 
-				if (entry.DEBUG()) { JcqApp.CQ.logDebug("ResMessage", LoggerX.unicode(resMessage)); }
+				if (entry.DEBUG()) { JcqApp.CQ.logDebug("ResMessage", LoggerX.unicode(this.resMessage)); }
 
 				if (this.resLength == 0) { this.isPureCQC = true; }
 			}
@@ -317,7 +317,7 @@ public class Message implements Serializable {
 
 	/***
 	 * 获取参数 即去掉/以后按空格切分的index+1, 如果不是命令则为null 执行器以外的地方不应执行这个函数
-	 * 
+	 *
 	 * @param index 索引号
 	 * @return 获取指定顺序参数
 	 */

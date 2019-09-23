@@ -121,7 +121,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				long time = this.GROUP_STATUS.get(gropid).initdt;
 				logger.seek(MODULE_PACKAGENAME, LoggerX.datetime(new Date(time)) + "(" + time + ")", gropid);
 			}
-			File OLD_STORAGE = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeak_" + LoggerX.datetime("yyyy_MM_dd_HH_mm_ss") + ".serial").toFile();
+			File OLD_STORAGE = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeak_" + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".serial").toFile();
 			this.GROUP_STATUS_SERIAL.renameTo(OLD_STORAGE);
 		} else {
 			this.GROUP_STATUS = new HashMap<>();
@@ -247,12 +247,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		// ===========================================================
 
 		builder.append("（1/4）水群统计\r\n自 ");
-		if (entry.DEBUG()) {
-			builder.append(LoggerX.datetime(new Date(groupStatus.initdt)));
-		} else {
-			builder.append(LoggerX.datetime(new Date(groupStatus.initdt), "yyyy-MM-dd"));
-		}
-		builder.append("以来\r\n总消息数：");
+		builder.append(LoggerX.formatTime("yyyy-MM-dd HH", new Date(groupStatus.initdt)));
+		builder.append(":00 以来\r\n总消息数：");
 		builder.append(groupStatus.GROP_MESSAGES);
 		builder.append("\r\n发言条数：");
 		builder.append(groupStatus.GROP_SENTENCE.size() + groupStatus.GROP_PURECCODE);
@@ -342,7 +338,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		for (String message : groupStatus.GROP_SENTENCE) {
 
 			message = message.trim();
-			
+
 			if (message.equals(" ")) {
 				// @的原因产生了 \u0020 的句子
 				continue;
@@ -497,7 +493,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						Thread.sleep(time);
 						// =======================================================
 						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "执行"); }
-						File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), "dailybackup_" + LoggerX.datetime("yyyy_MM_dd_HH_mm_ss") + ".serial").toFile();
+						File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), "dailybackup_" + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".serial").toFile();
 						ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(Listener_TopSpeak.this.GROUP_STATUS_SERIAL));
 						saver.writeObject(DAILY_BACKUP);
 						saver.close();

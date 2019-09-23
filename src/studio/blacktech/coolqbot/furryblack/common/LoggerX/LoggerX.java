@@ -3,6 +3,7 @@ package studio.blacktech.coolqbot.furryblack.common.LoggerX;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.TimeZone;
 
 public class LoggerX {
 
@@ -339,8 +340,23 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-	private static SimpleDateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static SimpleDateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
 	private static SimpleDateFormat formater_time = new SimpleDateFormat("HH:mm:ss");
+	private static SimpleDateFormat formater_full = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	// ================================================================
+
+	public static String date() {
+		return formater_date.format(new Date());
+	}
+
+	public static String date(Date date) {
+		return formater_date.format(date);
+	}
+
+	public static String date(long timestamp) {
+		return formater_date.format(new Date(timestamp));
+	}
 
 	public static String time() {
 		return formater_time.format(new Date());
@@ -350,40 +366,54 @@ public class LoggerX {
 		return formater_time.format(date);
 	}
 
-	public static String time(Date date, String format) {
-		return new SimpleDateFormat(format).format(date);
-	}
-
 	public static String time(long timestamp) {
 		return formater_time.format(new Date(timestamp));
 	}
 
-	public static String time(long timestamp, String format) {
-		return new SimpleDateFormat(format).format(new Date(timestamp));
-	}
-
 	public static String datetime() {
-		return formater_date.format(new Date());
+		return formater_full.format(new Date());
 	}
 
 	public static String datetime(Date date) {
-		return formater_date.format(date);
-	}
-
-	public static String datetime(String format) {
-		return new SimpleDateFormat(format).format(new Date());
-	}
-
-	public static String datetime(Date date, String format) {
-		return new SimpleDateFormat(format).format(date);
+		return formater_full.format(date);
 	}
 
 	public static String datetime(long timestamp) {
-		return formater_date.format(new Date(timestamp));
+		return formater_full.format(new Date(timestamp));
 	}
 
-	public static String datetime(long timestamp, String format) {
+	// ================================================================
+
+	public static String formatTime(String format) {
+		return new SimpleDateFormat(format).format(new Date());
+	}
+
+	public static String formatTime(String format, Date date) {
+		return new SimpleDateFormat(format).format(date);
+	}
+
+	public static String formatTime(String format, long timestamp) {
 		return new SimpleDateFormat(format).format(new Date(timestamp));
 	}
+
+	public static String formatTime(String format, TimeZone timezone) {
+		SimpleDateFormat formater = new SimpleDateFormat(format);
+		formater.setTimeZone(timezone);
+		return formater.format(new Date());
+	}
+
+	public static String formatTime(String format, TimeZone timezone, Date date) {
+		SimpleDateFormat formater = new SimpleDateFormat(format);
+		formater.setTimeZone(timezone);
+		return formater.format(date);
+	}
+
+	public static String formatTime(String format, TimeZone timezone, long timestamp) {
+		SimpleDateFormat formater = new SimpleDateFormat(format);
+		formater.setTimeZone(timezone);
+		return formater.format(new Date(timestamp));
+	}
+
+	// ================================================================
 
 }

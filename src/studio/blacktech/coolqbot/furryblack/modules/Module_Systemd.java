@@ -18,6 +18,7 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 import studio.blacktech.coolqbot.furryblack.modules.Module_Message.MessageDelegate;
 import studio.blacktech.coolqbot.furryblack.modules.Module_Nickmap.NicknameDelegate;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_time;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_acon;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_admin;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_chou;
@@ -224,6 +225,7 @@ public class Module_Systemd extends Module {
 		this.instantiationExecutor(new Executor_kong());
 		this.instantiationExecutor(new Executor_roll());
 		this.instantiationExecutor(new Executor_roulette());
+		this.instantiationExecutor(new Executor_time());
 		this.instantiationExecutor(new Executor_zhan());
 
 		// =======================================================================================================================
@@ -617,15 +619,19 @@ public class Module_Systemd extends Module {
 
 		builder.append("[加群] - ");
 		builder.append(LoggerX.datetime());
-		builder.append("\r\n类型：");
-		builder.append(typeid == 1 ? "自主申请" : "邀请加群");
 		builder.append("\r\n群号：");
 		builder.append(gropid);
-		builder.append("\r\n管理：");
-		builder.append(entry.getNickmap().getNickname(operid));
-		builder.append("(");
-		builder.append(operid);
-		builder.append(")\r\n成员：");
+		if (typeid == 1) {
+			builder.append("自主申请");
+			builder.append("\r\n管理：");
+			builder.append(entry.getNickmap().getNickname(operid));
+			builder.append("(");
+			builder.append(operid);
+			builder.append(")");
+		} else {
+			builder.append("邀请加群");
+		}
+		builder.append("\r\n成员：");
 		builder.append(entry.getNickmap().getNickname(userid));
 		builder.append("(");
 		builder.append(userid);
@@ -651,15 +657,20 @@ public class Module_Systemd extends Module {
 
 		builder.append("[退群]");
 		builder.append(LoggerX.datetime());
-		builder.append("\r\n类型：");
-		builder.append(typeid == 1 ? "自主退群" : "管理踢出");
 		builder.append("\r\n群号：");
 		builder.append(gropid);
-		builder.append("\r\n管理：");
-		builder.append(entry.getNickmap().getNickname(operid));
-		builder.append("(");
-		builder.append(operid);
-		builder.append(")r\n成员：");
+		builder.append("\r\n类型：");
+		if (typeid == 1) {
+			builder.append("自主退群");
+			builder.append("\r\n管理：");
+			builder.append(entry.getNickmap().getNickname(operid));
+			builder.append("(");
+			builder.append(operid);
+			builder.append(")");
+		} else {
+			builder.append("管理踢出");
+		}
+		builder.append("\r\n成员：");
 		builder.append(entry.getNickmap().getNickname(userid));
 		builder.append("(");
 		builder.append(userid);
