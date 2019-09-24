@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.sobte.cqp.jcq.entity.Member;
-import com.sobte.cqp.jcq.event.JcqApp;
+import org.meowy.cqp.jcq.entity.Member;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
@@ -155,12 +154,12 @@ public class Executor_roulette extends ModuleExecutor {
 			int bullet = new SecureRandom().nextInt(6);
 			Member member;
 			for (int i = 0; i < 6; i++) {
-				member = JcqApp.CQ.getGroupMemberInfoV2(gropid, round.player.get(i));
+				member = entry.getCQ().getGroupMemberInfo(gropid, round.player.get(i));
 				if (i == bullet) {
 					this.ROULETTE_FREQ.set(i, this.ROULETTE_FREQ.get(i) + 1);
-					entry.getMessage().gropInfo(gropid, entry.getNickmap().getGropnick(gropid, member.getQqId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
+					entry.getMessage().gropInfo(gropid, entry.getNickmap().getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
 				} else {
-					entry.getMessage().gropInfo(gropid, entry.getNickmap().getGropnick(gropid, member.getQqId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
+					entry.getMessage().gropInfo(gropid, entry.getNickmap().getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
 				}
 
 			}

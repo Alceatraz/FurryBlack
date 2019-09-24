@@ -13,10 +13,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import com.sobte.cqp.jcq.entity.Group;
-import com.sobte.cqp.jcq.entity.Member;
-import com.sobte.cqp.jcq.event.JcqApp;
-import com.sobte.cqp.jcq.event.JcqAppAbstract;
+import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
@@ -97,7 +95,7 @@ public class Executor_jrjp extends ModuleExecutor {
 
 		if (!this.USER_IGNORE.exists()) { this.USER_IGNORE.createNewFile(); }
 
-		List<Group> groups = JcqApp.CQ.getGroupList();
+		List<Group> groups = entry.getCQ().getGroupList();
 
 		for (Group group : groups) {
 			this.MEMBERS.put(group.getId(), new ArrayList<Long>());
@@ -125,10 +123,10 @@ public class Executor_jrjp extends ModuleExecutor {
 		for (Group group : groups) {
 			ArrayList<Long> tempMembers = this.MEMBERS.get(group.getId());
 			ArrayList<Long> tempIgnores = this.IGNORES.get(group.getId());
-			for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
-				if (entry.getMessage().isMyself(member.getQqId())) { continue; }
-				if (tempIgnores.contains(member.getQqId())) { continue; }
-				tempMembers.add(member.getQqId());
+			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
+				if (entry.getMessage().isMyself(member.getQQId())) { continue; }
+				if (tempIgnores.contains(member.getQQId())) { continue; }
+				tempMembers.add(member.getQQId());
 			}
 			Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(this.random.nextInt(tempMembers.size())));
 			Executor_jrjp.this.AVCODE.put(group.getId(), (long) this.random.nextInt(60000000));
@@ -216,10 +214,10 @@ public class Executor_jrjp extends ModuleExecutor {
 						time = time - date.getMinutes() * 60;
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
 						Thread.sleep(time);
 						// =======================================================
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "执行"); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行"); }
 						Executor_jrjp.this.AVCODE.clear();
 						Executor_jrjp.this.VICTIM.clear();
 						ArrayList<Long> temp;
@@ -235,16 +233,16 @@ public class Executor_jrjp extends ModuleExecutor {
 							Executor_jrjp.this.AVCODE.put(group, avcode);
 							builder.append("\r\n" + group + " - " + " AV" + avcode);
 						}
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "结果" + builder.toString()); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果" + builder.toString()); }
 					}
 				} catch (InterruptedException exception) {
-					if (JcqAppAbstract.enable) {
-						JcqApp.CQ.logWarning(MODULE_PACKAGENAME, "异常");
+					if (entry.isEnable()) {
+						entry.getCQ().logWarning(MODULE_PACKAGENAME, "异常");
 					} else {
-						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "关闭");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
 					}
 				}
-			} while (JcqAppAbstract.enable);
+			} while (entry.isEnable());
 		}
 	}
 }

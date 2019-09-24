@@ -3,12 +3,12 @@ package studio.blacktech.coolqbot.furryblack;
 import java.io.File;
 import java.nio.file.Paths;
 
-import com.sobte.cqp.jcq.entity.CQDebug;
-import com.sobte.cqp.jcq.entity.ICQVer;
-import com.sobte.cqp.jcq.entity.IMsg;
-import com.sobte.cqp.jcq.entity.IRequest;
-import com.sobte.cqp.jcq.event.JcqApp;
-import com.sobte.cqp.jcq.event.JcqAppAbstract;
+import org.meowy.cqp.jcq.entity.CoolQ;
+import org.meowy.cqp.jcq.entity.ICQVer;
+import org.meowy.cqp.jcq.entity.IMsg;
+import org.meowy.cqp.jcq.entity.IRequest;
+import org.meowy.cqp.jcq.event.JcqApp;
+import org.meowy.cqp.jcq.event.JcqListener;
 
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
@@ -25,7 +25,11 @@ import studio.blacktech.coolqbot.furryblack.modules.Module_Systemd.SystemdDelega
  *
  * @author Alceatraz Warprays
  */
-public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
+public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener {
+
+	public static void main(String[] parameters) {
+		System.out.println("This is a JCQ plugin, Not a executable jar file!");
+	}
 
 	// ==========================================================================================================================================================
 	//
@@ -34,10 +38,17 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	// ==========================================================================================================================================================
 
 	// 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
+
+	@Override
+	public String appInfo() {
+		return ICQVer.CQAPIVER + "," + entry.AppID;
+	}
+
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	public final static String VerID = "9.1 2019-09-03 (16:00)";
+	public final static String VerID = "10.0 2019-09-24 (15:00)";
 
 	public final static long BOOTTIME = System.currentTimeMillis();
 
@@ -56,38 +67,42 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	private static LoggerX bootLoggerX;
 
-	/**
-	 * JcqDebug 模式从此处执行
-	 *
-	 * @param args 启动参数 不应传入任何参数
-	 */
-	public static void main(String[] args) {
-		JcqApp.CQ = new CQDebug();
-		entry demo = new entry();
-		demo.startup();
-		demo.enable();
-		demo.disable();
-		demo.exit();
-
-	}
-
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
 	//
 	// ==========================================================================================================================================================
 
-	// 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-	@Override
-	public String appInfo() {
-		return ICQVer.CQAPIVER + "," + entry.AppID;
+	private static CoolQ CQ;
+
+	private static boolean enable = false;
+
+	private static String appDirectory;
+
+	/**
+	 * Jcq 1.3.0 更改了使用方式
+	 *
+	 * 南荒喵原话：
+	 *
+	 * 现在都不提供静态加载的了 不过你可以写个静态变量，然后加载的时候赋值，即可
+	 *
+	 * 如果说是用的有参构造方法加载的，需要继承JcqApp的
+	 *
+	 * 还是老的方式的话 那就不用强制继承的，只需要类里提供个CQ变量的
+	 *
+	 * 嗯 推荐继承JcqApp 不过之后的 JcqAppAbstract 也不会移除 移除的是，无参的构造方式
+	 *
+	 *
+	 * @param CQ CQ对象
+	 */
+	public entry(CoolQ CQ) {
+		super(CQ);
+		entry.CQ = CQ;
 	}
-	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 	/**
 	 * 生命周期函数：CoolQ启动
 	 */
-	@Override
 	public int startup() {
 		return 0;
 	}
@@ -95,7 +110,6 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	/**
 	 * 生命周期函数：JcqApp启动
 	 */
-	@Override
 	public int enable() {
 
 		bootLoggerX = new LoggerX();
@@ -107,12 +121,12 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-			JcqAppAbstract.appDirectory = JcqApp.CQ.getAppDirectory();
+			appDirectory = CQ.getAppDirectory();
 
 			// ==========================================================================================================================
 
-			entry.FOLDER_CONF = Paths.get(JcqAppAbstract.appDirectory, "conf").toFile();
-			entry.FOLDER_DATA = Paths.get(JcqAppAbstract.appDirectory, "data").toFile();
+			entry.FOLDER_CONF = Paths.get(appDirectory, "conf").toFile();
+			entry.FOLDER_DATA = Paths.get(appDirectory, "data").toFile();
 
 			// ==========================================================================================================================
 
@@ -152,18 +166,18 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 			// ==========================================================================================================================
 
-			JcqApp.CQ.logInfo("FurryBlack", logger.make(3));
+			CQ.logInfo("FurryBlack", logger.make(3));
 
 			getMessage().adminInfo(logger.make(0));
 
 			// ==========================================================================================================================
 
-			JcqAppAbstract.enable = true;
+			enable = true;
 
 			entry.DEBUG = false;
 
 		} catch (Exception exce) {
-			JcqAppAbstract.enable = false;
+			enable = false;
 			exce.printStackTrace();
 			getMessage().adminInfo(logger.make(3));
 		}
@@ -176,7 +190,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 	@Override
 	public int disable() {
 		LoggerX logger = new LoggerX();
-		JcqAppAbstract.enable = false;
+		enable = false;
 		try {
 			logger.mini(LoggerX.datetime());
 			logger.mini("[FurryBlack] - 保存");
@@ -261,7 +275,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n原因：");
 			builder.append(exce.getMessage());
 			getMessage().adminInfo(builder.toString());
-			JcqApp.CQ.logWarning("FurryBlackException", builder.toString());
+			CQ.logWarning("FurryBlackException", builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -293,7 +307,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n原因：");
 			builder.append(exce.getMessage());
 			getMessage().adminInfo(builder.toString());
-			JcqApp.CQ.logWarning("FurryBlackException", builder.toString());
+			CQ.logWarning("FurryBlackException", builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -329,7 +343,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n原因：");
 			builder.append(exce.getMessage());
 			getMessage().adminInfo(builder.toString());
-			JcqApp.CQ.logWarning("FurryBlackException", builder.toString());
+			CQ.logWarning("FurryBlackException", builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -359,7 +373,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append("\r\n原因：");
 			builder.append(exce.getMessage());
 			getMessage().adminInfo(builder.toString());
-			JcqApp.CQ.logWarning("FurryBlackException", builder.toString());
+			CQ.logWarning("FurryBlackException", builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -408,7 +422,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		builder.append(message);
 		getMessage().adminInfo(builder.toString());
 
-		JcqApp.CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, String.valueOf(userid));
+		CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, String.valueOf(userid));
 
 		return 0;
 	}
@@ -452,7 +466,7 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 			builder.append(")\r\n消息：");
 			builder.append(message);
 
-			JcqApp.CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
+			CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
 
 			break;
 		}
@@ -551,7 +565,19 @@ public class entry extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 		return bootLoggerX.make(level);
 	}
 
-	public static void ReverseEnableStatus() {
+	public static boolean isEnable() {
+		return enable;
 	}
 
+	public static void setEnable(boolean mode) {
+		enable = mode;
+	}
+
+	public static CoolQ getCQ() {
+		return CQ;
+	}
+
+	public static String getAppDirectory() {
+		return appDirectory;
+	}
 }

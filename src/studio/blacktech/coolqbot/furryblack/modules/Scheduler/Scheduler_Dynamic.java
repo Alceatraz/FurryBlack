@@ -8,9 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import com.sobte.cqp.jcq.event.JcqApp;
-import com.sobte.cqp.jcq.event.JcqAppAbstract;
-
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -223,12 +220,12 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 						time = time - date.getMinutes() % 10 * 60;
 						if (time < 60) { time = time + 300; }
 						time = time * 1000;
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
 						Thread.sleep(time);
 						// =======================================================
 						Scheduler_Dynamic.this.COUNT++;
 						// =======================================================
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "执行"); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行"); }
 						respons = Scheduler_Dynamic.this.setAddress();
 						// 直接更新地址
 						if (respons == null) {
@@ -271,17 +268,17 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 							failcount = 0;
 							entry.getMessage().adminInfo("[DDNS] 警告 更新失败\r\n需要手动介入\r\n已连续失败六次");
 						}
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "结果 " + respons); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果 " + respons); }
 						// =======================================================
 					}
 				} catch (InterruptedException exception) {
-					if (JcqAppAbstract.enable) {
-						JcqApp.CQ.logWarning(MODULE_PACKAGENAME, "异常");
+					if (entry.isEnable()) {
+						entry.getCQ().logWarning(MODULE_PACKAGENAME, "异常");
 					} else {
-						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "关闭");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
 					}
 				}
-			} while (JcqAppAbstract.enable);
+			} while (entry.isEnable());
 		}
 	}
 

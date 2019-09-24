@@ -5,9 +5,6 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.sobte.cqp.jcq.event.JcqApp;
-import com.sobte.cqp.jcq.event.JcqAppAbstract;
-
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -341,17 +338,17 @@ public class Executor_DEMO extends ModuleExecutor {
 						// time = time - 5;
 
 						// 应当输出log以便于观察定时任务的状况
-						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 休眠：" + time);
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 休眠：" + time);
 
 						Thread.sleep(time);
 
 						// 应当输出log以便于观察定时任务的状况
-						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 执行");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 执行");
 
 						// 此处执行实际任务
 
 						// 应当输出log以便于观察定时任务的状况
-						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 结果");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 结果");
 
 					}
 
@@ -359,14 +356,14 @@ public class Executor_DEMO extends ModuleExecutor {
 					// shut时 应打断休眠此时会产生异常
 					// 如果框架关闭，则并非真的异常 此时将会跳出主循环 结束worker
 					// 如果框架运行中，则遇到了真正意义上的异常，应观察发生了什么
-					if (JcqAppAbstract.enable) {
-						JcqApp.CQ.logWarning(MODULE_PACKAGENAME, "[Executor_DEMO] 异常");
+					if (entry.isEnable()) {
+						entry.getCQ().logWarning(MODULE_PACKAGENAME, "[Executor_DEMO] 异常");
 						exception.printStackTrace();
 					} else {
-						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 关闭");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 关闭");
 					}
 				}
-			} while (JcqAppAbstract.enable);
+			} while (entry.isEnable());
 		}
 	}
 }

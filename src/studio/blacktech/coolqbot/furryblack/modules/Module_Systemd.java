@@ -3,8 +3,6 @@ package studio.blacktech.coolqbot.furryblack.modules;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import com.sobte.cqp.jcq.event.JcqAppAbstract;
-
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -18,7 +16,6 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 import studio.blacktech.coolqbot.furryblack.modules.Module_Message.MessageDelegate;
 import studio.blacktech.coolqbot.furryblack.modules.Module_Nickmap.NicknameDelegate;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_time;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_acon;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_admin;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_chou;
@@ -30,6 +27,7 @@ import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_kong;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_mine;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_roll;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_roulette;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_time;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_zhan;
 import studio.blacktech.coolqbot.furryblack.modules.Listener.Listener_TopSpeak;
 import studio.blacktech.coolqbot.furryblack.modules.Scheduler.Scheduler_Dynamic;
@@ -1273,11 +1271,11 @@ public class Module_Systemd extends Module {
 		switch (level) {
 		case "0":
 			logger.info("init 0：切换启停");
-			if (JcqAppAbstract.enable) {
-				JcqAppAbstract.enable = false;
+			if (entry.isEnable()) {
+				entry.setEnable(false);
 				logger.info("切换至停机");
 			} else {
-				JcqAppAbstract.enable = true;
+				entry.setEnable(true);
 				logger.info("切换至运行");
 			}
 			break;

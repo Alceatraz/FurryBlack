@@ -4,9 +4,6 @@ import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.sobte.cqp.jcq.event.JcqApp;
-import com.sobte.cqp.jcq.event.JcqAppAbstract;
-
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -170,22 +167,22 @@ public class Executor_jrrp extends ModuleExecutor {
 						time = time - date.getMinutes() * 60;
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
 						Thread.sleep(time);
 						// =======================================================
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "执行"); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行"); }
 						Executor_jrrp.this.JRRP.clear();
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "结果"); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果"); }
 						// =======================================================
 					}
 				} catch (Exception exception) {
-					if (JcqAppAbstract.enable) {
-						JcqApp.CQ.logWarning(MODULE_PACKAGENAME, "异常");
+					if (entry.isEnable()) {
+						entry.getCQ().logWarning(MODULE_PACKAGENAME, "异常");
 					} else {
-						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "关闭");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
 					}
 				}
-			} while (JcqAppAbstract.enable);
+			} while (entry.isEnable());
 		}
 	}
 }

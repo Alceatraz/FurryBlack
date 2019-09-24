@@ -12,10 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.TreeMap;
 
-import com.sobte.cqp.jcq.entity.Group;
-import com.sobte.cqp.jcq.entity.Member;
-import com.sobte.cqp.jcq.event.JcqApp;
+import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
 
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -74,7 +74,7 @@ public class Module_Nickmap extends Module {
 
 		NICKNAME = new TreeMap<>();
 
-		for (Group group : JcqApp.CQ.getGroupList()) {
+		for (Group group : entry.getCQ().getGroupList()) {
 			NICKNAME.put(group.getId(), new TreeMap<>());
 		}
 
@@ -144,12 +144,12 @@ public class Module_Nickmap extends Module {
 			builder.append(LoggerX.datetime());
 			builder.append("\r\n");
 
-			for (Group group : JcqApp.CQ.getGroupList()) {
+			for (Group group : entry.getCQ().getGroupList()) {
 				long groupid = group.getId();
-				for (Member member : JcqApp.CQ.getGroupMemberList(groupid)) {
+				for (Member member : entry.getCQ().getGroupMemberList(groupid)) {
 					builder.append(groupid);
 					builder.append(":");
-					builder.append(member.getQqId());
+					builder.append(member.getQQId());
 					builder.append(":");
 					builder.append(member.getNick());
 					builder.append("\r\n");
@@ -183,7 +183,7 @@ public class Module_Nickmap extends Module {
 		builder.append(":");
 		builder.append(userid);
 		builder.append(":");
-		builder.append(JcqApp.CQ.getStrangerInfo(userid));
+		builder.append(entry.getCQ().getStrangerInfo(userid));
 
 		FileWriter writer = new FileWriter(this.FILE_NICKNAME, true);
 		writer.append(builder.toString());
@@ -221,7 +221,7 @@ public class Module_Nickmap extends Module {
 				//
 			}
 		}
-		return JcqApp.CQ.getStrangerInfo(userid).getNick();
+		return entry.getCQ().getStrangerInfo(userid).getNick();
 	}
 
 	// ==========================================================================================================================================================
@@ -240,7 +240,7 @@ public class Module_Nickmap extends Module {
 		}
 
 		public String getNickname(long userid) {
-			return JcqApp.CQ.getStrangerInfo(userid).getNick();
+			return entry.getCQ().getStrangerInfo(userid).getNick();
 		}
 	}
 }

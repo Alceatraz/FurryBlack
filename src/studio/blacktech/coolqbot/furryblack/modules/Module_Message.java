@@ -11,8 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
-import com.sobte.cqp.jcq.entity.Group;
-import com.sobte.cqp.jcq.event.JcqApp;
+import org.meowy.cqp.jcq.entity.Group;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
@@ -131,7 +130,7 @@ public class Module_Message extends Module {
 		this.MESSAGE_INFO = this.MESSAGE_INFO.replaceAll("REPLACE_VERSION", entry.VerID);
 		this.MESSAGE_EULA = this.MESSAGE_EULA.replaceAll("REPLACE_VERSION", entry.VerID);
 
-		this.USERID_CQBOT = JcqApp.CQ.getLoginQQ();
+		this.USERID_CQBOT = entry.getCQ().getLoginQQ();
 		this.USERID_ADMIN = Long.parseLong(this.CONFIG.getProperty("userid_admin", "0"));
 
 		if (this.USERID_ADMIN == 0) { throw new Exception("管理员账号配置错误"); }
@@ -139,7 +138,7 @@ public class Module_Message extends Module {
 		logger.seek(MODULE_PACKAGENAME, "机器人账号", this.USERID_CQBOT);
 		logger.seek(MODULE_PACKAGENAME, "管理员账号", this.USERID_ADMIN);
 
-		List<Group> groups = JcqApp.CQ.getGroupList();
+		List<Group> groups = entry.getCQ().getGroupList();
 		for (Group group : groups) {
 			this.MESSAGE_HISTORY_GROP.put(group.getId(), new LinkedList<>());
 		}
@@ -187,87 +186,87 @@ public class Module_Message extends Module {
 	}
 
 	private void doAdminInfo(String message) {
-		JcqApp.CQ.sendPrivateMsg(this.USERID_ADMIN, message);
+		entry.getCQ().sendPrivateMsg(this.USERID_ADMIN, message);
 	}
 
 	private void doAdminInfo(String[] message) {
 		for (String temp : message) {
-			JcqApp.CQ.sendPrivateMsg(this.USERID_ADMIN, temp);
+			entry.getCQ().sendPrivateMsg(this.USERID_ADMIN, temp);
 		}
 	}
 
 	private void doUserInfo(long userid, String message) {
-		JcqApp.CQ.sendPrivateMsg(userid, message);
+		entry.getCQ().sendPrivateMsg(userid, message);
 	}
 
 	private void doUserInfo(long userid, String[] message) {
 		for (String temp : message) {
-			JcqApp.CQ.sendPrivateMsg(userid, temp);
+			entry.getCQ().sendPrivateMsg(userid, temp);
 		}
 	}
 
 	private void doDiszInfo(long diszid, String message) {
-		JcqApp.CQ.sendDiscussMsg(diszid, message);
+		entry.getCQ().sendDiscussMsg(diszid, message);
 	}
 
 	private void doDiszInfo(long diszid, String[] message) {
 		for (String temp : message) {
-			JcqApp.CQ.sendDiscussMsg(diszid, temp);
+			entry.getCQ().sendDiscussMsg(diszid, temp);
 		}
 	}
 
 	private void doDiszInfo(long diszid, long userid, String message) {
-		JcqApp.CQ.sendDiscussMsg(diszid, "[CQ:at,qq=" + userid + "] " + message);
+		entry.getCQ().sendDiscussMsg(diszid, "[CQ:at,qq=" + userid + "] " + message);
 	}
 
 	private void doGropInfo(long gropid, String message) {
-		this.MESSAGE_HISTORY_GROP.get(gropid).add(JcqApp.CQ.sendGroupMsg(gropid, message));
+		this.MESSAGE_HISTORY_GROP.get(gropid).add(entry.getCQ().sendGroupMsg(gropid, message));
 	}
 
 	private void doGropInfo(long gropid, String[] message) {
 		for (String temp : message) {
-			this.MESSAGE_HISTORY_GROP.get(gropid).add(JcqApp.CQ.sendGroupMsg(gropid, temp));
+			this.MESSAGE_HISTORY_GROP.get(gropid).add(entry.getCQ().sendGroupMsg(gropid, temp));
 		}
 	}
 
 	private void doGropInfo(long gropid, long userid, String message) {
-		this.MESSAGE_HISTORY_GROP.get(gropid).add(JcqApp.CQ.sendGroupMsg(gropid, "[CQ:at,qq=" + userid + "] " + message));
+		this.MESSAGE_HISTORY_GROP.get(gropid).add(entry.getCQ().sendGroupMsg(gropid, "[CQ:at,qq=" + userid + "] " + message));
 	}
 
 	private void doSendInfo(long userid) {
-		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_INFO);
+		entry.getCQ().sendPrivateMsg(userid, this.MESSAGE_INFO);
 	}
 
 	private void doSendEula(long userid) {
-		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_EULA);
+		entry.getCQ().sendPrivateMsg(userid, this.MESSAGE_EULA);
 	}
 
 	private void doSendHelp(long userid) {
-		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_HELP);
+		entry.getCQ().sendPrivateMsg(userid, this.MESSAGE_HELP);
 	}
 
 	private void doSendHelp(long userid, ModuleTrigger module) {
-		JcqApp.CQ.sendPrivateMsg(userid, module.MODULE_FULLHELP());
+		entry.getCQ().sendPrivateMsg(userid, module.MODULE_FULLHELP());
 	}
 
 	private void doSendHelp(long userid, ModuleListener module) {
-		JcqApp.CQ.sendPrivateMsg(userid, module.MODULE_FULLHELP());
+		entry.getCQ().sendPrivateMsg(userid, module.MODULE_FULLHELP());
 	}
 
 	private void doSendHelp(long userid, ModuleExecutor module) {
-		JcqApp.CQ.sendPrivateMsg(userid, module.MODULE_FULLHELP());
+		entry.getCQ().sendPrivateMsg(userid, module.MODULE_FULLHELP());
 	}
 
 	private void doSendListUser(long userid) {
-		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_LIST_USER);
+		entry.getCQ().sendPrivateMsg(userid, this.MESSAGE_LIST_USER);
 	}
 
 	private void doSendListDisz(long userid) {
-		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_LIST_DISZ);
+		entry.getCQ().sendPrivateMsg(userid, this.MESSAGE_LIST_DISZ);
 	}
 
 	private void doSendListGrop(long userid) {
-		JcqApp.CQ.sendPrivateMsg(userid, this.MESSAGE_LIST_GROP);
+		entry.getCQ().sendPrivateMsg(userid, this.MESSAGE_LIST_GROP);
 	}
 
 	private boolean doIsMyself(long userid) {
@@ -279,7 +278,7 @@ public class Module_Message extends Module {
 	}
 
 	private void doRevokeMessage(long gropid) {
-		JcqApp.CQ.deleteMsg(this.MESSAGE_HISTORY_GROP.get(gropid).pollLast());
+		entry.getCQ().deleteMsg(this.MESSAGE_HISTORY_GROP.get(gropid).pollLast());
 	}
 
 	public void doGenetateList(

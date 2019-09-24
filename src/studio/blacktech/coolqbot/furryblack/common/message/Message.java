@@ -8,8 +8,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sobte.cqp.jcq.event.JcqApp;
-
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 
@@ -178,7 +176,7 @@ public class Message implements Serializable {
 				this.resMessage = this.rawMessage.replaceAll("\\[CQ:.+\\]", "").trim();
 				this.resLength = this.resMessage.length();
 
-				if (entry.DEBUG()) { JcqApp.CQ.logDebug("ResMessage", LoggerX.unicode(this.resMessage)); }
+				if (entry.DEBUG()) { entry.getCQ().logDebug("ResMessage", LoggerX.unicode(this.resMessage)); }
 
 				if (this.resLength == 0) { this.isPureCQC = true; }
 			}

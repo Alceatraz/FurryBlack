@@ -19,10 +19,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
-import com.sobte.cqp.jcq.entity.Group;
-import com.sobte.cqp.jcq.entity.Member;
-import com.sobte.cqp.jcq.event.JcqApp;
-import com.sobte.cqp.jcq.event.JcqAppAbstract;
+import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
+import org.meowy.cqp.jcq.message.CQCode;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
@@ -126,7 +125,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		} else {
 			this.GROUP_STATUS = new HashMap<>();
 		}
-		List<Group> groups = JcqApp.CQ.getGroupList();
+		List<Group> groups = entry.getCQ().getGroupList();
 		for (Group group : groups) {
 			if (!this.GROUP_STATUS.containsKey(group.getId())) {
 				this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
@@ -409,7 +408,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(message);
 					if (entry.DEBUG()) {
 						String[] unicode = LoggerX.unicodeid(message);
-						JcqApp.CQ.logDebug("shui " + order, Arrays.toString(unicode));
+						entry.getCQ().logDebug("shui " + order, Arrays.toString(unicode));
 					}
 
 					if (limit > 20) { break; }
@@ -448,6 +447,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		if (allPictureRank.size() > 0) {
 			int order = 1;
 			int limit = 0;
+
 			for (int pictureRank : allPictureRank.keySet()) {
 				HashSet<String> tempSet = allPictureRank.get(pictureRank);
 				for (String picture : tempSet) {
@@ -457,7 +457,8 @@ public class Listener_TopSpeak extends ModuleListener {
 					builder.append(" - ");
 					builder.append(pictureRank);
 					builder.append("次：");
-					builder.append(JcqApp.CC.getCQImage(picture).getUrl());
+					builder.append(CQCode.getInstance().getCQImage(picture).getUrl());
+
 					report.add(builder.toString());
 					limit++;
 					if (limit > 2) { break; }
@@ -489,10 +490,10 @@ public class Listener_TopSpeak extends ModuleListener {
 						time = time - date.getHours() * 3600;
 						if (time < 0) { time = time + 864000; }
 						time = time * 1000;
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
 						Thread.sleep(time);
 						// =======================================================
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "执行"); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行"); }
 						File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), "dailybackup_" + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".serial").toFile();
 						ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(Listener_TopSpeak.this.GROUP_STATUS_SERIAL));
 						saver.writeObject(DAILY_BACKUP);
@@ -504,17 +505,17 @@ public class Listener_TopSpeak extends ModuleListener {
 								continue;
 							}
 						}
-						if (entry.DEBUG()) { JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "结果"); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果"); }
 						// =======================================================
 					}
 				} catch (Exception exception) {
-					if (JcqAppAbstract.enable) {
-						JcqApp.CQ.logWarning(MODULE_PACKAGENAME, "异常");
+					if (entry.isEnable()) {
+						entry.getCQ().logWarning(MODULE_PACKAGENAME, "异常");
 					} else {
-						JcqApp.CQ.logInfo(MODULE_PACKAGENAME, "关闭");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
 					}
 				}
-			} while (JcqAppAbstract.enable);
+			} while (entry.isEnable());
 		}
 	}
 
@@ -538,8 +539,8 @@ class GroupStatus implements Serializable {
 	public GroupStatus(long gropid) {
 		this.initdt = System.currentTimeMillis();
 		this.gropid = gropid;
-		for (Member member : JcqApp.CQ.getGroupMemberList(gropid)) {
-			this.USER_STATUS.put(member.getQqId(), new UserStatus(member.getQqId()));
+		for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
+			this.USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
 		}
 	}
 

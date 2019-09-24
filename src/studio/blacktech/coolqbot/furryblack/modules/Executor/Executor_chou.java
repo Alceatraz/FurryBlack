@@ -11,10 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.sobte.cqp.jcq.entity.Group;
-import com.sobte.cqp.jcq.entity.Member;
-import com.sobte.cqp.jcq.entity.QQInfo;
-import com.sobte.cqp.jcq.event.JcqApp;
+import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
+import org.meowy.cqp.jcq.entity.QQInfo;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
@@ -85,7 +84,7 @@ public class Executor_chou extends ModuleExecutor {
 
 		if (!this.FILE_IGNORE_USER.exists()) { this.FILE_IGNORE_USER.createNewFile(); }
 
-		List<Group> groups = JcqApp.CQ.getGroupList();
+		List<Group> groups = entry.getCQ().getGroupList();
 
 		for (Group group : groups) {
 			this.MEMBERS.put(group.getId(), new ArrayList<Long>());
@@ -124,10 +123,10 @@ public class Executor_chou extends ModuleExecutor {
 			tempMembers = this.MEMBERS.get(group.getId());
 			tempIgnores = this.IGNORES.get(group.getId());
 
-			for (Member member : JcqApp.CQ.getGroupMemberList(group.getId())) {
-				if (entry.getMessage().isMyself(member.getQqId())) { continue; }
-				if (tempIgnores.contains(member.getQqId())) { continue; }
-				tempMembers.add(member.getQqId());
+			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
+				if (entry.getMessage().isMyself(member.getQQId())) { continue; }
+				if (tempIgnores.contains(member.getQQId())) { continue; }
+				tempMembers.add(member.getQQId());
 			}
 		}
 
@@ -162,12 +161,12 @@ public class Executor_chou extends ModuleExecutor {
 		ArrayList<Long> tempMembers = new ArrayList<>();
 		if (this.IGNORES.containsKey(gropid)) {
 			ArrayList<Long> tempIgnores = this.IGNORES.get(gropid);
-			for (Member tempUserid : JcqApp.CQ.getGroupMemberList(gropid)) {
-				if (!tempIgnores.contains(tempUserid.getQqId())) { tempMembers.add(tempUserid.getQqId()); }
+			for (Member tempUserid : entry.getCQ().getGroupMemberList(gropid)) {
+				if (!tempIgnores.contains(tempUserid.getQQId())) { tempMembers.add(tempUserid.getQQId()); }
 			}
 		} else {
-			for (Member tempUserid : JcqApp.CQ.getGroupMemberList(gropid)) {
-				tempMembers.add(tempUserid.getQqId());
+			for (Member tempUserid : entry.getCQ().getGroupMemberList(gropid)) {
+				tempMembers.add(tempUserid.getQQId());
 			}
 		}
 		this.MEMBERS.put(gropid, tempMembers);
@@ -207,11 +206,11 @@ public class Executor_chou extends ModuleExecutor {
 			do {
 				chouid = members.get(random.nextInt(size));
 			} while (chouid == userid);
-			QQInfo member = JcqApp.CQ.getStrangerInfo(chouid);
+			QQInfo member = entry.getCQ().getStrangerInfo(chouid);
 			if (message.getSection() == 1) {
-				entry.getMessage().gropInfo(gropid, userid, "随机抽到 " + entry.getNickmap().getGropnick(gropid, member.getQqId()) + "(" + chouid + ")");
+				entry.getMessage().gropInfo(gropid, userid, "随机抽到 " + entry.getNickmap().getGropnick(gropid, member.getQQId()) + "(" + chouid + ")");
 			} else {
-				entry.getMessage().gropInfo(gropid, userid, "随机抽到 " + entry.getNickmap().getGropnick(gropid, member.getQqId()) + "(" + chouid + ")： " + message.getOptions());
+				entry.getMessage().gropInfo(gropid, userid, "随机抽到 " + entry.getNickmap().getGropnick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getOptions());
 			}
 		}
 		return true;

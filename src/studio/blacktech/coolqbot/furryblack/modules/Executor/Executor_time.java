@@ -90,19 +90,19 @@ public class Executor_time extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().userInfo(userid, getTime());
+		entry.getMessage().userInfo(userid, this.getTime());
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().diszInfo(diszid, getTime());
+		entry.getMessage().diszInfo(diszid, this.getTime());
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().gropInfo(gropid, getTime());
+		entry.getMessage().gropInfo(gropid, this.getTime());
 		return true;
 	}
 
@@ -113,16 +113,18 @@ public class Executor_time extends ModuleExecutor {
 		TimeZone zone_E2 = TimeZone.getTimeZone("EET");
 		TimeZone zone_E8 = TimeZone.getTimeZone("CTT");
 
-		int UTC_DATE = Integer.parseInt(LoggerX.formatTime("dd", zone_00));
+		int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", zone_E8));
 
-		boolean lastday_W7 = Integer.parseInt(LoggerX.formatTime("dd", zone_W7)) < UTC_DATE;
-		boolean lastday_W4 = Integer.parseInt(LoggerX.formatTime("dd", zone_W4)) < UTC_DATE;
+		boolean yestday_W7 = Integer.parseInt(LoggerX.formatTime("dd", zone_W7)) < E8_DATE;
+		boolean yestday_W4 = Integer.parseInt(LoggerX.formatTime("dd", zone_W4)) < E8_DATE;
+		boolean yestday_E2 = Integer.parseInt(LoggerX.formatTime("dd", zone_E2)) < E8_DATE;
+
 		return
 		// @formatter:off
 				"世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", zone_00) +
-				"\r\n美国西部(UTC-7) " + (lastday_W7 ? "昨天" : "") + LoggerX.formatTime("HH:mm", zone_W7) +
-				"\r\n美国东部(UTC-4) " + (lastday_W4 ? "昨天" : "") + LoggerX.formatTime("HH:mm", zone_W4) +
-				"\r\n欧洲英国(UTC+4) " + LoggerX.formatTime("HH:mm", zone_E2) +
+				"\r\n美国西部(UTC-7) " + (yestday_W7 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W7) +
+				"\r\n美国东部(UTC-4) " + (yestday_W4 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W4) +
+				"\r\n欧洲英国(UTC+4) " + (yestday_E2 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_E2) +
 				"\r\n亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", zone_E8)
 		// @formatter:on
 		;
@@ -141,6 +143,6 @@ public class Executor_time extends ModuleExecutor {
 
 	@Test
 	void test() {
-		System.out.println(getTime());
+		System.out.println(this.getTime());
 	}
 }
