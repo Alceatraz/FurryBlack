@@ -107,24 +107,24 @@ public class Executor_time extends ModuleExecutor {
 	}
 
 	private String getTime() {
-		TimeZone zone_W7 = TimeZone.getTimeZone("MST");
-		TimeZone zone_W4 = TimeZone.getTimeZone("PRT");
-		TimeZone zone_00 = TimeZone.getTimeZone("UTC");
-		TimeZone zone_E2 = TimeZone.getTimeZone("EET");
-		TimeZone zone_E8 = TimeZone.getTimeZone("CTT");
+		TimeZone zone_W7 = TimeZone.getTimeZone("MST"); // Mountain Standard Time
+		TimeZone zone_W4 = TimeZone.getTimeZone("PRT"); // Atlantic Standard Time
+		TimeZone zone_00 = TimeZone.getTimeZone("UTC"); // Coordinated Universal Time
+		TimeZone zone_E1 = TimeZone.getTimeZone("WET"); // Western European Time
+		TimeZone zone_E8 = TimeZone.getTimeZone("CTT"); // China Standard Time
 
 		int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", zone_E8));
 
 		boolean yestday_W7 = Integer.parseInt(LoggerX.formatTime("dd", zone_W7)) < E8_DATE;
 		boolean yestday_W4 = Integer.parseInt(LoggerX.formatTime("dd", zone_W4)) < E8_DATE;
-		boolean yestday_E2 = Integer.parseInt(LoggerX.formatTime("dd", zone_E2)) < E8_DATE;
+		boolean yestday_E1 = Integer.parseInt(LoggerX.formatTime("dd", zone_E1)) < E8_DATE;
 
 		return
 		// @formatter:off
 				"世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", zone_00) +
 				"\r\n美国西部(UTC-7) " + (yestday_W7 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W7) +
 				"\r\n美国东部(UTC-4) " + (yestday_W4 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W4) +
-				"\r\n欧洲英国(UTC+4) " + (yestday_E2 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_E2) +
+				"\r\n欧洲英国(UTC+1) " + (yestday_E1 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_E1) +
 				"\r\n亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", zone_E8)
 		// @formatter:on
 		;
@@ -144,5 +144,10 @@ public class Executor_time extends ModuleExecutor {
 	@Test
 	void test() {
 		System.out.println(this.getTime());
+		System.out.println(TimeZone.getTimeZone("MST").getDisplayName());
+		System.out.println(TimeZone.getTimeZone("PRT").getDisplayName());
+		System.out.println(TimeZone.getTimeZone("UTC").getDisplayName());
+		System.out.println(TimeZone.getTimeZone("WET").getDisplayName());
+		System.out.println(TimeZone.getTimeZone("CTT").getDisplayName());
 	}
 }

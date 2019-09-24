@@ -47,8 +47,7 @@ public class JcqDemo_130 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	}
 
 	/**
-	 * 用main方法调试可以最大化的加快开发效率，检测和定位错误位置<br/>
-	 * 以下就是使用Main方法进行测试的一个简易案例
+	 * 用main方法调试可以最大化的加快开发效率，检测和定位错误位置 以下就是使用Main方法进行测试的一个简易案例
 	 *
 	 * @param args 系统参数
 	 */
