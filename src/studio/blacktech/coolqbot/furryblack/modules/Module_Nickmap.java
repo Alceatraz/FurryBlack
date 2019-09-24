@@ -70,7 +70,7 @@ public class Module_Nickmap extends Module {
 	@Override
 	public void init(LoggerX logger) throws Exception {
 
-		this.initDataFolder();
+		this.initConfFolder();
 
 		NICKNAME = new TreeMap<>();
 
@@ -78,7 +78,7 @@ public class Module_Nickmap extends Module {
 			NICKNAME.put(group.getId(), new TreeMap<>());
 		}
 
-		this.FILE_NICKNAME = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "user_nickname.txt").toFile();
+		this.FILE_NICKNAME = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "user_nickname.txt").toFile();
 		if (!this.FILE_NICKNAME.exists()) { if (!this.FILE_NICKNAME.createNewFile()) { throw new InitializationException("无法创建文件user_nickname.txt"); } }
 
 		String line;
