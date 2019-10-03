@@ -112,15 +112,51 @@ public class Executor_zhan extends ModuleExecutor {
 
 		// 为什么不写循环？ 因为写死运行快 塔罗牌永远就那么多
 		// @formatter:off
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);this.FREQ.add(0);
-		this.FREQ.add(0);this.FREQ.add(0);
-		// @formatter:on
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        this.FREQ.add(0);
+        // @formatter:on
 
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;

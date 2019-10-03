@@ -120,9 +120,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	}
 
 	/**
-	 *
 	 * 生命周期函数 初始化阶段
-	 *
+	 * <p>
 	 * 1：初始化配置及数据文件 2：生成所有内存结构 3：读取配置并应用 4：分析 ENABLE_MODE
 	 */
 	@Override
@@ -210,11 +209,10 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	/**
 	 * 如果有 应在此处打断工作线程 和剩余的关闭逻辑
-	 *
+	 * <p>
 	 * 正常关闭情况下执行shut之前将会执行save
-	 *
+	 * <p>
 	 * 有可能会使用 /admin init X 强制执行生命周期函数 但是此命令不属于正常使用范畴 可以不考虑此情况
-	 *
 	 */
 	@Override
 	public void shut(LoggerX logger) throws Exception {

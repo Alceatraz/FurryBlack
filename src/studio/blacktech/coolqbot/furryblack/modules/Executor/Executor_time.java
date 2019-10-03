@@ -121,12 +121,12 @@ public class Executor_time extends ModuleExecutor {
 
 		return
 		// @formatter:off
-				"世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", zone_00) +
-				"\r\n美国西部(UTC-7) " + (yestday_W7 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W7) +
-				"\r\n美国东部(UTC-4) " + (yestday_W4 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W4) +
-				"\r\n欧洲英国(UTC+1) " + (yestday_E1 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_E1) +
-				"\r\n亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", zone_E8)
-		// @formatter:on
+                "世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", zone_00) +
+                        "\r\n美国西部(UTC-7) " + (yestday_W7 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W7) +
+                        "\r\n美国东部(UTC-4) " + (yestday_W4 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W4) +
+                        "\r\n欧洲英国(UTC+1) " + (yestday_E1 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_E1) +
+                        "\r\n亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", zone_E8)
+                // @formatter:on
 		;
 	}
 
@@ -139,15 +139,5 @@ public class Executor_time extends ModuleExecutor {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
-	}
-
-	@Test
-	void test() {
-		System.out.println(this.getTime());
-		System.out.println(TimeZone.getTimeZone("MST").getDisplayName());
-		System.out.println(TimeZone.getTimeZone("PRT").getDisplayName());
-		System.out.println(TimeZone.getTimeZone("UTC").getDisplayName());
-		System.out.println(TimeZone.getTimeZone("WET").getDisplayName());
-		System.out.println(TimeZone.getTimeZone("CTT").getDisplayName());
 	}
 }

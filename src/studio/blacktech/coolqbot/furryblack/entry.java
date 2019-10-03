@@ -81,17 +81,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 	/**
 	 * Jcq 1.3.0 更改了使用方式
-	 *
+	 * <p>
 	 * 南荒喵原话：
-	 *
+	 * <p>
 	 * 现在都不提供静态加载的了 不过你可以写个静态变量，然后加载的时候赋值，即可
-	 *
+	 * <p>
 	 * 如果说是用的有参构造方法加载的，需要继承JcqApp的
-	 *
+	 * <p>
 	 * 还是老的方式的话 那就不用强制继承的，只需要类里提供个CQ变量的
-	 *
+	 * <p>
 	 * 嗯 推荐继承JcqApp 不过之后的 JcqAppAbstract 也不会移除 移除的是，无参的构造方式
-	 *
 	 *
 	 * @param CQ CQ对象
 	 */

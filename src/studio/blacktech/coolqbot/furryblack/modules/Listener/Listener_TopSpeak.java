@@ -484,7 +484,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					// =======================================================
 					while (true) {
 						date = new Date();
-						time = 72000L;
+						time = 21600L;
 						time = time - date.getSeconds();
 						time = time - date.getMinutes() * 60;
 						time = time - date.getHours() * 3600;

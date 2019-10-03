@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -53,6 +54,8 @@ public class Module_Message extends Module {
 	private File FILE_MESSAGE_INFO;
 	private File FILE_MESSAGE_EULA;
 
+	private File FILE_SILENCE_GROP;
+
 	private String MESSAGE_HELP = "";
 	private String MESSAGE_INFO = "";
 	private String MESSAGE_EULA = "";
@@ -61,8 +64,10 @@ public class Module_Message extends Module {
 	private String MESSAGE_LIST_DISZ = "";
 	private String MESSAGE_LIST_GROP = "";
 
-	private TreeMap<Long, LinkedList<Integer>> MESSAGE_HISTORY_GROP;
 	private MessageDelegate delegate = new MessageDelegate();
+
+	private HashSet<Long> SILENCE_GROP;
+	private TreeMap<Long, LinkedList<Integer>> MESSAGE_HISTORY_GROP;
 
 	private long USERID_CQBOT = 0;
 	private long USERID_ADMIN = 0;
@@ -79,12 +84,14 @@ public class Module_Message extends Module {
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public void init(LoggerX logger) throws Exception {
 
 		this.initConfFolder();
 		this.initCofigurtion();
 
+		this.SILENCE_GROP = new HashSet<>();
 		this.MESSAGE_HISTORY_GROP = new TreeMap<>();
 
 		if (this.NEW_CONFIG) {
@@ -99,14 +106,17 @@ public class Module_Message extends Module {
 		this.FILE_MESSAGE_HELP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_help.txt").toFile();
 		this.FILE_MESSAGE_INFO = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_info.txt").toFile();
 		this.FILE_MESSAGE_EULA = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_eula.txt").toFile();
+		this.FILE_SILENCE_GROP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "silence_grop.txt").toFile();
 
 		if (!this.FILE_MESSAGE_HELP.exists()) { this.FILE_MESSAGE_HELP.createNewFile(); }
 		if (!this.FILE_MESSAGE_INFO.exists()) { this.FILE_MESSAGE_INFO.createNewFile(); }
 		if (!this.FILE_MESSAGE_EULA.exists()) { this.FILE_MESSAGE_EULA.createNewFile(); }
+		if (!this.FILE_SILENCE_GROP.exists()) { this.FILE_SILENCE_GROP.createNewFile(); }
 
 		BufferedReader readerHelp = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_MESSAGE_HELP), StandardCharsets.UTF_8));
 		BufferedReader readerInfo = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_MESSAGE_INFO), StandardCharsets.UTF_8));
 		BufferedReader readerEula = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_MESSAGE_EULA), StandardCharsets.UTF_8));
+		BufferedReader readerSKIP = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_SILENCE_GROP), StandardCharsets.UTF_8));
 
 		String line;
 
@@ -143,6 +153,13 @@ public class Module_Message extends Module {
 			this.MESSAGE_HISTORY_GROP.put(group.getId(), new LinkedList<>());
 		}
 
+		while ((line = readerSKIP.readLine()) != null) {
+			if (line.startsWith("#")) { continue; }
+			this.SILENCE_GROP.add(Long.valueOf(line));
+			logger.seek(MODULE_PACKAGENAME, "关闭发言", line);
+		}
+
+		readerSKIP.close();
 	}
 
 	@Override
@@ -220,16 +237,19 @@ public class Module_Message extends Module {
 	}
 
 	private void doGropInfo(long gropid, String message) {
+		if (this.SILENCE_GROP.contains(gropid)) { return; }
 		this.MESSAGE_HISTORY_GROP.get(gropid).add(entry.getCQ().sendGroupMsg(gropid, message));
 	}
 
 	private void doGropInfo(long gropid, String[] message) {
+		if (this.SILENCE_GROP.contains(gropid)) { return; }
 		for (String temp : message) {
 			this.MESSAGE_HISTORY_GROP.get(gropid).add(entry.getCQ().sendGroupMsg(gropid, temp));
 		}
 	}
 
 	private void doGropInfo(long gropid, long userid, String message) {
+		if (this.SILENCE_GROP.contains(gropid)) { return; }
 		this.MESSAGE_HISTORY_GROP.get(gropid).add(entry.getCQ().sendGroupMsg(gropid, "[CQ:at,qq=" + userid + "] " + message));
 	}
 
@@ -283,16 +303,16 @@ public class Module_Message extends Module {
 
 	public void doGenetateList(
 	// @formatter:off
-		ArrayList<ModuleTrigger> TRIGGER_USER,
-		ArrayList<ModuleTrigger> TRIGGER_DISZ,
-		ArrayList<ModuleTrigger> TRIGGER_GROP,
-		ArrayList<ModuleListener> LISTENER_USER,
-		ArrayList<ModuleListener> LISTENER_DISZ,
-		ArrayList<ModuleListener> LISTENER_GROP,
-		TreeMap<String, ModuleExecutor> EXECUTOR_USER,
-		TreeMap<String, ModuleExecutor> EXECUTOR_DISZ,
-		TreeMap<String, ModuleExecutor> EXECUTOR_GROP
-	// @formatter:on
+            ArrayList<ModuleTrigger> TRIGGER_USER,
+            ArrayList<ModuleTrigger> TRIGGER_DISZ,
+            ArrayList<ModuleTrigger> TRIGGER_GROP,
+            ArrayList<ModuleListener> LISTENER_USER,
+            ArrayList<ModuleListener> LISTENER_DISZ,
+            ArrayList<ModuleListener> LISTENER_GROP,
+            TreeMap<String, ModuleExecutor> EXECUTOR_USER,
+            TreeMap<String, ModuleExecutor> EXECUTOR_DISZ,
+            TreeMap<String, ModuleExecutor> EXECUTOR_GROP
+            // @formatter:on
 	) {
 		if (this.GEN_LOCK) { return; }
 
@@ -585,16 +605,16 @@ public class Module_Message extends Module {
 
 		public void genetateList(
 		// 	@formatter:off
-			ArrayList<ModuleTrigger> TRIGGER_USER,
-			ArrayList<ModuleTrigger> TRIGGER_DISZ,
-			ArrayList<ModuleTrigger> TRIGGER_GROP,
-			ArrayList<ModuleListener> LISTENER_USER,
-			ArrayList<ModuleListener> LISTENER_DISZ,
-			ArrayList<ModuleListener> LISTENER_GROP,
-			TreeMap<String, ModuleExecutor> EXECUTOR_USER,
-			TreeMap<String, ModuleExecutor> EXECUTOR_DISZ,
-			TreeMap<String, ModuleExecutor> EXECUTOR_GROP
-			// @formatter:on
+                ArrayList<ModuleTrigger> TRIGGER_USER,
+                ArrayList<ModuleTrigger> TRIGGER_DISZ,
+                ArrayList<ModuleTrigger> TRIGGER_GROP,
+                ArrayList<ModuleListener> LISTENER_USER,
+                ArrayList<ModuleListener> LISTENER_DISZ,
+                ArrayList<ModuleListener> LISTENER_GROP,
+                TreeMap<String, ModuleExecutor> EXECUTOR_USER,
+                TreeMap<String, ModuleExecutor> EXECUTOR_DISZ,
+                TreeMap<String, ModuleExecutor> EXECUTOR_GROP
+                // @formatter:on
 		) {
 			Module_Message.this.doGenetateList(TRIGGER_USER, TRIGGER_DISZ, TRIGGER_GROP, LISTENER_USER, LISTENER_DISZ, LISTENER_GROP, EXECUTOR_USER, EXECUTOR_DISZ, EXECUTOR_GROP);
 		}

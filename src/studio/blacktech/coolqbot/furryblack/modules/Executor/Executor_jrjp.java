@@ -1,4 +1,3 @@
-
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import java.io.BufferedReader;
