@@ -2,8 +2,6 @@ package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import java.util.TimeZone;
 
-import org.junit.jupiter.api.Test;
-
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -30,8 +28,7 @@ public class Executor_time extends ModuleExecutor {
 	private static String[] MODULE_USAGE = new String[] {
 			"/time 看看谁该睡觉了"
 	};
-	public static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	public static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
@@ -49,7 +46,7 @@ public class Executor_time extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_time() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -121,12 +118,12 @@ public class Executor_time extends ModuleExecutor {
 
 		return
 		// @formatter:off
-                "世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", zone_00) +
-                        "\r\n美国西部(UTC-7) " + (yestday_W7 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W7) +
-                        "\r\n美国东部(UTC-4) " + (yestday_W4 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W4) +
-                        "\r\n欧洲英国(UTC+1) " + (yestday_E1 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_E1) +
-                        "\r\n亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", zone_E8)
-                // @formatter:on
+		"世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", zone_00) + "\r\n" +
+		"美国西部(UTC-7) " + (yestday_W7 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W7) + "\r\n" +
+        "美国东部(UTC-4) " + (yestday_W4 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W4) + "\r\n" +
+        "欧洲英国(UTC+1) " + (yestday_E1 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_E1) + "\r\n" +
+        "亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", zone_E8)
+        // @formatter:on
 		;
 	}
 

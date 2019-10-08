@@ -33,10 +33,10 @@ public class Executor_roulette extends ModuleExecutor {
 	private static String[] MODULE_USAGE = new String[] {
 			"/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌，十分钟仍未满员则自动解散对局"
 	};
-	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {
+			"按照\"群-成员-回合\"的层级关系存储 - 回合结束或超时后下一次第一名玩家加入时释放"
+	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人"
 	};
@@ -59,7 +59,7 @@ public class Executor_roulette extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_roulette() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override

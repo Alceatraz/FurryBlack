@@ -42,8 +42,7 @@ public class Executor_chou extends ModuleExecutor {
 			"/chou - 随机抽一个人",
 			"/chou 理由 - 以某个理由抽一个人"
 	};
-	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
@@ -69,7 +68,7 @@ public class Executor_chou extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_chou() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override

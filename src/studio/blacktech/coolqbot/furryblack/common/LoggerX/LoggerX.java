@@ -60,38 +60,22 @@ public class LoggerX {
 	// =====================================
 
 	public String mini(String message) {
-		this.builder_mini.append("[");
-		this.builder_mini.append(time());
-		this.builder_mini.append("]");
-		this.builder_mini.append(message);
-		this.builder_mini.append("\r\n");
+		this.builder_mini.append("[" + time() + "]" + message + "\r\n");
 		return this.info(message);
 	}
 
 	public String info(String message) {
-		this.builder_info.append("[");
-		this.builder_info.append(time());
-		this.builder_info.append("]");
-		this.builder_info.append(message);
-		this.builder_info.append("\r\n");
+		this.builder_info.append("[" + time() + "]" + message + "\r\n");
 		return this.seek(message);
 	}
 
 	public String seek(String message) {
-		this.builder_seek.append("[");
-		this.builder_seek.append(time());
-		this.builder_seek.append("]");
-		this.builder_seek.append(message);
-		this.builder_seek.append("\r\n");
+		this.builder_seek.append("[" + time() + "]" + message + "\r\n");
 		return this.full(message);
 	}
 
 	public String full(String message) {
-		this.builder_full.append("[");
-		this.builder_full.append(time());
-		this.builder_full.append("]");
-		this.builder_full.append(message);
-		this.builder_full.append("\r\n");
+		this.builder_full.append("[" + time() + "]" + message + "\r\n");
 		return message;
 	}
 
@@ -102,46 +86,22 @@ public class LoggerX {
 	// =====================================
 
 	public String mini(String category, String message) {
-		this.builder_mini.append("[");
-		this.builder_mini.append(time());
-		this.builder_mini.append("] ");
-		this.builder_mini.append(category);
-		this.builder_mini.append(" - ");
-		this.builder_mini.append(message);
-		this.builder_mini.append("\r\n");
+		this.builder_mini.append("[" + time() + "][" + category + "] " + message + "\r\n");
 		return this.info(category, message);
 	}
 
 	public String info(String category, String message) {
-		this.builder_info.append("[");
-		this.builder_info.append(time());
-		this.builder_info.append("] ");
-		this.builder_info.append(category);
-		this.builder_info.append(" - ");
-		this.builder_info.append(message);
-		this.builder_info.append("\r\n");
+		this.builder_info.append("[" + time() + "][" + category + "] " + message + "\r\n");
 		return this.seek(category, message);
 	}
 
 	public String seek(String category, String message) {
-		this.builder_seek.append("[");
-		this.builder_seek.append(time());
-		this.builder_seek.append("] ");
-		this.builder_seek.append(category);
-		this.builder_seek.append(" - ");
-		this.builder_seek.append(message);
-		this.builder_seek.append("\r\n");
+		this.builder_seek.append("[" + time() + "][" + category + "] " + message + "\r\n");
 		return this.full(category, message);
 	}
 
 	public String full(String category, String message) {
-		this.builder_full.append("[");
-		this.builder_full.append(time());
-		this.builder_full.append("] ");
-		this.builder_full.append(category);
-		this.builder_full.append(" - ");
-		this.builder_full.append(message);
-		this.builder_full.append("\r\n");
+		this.builder_full.append("[" + time() + "][" + category + "] " + message + "\r\n");
 		return message;
 	}
 
@@ -152,162 +112,66 @@ public class LoggerX {
 	// =====================================
 
 	public String mini(String packname, String key, String value) {
-		this.builder_mini.append("[");
-		this.builder_mini.append(time());
-		this.builder_mini.append("][");
-		this.builder_mini.append(packname);
-		this.builder_mini.append("]");
-		this.builder_mini.append(key);
-		this.builder_mini.append("：");
-		this.builder_mini.append(value);
-		this.builder_mini.append("\r\n");
+		this.builder_mini.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return this.info(packname, key, value);
 	}
 
 	public String info(String packname, String key, String value) {
-		this.builder_info.append("[");
-		this.builder_info.append(time());
-		this.builder_info.append("][");
-		this.builder_info.append(packname);
-		this.builder_info.append("]");
-		this.builder_info.append(key);
-		this.builder_info.append("：");
-		this.builder_info.append(value);
-		this.builder_info.append("\r\n");
+		this.builder_info.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return this.seek(packname, key, value);
 	}
 
 	public String seek(String packname, String key, String value) {
-		this.builder_seek.append("[");
-		this.builder_seek.append(time());
-		this.builder_seek.append("][");
-		this.builder_seek.append(packname);
-		this.builder_seek.append("]");
-		this.builder_seek.append(key);
-		this.builder_seek.append("：");
-		this.builder_seek.append(value);
-		this.builder_seek.append("\r\n");
+		this.builder_seek.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return this.full(packname, key, value);
 	}
 
 	public String full(String packname, String key, String value) {
-		this.builder_full.append("[");
-		this.builder_full.append(time());
-		this.builder_full.append("][");
-		this.builder_full.append(packname);
-		this.builder_full.append("] ");
-		this.builder_full.append(key);
-		this.builder_full.append("：");
-		this.builder_full.append(value);
-		this.builder_full.append("\r\n");
+		this.builder_full.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return value;
 	}
 
 	// ========================================================
 
 	public int mini(String packname, String key, int value) {
-		this.builder_mini.append("[");
-		this.builder_mini.append(time());
-		this.builder_mini.append("][");
-		this.builder_mini.append(packname);
-		this.builder_mini.append("]");
-		this.builder_mini.append(key);
-		this.builder_mini.append("：");
-		this.builder_mini.append(value);
-		this.builder_mini.append("\r\n");
+		this.builder_mini.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return this.info(packname, key, value);
 	}
 
 	public int info(String packname, String key, int value) {
-		this.builder_info.append("[");
-		this.builder_info.append(time());
-		this.builder_info.append("][");
-		this.builder_info.append(packname);
-		this.builder_info.append("]");
-		this.builder_info.append(key);
-		this.builder_info.append("：");
-		this.builder_info.append(value);
-		this.builder_info.append("\r\n");
+		this.builder_mini.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return this.seek(packname, key, value);
 	}
 
 	public int seek(String packname, String key, int value) {
-		this.builder_seek.append("[");
-		this.builder_seek.append(time());
-		this.builder_seek.append("][");
-		this.builder_seek.append(packname);
-		this.builder_seek.append("]");
-		this.builder_seek.append(key);
-		this.builder_seek.append("：");
-		this.builder_seek.append(value);
-		this.builder_seek.append("\r\n");
+		this.builder_seek.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return this.full(packname, key, value);
 	}
 
 	public int full(String packname, String key, int value) {
-		this.builder_full.append("[");
-		this.builder_full.append(time());
-		this.builder_full.append("][");
-		this.builder_full.append(packname);
-		this.builder_full.append("] ");
-		this.builder_full.append(key);
-		this.builder_full.append("：");
-		this.builder_full.append(value);
-		this.builder_full.append("\r\n");
+		this.builder_full.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return value;
 	}
 
 	// ========================================================
 
 	public long mini(String packname, String key, long value) {
-		this.builder_mini.append("[");
-		this.builder_mini.append(time());
-		this.builder_mini.append("][");
-		this.builder_mini.append(packname);
-		this.builder_mini.append("]");
-		this.builder_mini.append(key);
-		this.builder_mini.append("：");
-		this.builder_mini.append(value);
-		this.builder_mini.append("\r\n");
+		this.builder_mini.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return this.info(packname, key, value);
 	}
 
 	public long info(String packname, String key, long value) {
-		this.builder_info.append("[");
-		this.builder_info.append(time());
-		this.builder_info.append("][");
-		this.builder_info.append(packname);
-		this.builder_info.append("]");
-		this.builder_info.append(key);
-		this.builder_info.append("：");
-		this.builder_info.append(value);
-		this.builder_info.append("\r\n");
+		this.builder_info.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return this.seek(packname, key, value);
 	}
 
 	public long seek(String packname, String key, long value) {
-		this.builder_seek.append("[");
-		this.builder_seek.append(time());
-		this.builder_seek.append("][");
-		this.builder_seek.append(packname);
-		this.builder_seek.append("]");
-		this.builder_seek.append(key);
-		this.builder_seek.append("：");
-		this.builder_seek.append(value);
-		this.builder_seek.append("\r\n");
+		this.builder_seek.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return this.full(packname, key, value);
 	}
 
 	public long full(String packname, String key, long value) {
-		this.builder_full.append("[");
-		this.builder_full.append(time());
-		this.builder_full.append("][");
-		this.builder_full.append(packname);
-		this.builder_full.append("] ");
-		this.builder_full.append(key);
-		this.builder_full.append("：");
-		this.builder_full.append(value);
-		this.builder_full.append("\r\n");
+		this.builder_full.append("[" + time() + "][" + packname + "]" + key + "：" + value + "\r\n");
 		return value;
 	}
 

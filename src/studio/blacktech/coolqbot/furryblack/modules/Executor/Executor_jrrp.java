@@ -30,8 +30,6 @@ public class Executor_jrrp extends ModuleExecutor {
 	private static String[] MODULE_USAGE = new String[] {
 			"/jrrp - 查看今日运气"
 	};
-	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
 			"用户与运气对应表 - 每日UTC+8 00:00 清空"
@@ -57,7 +55,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_jrrp() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -167,12 +165,12 @@ public class Executor_jrrp extends ModuleExecutor {
 						time = time - date.getMinutes() * 60;
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
-						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
+						entry.getCQ().logDebug(MODULE_PACKAGENAME, "休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行"); }
+						entry.getCQ().logDebug(MODULE_PACKAGENAME, "执行");
 						Executor_jrrp.this.JRRP.clear();
-						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果"); }
+						entry.getCQ().logDebug(MODULE_PACKAGENAME, "执行结果", "无");
 						// =======================================================
 					}
 				} catch (Exception exception) {

@@ -16,8 +16,7 @@ public abstract class ModuleTrigger extends Module {
             String MODULE_DESCRIPTION,
             String MODULE_VERSION,
             String[] MODULE_USAGE,
-            String[] MODULE_PRIVACY_TRIGER,
-            String[] MODULE_PRIVACY_LISTEN,
+
             String[] MODULE_PRIVACY_STORED,
             String[] MODULE_PRIVACY_CACHED,
             String[] MODULE_PRIVACY_OBTAIN
@@ -29,8 +28,6 @@ public abstract class ModuleTrigger extends Module {
                 MODULE_DESCRIPTION,
                 MODULE_VERSION,
                 MODULE_USAGE,
-                MODULE_PRIVACY_TRIGER,
-                MODULE_PRIVACY_LISTEN,
                 MODULE_PRIVACY_STORED,
                 MODULE_PRIVACY_CACHED,
                 MODULE_PRIVACY_OBTAIN

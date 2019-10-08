@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.modules.Executor;
+package studio.blacktech.coolqbot.furryblack.common;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -60,16 +60,6 @@ public class Executor_DEMO extends ModuleExecutor {
 			"命令4 - 命令用法4",
 	};
 
-	// 如果注册为触发器 则应写明此模块功能 且必须全部列出
-	public static String[] MODULE_PRIVACY_TRIGER = new String[] {
-			"触发器 - 功能"
-	};
-
-	// 如果注册为监听器 则应写明此模块功能 且必须全部列出
-	public static String[] MODULE_PRIVACY_LISTEN = new String[] {
-			"监听器 - 功能"
-	};
-
 	// 如果需要将数据存储为文件 则应写明存储的内容及其用途 有效时限
 	public static String[] MODULE_PRIVACY_STORED = new String[] {
 			"隐私级别 - 用途"
@@ -116,7 +106,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * @throws Exception 发生任何错误应扔出
 	 */
 	public Executor_DEMO() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	/**

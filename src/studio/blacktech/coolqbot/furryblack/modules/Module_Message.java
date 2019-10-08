@@ -36,10 +36,8 @@ public class Module_Message extends Module {
 	private static String MODULE_COMMANDNAME = "message";
 	private static String MODULE_DISPLAYNAME = "消息广播";
 	private static String MODULE_DESCRIPTION = "负责发送所有消息";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "8.0";
 	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
@@ -81,7 +79,7 @@ public class Module_Message extends Module {
 	// ==========================================================================================================================================================
 
 	public Module_Message() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@SuppressWarnings("resource")
@@ -164,7 +162,6 @@ public class Module_Message extends Module {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
-
 	}
 
 	@Override
@@ -316,196 +313,193 @@ public class Module_Message extends Module {
 	) {
 		if (this.GEN_LOCK) { return; }
 
-		StringBuilder preBuilder;
+		StringBuilder builder;
 
 		// =========================================================
 		// =========================================================
 		// =========================================================
 
-		preBuilder = new StringBuilder();
+		builder = new StringBuilder();
 
-		preBuilder.append("=================");
-		preBuilder.append("\r\n启用的触发器： ");
+		builder.append("=================\r\n私聊启用的模块\r\n=================\r\n启用的触发器： ");
 
 		if (TRIGGER_USER.size() == 0) {
-			preBuilder.append("无");
+			builder.append("无");
 		} else {
-			preBuilder.append(TRIGGER_USER.size());
+			builder.append(TRIGGER_USER.size());
 			for (ModuleTrigger temp : TRIGGER_USER) {
-				preBuilder.append("\r\n");
-				preBuilder.append(temp.MODULE_COMMANDNAME());
-				preBuilder.append(" > ");
-				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append("：");
-				preBuilder.append(temp.MODULE_DESCRIPTION());
+				builder.append("\r\n");
+				builder.append(temp.MODULE_COMMANDNAME());
+				builder.append(" > ");
+				builder.append(temp.MODULE_DISPLAYNAME());
+				builder.append("：");
+				builder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n=================");
-		preBuilder.append("\r\n启用的监听器： ");
+		builder.append("\r\n=================");
+		builder.append("\r\n启用的监听器： ");
 
 		if (LISTENER_USER.size() == 0) {
-			preBuilder.append("无");
+			builder.append("无");
 		} else {
-			preBuilder.append(LISTENER_USER.size());
+			builder.append(LISTENER_USER.size());
 			for (ModuleListener temp : LISTENER_USER) {
-				preBuilder.append("\r\n");
-				preBuilder.append(temp.MODULE_COMMANDNAME());
-				preBuilder.append(" > ");
-				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append("：");
-				preBuilder.append(temp.MODULE_DESCRIPTION());
+				builder.append("\r\n");
+				builder.append(temp.MODULE_COMMANDNAME());
+				builder.append(" > ");
+				builder.append(temp.MODULE_DISPLAYNAME());
+				builder.append("：");
+				builder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n=================");
-		preBuilder.append("\r\n可用的执行器： ");
+		builder.append("\r\n=================");
+		builder.append("\r\n可用的执行器： ");
 
 		if (EXECUTOR_USER.size() == 0) {
-			preBuilder.append("无");
+			builder.append("无");
 		} else {
-			preBuilder.append(EXECUTOR_USER.size());
+			builder.append(EXECUTOR_USER.size());
 			for (String temp : EXECUTOR_USER.keySet()) {
 				ModuleExecutor module = EXECUTOR_USER.get(temp);
 				module.genFullHelp();
-				preBuilder.append("\r\n");
-				preBuilder.append(module.MODULE_COMMANDNAME());
-				preBuilder.append(" > ");
-				preBuilder.append(module.MODULE_DISPLAYNAME());
-				preBuilder.append("：");
-				preBuilder.append(module.MODULE_DESCRIPTION());
+				builder.append("\r\n");
+				builder.append(module.MODULE_COMMANDNAME());
+				builder.append(" > ");
+				builder.append(module.MODULE_DISPLAYNAME());
+				builder.append("：");
+				builder.append(module.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n=================");
+		builder.append("\r\n=================");
 
-		this.MESSAGE_LIST_USER = preBuilder.toString();
+		this.MESSAGE_LIST_USER = builder.toString();
 
 		// =========================================================
 		// =========================================================
 		// =========================================================
 
-		preBuilder = new StringBuilder();
+		builder = new StringBuilder();
 
-		preBuilder.append("=================");
-		preBuilder.append("\r\n启用的触发器： ");
+		builder.append("=================\r\n组聊启用的模块\r\n=================\r\n启用的触发器： ");
 
 		if (TRIGGER_DISZ.size() == 0) {
-			preBuilder.append("无");
+			builder.append("无");
 		} else {
-			preBuilder.append(TRIGGER_DISZ.size());
+			builder.append(TRIGGER_DISZ.size());
 			for (ModuleTrigger temp : TRIGGER_DISZ) {
-				preBuilder.append("\r\n");
-				preBuilder.append(temp.MODULE_COMMANDNAME());
-				preBuilder.append(" > ");
-				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append("：");
-				preBuilder.append(temp.MODULE_DESCRIPTION());
+				builder.append("\r\n");
+				builder.append(temp.MODULE_COMMANDNAME());
+				builder.append(" > ");
+				builder.append(temp.MODULE_DISPLAYNAME());
+				builder.append("：");
+				builder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n=================");
-		preBuilder.append("\r\n启用的监听器： ");
+		builder.append("\r\n=================");
+		builder.append("\r\n启用的监听器： ");
 
 		if (LISTENER_DISZ.size() == 0) {
-			preBuilder.append("无");
+			builder.append("无");
 		} else {
-			preBuilder.append(LISTENER_DISZ.size());
+			builder.append(LISTENER_DISZ.size());
 			for (ModuleListener temp : LISTENER_DISZ) {
-				preBuilder.append("\r\n");
-				preBuilder.append(temp.MODULE_COMMANDNAME());
-				preBuilder.append(" > ");
-				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append("：");
-				preBuilder.append(temp.MODULE_DESCRIPTION());
+				builder.append("\r\n");
+				builder.append(temp.MODULE_COMMANDNAME());
+				builder.append(" > ");
+				builder.append(temp.MODULE_DISPLAYNAME());
+				builder.append("：");
+				builder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n=================");
-		preBuilder.append("\r\n可用的执行器： ");
+		builder.append("\r\n=================");
+		builder.append("\r\n可用的执行器： ");
 
 		if (EXECUTOR_DISZ.size() == 0) {
-			preBuilder.append("无");
+			builder.append("无");
 		} else {
-			preBuilder.append(EXECUTOR_DISZ.size());
+			builder.append(EXECUTOR_DISZ.size());
 			for (String temp : EXECUTOR_DISZ.keySet()) {
 				ModuleExecutor module = EXECUTOR_DISZ.get(temp);
 				module.genFullHelp();
-				preBuilder.append("\r\n");
-				preBuilder.append(module.MODULE_COMMANDNAME());
-				preBuilder.append(" > ");
-				preBuilder.append(module.MODULE_DISPLAYNAME());
-				preBuilder.append("：");
-				preBuilder.append(module.MODULE_DESCRIPTION());
+				builder.append("\r\n");
+				builder.append(module.MODULE_COMMANDNAME());
+				builder.append(" > ");
+				builder.append(module.MODULE_DISPLAYNAME());
+				builder.append("：");
+				builder.append(module.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n=================");
+		builder.append("\r\n=================");
 
-		this.MESSAGE_LIST_USER = preBuilder.toString();
+		this.MESSAGE_LIST_DISZ = builder.toString();
 
 		// =========================================================
 		// =========================================================
 		// =========================================================
 
-		preBuilder = new StringBuilder();
+		builder = new StringBuilder();
 
-		preBuilder.append("=================");
-		preBuilder.append("\r\n启用的触发器： ");
+		builder.append("=================\r\n群聊启用的模块\r\n=================\r\n启用的触发器： ");
 
 		if (TRIGGER_GROP.size() == 0) {
-			preBuilder.append("无");
+			builder.append("无");
 		} else {
-			preBuilder.append(TRIGGER_GROP.size());
+			builder.append(TRIGGER_GROP.size());
 			for (ModuleTrigger temp : TRIGGER_GROP) {
-				preBuilder.append("\r\n");
-				preBuilder.append(temp.MODULE_COMMANDNAME());
-				preBuilder.append(" > ");
-				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append("：");
-				preBuilder.append(temp.MODULE_DESCRIPTION());
+				builder.append("\r\n");
+				builder.append(temp.MODULE_COMMANDNAME());
+				builder.append(" > ");
+				builder.append(temp.MODULE_DISPLAYNAME());
+				builder.append("：");
+				builder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n=================");
-		preBuilder.append("\r\n启用的监听器： ");
+		builder.append("\r\n=================");
+		builder.append("\r\n启用的监听器： ");
 
 		if (LISTENER_GROP.size() == 0) {
-			preBuilder.append("无");
+			builder.append("无");
 		} else {
-			preBuilder.append(LISTENER_GROP.size());
+			builder.append(LISTENER_GROP.size());
 			for (ModuleListener temp : LISTENER_USER) {
-				preBuilder.append("\r\n");
-				preBuilder.append(temp.MODULE_COMMANDNAME());
-				preBuilder.append(" > ");
-				preBuilder.append(temp.MODULE_DISPLAYNAME());
-				preBuilder.append("：");
-				preBuilder.append(temp.MODULE_DESCRIPTION());
+				builder.append("\r\n");
+				builder.append(temp.MODULE_COMMANDNAME());
+				builder.append(" > ");
+				builder.append(temp.MODULE_DISPLAYNAME());
+				builder.append("：");
+				builder.append(temp.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n=================");
-		preBuilder.append("\r\n可用的执行器： ");
+		builder.append("\r\n=================");
+		builder.append("\r\n可用的执行器： ");
 
 		if (EXECUTOR_GROP.size() == 0) {
-			preBuilder.append("无");
+			builder.append("无");
 		} else {
-			preBuilder.append(EXECUTOR_GROP.size());
+			builder.append(EXECUTOR_GROP.size());
 			for (String temp : EXECUTOR_GROP.keySet()) {
 				ModuleExecutor module = EXECUTOR_GROP.get(temp);
 				module.genFullHelp();
-				preBuilder.append("\r\n");
-				preBuilder.append(module.MODULE_COMMANDNAME());
-				preBuilder.append(" > ");
-				preBuilder.append(module.MODULE_DISPLAYNAME());
-				preBuilder.append("：");
-				preBuilder.append(module.MODULE_DESCRIPTION());
+				builder.append("\r\n");
+				builder.append(module.MODULE_COMMANDNAME());
+				builder.append(" > ");
+				builder.append(module.MODULE_DISPLAYNAME());
+				builder.append("：");
+				builder.append(module.MODULE_DESCRIPTION());
 			}
 		}
 
-		preBuilder.append("\r\n=================");
+		builder.append("\r\n=================");
 
-		this.MESSAGE_LIST_USER = preBuilder.toString();
+		this.MESSAGE_LIST_GROP = builder.toString();
 
 	}
 

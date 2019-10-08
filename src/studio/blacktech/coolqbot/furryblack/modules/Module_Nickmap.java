@@ -37,11 +37,7 @@ public class Module_Nickmap extends Module {
 	private static String MODULE_DESCRIPTION = "将复杂的昵称映射为朋友间的简短称呼";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {
-			"按照\"群号:QQ号:昵称\"的形式存储简短昵称"
-	};
+	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
@@ -64,7 +60,7 @@ public class Module_Nickmap extends Module {
 	// ==========================================================================================================================================================
 
 	public Module_Nickmap() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override

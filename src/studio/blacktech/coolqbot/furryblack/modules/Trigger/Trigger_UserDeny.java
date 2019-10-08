@@ -33,15 +33,11 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	private static String MODULE_DESCRIPTION = "用户过滤器";
 	private static String MODULE_VERSION = "2.0";
 	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_TRIGER = new String[] {
-			"获取ID号码 - 用于过滤"
+	private static String[] MODULE_PRIVACY_STORED = new String[] {
+			"按照\"群-成员\"的层级关系手动配置被阻止的用户"
 	};
-	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-
-	};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//
@@ -68,7 +64,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	// ==========================================================================================================================================================
 
 	public Trigger_UserDeny() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override

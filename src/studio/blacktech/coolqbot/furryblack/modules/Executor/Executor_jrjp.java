@@ -41,8 +41,6 @@ public class Executor_jrjp extends ModuleExecutor {
 	private static String[] MODULE_USAGE = new String[] {
 			"/jrjp - 查看今日祭品"
 	};
-	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
 			"群号-QQ号对应表 - 每日UTC+8 00:00 清空",
@@ -77,7 +75,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_jrjp() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -213,26 +211,25 @@ public class Executor_jrjp extends ModuleExecutor {
 						time = time - date.getMinutes() * 60;
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
-						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
+						entry.getCQ().logDebug(MODULE_PACKAGENAME, "休眠：" + time);
 						Thread.sleep(time);
 						// =======================================================
-						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行"); }
+						entry.getCQ().logDebug(MODULE_PACKAGENAME, "执行");
 						Executor_jrjp.this.AVCODE.clear();
 						Executor_jrjp.this.VICTIM.clear();
 						ArrayList<Long> temp;
 						long victim;
 						long avcode;
 						StringBuilder builder = new StringBuilder();
-						builder.append("[计划任务] Executor_jrjp 定时刷新");
 						for (Long group : Executor_jrjp.this.MEMBERS.keySet()) {
 							temp = Executor_jrjp.this.MEMBERS.get(group);
 							victim = temp.get(Executor_jrjp.this.random.nextInt(temp.size()));
 							avcode = Executor_jrjp.this.random.nextInt(60000000);
 							Executor_jrjp.this.VICTIM.put(group, victim);
 							Executor_jrjp.this.AVCODE.put(group, avcode);
-							builder.append("\r\n" + group + " - " + " AV" + avcode);
+							builder.append(group + " - " + " AV" + avcode + "\r\n");
 						}
-						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果" + builder.toString()); }
+						entry.getCQ().logDebug(MODULE_PACKAGENAME, "结果" + builder.toString());
 					}
 				} catch (InterruptedException exception) {
 					if (entry.isEnable()) {

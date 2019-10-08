@@ -29,8 +29,6 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	private static String MODULE_DESCRIPTION = "动态域名";
 	private static String MODULE_VERSION = "4.0";
 	private static String[] MODULE_USAGE = new String[] {};
-	public static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	public static String[] MODULE_PRIVACY_LISTEN = new String[] {};
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
@@ -66,7 +64,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	// ==========================================================================================================================================================
 
 	public Scheduler_Dynamic() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override

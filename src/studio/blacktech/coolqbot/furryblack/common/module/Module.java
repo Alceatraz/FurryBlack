@@ -23,8 +23,6 @@ public abstract class Module implements Serializable {
 	private String MODULE_DESCRIPTION;
 	private String MODULE_VERSION;
 	private String[] MODULE_USAGE;
-	private String[] MODULE_PRIVACY_TRIGER;
-	private String[] MODULE_PRIVACY_LISTEN;
 	private String[] MODULE_PRIVACY_STORED;
 	private String[] MODULE_PRIVACY_CACHED;
 	private String[] MODULE_PRIVACY_OBTAIN;
@@ -41,7 +39,18 @@ public abstract class Module implements Serializable {
 
 	private boolean init_conf_folder = false;
 
-	public Module(String MODULE_PACKAGENAME, String MODULE_COMMANDNAME, String MODULE_DISPLAYNAME, String MODULE_DESCRIPTION, String MODULE_VERSION, String[] MODULE_USAGE, String[] MODULE_PRIVACY_TRIGER, String[] MODULE_PRIVACY_LISTEN, String[] MODULE_PRIVACY_STORED, String[] MODULE_PRIVACY_CACHED, String[] MODULE_PRIVACY_OBTAIN) throws Exception {
+	// @formatter:off
+	public Module(
+			String MODULE_PACKAGENAME,
+			String MODULE_COMMANDNAME,
+			String MODULE_DISPLAYNAME,
+			String MODULE_DESCRIPTION,
+			String MODULE_VERSION,
+			String[] MODULE_USAGE,
+			String[] MODULE_PRIVACY_STORED,
+			String[] MODULE_PRIVACY_CACHED,
+			String[] MODULE_PRIVACY_OBTAIN
+	) throws Exception {
 
 		this.MODULE_PACKAGENAME = MODULE_PACKAGENAME;
 		this.MODULE_COMMANDNAME = MODULE_COMMANDNAME;
@@ -49,8 +58,6 @@ public abstract class Module implements Serializable {
 		this.MODULE_DESCRIPTION = MODULE_DESCRIPTION;
 		this.MODULE_VERSION = MODULE_VERSION;
 		this.MODULE_USAGE = MODULE_USAGE;
-		this.MODULE_PRIVACY_TRIGER = MODULE_PRIVACY_TRIGER;
-		this.MODULE_PRIVACY_LISTEN = MODULE_PRIVACY_LISTEN;
 		this.MODULE_PRIVACY_STORED = MODULE_PRIVACY_STORED;
 		this.MODULE_PRIVACY_CACHED = MODULE_PRIVACY_CACHED;
 		this.MODULE_PRIVACY_OBTAIN = MODULE_PRIVACY_OBTAIN;
@@ -58,6 +65,7 @@ public abstract class Module implements Serializable {
 		this.MODULE_FULLHELP = this.genFullHelp();
 
 	}
+	// @formatter:on
 
 	public void initConfFolder() throws Exception {
 		this.FOLDER_CONF = Paths.get(entry.FOLDER_CONF().getAbsolutePath(), this.MODULE_PACKAGENAME).toFile();
@@ -132,74 +140,46 @@ public abstract class Module implements Serializable {
 
 	public String genFullHelp() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("模块：");
-		builder.append(this.MODULE_PACKAGENAME);
-		builder.append("\r\n");
-		builder.append(this.MODULE_COMMANDNAME);
-		builder.append(" > ");
-		builder.append(this.MODULE_DISPLAYNAME);
-		builder.append(" v");
-		builder.append(this.MODULE_VERSION);
-		builder.append("\r\n");
-		builder.append(this.MODULE_DESCRIPTION);
-		builder.append("\r\n命令用法：");
+		builder.append("模块：" + this.MODULE_PACKAGENAME + "v" + this.MODULE_VERSION + "\r\n");
+		builder.append("名称：" + this.MODULE_DISPLAYNAME + "\r\n");
+		builder.append("用途：" + this.MODULE_DESCRIPTION + "\r\n");
+		builder.append("命令：" + this.MODULE_COMMANDNAME + "\r\n");
+		builder.append("用法：");
 		if (this.MODULE_USAGE.length == 0) {
 			builder.append("无");
 		} else {
 			for (String temp : this.MODULE_USAGE) {
-				builder.append("\r\n");
-				builder.append(temp);
+				builder.append(temp + "\r\n");
 			}
 		}
-		builder.append("\r\n隐私声明：");
-		builder.append("\r\n触发器：");
-		if (this.MODULE_PRIVACY_TRIGER.length == 0) {
-			builder.append("无");
-		} else {
-			builder.append(this.MODULE_PRIVACY_TRIGER.length);
-			for (String temp : this.MODULE_PRIVACY_TRIGER) {
-				builder.append("\r\n  ");
-				builder.append(temp);
-			}
-		}
-		builder.append("\r\n监听器：");
-		if (this.MODULE_PRIVACY_LISTEN.length == 0) {
-			builder.append("无");
-		} else {
-			builder.append(this.MODULE_PRIVACY_LISTEN.length);
-			for (String temp : this.MODULE_PRIVACY_LISTEN) {
-				builder.append("\r\n  ");
-				builder.append(temp);
-			}
-		}
-		builder.append("\r\n存储：");
+
+		builder.append("隐私声明：" + "\r\n");
+
+		builder.append("存储：" + "\r\n");
 		if (this.MODULE_PRIVACY_STORED.length == 0) {
-			builder.append("无");
+			builder.append("无" + "\r\n");
 		} else {
 			builder.append(this.MODULE_PRIVACY_STORED.length);
 			for (String temp : this.MODULE_PRIVACY_STORED) {
-				builder.append("\r\n  ");
-				builder.append(temp);
+				builder.append(" " + temp + "\r\n");
 			}
 		}
-		builder.append("\r\n缓存：");
+		builder.append("缓存：" + "\r\n");
 		if (this.MODULE_PRIVACY_CACHED.length == 0) {
-			builder.append("无");
+			builder.append("无" + "\r\n");
 		} else {
 			builder.append(this.MODULE_PRIVACY_CACHED.length);
 			for (String temp : this.MODULE_PRIVACY_CACHED) {
-				builder.append("\r\n  ");
-				builder.append(temp);
+				builder.append(" " + temp + "\r\n");
 			}
 		}
-		builder.append("\r\n获取：");
+		builder.append("获取：" + "\r\n");
 		if (this.MODULE_PRIVACY_OBTAIN.length == 0) {
-			builder.append("无");
+			builder.append("无" + "\r\n");
 		} else {
 			builder.append(this.MODULE_PRIVACY_OBTAIN.length);
 			for (String temp : this.MODULE_PRIVACY_OBTAIN) {
-				builder.append("\r\n  ");
-				builder.append(temp);
+				builder.append(" " + temp + "\r\n");
 			}
 		}
 		return builder.toString();

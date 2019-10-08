@@ -30,8 +30,7 @@ public class Executor_zhan extends ModuleExecutor {
 	private static String[] MODULE_USAGE = new String[] {
 			"/zhan 理由 - 为某事占卜"
 	};
-	private static String[] MODULE_PRIVACY_TRIGER = new String[] {};
-	private static String[] MODULE_PRIVACY_LISTEN = new String[] {};
+
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
@@ -54,7 +53,7 @@ public class Executor_zhan extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_zhan() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_TRIGER, MODULE_PRIVACY_LISTEN, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	@Override
@@ -63,8 +62,7 @@ public class Executor_zhan extends ModuleExecutor {
 		this.CARD = new TreeMap<>();
 		this.FREQ = new ArrayList<>();
 
-		// 为什么不读配置文件？
-		// 塔罗牌又不会变
+		// 为什么不读配置文件？ 塔罗牌又不会变
 		this.CARD.put(1, "O. THE FOOL 愚者正位\r\n愚蠢 狂躁 挥霍无度 神志不清");
 		this.CARD.put(2, "O. THE FOOL 愚者逆位\r\n疏忽 缺乏 暮气 无效 虚荣");
 		this.CARD.put(3, "I. THE MAGICIAN 魔术师正位\r\n手段 灾难 痛苦 损失");
@@ -112,51 +110,15 @@ public class Executor_zhan extends ModuleExecutor {
 
 		// 为什么不写循环？ 因为写死运行快 塔罗牌永远就那么多
 		// @formatter:off
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        this.FREQ.add(0);
-        // @formatter:on
+        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        // @formatter:on
 
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;

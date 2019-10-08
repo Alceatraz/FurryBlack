@@ -24,11 +24,9 @@ public class MessageGrop extends Message {
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
-		builder.append("Grop ID: ");
-		builder.append(this.gropid);
-		builder.append("\nUser ID: ");
-		builder.append(this.userid);
-		builder.append("\n");
+		builder.append("============================================\n");
+		builder.append("群聊ID: " + this.gropid + "\n");
+		builder.append("用户ID: " + this.userid + "\n");
 		builder.append(super.toString());
 		return builder.toString();
 	}
