@@ -19,7 +19,6 @@
 > CACHED → CACHE → 缓存  
 > OBTAIN → OBTAIN → 获取
 
-![很怪.jpg](https://git.blacktech.studio/blacktechstudio/furryblack/raw/master/images/very_strange.jpg)
 
 ## 警告×2
 

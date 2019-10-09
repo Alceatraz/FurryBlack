@@ -266,9 +266,12 @@ public class Listener_TopSpeak extends ModuleListener {
 		HashMap<String, Integer> allMessageRankTemp = new HashMap<>();
 		for (String message : groupStatus.GROP_SENTENCE) {
 			message = message.trim();
-			if (message.equals(" ")) {
-				// @的原因产生了 \u0020 的句子
+			if (message.length() == 0) {
 				continue;
+			} else if (message.matches("\\s+")) {
+				continue;
+			} else if (message.equals("¿")) {
+				message = "？";
 			} else if (message.equals("?")) {
 				message = "？";
 			} else if (message.equals("??")) {
@@ -289,12 +292,16 @@ public class Listener_TopSpeak extends ModuleListener {
 				message = "太富了";
 			} else if (message.equals("tcl")) {
 				message = "太草了";
+			} else if (message.equals("ghs")) {
+				message = "搞黄色";
 			} else if (message.equals("草")) {
 				message = "草";
 			} else if (message.equals("操")) {
 				message = "草";
 			} else if (message.equals("艹")) {
 				message = "草";
+			} else if (message.equals("好色哦")) {
+				message = "好骚哦";
 			} else {
 				// SAM IS RAGE
 				// SAM IS RAGE
@@ -326,11 +333,12 @@ public class Listener_TopSpeak extends ModuleListener {
 				HashSet<String> tempSet = allMessageRank.get(messageRank);
 				for (String message : tempSet) {
 					limit++;
-					builder.append("No." + +order + " - " + messageRank + "次：" + message + "\r\n");
-					if (limit > 20) { break; }
+					builder.append("No." + order + " - " + messageRank + "次：" + message + "\r\n");
+					entry.getCQ().logDebug("ShuiDebug", order + " - " + messageRank + " - " + message.length() + "\r\n" + message + "\r\n" + LoggerX.unicode(message));
+					if (limit == 20) { break; }
 				}
+				if (limit == 20) { break; }
 				order = order + tempSet.size();
-				if (limit > 20) { break; }
 			}
 			report.add(builder.substring(0, builder.length() - 2).toString());
 		}
@@ -520,6 +528,7 @@ class UserStatus implements Serializable {
 					this.USER_PURECCODE++;
 					this.USER_CHARACTER++;
 				} else {
+					if (temp.getResLength() == 0) { continue; }
 					this.USER_SENTENCE.add(temp.getResMessage());
 					this.USER_CHARACTER = this.USER_CHARACTER + temp.getResLength();
 				}

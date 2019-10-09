@@ -120,6 +120,8 @@ public class Message implements Serializable {
 		} else if (this.rawMessage.startsWith("&#91;QQ红包&#93;")) {
 			this.isHongbao = true;
 		} else {
+			// 如果是普通消息
+
 			// 提取所有图片
 			Pattern pattern = Pattern.compile(Message.REGEX_IMAGE);
 			Matcher matcher = pattern.matcher(this.rawMessage);
@@ -134,15 +136,18 @@ public class Message implements Serializable {
 			}
 
 			// 删除所有CQ码
+			// 删除所有空白字符
 			this.resMessage = this.rawMessage.replaceAll("\\[CQ:.+\\]", "").trim();
+			this.resMessage = this.resMessage.replaceAll("\\s+", "").trim();
 
-			// 删除完所有CQ码只剩下空白字符不视为正常消息
-			if (this.resMessage.matches("\\s+")) {
-				this.isPureCQC = true;
-				this.resLength = 0;
-			} else {
-				this.resLength = this.resMessage.length();
-			}
+			this.resLength = this.resMessage.length();
+
+			// 删除所有空白字符以后长度为0 则不视为正常消息
+			// 比如@时会在最后自动加一个空格
+			// [CQ:at=1234567890]□
+			// 多次连续at会产生多个空格，不应用 ==" " 判断
+
+			if (this.resLength == 0) { this.isPureCQC = true; }
 		}
 
 		return this;
@@ -168,6 +173,79 @@ public class Message implements Serializable {
 		}
 	}
 
+	// ===================================================================================
+
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("============================================\n");
+		builder.append("时间戳：" + LoggerX.datetime(new Date(this.sendTime)) + "(" + this.sendTime + ")" + "\n");
+		builder.append("消息ID：" + this.messageId + "\n");
+		builder.append("字体ID：" + this.messageFt + "\n");
+		builder.append("============================================\n");
+		builder.append("原始内容：" + this.rawMessage + "\n");
+		builder.append("原始长度：" + this.rawLength + "\n");
+		builder.append("原始编码：");
+		for (int i = 0; i < this.rawLength; i++) {
+			builder.append("\\u");
+			builder.append(Integer.toHexString(this.rawMessage.charAt(i) & 0xffff));
+		}
+		builder.append("\n");
+		builder.append("============================================\n");
+		builder.append("是否命令：" + (this.isCommand ? "True" : "False") + "\n");
+		if (this.isCommand) {
+			builder.append("\n");
+			builder.append("============================================\n");
+			builder.append("命令内容：" + this.cmdMessage + "\n");
+			builder.append("命令名字：" + this.command + "\n");
+			builder.append("命令参数：" + this.options + "\n");
+			builder.append("参数长度：" + this.section + "\n");
+			if (this.section > 0) {
+				builder.append("============================================\n");
+				builder.append("参数内容: \n");
+				for (String temp : this.segment) {
+					builder.append(temp + "\n");
+				}
+			}
+			if (this.switchs != null) {
+				builder.append("============================================\n");
+				builder.append("参数开关：\n");
+				for (String name : this.switchs.keySet()) {
+					builder.append(name + " - " + this.switchs.get(name) + "\n");
+				}
+			}
+		} else {
+			builder.append("============================================\n");
+			builder.append("是否闪照：" + (this.isSnappic ? "True" : "False") + "\n");
+			builder.append("是否视频：" + (this.isQQVideo ? "True" : "False") + "\n");
+			builder.append("是否红包：" + (this.isHongbao ? "True" : "False") + "\n");
+			builder.append("是否纯码：" + (this.isPureCQC ? "True" : "False") + "\n");
+			builder.append("============================================\n");
+			builder.append("包含图片：" + (this.hasPicture ? "True" : "False") + "\n");
+			if (this.hasPicture) {
+				builder.append("图片ID：\n");
+				for (String temp : this.picture) {
+					builder.append(temp + "\n");
+				}
+			}
+			builder.append("============================================\n");
+			builder.append("最终长度: " + this.resLength + "\n");
+			if (this.resLength == 0) {
+				builder.append("最终内容：" + "无" + "\n");
+				builder.append("最终编码：" + "无" + "\n");
+			} else {
+				builder.append("最终内容：" + this.resMessage + "\n");
+				builder.append("最终编码：");
+				for (int i = 0; i < this.resLength; i++) {
+					builder.append("\\u");
+					builder.append(Integer.toHexString(this.resMessage.charAt(i) & 0xffff));
+				}
+				builder.append("\n");
+			}
+		}
+		builder.append("============================================");
+
+		return builder.toString();
+	}
 	// ===================================================================================
 
 	/**
@@ -381,61 +459,4 @@ public class Message implements Serializable {
 		return this.resLength;
 	}
 
-	// ===================================================================================
-
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("============================================\n");
-		builder.append("时间戳: " + LoggerX.datetime(new Date(this.sendTime)) + "(" + this.sendTime + ")" + "\n");
-		builder.append("消息ID: " + this.messageId + "\n");
-		builder.append("字体ID: " + this.messageFt + "\n");
-		builder.append("============================================\n");
-		builder.append("原始内容: " + this.rawMessage + "\n");
-		builder.append("原始长度: " + this.rawLength + "\n");
-		if (!this.isCommand) {
-			builder.append("最终内容：" + this.resMessage + "\n");
-			builder.append("最终长度: " + this.resLength + "\n");
-		}
-		builder.append("万国码: ");
-		for (int i = 0; i < this.rawLength; i++) {
-			builder.append("\\u");
-			builder.append(Integer.toHexString(this.rawMessage.charAt(i) & 0xffff));
-		}
-		builder.append("\n");
-		builder.append("============================================\n");
-		builder.append("指令: " + (this.isPureCQC ? "True" : "False") + "\n");
-		builder.append("闪照: " + (this.isSnappic ? "True" : "False") + "\n");
-		builder.append("视频: " + (this.isQQVideo ? "True" : "False") + "\n");
-		builder.append("红包: " + (this.isHongbao ? "True" : "False") + "\n");
-		builder.append("============================================\n");
-		builder.append("命令: " + (this.isCommand ? "True" : "False") + "\n");
-		if (this.isCommand) {
-			builder.append("命令内容: " + this.cmdMessage + "\n");
-			builder.append("命令名字: " + this.command + "\n");
-			builder.append("命令参数: " + this.options + "\n");
-			builder.append("参数长度: " + this.section + "\n");
-			if (this.section > 0) {
-				builder.append("参数内容: \n");
-				for (String temp : this.segment) {
-					builder.append(temp + "\n");
-				}
-			}
-			if (this.switchs != null) {
-				builder.append("参数开关：\n");
-				for (String name : this.switchs.keySet()) {
-					builder.append(name + " - " + this.switchs.get(name) + "\n");
-				}
-			}
-		}
-		builder.append("============================================\n");
-		builder.append("包含图片: " + (this.hasPicture ? "True" : "False") + "\n");
-		if (this.hasPicture) {
-			builder.append("图片ID: \n");
-			for (String temp : this.picture) {
-				builder.append(temp + "\n");
-			}
-		}
-		builder.append("============================================");
-		return builder.toString();
-	}
 }

@@ -62,7 +62,13 @@ public class Executor_zhan extends ModuleExecutor {
 		this.CARD = new TreeMap<>();
 		this.FREQ = new ArrayList<>();
 
-		// 为什么不读配置文件？ 塔罗牌又不会变
+		// =======================================
+		//
+		// 为什么不读配置文件？
+		// 我有理由相信，塔罗牌会保持44张不会变
+		//
+		// =======================================
+
 		this.CARD.put(1, "O. THE FOOL 愚者正位\r\n愚蠢 狂躁 挥霍无度 神志不清");
 		this.CARD.put(2, "O. THE FOOL 愚者逆位\r\n疏忽 缺乏 暮气 无效 虚荣");
 		this.CARD.put(3, "I. THE MAGICIAN 魔术师正位\r\n手段 灾难 痛苦 损失");
@@ -108,7 +114,6 @@ public class Executor_zhan extends ModuleExecutor {
 		this.CARD.put(43, "XXI. THE WORLD 世界正位\r\n成功 道路 航程 换位");
 		this.CARD.put(44, "XXI. THE WORLD 世界逆位\r\n惯性 固执 停滞 持久");
 
-		// 为什么不写循环？ 因为写死运行快 塔罗牌永远就那么多
 		// @formatter:off
         this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
         this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
