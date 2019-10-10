@@ -57,10 +57,13 @@ public class JcqDemo_130 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		JcqDemo_130 demo = new JcqDemo_130();
 		// 获取当前酷Q操作对象
 		CoolQ CQ = demo.getCoolQ();
-		CQ.logInfo("[JCQ] TEST Demo", "测试启动");// 现在就可以用CQ变量来执行任何想要的操作了
+		CQ.logInfo("[JCQ] TEST Demo", "测试启动");
+		// 现在就可以用CQ变量来执行任何想要的操作了
 		// 下面对主类进行各方法测试,按照JCQ运行过程，模拟实际情况
-		demo.startup();// 程序运行开始 调用应用初始化方法
-		demo.enable();// 程序初始化完成后，启用应用，让应用正常工作
+		demo.startup();
+		// 程序运行开始 调用应用初始化方法
+		demo.enable();
+		// 程序初始化完成后，启用应用，让应用正常工作
 		// 开始模拟发送消息
 		// 模拟私聊消息
 		// 开始模拟QQ用户发送消息，以下QQ全部编造，请勿添加

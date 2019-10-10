@@ -92,9 +92,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 *
 	 * @param CQ CQ对象
 	 */
+
 	public entry(CoolQ CQ) {
 		super(CQ);
-		entry.CQ = CQ;
 	}
 
 	/**
