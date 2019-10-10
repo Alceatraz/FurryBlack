@@ -12,8 +12,7 @@ GitEE的组织名字居然会过长不能写，蛋疼，请记住这个群组名
 
 ## 警告  
 
-**由于极度强迫症对不齐很难受 而且这个项目也没人给我钱 也没有合作者**  
-**所以很多代码的名命完全放飞自我 导致很怪**  
+**由于极度强迫症对不齐很难受 而且这个项目也没人给我钱 也没有合作者 所以很多代码的名命完全放飞自我 导致很怪**  
 
 比如随意乱缩写  
 > user → user  
@@ -52,7 +51,8 @@ JcqSDK会为jar（即插件）生成同名的文件夹
 
 只有执行了`initConfFolder()`才会生成`/conf/$PACKAGE_NAME`目录  
 只有执行了`initDataFolder()`才会生成`/data/$PACKAGE_NAME`目录  
-只有执行了`initConfigurtion()`才会生成`/data/config.properties`文件  
+
+只有执行了`initConfigurtion()`才会生成`/conf/config.properties`文件  
 
 ## 开发  
 
