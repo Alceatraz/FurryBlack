@@ -7,8 +7,7 @@
 `https://git.blacktech.studio:8888/blacktechstudio/furryblack`  
 `https://gitee.com/BlackTechStudio/FurryBlackBot.git`  
 
-GitEE的组织名字居然会过长不能写，蛋疼，请记住这个群组名应该叫做  
-**BlackTechStudio - Offical**  
+GitEE的组织名字居然会过长不能写，蛋疼，请记住这个群组名应该叫做**BlackTechStudio - Offical**  
 
 ## 警告  
 
@@ -52,7 +51,7 @@ JcqSDK会为jar（即插件）生成同名的文件夹
 只有执行了`initConfFolder()`才会生成`/conf/$PACKAGE_NAME`目录  
 只有执行了`initDataFolder()`才会生成`/data/$PACKAGE_NAME`目录  
 
-只有执行了`initConfigurtion()`才会生成`/conf/config.properties`文件  
+只有执行了`initConfigurtion()`才会生成`/conf/$PACKAGE_NAME/config.properties`文件  
 
 ## 开发  
 

@@ -11,9 +11,7 @@ import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
@@ -45,7 +43,6 @@ public class AESCipher {
 	 * @throws InvalidKeyException
 	 */
 	public AESCipher(String secretKey, String initialVector) {
-
 		try {
 			Provider provider = Security.getProvider("SUN");
 			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", provider);
@@ -77,14 +74,13 @@ public class AESCipher {
 	 *
 	 * @param content 需要加密的内容
 	 * @return 加密后的内容
-	 * @throws BadPaddingException       Cipher产生
-	 * @throws IllegalBlockSizeException Cipher产生
+	 * @throws GeneralSecurityException Cipher产生
+	 * 
 	 */
 	public String encryptAES(String content) throws GeneralSecurityException {
 		byte[] tmp1 = content.getBytes(UTF_8);
 		byte[] tmp2 = this.encrypter.doFinal(tmp1);
 		return this.encoder.encode(tmp2);
-
 	}
 
 	/**
@@ -92,9 +88,9 @@ public class AESCipher {
 	 *
 	 * @param content 需要解密的内容
 	 * @return 解密后的内容
-	 * @throws IOException               SUN Base64库产生
-	 * @throws BadPaddingException       Cipher产生
-	 * @throws IllegalBlockSizeException Cipher产生
+	 * @throws IOException              SUN Base64库产生
+	 * @throws GeneralSecurityException Cipher产生
+	 * 
 	 */
 	public String decryptAES(String content) throws GeneralSecurityException, IOException {
 		byte[] tmp1 = this.decoder.decodeBuffer(content);
@@ -103,13 +99,11 @@ public class AESCipher {
 	}
 
 	/**
-	 * 加密
-	 *
-	 * unsafe指不会抛出异常，返回null
+	 * 加密 unsafe指不会抛出异常，返回null
 	 *
 	 * @param content 需要加密的内容
 	 * @return 加密后的内容 发生异常则为null
-	 *
+	 * 
 	 */
 	public String unsafeEncryptAES(String content) {
 		try {
@@ -122,13 +116,11 @@ public class AESCipher {
 	}
 
 	/**
-	 * 解密
-	 *
-	 * unsafe指不会抛出异常，返回null
+	 * 解密 unsafe指不会抛出异常，返回null
 	 *
 	 * @param content 需要解密的内容
 	 * @return 解密后的内容 发生异常则为null
-	 *
+	 * 
 	 */
 	public String unsafeDecryptAES(String content) {
 		try {
