@@ -37,10 +37,6 @@ public class AESCipher {
 	 *
 	 * @param secretKey     密钥种子，任意长度，不做处理
 	 * @param initialVector 初始向量，任意长度，MD5处理
-	 * @throws NoSuchAlgorithmException
-	 * @throws NoSuchPaddingException
-	 * @throws InvalidAlgorithmParameterException
-	 * @throws InvalidKeyException
 	 */
 	public AESCipher(String secretKey, String initialVector) {
 		try {
@@ -60,7 +56,7 @@ public class AESCipher {
 			this.decrypter.init(Cipher.DECRYPT_MODE, this.sk, this.iv);
 			this.encoder = new BASE64Encoder();
 			this.decoder = new BASE64Decoder();
-		} catch (Exception exception) {
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException exception) {
 			// 这些异常不可能发生 (非标准JVM和lib除外，经过测试ADoptOpenJDK不会出现错误)
 			// NoSuchAlgorithmException ----------- 不能自定义算法保证绝对合法
 			// NoSuchPaddingException ------------- 不能自定义补位保证绝对合法
@@ -75,9 +71,9 @@ public class AESCipher {
 	 * @param content 需要加密的内容
 	 * @return 加密后的内容
 	 * @throws GeneralSecurityException Cipher产生
-	 * 
+	 *
 	 */
-	public String encryptAES(String content) throws GeneralSecurityException {
+	public String encrypt(String content) throws GeneralSecurityException {
 		byte[] tmp1 = content.getBytes(UTF_8);
 		byte[] tmp2 = this.encrypter.doFinal(tmp1);
 		return this.encoder.encode(tmp2);
@@ -90,9 +86,9 @@ public class AESCipher {
 	 * @return 解密后的内容
 	 * @throws IOException              SUN Base64库产生
 	 * @throws GeneralSecurityException Cipher产生
-	 * 
+	 *
 	 */
-	public String decryptAES(String content) throws GeneralSecurityException, IOException {
+	public String decrypt(String content) throws GeneralSecurityException, IOException {
 		byte[] tmp1 = this.decoder.decodeBuffer(content);
 		byte[] tmp2 = this.decrypter.doFinal(tmp1);
 		return new String(tmp2, UTF_8);
@@ -103,9 +99,9 @@ public class AESCipher {
 	 *
 	 * @param content 需要加密的内容
 	 * @return 加密后的内容 发生异常则为null
-	 * 
+	 *
 	 */
-	public String unsafeEncryptAES(String content) {
+	public String unsafeEncrypt(String content) {
 		try {
 			byte[] tmp1 = content.getBytes(UTF_8);
 			byte[] tmp2 = this.encrypter.doFinal(tmp1);
@@ -120,9 +116,9 @@ public class AESCipher {
 	 *
 	 * @param content 需要解密的内容
 	 * @return 解密后的内容 发生异常则为null
-	 * 
+	 *
 	 */
-	public String unsafeDecryptAES(String content) {
+	public String unsafeDecrypt(String content) {
 		try {
 			byte[] tmp1 = this.decoder.decodeBuffer(content);
 			byte[] tmp2 = this.decrypter.doFinal(tmp1);
