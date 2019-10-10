@@ -31,12 +31,15 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
 
 public class Listener_TopSpeak extends ModuleListener {
+
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Listener_TopSpeak";
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群统计";
@@ -48,14 +51,18 @@ public class Listener_TopSpeak extends ModuleListener {
 	};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	private ArrayList<Long> GROUP_REPORT;
 	private HashMap<Long, GroupStatus> GROUP_STATUS;
+
 	private Thread thread;
+
 	private File CONFIG_GROUP_REPORT;
 	private File GROUP_STATUS_SERIAL;
 
@@ -64,6 +71,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	// 生命周期函数
 	//
 	// ==========================================================================================================================================================
+
 	public Listener_TopSpeak() throws Exception {
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
@@ -71,11 +79,15 @@ public class Listener_TopSpeak extends ModuleListener {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init(LoggerX logger) throws Exception {
+
 		this.initConfFolder();
 		this.initDataFolder();
+
 		this.GROUP_REPORT = new ArrayList<>();
+
 		this.CONFIG_GROUP_REPORT = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "grop_report.txt").toFile();
 		this.GROUP_STATUS_SERIAL = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeak.serial").toFile();
+
 		if (this.CONFIG_GROUP_REPORT.exists()) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_GROUP_REPORT), StandardCharsets.UTF_8));
 			String line;
@@ -88,6 +100,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		} else {
 			this.CONFIG_GROUP_REPORT.createNewFile();
 		}
+
 		if (this.GROUP_STATUS_SERIAL.exists()) {
 			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(this.GROUP_STATUS_SERIAL));
 			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
@@ -102,13 +115,16 @@ public class Listener_TopSpeak extends ModuleListener {
 		} else {
 			this.GROUP_STATUS = new HashMap<>();
 		}
+
 		List<Group> groups = entry.getCQ().getGroupList();
+
 		for (Group group : groups) {
 			if (!this.GROUP_STATUS.containsKey(group.getId())) {
 				this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
 				logger.seek(MODULE_PACKAGENAME, " 添加新群 " + group.getName() + "(" + group.getId() + ")");
 			}
 		}
+
 		this.ENABLE_USER = false;
 		this.ENABLE_DISZ = false;
 		this.ENABLE_GROP = true;
