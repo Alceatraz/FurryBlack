@@ -1,5 +1,14 @@
 # FurryBlack - 一个小动物形象的人工智障
 
+## 注意
+
+本仓库同时添加了多个remote，我的私人Gitlab和GitEE，所以贡献者名字会变得很怪异，我将优先使自己Gitlab服务器里名字更好看。联通毫无预兆的屏蔽了443端口，非标准端口的网站怎么看都像是钓鱼网站，所以以添加了GitEE同步。  
+
+`https://git.blacktech.studio/blacktechstudio/furryblack`  
+`https://gitee.com/BlackTechStudio/FurryBlackBot.git`  
+
+GitEE的组织名字居然会过长，蛋疼  
+
 ## 警告
 
 **由于极度强迫症对不齐很难受 所以很多代码的名命很怪**
