@@ -21,6 +21,12 @@ import javax.crypto.spec.SecretKeySpec;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
+/***
+ * 使用标准JavaCipher包装的AES-CBC工具类，注意：不包含HASH检测，使用者应当自己负责比特翻转等攻击
+ * 
+ * @author netuser
+ *
+ */
 public class AESCipher {
 
 	private static final Charset UTF_8 = Charset.forName("UTF-8");
@@ -34,9 +40,35 @@ public class AESCipher {
 
 	/**
 	 * AES + BASE64 工具类
+	 * 
+	 * 初始向量固定的情况下加密变得极度不安全，仅用于测试目的
+	 * 
+	 * @param secretKey 密钥种子
+	 */
+	@Deprecated
+	public AESCipher(String secretKey) {
+		this(secretKey, "0123456789ABCDEF");
+		System.err.println("Warning! Fixed IV is NOT safe! Only test purpose!");
+	}
+
+	/**
+	 * AES + BASE64 工具类
+	 * 
+	 * 初始向量固定的情况下加密变得极度不安全，仅用于测试目的
+	 * 
+	 * @param secretKeySpec 密钥
+	 */
+	@Deprecated
+	public AESCipher(SecretKeySpec secretKeySpec) {
+		this(secretKeySpec, "0123456789ABCDEF");
+		System.err.println("Warning! Fixed IV is NOT safe! Only test purpose!");
+	}
+
+	/**
+	 * AES + BASE64 工具类
 	 *
-	 * @param secretKey     密钥种子，任意长度，不做处理
-	 * @param initialVector 初始向量，任意长度，MD5处理
+	 * @param secretKey     密钥种子
+	 * @param initialVector 初始向量
 	 */
 	public AESCipher(String secretKey, String initialVector) {
 		try {
@@ -48,8 +80,35 @@ public class AESCipher {
 			SecretKey skey = generator.generateKey();
 			MessageDigest digest = MessageDigest.getInstance("MD5");
 			digest.update(initialVector.getBytes(UTF_8));
-			this.sk = new SecretKeySpec(skey.getEncoded(), "AES");
 			this.iv = new IvParameterSpec(digest.digest());
+			this.sk = new SecretKeySpec(skey.getEncoded(), "AES");
+			this.encrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			this.decrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			this.encrypter.init(Cipher.ENCRYPT_MODE, this.sk, this.iv);
+			this.decrypter.init(Cipher.DECRYPT_MODE, this.sk, this.iv);
+			this.encoder = new BASE64Encoder();
+			this.decoder = new BASE64Decoder();
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException exception) {
+			// 这些异常不可能发生 (非标准JVM和lib除外，经过测试ADoptOpenJDK不会出现错误)
+			// NoSuchAlgorithmException ----------- 不能自定义算法保证绝对合法
+			// NoSuchPaddingException ------------- 不能自定义补位保证绝对合法
+			// InvalidKeyException ---------------- 密钥由生成器生成保证绝对合法
+			// InvalidAlgorithmParameterException - 加密解密模式是写死的保证绝对合法
+		}
+	}
+
+	/**
+	 * AES + BASE64 工具类
+	 *
+	 * @param secretKeySpec 密钥
+	 * @param initialVector 初始向量，任意长度，MD5处理
+	 */
+	public AESCipher(SecretKeySpec secretKeySpec, String initialVector) {
+		try {
+			MessageDigest digest = MessageDigest.getInstance("MD5");
+			digest.update(initialVector.getBytes(UTF_8));
+			this.iv = new IvParameterSpec(digest.digest());
+			this.sk = secretKeySpec;
 			this.encrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			this.decrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			this.encrypter.init(Cipher.ENCRYPT_MODE, this.sk, this.iv);

@@ -43,8 +43,8 @@ public class RSACipher {
 	/**
 	 * 通过密钥长度和随机种子生成新的密钥
 	 *
-	 * @param keyLength 密钥长度
 	 * @param secretKey 随机种子
+	 * @param keyLength 密钥长度
 	 */
 	public RSACipher(String secretKey, int keyLength) {
 		this();
@@ -70,17 +70,17 @@ public class RSACipher {
 	/**
 	 * 输入X509编码的密钥
 	 *
-	 * @param publicKey  x509公钥
-	 * @param privateKey x509私钥
-	 * @throws InvalidKeySpecException 传入错误密钥将会产生异常
-	 * @throws IOException             传入错误密钥将会产生异常
+	 * @param publicKey  x509公钥 Base64
+	 * @param privateKey x509私钥 Base64
+	 * @throws IOException             传入错误密钥将会产生异常 - 应经过BASE64编码
+	 * @throws InvalidKeySpecException 传入错误密钥将会产生异常 - 不是X509密钥
 	 */
 	public RSACipher(String publicKey, String privateKey) throws InvalidKeySpecException, IOException {
 		this();
 		try {
-			KeyFactory factory = KeyFactory.getInstance("RSA");
 			byte[] publicKeyString = decoder.decodeBuffer(publicKey);
 			byte[] privateKeyString = decoder.decodeBuffer(privateKey);
+			KeyFactory factory = KeyFactory.getInstance("RSA");
 			this.publicKey = (RSAPublicKey) factory.generatePublic(new X509EncodedKeySpec(publicKeyString));
 			this.privateKey = (RSAPrivateKey) factory.generatePrivate(new X509EncodedKeySpec(privateKeyString));
 			this.encrypter = Cipher.getInstance("RSA");
@@ -164,7 +164,7 @@ public class RSACipher {
 	 * @return x509
 	 */
 	public String getPublicKeyBase64() {
-		return "" + encoder.encode(this.publicKey.getEncoded()) + "";
+		return encoder.encode(this.publicKey.getEncoded());
 	}
 
 	/***

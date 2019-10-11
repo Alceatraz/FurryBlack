@@ -13,6 +13,7 @@ public class TimeBaseVerification {
 	private static final Charset UTF_8 = Charset.forName("UTF-8");
 
 	private AESCipher cipher;
+	private String challenge;
 	private String response;
 
 	public TimeBaseVerification(String key) {
@@ -26,17 +27,16 @@ public class TimeBaseVerification {
 
 	public String generateChallenge() {
 		String raw = RandomTools.genRandomString(64);
-		String tmp = this.makeChallenge(raw);
-		this.response = this.makeResponse(tmp);
-		String res = this.cipher.unsafeEncrypt(tmp);
+		this.challenge = this.makeChallenge(raw);
+		this.response = this.makeResponse(this.challenge);
+		String res = this.cipher.unsafeEncrypt(this.challenge);
 		return res;
 	}
 
 	public String generateResponse(String challenge) {
-		String raw = this.cipher.unsafeDecrypt(challenge);
-		String tmp = this.makeResponse(raw);
-		String res = this.cipher.unsafeEncrypt(tmp);
-		return res;
+		this.challenge = this.cipher.unsafeDecrypt(challenge);
+		this.response = this.makeResponse(this.challenge);
+		return this.cipher.unsafeEncrypt(this.response);
 	}
 
 	public boolean verifyResponse(String raw) {
@@ -81,5 +81,13 @@ public class TimeBaseVerification {
 			builder.append(Character.toChars(Integer.valueOf(hex) & 0xFFFF));
 		}
 		return builder.toString();
+	}
+
+	public String getChallenge() {
+		return this.challenge;
+	}
+
+	public String getResponse() {
+		return this.response;
 	}
 }
