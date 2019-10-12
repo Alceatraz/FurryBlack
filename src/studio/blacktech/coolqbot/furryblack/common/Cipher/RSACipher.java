@@ -78,8 +78,8 @@ public class RSACipher {
 	public RSACipher(String publicKey, String privateKey) throws InvalidKeySpecException, IOException {
 		this();
 		try {
-			byte[] publicKeyString = decoder.decodeBuffer(publicKey);
-			byte[] privateKeyString = decoder.decodeBuffer(privateKey);
+			byte[] publicKeyString = this.decoder.decodeBuffer(publicKey);
+			byte[] privateKeyString = this.decoder.decodeBuffer(privateKey);
 			KeyFactory factory = KeyFactory.getInstance("RSA");
 			this.publicKey = (RSAPublicKey) factory.generatePublic(new X509EncodedKeySpec(publicKeyString));
 			this.privateKey = (RSAPrivateKey) factory.generatePrivate(new X509EncodedKeySpec(privateKeyString));
@@ -160,19 +160,19 @@ public class RSACipher {
 
 	/***
 	 * 获取公钥 Base64
-	 * 
+	 *
 	 * @return x509
 	 */
 	public String getPublicKeyBase64() {
-		return encoder.encode(this.publicKey.getEncoded());
+		return this.encoder.encode(this.publicKey.getEncoded());
 	}
 
 	/***
 	 * 获取私钥 Base64
-	 * 
+	 *
 	 * @return x509
 	 */
 	public String getPrivateKeyBase64() {
-		return encoder.encode(this.privateKey.getEncoded());
+		return this.encoder.encode(this.privateKey.getEncoded());
 	}
 }

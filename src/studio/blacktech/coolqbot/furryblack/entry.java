@@ -95,6 +95,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 	public entry(CoolQ CQ) {
 		super(CQ);
+		entry.CQ = CQ;
 	}
 
 	/**
@@ -151,9 +152,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			// ==========================================================================================================================
 
 			entry.SYSTEMD = new Module_Systemd();
-
 			SYSTEMD.init(logger);
-
 			SYSTEMD.boot(logger);
 
 			// ==========================================================================================================================

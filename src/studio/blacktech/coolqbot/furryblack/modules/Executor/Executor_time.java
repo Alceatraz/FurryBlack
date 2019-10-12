@@ -1,6 +1,11 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
+
+import org.junit.jupiter.api.Test;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
@@ -39,6 +44,13 @@ public class Executor_time extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+	private static final TimeZone zone_W8 = TimeZone.getTimeZone("America/Los_Angeles");
+	private static final TimeZone zone_W4 = TimeZone.getTimeZone("America/New_York");
+	private static final TimeZone zone_00 = TimeZone.getTimeZone("UTC");
+	private static final TimeZone zone_E0 = TimeZone.getTimeZone("Europe/London");
+	private static final TimeZone zone_E1 = TimeZone.getTimeZone("Europe/Stockholm");
+	private static final TimeZone zone_E8 = TimeZone.getTimeZone("Asia/Shanghai");
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -51,7 +63,6 @@ public class Executor_time extends ModuleExecutor {
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
-
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;
 		this.ENABLE_GROP = true;
@@ -104,27 +115,54 @@ public class Executor_time extends ModuleExecutor {
 	}
 
 	private String getTime() {
-		TimeZone zone_W7 = TimeZone.getTimeZone("MST"); // Mountain Standard Time
-		TimeZone zone_W4 = TimeZone.getTimeZone("PRT"); // Atlantic Standard Time
-		TimeZone zone_00 = TimeZone.getTimeZone("UTC"); // Coordinated Universal Time
-		TimeZone zone_E1 = TimeZone.getTimeZone("WET"); // Western European Time
-		TimeZone zone_E8 = TimeZone.getTimeZone("CTT"); // China Standard Time
-
-		int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", zone_E8));
-
-		boolean yestday_W7 = Integer.parseInt(LoggerX.formatTime("dd", zone_W7)) < E8_DATE;
-		boolean yestday_W4 = Integer.parseInt(LoggerX.formatTime("dd", zone_W4)) < E8_DATE;
-		boolean yestday_E1 = Integer.parseInt(LoggerX.formatTime("dd", zone_E1)) < E8_DATE;
-
 		return
 		// @formatter:off
+		//
 		"世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", zone_00) + "\r\n" +
-		"美国西部(UTC-7) " + (yestday_W7 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W7) + "\r\n" +
-        "美国东部(UTC-4) " + (yestday_W4 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_W4) + "\r\n" +
-        "欧洲英国(UTC+1) " + (yestday_E1 ? "昨天 " : "") + LoggerX.formatTime("HH:mm", zone_E1) + "\r\n" +
+		"美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", zone_W8) + this.format(zone_W8) + "\r\n" +
+        "美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", zone_W4) + this.format(zone_W4) + "\r\n" +
+        "欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", zone_E0) + this.format(zone_E0) + "\r\n" +
+        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
         "亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", zone_E8)
         // @formatter:on
 		;
+	}
+
+	@SuppressWarnings("deprecation")
+	private String format(TimeZone timezone) {
+		// @formatter:off
+		boolean isEnableDST = false;
+		boolean isDisableDST = false;
+		StringBuilder builder = new StringBuilder();
+		Calendar today = Calendar.getInstance(timezone);
+		long current = today.getTimeInMillis();
+		Date begin = new Date(current);
+		begin.setMonth(1);
+		begin.setDate(1);
+		begin.setHours(0);
+		begin.setMinutes(0);
+		begin.setSeconds(0);
+		Calendar temp = Calendar.getInstance(timezone);
+		temp.setTime(new Date(begin.getTime() / 1000 * 1000));
+		for (long i = temp.getTimeInMillis(); i < current; i = temp.getTimeInMillis()) {
+			temp.add(Calendar.DATE, 1);
+			long t = temp.getTimeInMillis();
+			if (t - i < 86400000) {
+				isEnableDST = true;
+			} else if (t - i > 86400000) {
+				isDisableDST = true;
+			}
+		}
+		if (isEnableDST ^ isDisableDST) { builder.append(" 夏令时"); }
+		int TZ_DATE = Integer.parseInt(LoggerX.formatTime("dd", timezone));
+		int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", zone_E8));
+		if (E8_DATE - TZ_DATE > 0) {
+			builder.append(" 昨天," + TZ_DATE + "日");
+		} else if (E8_DATE - TZ_DATE < 0) {
+			builder.append(" 明天," + TZ_DATE + "日");
+		}
+        // @formatter:on
+		return builder.toString();
 	}
 
 	// ==========================================================================================================================================================
@@ -136,5 +174,19 @@ public class Executor_time extends ModuleExecutor {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
+	}
+
+	@Test
+	void findAllDSTDate() {
+		TimeZone timezone = zone_E0;
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar start = Calendar.getInstance(timezone);
+		start.setTime(new Date(0));
+		long end = Calendar.getInstance(timezone).getTimeInMillis();
+		System.out.println("Time Zone is " + timezone.getDisplayName() + " " + timezone.getID());
+		for (long i = start.getTimeInMillis(); i < end; i = start.getTimeInMillis()) {
+			start.add(Calendar.DATE, 1);
+			if ((start.getTimeInMillis() - i) % (24 * 3600 * 1000L) != 0) { System.out.println("from " + fmt.format(new Date(i)) + " to " + fmt.format(start.getTime()) + " has " + (start.getTimeInMillis() - i) + "ms" + "[" + (start.getTimeInMillis() - i) / (3600 * 1000L) + "hours]"); }
+		}
 	}
 }

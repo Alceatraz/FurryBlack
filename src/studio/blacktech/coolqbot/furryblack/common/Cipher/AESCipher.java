@@ -23,7 +23,7 @@ import sun.misc.BASE64Encoder;
 
 /***
  * 使用标准JavaCipher包装的AES-CBC工具类，注意：不包含HASH检测，使用者应当自己负责比特翻转等攻击
- * 
+ *
  * @author netuser
  *
  */
@@ -40,9 +40,9 @@ public class AESCipher {
 
 	/**
 	 * AES + BASE64 工具类
-	 * 
+	 *
 	 * 初始向量固定的情况下加密变得极度不安全，仅用于测试目的
-	 * 
+	 *
 	 * @param secretKey 密钥种子
 	 */
 	@Deprecated
@@ -53,9 +53,9 @@ public class AESCipher {
 
 	/**
 	 * AES + BASE64 工具类
-	 * 
+	 *
 	 * 初始向量固定的情况下加密变得极度不安全，仅用于测试目的
-	 * 
+	 *
 	 * @param secretKeySpec 密钥
 	 */
 	@Deprecated

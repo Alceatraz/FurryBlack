@@ -53,7 +53,7 @@ public class DiffieHellmanX {
 			generator.initialize(4096, random);
 			this.keyPair = generator.generateKeyPair();
 			this.agreement.init(this.keyPair.getPrivate());
-			return encoder.encode(this.keyPair.getPublic().getEncoded());
+			return this.encoder.encode(this.keyPair.getPublic().getEncoded());
 		} catch (NoSuchAlgorithmException | InvalidKeyException exception) {
 			// 这些异常不可能发生 (非标准JVM和lib除外，经过测试ADoptOpenJDK不会出现错误)
 			// NoSuchAlgorithmException ----------- 不能自定义算法保证绝对合法
@@ -64,16 +64,16 @@ public class DiffieHellmanX {
 
 	public String init(String publicKeyString) throws GeneralSecurityException {
 		try {
-			byte[] publicKeyByte = decoder.decodeBuffer(publicKeyString);
+			byte[] publicKeyByte = this.decoder.decodeBuffer(publicKeyString);
 			X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(publicKeyByte);
-			DHPublicKey publicKey = (DHPublicKey) factory.generatePublic(x509KeySpec);
+			DHPublicKey publicKey = (DHPublicKey) this.factory.generatePublic(x509KeySpec);
 			DHParameterSpec dhParamSpec = publicKey.getParams();
-			KeyPairGenerator generator = KeyPairGenerator.getInstance(factory.getAlgorithm());
+			KeyPairGenerator generator = KeyPairGenerator.getInstance(this.factory.getAlgorithm());
 			generator.initialize(dhParamSpec);
 			this.keyPair = generator.generateKeyPair();
-			this.agreement.init(keyPair.getPrivate());
+			this.agreement.init(this.keyPair.getPrivate());
 			this.agreement.doPhase(publicKey, true);
-			return encoder.encode(this.keyPair.getPublic().getEncoded());
+			return this.encoder.encode(this.keyPair.getPublic().getEncoded());
 		} catch (IOException | InvalidKeyException exception) {
 			throw new InvalidKeyException("传入了不合法的密钥");
 		} catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | InvalidKeySpecException exception) {
@@ -92,9 +92,9 @@ public class DiffieHellmanX {
 
 	public SecretKeySpec generateFinalKey(String publicKeyString) throws GeneralSecurityException {
 		try {
-			byte[] publicKeyByte = decoder.decodeBuffer(publicKeyString);
+			byte[] publicKeyByte = this.decoder.decodeBuffer(publicKeyString);
 			X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(publicKeyByte);
-			DHPublicKey publicKey = (DHPublicKey) factory.generatePublic(x509KeySpec);
+			DHPublicKey publicKey = (DHPublicKey) this.factory.generatePublic(x509KeySpec);
 			this.agreement.doPhase(publicKey, true);
 			byte[] secret = this.agreement.generateSecret();
 			return new SecretKeySpec(secret, 0, 16, "AES");
