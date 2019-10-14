@@ -123,7 +123,7 @@ public class Executor_roulette extends ModuleExecutor {
 
 		// 只有命令 没下注
 		if (message.getSection() == 0) {
-			entry.getMessage().gropInfo(gropid, userid, "不下注是8koi的");
+			entry.gropInfo(gropid, userid, "不下注是8koi的");
 			return true;
 		}
 
@@ -150,20 +150,20 @@ public class Executor_roulette extends ModuleExecutor {
 
 		if (round.join(gropid, userid, message)) {
 
-			entry.getMessage().gropInfo(gropid, "名单已凑齐 装填子弹中");
+			entry.gropInfo(gropid, "名单已凑齐 装填子弹中");
 			int bullet = new SecureRandom().nextInt(6);
 			Member member;
 			for (int i = 0; i < 6; i++) {
 				member = entry.getCQ().getGroupMemberInfo(gropid, round.player.get(i));
 				if (i == bullet) {
 					this.ROULETTE_FREQ.set(i, this.ROULETTE_FREQ.get(i) + 1);
-					entry.getMessage().gropInfo(gropid, entry.getNickmap().getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
+					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
 				} else {
-					entry.getMessage().gropInfo(gropid, entry.getNickmap().getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
+					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
 				}
 
 			}
-			entry.getMessage().gropInfo(gropid, "@平安中国 目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
+			entry.gropInfo(gropid, "@平安中国 目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
 			this.ROULETTE_ROUNDS.remove(gropid);
 			this.ROUND_SUCCESS++;
 		}
@@ -187,7 +187,7 @@ public class Executor_roulette extends ModuleExecutor {
 
 		public boolean join(long gropid, long userid, Message message) {
 			if (this.player.contains(userid)) {
-				entry.getMessage().gropInfo(gropid, "你8koi离开，不准放过");
+				entry.gropInfo(gropid, "你8koi离开，不准放过");
 			} else {
 				this.time = new Date();
 				this.players++;
@@ -211,7 +211,7 @@ public class Executor_roulette extends ModuleExecutor {
 					buffer.append(i + 1);
 					buffer.append(" - 等待加入");
 				}
-				entry.getMessage().gropInfo(gropid, buffer.toString());
+				entry.gropInfo(gropid, buffer.toString());
 			}
 			this.lock = this.players > 5;
 			return this.lock;
@@ -253,8 +253,9 @@ public class Executor_roulette extends ModuleExecutor {
 			builder.append(this.ROULETTE_FREQ.get(5) * 100 / this.ROUND_SUCCESS);
 			builder.append("%");
 		}
-		String[] res = new String[1];
-		res[0] = builder.toString();
+		String[] res = new String[] {
+				builder.toString()
+		};
 		return res;
 	}
 }

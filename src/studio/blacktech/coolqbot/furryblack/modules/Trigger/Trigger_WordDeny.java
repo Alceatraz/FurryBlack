@@ -108,7 +108,8 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		String line;
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			this.BLACKLIST.add(line);
+			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")); }
+			this.BLACKLIST.add(line.trim());
 			logger.seek(MODULE_PACKAGENAME, "过滤规则", line);
 		}
 		reader.close();
@@ -159,7 +160,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		for (String temp : this.BLACKLIST) {
 			if (Pattern.matches(temp, message.getRawMessage())) {
-				entry.getMessage().adminInfo("私聊过滤：" + entry.getNickmap().getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
+				entry.adminInfo("私聊过滤：" + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
 				this.BLOCK_USER_STORE.get(temp).add(message);
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8));
 				writer.write(message.toString());
@@ -176,7 +177,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		for (String temp : this.BLACKLIST) {
 			if (Pattern.matches(temp, message.getRawMessage())) {
-				entry.getMessage().adminInfo("组聊过滤：" + diszid + " - " + entry.getNickmap().getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
+				entry.adminInfo("组聊过滤：" + diszid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
 				this.BLOCK_DISZ_STORE.get(temp).add(message);
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8));
 				writer.write(message.toString());
@@ -193,7 +194,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		for (String temp : this.BLACKLIST) {
 			if (Pattern.matches(temp, message.getRawMessage())) {
-				entry.getMessage().adminInfo("群聊过滤：" + gropid + " - " + entry.getNickmap().getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
+				entry.adminInfo("群聊过滤：" + gropid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
 				this.BLOCK_GROP_STORE.get(temp).add(message);
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8));
 				writer.write(message.toString());
@@ -259,7 +260,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 						builder.append("\r\n");
 						builder.append(LoggerX.datetime(new Date(block.getSendtime())));
 						builder.append(" > ");
-						builder.append(entry.getNickmap().getNickname(block.userid()));
+						builder.append(entry.getNickname(block.userid()));
 						builder.append(" (");
 						builder.append(block.userid());
 						builder.append(") ");
@@ -286,7 +287,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 						builder.append("\r\n");
 						builder.append(LoggerX.datetime(new Date(block.getSendtime())));
 						builder.append(" > ");
-						builder.append(entry.getNickmap().getNickname(block.userid()));
+						builder.append(entry.getNickname(block.userid()));
 						builder.append(" (");
 						builder.append(block.userid());
 						builder.append(" [");
@@ -315,7 +316,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 						builder.append("\r\n");
 						builder.append(LoggerX.datetime(new Date(block.getSendtime())));
 						builder.append(" > ");
-						builder.append(entry.getNickmap().getNickname(block.userid()));
+						builder.append(entry.getNickname(block.userid()));
 						builder.append(" (");
 						builder.append(block.userid());
 						builder.append(" [");

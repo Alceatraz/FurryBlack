@@ -104,10 +104,14 @@ public class Executor_jrjp extends ModuleExecutor {
 		String[] temp;
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			if (line.indexOf(":") < 0) { continue; }
+			if (!line.contains(":")) {
+				logger.mini(MODULE_PACKAGENAME, "配置错误 - 不含:", line);
+				continue;
+			}
+			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
 			temp = line.split(":");
 			if (temp.length != 2) {
-				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
+				logger.mini(MODULE_PACKAGENAME, "配置错误 - 不止一个:", line);
 			} else {
 				long gropid = Long.parseLong(temp[0]);
 				long userid = Long.parseLong(temp[1]);
@@ -121,7 +125,7 @@ public class Executor_jrjp extends ModuleExecutor {
 			ArrayList<Long> tempMembers = this.MEMBERS.get(group.getId());
 			ArrayList<Long> tempIgnores = this.IGNORES.get(group.getId());
 			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
-				if (entry.getMessage().isMyself(member.getQQId())) { continue; }
+				if (entry.isMyself(member.getQQId())) { continue; }
 				if (tempIgnores.contains(member.getQQId())) { continue; }
 				tempMembers.add(member.getQQId());
 			}
@@ -181,7 +185,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		long victim = this.VICTIM.get(gropid);
-		entry.getMessage().gropInfo(gropid, entry.getNickmap().getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.AVCODE.get(gropid));
+		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.AVCODE.get(gropid));
 		return true;
 	}
 	// ==========================================================================================================================================================
@@ -192,7 +196,7 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		return null;
+		return new String[0];
 	}
 
 	@SuppressWarnings("deprecation")

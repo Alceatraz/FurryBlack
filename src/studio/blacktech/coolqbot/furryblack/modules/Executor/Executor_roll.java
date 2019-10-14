@@ -96,19 +96,19 @@ public class Executor_roll extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().userInfo(userid, this.roll(message));
+		entry.userInfo(userid, this.roll(message));
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().diszInfo(diszid, userid, this.roll(message));
+		entry.diszInfo(diszid, userid, this.roll(message));
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().gropInfo(gropid, userid, this.roll(message));
+		entry.gropInfo(gropid, userid, this.roll(message));
 		return true;
 	}
 
@@ -190,8 +190,9 @@ public class Executor_roll extends ModuleExecutor {
 		builder.append(this.mode_2);
 		builder.append("\r\n模式3 - 双限: ");
 		builder.append(this.mode_3);
-		String[] res = new String[1];
-		res[0] = builder.toString();
+		String[] res = new String[] {
+				builder.toString()
+		};
 		return res;
 	}
 

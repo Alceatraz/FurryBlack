@@ -162,7 +162,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-		if (entry.getMessage().isMyself(userid)) {
+		if (entry.isMyself(userid)) {
 			this.GROUP_STATUS.put(gropid, new GroupStatus(gropid));
 		} else {
 			this.GROUP_STATUS.get(gropid).USER_STATUS.put(userid, new UserStatus(userid));
@@ -171,7 +171,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-		if (entry.getMessage().isMyself(userid)) {
+		if (entry.isMyself(userid)) {
 			this.GROUP_STATUS.remove(gropid);
 		} else {
 			this.GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
@@ -204,32 +204,71 @@ public class Listener_TopSpeak extends ModuleListener {
 	//
 	//
 	// ==========================================================================================================================================================
+
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
+
+		String report[] = null;
+
 		switch (mode) {
+
 		case 10:
-			String gropid = message.getSwitch("gropid");
-			if (gropid == null) {
-				return new String[] {
+
+			if (message.hasSwitch("gropid")) {
+
+				long gropid = Long.parseLong(message.getSwitch("gropid"));
+
+				int limitRank = 10;
+				int limitRepeat = 10;
+				int limitPicture = 3;
+
+				if (message.hasSwitch("limit")) {
+
+					String[] limits = message.getSwitch("limit").split(",");
+
+					switch (limits.length) {
+
+					case 3:
+						limitPicture = Integer.parseInt(limits[2]);
+					case 2:
+						limitRepeat = Integer.parseInt(limits[1]);
+					case 1:
+						limitRank = Integer.parseInt(limits[0]);
+
+					}
+
+				}
+
+				report = this.generateMemberRank(gropid, limitRank, limitRepeat, limitPicture);
+
+			} else {
+
+				report = new String[] {
 						"参数错误 --gropid 为空"
 				};
-			} else {
-				return this.generateMemberRank(Long.parseLong(gropid));
+
 			}
+			break;
 		}
-		return null;
+
+		return report;
 	}
 
 	// ==========================================================================================================================
-	public String[] generateMemberRank(long gropid) {
+
+	public String[] generateMemberRank(long gropid, int limitRank, int limitRepeat, int limitPicture) {
+
 		StringBuilder builder;
 		LinkedList<String> report = new LinkedList<>();
 		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid).sum();
-		// ===========================================================
-		builder = new StringBuilder();
-		// ===========================================================
-		builder.append("（1/4）水群统计" + "\r\n");
 
+		// ===========================================================
+
+		builder = new StringBuilder();
+
+		// ===========================================================
+
+		builder.append("（1/4）水群统计 " + limitRank + "/" + limitRepeat + "/" + limitPicture + "\r\n");
 		builder.append("自" + LoggerX.formatTime("yyyy-MM-dd HH", new Date(groupStatus.initdt)) + ":00 以来" + "\r\n");
 		builder.append("总消息数：" + groupStatus.GROP_MESSAGES + "\r\n");
 		builder.append("发言条数：" + (groupStatus.GROP_SENTENCE.size() + groupStatus.GROP_PURECCODE) + "\r\n");
@@ -244,156 +283,230 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		// ===========================================================
 
-		UserStatus userStatus;
-		TreeMap<Integer, HashSet<Long>> allMemberRank = new TreeMap<>((a, b) -> b - a);
-		for (long userid : groupStatus.USER_STATUS.keySet()) {
-			userStatus = groupStatus.USER_STATUS.get(userid);
-			int userCharacter = userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE;
-			if (userCharacter > 0) {
-				if (allMemberRank.containsKey(userCharacter)) {
-					allMemberRank.get(userCharacter).add(userid);
+		if (limitRank >= 0) {
+
+			UserStatus userStatus;
+			TreeMap<Integer, HashSet<Long>> allMemberRank = new TreeMap<>((a, b) -> b - a);
+
+			for (long userid : groupStatus.USER_STATUS.keySet()) {
+
+				userStatus = groupStatus.USER_STATUS.get(userid);
+
+				int userCharacter = userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE;
+
+				if (userCharacter > 0) {
+
+					if (allMemberRank.containsKey(userCharacter)) {
+						allMemberRank.get(userCharacter).add(userid);
+					} else {
+						HashSet<Long> tempSet = new HashSet<>();
+						tempSet.add(userid);
+						allMemberRank.put(userCharacter, tempSet);
+					}
+
+				}
+			}
+
+			if (allMemberRank.size() > 0) {
+
+				builder = new StringBuilder();
+				builder.append("（2/4）成员排行：" + "\r\n");
+
+				int i = 1;
+				int limit = 0;
+				int slice = 0;
+
+				for (int userRank : allMemberRank.keySet()) {
+
+					HashSet<Long> tempSet = allMemberRank.get(userRank);
+
+					for (Long userid : tempSet) {
+
+						userStatus = groupStatus.USER_STATUS.get(userid);
+
+						builder.append("No." + i + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "句/" + userStatus.USER_CHARACTER + "字");
+
+						if (userStatus.USER_PICTURES.size() > 0) { builder.append("/" + userStatus.USER_PICTURES.size() + "图"); }
+						if (userStatus.USER_SNAPSHOT > 0) { builder.append("/" + userStatus.USER_SNAPSHOT + "闪"); }
+						if (userStatus.USER_TAPVIDEO > 0) { builder.append("/" + userStatus.USER_TAPVIDEO + "片"); }
+						if (userStatus.USER_HONGBAOS > 0) { builder.append("/" + userStatus.USER_HONGBAOS + "包"); }
+
+						builder.append("\r\n");
+
+						limit++;
+						slice++;
+
+						if (slice == 30) {
+							report.add(builder.substring(0, builder.length() - 2).toString());
+							builder = new StringBuilder();
+							slice = 0;
+						}
+
+						if (limitRank != 0 && limit >= limitRank) { break; }
+					}
+
+					if (limitRank != 0 && limit >= limitRank) { break; }
+					i = i + tempSet.size();
+				}
+				report.add(builder.substring(0, builder.length() - 2).toString());
+			}
+		}
+
+		// ===========================================================
+
+		if (limitRepeat >= 0) {
+
+			HashMap<String, Integer> allMessageRankTemp = new HashMap<>();
+
+			for (String messageContent : groupStatus.GROP_SENTENCE) {
+
+				messageContent = messageContent.trim();
+
+				if (messageContent.length() == 0) {
+					continue;
+				} else if (messageContent.matches("\\s+")) {
+					continue;
+				} else if (messageContent.equals("¿")) {
+					messageContent = "？";
+				} else if (messageContent.equals("?")) {
+					messageContent = "？";
+				} else if (messageContent.equals("??")) {
+					messageContent = "？？";
+				} else if (messageContent.equals("???")) {
+					messageContent = "？？？";
+				} else if (messageContent.equals("????")) {
+					messageContent = "？？？？";
+				} else if (messageContent.equals("wky")) {
+					messageContent = "我可以";
+				} else if (messageContent.equals("whl")) {
+					messageContent = "我好了";
+				} else if (messageContent.equals("hso")) {
+					messageContent = "好骚哦";
+				} else if (messageContent.equals("tql")) {
+					messageContent = "太强了";
+				} else if (messageContent.equals("tfl")) {
+					messageContent = "太富了";
+				} else if (messageContent.equals("tcl")) {
+					messageContent = "太草了";
+				} else if (messageContent.equals("ghs")) {
+					messageContent = "搞黄色";
+				} else if (messageContent.equals("草")) {
+					messageContent = "草";
+				} else if (messageContent.equals("操")) {
+					messageContent = "草";
+				} else if (messageContent.equals("艹")) {
+					messageContent = "草";
+				} else if (messageContent.equals("好色哦")) {
+					messageContent = "好骚哦";
 				} else {
-					HashSet<Long> tempSet = new HashSet<>();
-					tempSet.add(userid);
-					allMemberRank.put(userCharacter, tempSet);
+					// SAM IS RAGE
+					// SAM IS RAGE
+				}
+
+				if (allMessageRankTemp.containsKey(messageContent)) {
+					allMessageRankTemp.put(messageContent, allMessageRankTemp.get(messageContent) + 1);
+				} else {
+					allMessageRankTemp.put(messageContent, 1);
 				}
 			}
-		}
-		if (allMemberRank.size() > 0) {
-			builder = new StringBuilder();
-			builder.append("（2/4）成员排行：" + "\r\n");
-			int i = 1;
-			for (int userRank : allMemberRank.keySet()) {
-				HashSet<Long> tempSet = allMemberRank.get(userRank);
-				for (Long userid : tempSet) {
-					userStatus = groupStatus.USER_STATUS.get(userid);
-					builder.append("No." + i + " - " + entry.getNickmap().getGropnick(gropid, userid) + "(" + userid + ") " + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "句/" + userStatus.USER_CHARACTER + "字");
-					if (userStatus.USER_PICTURES.size() > 0) { builder.append("/" + userStatus.USER_PICTURES.size() + "图"); }
-					if (userStatus.USER_SNAPSHOT > 0) { builder.append("/" + userStatus.USER_SNAPSHOT + "闪"); }
-					if (userStatus.USER_TAPVIDEO > 0) { builder.append("/" + userStatus.USER_TAPVIDEO + "片"); }
-					if (userStatus.USER_HONGBAOS > 0) { builder.append("/" + userStatus.USER_HONGBAOS + "包"); }
-					builder.append("\r\n");
+
+			TreeMap<Integer, HashSet<String>> allMessageRank = new TreeMap<>((a, b) -> b - a);
+
+			for (String raw : allMessageRankTemp.keySet()) {
+
+				int tempCount = allMessageRankTemp.get(raw);
+
+				if (allMessageRank.containsKey(tempCount)) {
+					allMessageRank.get(tempCount).add(raw);
+				} else {
+					HashSet<String> tempSet = new HashSet<>();
+					tempSet.add(raw);
+					allMessageRank.put(tempCount, tempSet);
 				}
-				i = i + tempSet.size();
+
 			}
-			report.add(builder.substring(0, builder.length() - 2).toString());
+
+			allMessageRank.remove(1);
+
+			if (allMessageRank.size() > 0) {
+
+				builder = new StringBuilder();
+				builder.append("（3/4）整句排行：" + "\r\n");
+
+				int order = 1;
+				int limit = 0;
+				int slice = 0;
+
+				for (int messageRank : allMessageRank.keySet()) {
+
+					HashSet<String> tempSet = allMessageRank.get(messageRank);
+
+					for (String messageContent : tempSet) {
+						builder.append("No." + order + " - " + messageRank + "次：" + messageContent + "\r\n");
+						limit++;
+						slice++;
+						if (slice == 50) {
+							report.add(builder.substring(0, builder.length() - 2).toString());
+							builder = new StringBuilder();
+							slice = 0;
+						}
+						if (limitRepeat != 0 && limit >= limitRepeat) { break; }
+					}
+					if (limitRepeat != 0 && limit >= limitRepeat) { break; }
+					order = order + tempSet.size();
+				}
+				report.add(builder.substring(0, builder.length() - 2).toString());
+			}
 		}
+
 		// ===========================================================
-		HashMap<String, Integer> allMessageRankTemp = new HashMap<>();
-		for (String message : groupStatus.GROP_SENTENCE) {
-			message = message.trim();
-			if (message.length() == 0) {
-				continue;
-			} else if (message.matches("\\s+")) {
-				continue;
-			} else if (message.equals("¿")) {
-				message = "？";
-			} else if (message.equals("?")) {
-				message = "？";
-			} else if (message.equals("??")) {
-				message = "？？";
-			} else if (message.equals("???")) {
-				message = "？？？";
-			} else if (message.equals("????")) {
-				message = "？？？？";
-			} else if (message.equals("wky")) {
-				message = "我可以";
-			} else if (message.equals("whl")) {
-				message = "我好了";
-			} else if (message.equals("hso")) {
-				message = "好骚哦";
-			} else if (message.equals("tql")) {
-				message = "太强了";
-			} else if (message.equals("tfl")) {
-				message = "太富了";
-			} else if (message.equals("tcl")) {
-				message = "太草了";
-			} else if (message.equals("ghs")) {
-				message = "搞黄色";
-			} else if (message.equals("草")) {
-				message = "草";
-			} else if (message.equals("操")) {
-				message = "草";
-			} else if (message.equals("艹")) {
-				message = "草";
-			} else if (message.equals("好色哦")) {
-				message = "好骚哦";
-			} else {
-				// SAM IS RAGE
-				// SAM IS RAGE
-			}
-			if (allMessageRankTemp.containsKey(message)) {
-				allMessageRankTemp.put(message, allMessageRankTemp.get(message) + 1);
-			} else {
-				allMessageRankTemp.put(message, 1);
-			}
-		}
-		TreeMap<Integer, HashSet<String>> allMessageRank = new TreeMap<>((a, b) -> b - a);
-		for (String raw : allMessageRankTemp.keySet()) {
-			int tempCount = allMessageRankTemp.get(raw);
-			if (allMessageRank.containsKey(tempCount)) {
-				allMessageRank.get(tempCount).add(raw);
-			} else {
-				HashSet<String> tempSet = new HashSet<>();
-				tempSet.add(raw);
-				allMessageRank.put(tempCount, tempSet);
-			}
-		}
-		allMessageRank.remove(1);
-		if (allMessageRank.size() > 0) {
-			builder = new StringBuilder();
-			builder.append("（3/4）整句排行：" + "\r\n");
-			int order = 1;
-			int limit = 0;
-			for (int messageRank : allMessageRank.keySet()) {
-				HashSet<String> tempSet = allMessageRank.get(messageRank);
-				for (String message : tempSet) {
-					limit++;
-					builder.append("No." + order + " - " + messageRank + "次：" + message + "\r\n");
-					entry.getCQ().logDebug("ShuiDebug", order + " - " + messageRank + " - " + message.length() + "\r\n" + message + "\r\n" + LoggerX.unicode(message));
-					if (limit == 20) { break; }
+
+		if (limitPicture >= 0) {
+
+			HashMap<String, Integer> allPictureRankTemp = new HashMap<>();
+
+			for (String messageContent : groupStatus.GROP_PICTURES) {
+				if (allPictureRankTemp.containsKey(messageContent)) {
+					allPictureRankTemp.put(messageContent, allPictureRankTemp.get(messageContent) + 1);
+				} else {
+					allPictureRankTemp.put(messageContent, 1);
 				}
-				if (limit == 20) { break; }
-				order = order + tempSet.size();
 			}
-			report.add(builder.substring(0, builder.length() - 2).toString());
-		}
-		// ===========================================================
-		HashMap<String, Integer> allPictureRankTemp = new HashMap<>();
-		for (String message : groupStatus.GROP_PICTURES) {
-			if (allPictureRankTemp.containsKey(message)) {
-				allPictureRankTemp.put(message, allPictureRankTemp.get(message) + 1);
-			} else {
-				allPictureRankTemp.put(message, 1);
-			}
-		}
-		TreeMap<Integer, HashSet<String>> allPictureRank = new TreeMap<>((a, b) -> b - a);
-		for (String raw : allPictureRankTemp.keySet()) {
-			int tempCount = allPictureRankTemp.get(raw);
-			if (allPictureRank.containsKey(tempCount)) {
-				allPictureRank.get(tempCount).add(raw);
-			} else {
-				HashSet<String> tempSet = new HashSet<>();
-				tempSet.add(raw);
-				allPictureRank.put(tempCount, tempSet);
-			}
-		}
-		allPictureRank.remove(1);
-		if (allPictureRank.size() > 0) {
-			int order = 1;
-			int limit = 0;
-			for (int pictureRank : allPictureRank.keySet()) {
-				HashSet<String> tempSet = allPictureRank.get(pictureRank);
-				for (String picture : tempSet) {
-					report.add("No." + order + " - " + pictureRank + "次：" + CQCode.getInstance().getCQImage(picture).getUrl());
-					limit++;
-					if (limit > 2) { break; }
+
+			TreeMap<Integer, HashSet<String>> allPictureRank = new TreeMap<>((a, b) -> b - a);
+
+			for (String raw : allPictureRankTemp.keySet()) {
+				int tempCount = allPictureRankTemp.get(raw);
+				if (allPictureRank.containsKey(tempCount)) {
+					allPictureRank.get(tempCount).add(raw);
+				} else {
+					HashSet<String> tempSet = new HashSet<>();
+					tempSet.add(raw);
+					allPictureRank.put(tempCount, tempSet);
 				}
-				order = order + tempSet.size();
-				if (limit > 2) { break; }
+			}
+
+			allPictureRank.remove(1);
+
+			if (allPictureRank.size() > 0) {
+				int order = 1;
+				int limit = 0;
+				for (int pictureRank : allPictureRank.keySet()) {
+					HashSet<String> tempSet = allPictureRank.get(pictureRank);
+					for (String picture : tempSet) {
+						limit++;
+						String image = CQCode.getInstance().getCQImage(picture).getUrl();
+						report.add("No." + order + " - " + pictureRank + "次：" + image.substring(0, image.indexOf("?")));
+						if (limitPicture != 0 && limit >= limitPicture) { break; }
+					}
+					order = order + tempSet.size();
+					if (limitPicture != 0 && limit >= limitPicture) { break; }
+				}
 			}
 		}
+
 		// ===========================================================
+
 		return report.toArray(new String[report.size()]);
 	}
 
@@ -423,7 +536,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						saver.close();
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {
 							if (Listener_TopSpeak.this.GROUP_REPORT.contains(temp)) {
-								entry.getMessage().gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp));
+								entry.gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp, 10, 10, 3));
 							} else {
 								continue;
 							}

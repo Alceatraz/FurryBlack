@@ -232,7 +232,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		// QQ系统通知为
-		if (userid == 1000000) { entry.getMessage().adminInfo("系统消息 - （" + gropid + "）"); }
+		if (userid == 1000000) { entry.adminInfo("系统消息 - （" + gropid + "）"); }
 	}
 
 	/**
@@ -264,8 +264,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		// 不要使用JcpApp.CQ发送消息，Message实现了撤回功能（仅限Pro版，Air版会失败并提示付费）
-		entry.getMessage().gropInfo(gropid, userid, "MESSAGE");
-		entry.getMessage().revokeMessage(gropid);
+		entry.gropInfo(gropid, userid, "MESSAGE");
+		entry.revokeMessage(gropid);
 		return true;
 	}
 

@@ -22,7 +22,13 @@ import org.meowy.cqp.jcq.event.JcqAppAbstract;
  * 酷Q核心操作类}), {@link JcqAppAbstract#CC
  * CC}({@link org.meowy.cqp.jcq.message.CQCode 酷Q码操作类}), 具体功能可以查看文档
  */
-public class JcqDemo_130 extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
+
+@SuppressWarnings({
+		"deprecation",
+		"unused"
+})
+
+public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	/**
 	 * 关于新版：本版本只是为了测试下新做的插件能不能正常运行，并不包含任何 “新” 内容 新：指代 打包，调试运行 新版改了整体架构，内部改动非常大，使用上
@@ -32,8 +38,7 @@ public class JcqDemo_130 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	/**
 	 * 老的方式依然支持，也就是不强行定构造方法也行
 	 */
-	@SuppressWarnings("deprecation")
-	public JcqDemo_130() {
+	public JcqDemo_131() {
 
 	}
 
@@ -42,28 +47,26 @@ public class JcqDemo_130 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 *
 	 * @param CQ CQ初始化
 	 */
-	public JcqDemo_130(CoolQ CQ) {
+	public JcqDemo_131(CoolQ CQ) {
 		super(CQ);
 	}
 
 	/**
-	 * 用main方法调试可以最大化的加快开发效率，检测和定位错误位置 以下就是使用Main方法进行测试的一个简易案例
+	 * 用main方法调试可以最大化的加快开发效率，检测和定位错误位置<br/>
+	 * 以下就是使用Main方法进行测试的一个简易案例
 	 *
 	 * @param args 系统参数
 	 */
 	public static void main(String[] args) {
 
 		// 要测试主类就先实例化一个主类对象
-		JcqDemo_130 demo = new JcqDemo_130();
+		JcqDemo_131 demo = new JcqDemo_131();
 		// 获取当前酷Q操作对象
 		CoolQ CQ = demo.getCoolQ();
-		CQ.logInfo("[JCQ] TEST Demo", "测试启动");
-		// 现在就可以用CQ变量来执行任何想要的操作了
+		CQ.logInfo("[JCQ] TEST Demo", "测试启动");// 现在就可以用CQ变量来执行任何想要的操作了
 		// 下面对主类进行各方法测试,按照JCQ运行过程，模拟实际情况
-		demo.startup();
-		// 程序运行开始 调用应用初始化方法
-		demo.enable();
-		// 程序初始化完成后，启用应用，让应用正常工作
+		demo.startup();// 程序运行开始 调用应用初始化方法
+		demo.enable();// 程序初始化完成后，启用应用，让应用正常工作
 		// 开始模拟发送消息
 		// 模拟私聊消息
 		// 开始模拟QQ用户发送消息，以下QQ全部编造，请勿添加
@@ -111,7 +114,7 @@ public class JcqDemo_130 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	public int startup() {
 		// 获取应用数据目录(无需储存数据时，请将此行注释)
 		this.appDirectory = this.CQ.getAppDirectory();
-		// 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
+		// 返回如：D:\CoolQ\data\app\org.meowy.cqp.jcq\data\app\com.example.demo\
 		// 应用的所有数据、配置【必须】存放于此目录，避免给用户带来困扰。
 		return 0;
 	}
@@ -172,7 +175,6 @@ public class JcqDemo_130 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	public int privateMsg(int subType, int msgId, long fromQQ, String msg, int font) {
 		// 这里处理消息
 		this.CQ.sendPrivateMsg(fromQQ, "你发送了这样的消息：" + msg + "\n来自Java插件");
-		System.out.println(this.CQ);
 		return MSG_IGNORE;
 	}
 
@@ -194,7 +196,6 @@ public class JcqDemo_130 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		if (fromQQ == 80000000L && !fromAnonymous.equals("")) {
 			// 将匿名用户信息放到 anonymous 变量中
 			Anonymous anonymous = this.CQ.getAnonymous(fromAnonymous);
-			anonymous.getAid();
 		}
 
 		// 解析CQ码案例 如：[CQ:at,qq=100000]
@@ -204,17 +205,13 @@ public class JcqDemo_130 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		// long qqId = CC.getAt(msg);// 此方法为简便方法，获取第一个CQ:at里的QQ号，错误时为：-1000
 		// List<Long> qqIds = CC.getAts(msg); // 此方法为获取消息中所有的CQ码对象，错误时返回 已解析的数据
 		// 解析消息中的图片
-		// CQImage image = CC.getCQImage(msg);//
+		// String image = CC.getImage(msg);//
 		// 此方法为简便方法，获取第一个CQ:image里的图片数据，错误时打印异常到控制台，返回 null
-		// List<CQImage> images = CC.getCQImages(msg);//
-		// 此方法为获取消息中所有的CQ图片数据，错误时打印异常到控制台，返回 已解析的数据
+		// String file = CQ.getImage(image);// 获取酷Q 下载的图片地址
 
 		// 这里处理消息
-		// CQ.sendGroupMsg(fromGroup, CC.at(fromQQ) + "你发送了这样的消息：" + msg +
-		// "\n来自Java插件");
-		if (fromGroup == 427984429L) {
-			System.out.println(msg);
-			this.CQ.sendGroupMsg(fromGroup, msg + "\n喵呜~");
+		if (fromGroup == 0L) { // 这里的 0L 可以换成您的测试群
+			this.CQ.sendGroupMsg(fromGroup, this.CC.at(fromQQ) + "你发送了这样的消息：" + msg + "\n来自Java插件");
 		}
 		return MSG_IGNORE;
 	}
@@ -307,6 +304,24 @@ public class JcqDemo_130 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		this.CQ.logInfo("fromQQ", "" + fromQQ);
 		this.CQ.logInfo("beingOperateQQ", "" + beingOperateQQ);
 		return MSG_IGNORE;
+	}
+
+	/**
+	 * 群事件-群禁言 (Type=104)<br>
+	 * 本方法会在酷Q【线程】中被调用。<br>
+	 *
+	 * @param subType        子类型，1/被解禁 2/被禁言
+	 * @param sendTime       发送时间(时间戳)
+	 * @param fromGroup      来源群号
+	 * @param fromQQ         操作者QQ
+	 * @param beingOperateQQ 被操作QQ(若为全群禁言/解禁，则本参数为 0)
+	 * @param duration       禁言时长(单位 秒，仅子类型为2时可用)
+	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
+	 */
+	public int groupBan(int subType, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ, long duration) {
+		// 这里处理消息
+
+		return 0;
 	}
 
 	/**

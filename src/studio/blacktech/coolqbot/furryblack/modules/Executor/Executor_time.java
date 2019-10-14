@@ -98,19 +98,19 @@ public class Executor_time extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().userInfo(userid, this.getTime());
+		entry.userInfo(userid, this.getTime());
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().diszInfo(diszid, this.getTime());
+		entry.diszInfo(diszid, this.getTime());
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().gropInfo(gropid, this.getTime());
+		entry.gropInfo(gropid, this.getTime());
 		return true;
 	}
 
@@ -173,7 +173,7 @@ public class Executor_time extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		return null;
+		return new String[0];
 	}
 
 	@Test

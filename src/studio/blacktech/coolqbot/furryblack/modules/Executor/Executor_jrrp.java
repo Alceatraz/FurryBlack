@@ -108,7 +108,7 @@ public class Executor_jrrp extends ModuleExecutor {
 			SecureRandom random = new SecureRandom();
 			this.JRRP.put(userid, random.nextInt(100));
 		}
-		entry.getMessage().userInfo(userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
+		entry.userInfo(userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
@@ -118,7 +118,7 @@ public class Executor_jrrp extends ModuleExecutor {
 			SecureRandom random = new SecureRandom();
 			this.JRRP.put(userid, random.nextInt(100));
 		}
-		entry.getMessage().diszInfo(diszid, userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
+		entry.diszInfo(diszid, userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
@@ -128,13 +128,13 @@ public class Executor_jrrp extends ModuleExecutor {
 			SecureRandom random = new SecureRandom();
 			this.JRRP.put(userid, random.nextInt(100));
 		}
-		entry.getMessage().gropInfo(gropid, userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
+		entry.gropInfo(gropid, userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		return null;
+		return new String[0];
 		/*
 		 * if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null;
 		 * } TreeMap<Integer, Integer> frequency = new TreeMap<>(); for (long temp :

@@ -153,118 +153,118 @@ public class Executor_acon extends ModuleExecutor {
 			switch (message.getSegment()[0]) {
 
 			case "off":
-				entry.getMessage().gropInfo(gropid, "空调已关闭");
+				entry.gropInfo(gropid, "空调已关闭");
 				this.WORKINGMODE.put(gropid, 1L);
 				break;
 
 			case "dry":
-				entry.getMessage().gropInfo(gropid, "切换至除湿模式");
+				entry.gropInfo(gropid, "切换至除湿模式");
 				this.WORKINGMODE.put(gropid, 5880L);
 				break;
 
 			case "wet":
-				entry.getMessage().gropInfo(gropid, "切换至加湿模式");
+				entry.gropInfo(gropid, "切换至加湿模式");
 				this.WORKINGMODE.put(gropid, 5880L);
 				break;
 
 			case "cold":
-				entry.getMessage().gropInfo(gropid, "切换至制冰模式 -20°");
+				entry.gropInfo(gropid, "切换至制冰模式 -20°");
 				this.WORKINGMODE.put(gropid, 14700L);
 				break;
 
 			case "cool":
-				entry.getMessage().gropInfo(gropid, "切换至制冷模式 20°");
+				entry.gropInfo(gropid, "切换至制冷模式 20°");
 				this.WORKINGMODE.put(gropid, 7350L);
 				break;
 
 			case "warm":
-				entry.getMessage().gropInfo(gropid, "切换至制热模式 23°");
+				entry.gropInfo(gropid, "切换至制热模式 23°");
 				this.WORKINGMODE.put(gropid, 7350L);
 				break;
 
 			case "bake":
-				entry.getMessage().gropInfo(gropid, "切换至烘烤模式 285°");
+				entry.gropInfo(gropid, "切换至烘烤模式 285°");
 				this.WORKINGMODE.put(gropid, 14700L);
 				break;
 
 			case "burn":
-				entry.getMessage().gropInfo(gropid, "切换至烧烤模式 960°");
+				entry.gropInfo(gropid, "切换至烧烤模式 960°");
 				this.WORKINGMODE.put(gropid, 22050L);
 				break;
 
 			case "fire":
-				entry.getMessage().gropInfo(gropid, "切换至焚化模式 1,200°");
+				entry.gropInfo(gropid, "切换至焚化模式 1,200°");
 				this.WORKINGMODE.put(gropid, 29400L);
 				break;
 
 			case "c2h2":
-				entry.getMessage().gropInfo(gropid, "切换至乙炔炬模式 3,300°");
+				entry.gropInfo(gropid, "切换至乙炔炬模式 3,300°");
 				this.WORKINGMODE.put(gropid, 33075L);
 				break;
 
 			case "argon":
-				entry.getMessage().gropInfo(gropid, "切换至氩气弧模式 7,550°");
+				entry.gropInfo(gropid, "切换至氩气弧模式 7,550°");
 				this.WORKINGMODE.put(gropid, 36750L);
 				break;
 
 			case "plasma":
-				entry.getMessage().gropInfo(gropid, "切换至等离子模式 23,500°");
+				entry.gropInfo(gropid, "切换至等离子模式 23,500°");
 				this.WORKINGMODE.put(gropid, 44100L);
 				break;
 
 			case "nova":
-				entry.getMessage().gropInfo(gropid, "切换至新星模式 1,000,000°");
+				entry.gropInfo(gropid, "切换至新星模式 1,000,000°");
 				this.WORKINGMODE.put(gropid, 7350000L);
 				break;
 
 			case "cfnuke":
-				entry.getMessage().gropInfo(gropid, "切换至冷核模式 100,000,000°");
+				entry.gropInfo(gropid, "切换至冷核模式 100,000,000°");
 				this.WORKINGMODE.put(gropid, 29400000L);
 				break;
 
 			case "trnuke":
-				entry.getMessage().gropInfo(gropid, "切换至热核模式 120,000,000°");
+				entry.gropInfo(gropid, "切换至热核模式 120,000,000°");
 				this.WORKINGMODE.put(gropid, 33075000L);
 				break;
 
 			case "tfnuke":
-				entry.getMessage().gropInfo(gropid, "切换至三相热核模式 150,000,000°");
+				entry.gropInfo(gropid, "切换至三相热核模式 150,000,000°");
 				this.WORKINGMODE.put(gropid, 44100000L);
 				break;
 
 			case "ianova":
-				entry.getMessage().gropInfo(gropid, "切换至Ia星爆发模式 800,000,000°");
+				entry.gropInfo(gropid, "切换至Ia星爆发模式 800,000,000°");
 				this.WORKINGMODE.put(gropid, 294000000L);
 				break;
 
 			case "ibnova":
-				entry.getMessage().gropInfo(gropid, "切换至Ib新星爆发模式 2,600,000,000°");
+				entry.gropInfo(gropid, "切换至Ib新星爆发模式 2,600,000,000°");
 				this.WORKINGMODE.put(gropid, 330750000L);
 				break;
 
 			case "icnova":
-				entry.getMessage().gropInfo(gropid, "切换至Ic新星爆发模式 2,800,000,000°");
+				entry.gropInfo(gropid, "切换至Ic新星爆发模式 2,800,000,000°");
 				this.WORKINGMODE.put(gropid, 441000000L);
 				break;
 
 			case "iinova":
-				entry.getMessage().gropInfo(gropid, "切换至II新星爆发模式 3,000,000,000°");
+				entry.gropInfo(gropid, "切换至II新星爆发模式 3,000,000,000°");
 				this.WORKINGMODE.put(gropid, 514500000L);
 				break;
 
 			case "samrage":
-				entry.getMessage().gropInfo(gropid, "父王之怒 10,000,000,000,000,000,000,000,000,000°");
+				entry.gropInfo(gropid, "父王之怒 10,000,000,000,000,000,000,000,000,000°");
 				this.WORKINGMODE.put(gropid, 73500000000L);
 				break;
 
 			case "samrape":
-				entry.getMessage().gropInfo(gropid, "父王之怒 -273.16°");
+				entry.gropInfo(gropid, "父王之怒 -273.16°");
 				this.WORKINGMODE.put(gropid, 73500000000L);
 				break;
 
 			case "cost":
 				// @formatter:off
-                    entry.getMessage().gropInfo(gropid,
+                    entry.gropInfo(gropid,
                             String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元",
                                     consumption.divide(BigInteger.valueOf(1000)).toString(),
                                     consumption.divide(BigInteger.valueOf(3600000L)).toString(),
@@ -275,7 +275,6 @@ public class Executor_acon extends ModuleExecutor {
 				break;
 
 			default:
-				entry.getMessage().gropInfo(gropid, userid, "请勿触摸以防烫伤");
 				break;
 
 			}
@@ -298,7 +297,7 @@ public class Executor_acon extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		return null;
+		return new String[0];
 	}
 
 }

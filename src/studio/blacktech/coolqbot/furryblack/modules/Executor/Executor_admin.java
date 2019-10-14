@@ -22,7 +22,7 @@ public class Executor_admin extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "admin";
 	private static String MODULE_DISPLAYNAME = "管理工具";
 	private static String MODULE_DESCRIPTION = "管理员控制台";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "11.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -31,6 +31,15 @@ public class Executor_admin extends ModuleExecutor {
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
+	//
+	// ==========================================================================================================================================================
+
+	public final static String MESSAGE_bootlog = "Logger Level\r\n0 mini - 必须介入的消息\r\n1 info - 需要知晓的消息\r\n2 seek - 自动执行的消息\r\n3 full - 所有消息";
+	public final static String MESSAGE_initlvl = "init 0 - 切换起停\r\ninit 1 - 初始化\r\ninit 2 - 启动\r\ninit 3 - 保存\r\ninit 4 - 丢弃关闭\r\ninit 5 - 保存关闭\r\ninit 6 - 保存重启";
+
+	// ==========================================================================================================================================================
+	//
+	// 生命周期函数
 	//
 	// ==========================================================================================================================================================
 
@@ -74,103 +83,73 @@ public class Executor_admin extends ModuleExecutor {
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	private final String MESSAGE_bootlog = "Logger Level\r\n0 mini - 必须介入的消息\r\n1 info - 需要知晓的消息\r\n2 seek - 自动执行的消息\r\n3 full - 所有消息";
-	private final String MESSAGE_init = "init 0 - 切换起停\r\ninit 1 - 初始化\r\ninit 2 - 启动\r\ninit 3 - 保存\r\ninit 4 - 丢弃关闭\r\ninit 5 - 保存关闭\r\ninit 6 - 保存重启";
-
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		if (!entry.getMessage().isAdmin(userid)) { return false; }
-
-		if (message.getSection() == 0) {
-			entry.getSystemd().sendSystemsReport(0, 0);
+		if (entry.isAdmin(userid)) {
+			if (message.getSection() == 0) {
+				entry.adminInfo(entry.getSystemd().generateReport(0, message, null, null));
+			} else {
+				switch (message.getSegment(0)) {
+				case "report":
+					entry.adminInfo(entry.getSystemd().generateReport(10, message, null, null));
+					break;
+				case "debug":
+					entry.adminInfo(entry.switchDEBUG() ? "DEBUG → Enable" : "DEBUG → Disable");
+					break;
+				}
+			}
 			return true;
 		} else {
-			switch (message.getSegment()[0]) {
-			case "bootlog":
-				if (message.getSection() == 2) {
-					entry.getMessage().adminInfo(entry.getBootLogger(Integer.parseInt(message.getSegment(1))));
-				} else {
-					entry.getMessage().adminInfo(this.MESSAGE_bootlog);
-				}
-				return true;
-			case "exec":
-				entry.getMessage().adminInfo(entry.getSystemd().exec(message.toMessage()).make(3));
-				return true;
-			case "init":
-				if (message.getSection() == 2) {
-					entry.getMessage().adminInfo(entry.getSystemd().init(message.getSegment(1)).make(3));
-				} else {
-					entry.getMessage().adminInfo(this.MESSAGE_init);
-				}
-				return true;
-			case "debug":
-				String temp = entry.switchDEBUG() ? "ENABLE" : "DISABLE";
-				entry.getMessage().adminInfo("DEBUG → " + temp);
-				return true;
-			case "report":
-				entry.getSystemd().sendModuleReport(message);
-				return true;
-			}
+			entry.userInfo(userid, "你不是我的Master");
 			return false;
 		}
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		return false;
-	}
-
-	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		if (!entry.getMessage().isAdmin(userid)) { return false; }
-
-		if (message.getSection() == 0) {
-			entry.getSystemd().sendSystemsReport(3, gropid);
+		if (entry.isAdmin(userid)) {
+			if (message.getSection() == 0) {
+				entry.adminInfo(entry.getSystemd().generateReport(0, message, null, null));
+			} else {
+			}
 			return true;
 		} else {
-
-			switch (message.getSegment()[0]) {
-
-			case "bootlog":
-				if (message.getSection() == 2) {
-					entry.getMessage().gropInfo(gropid, entry.getBootLogger(Integer.parseInt(message.getSegment(1))));
-				} else {
-					entry.getMessage().gropInfo(gropid, this.MESSAGE_bootlog);
-				}
-				return true;
-			case "init":
-				if (message.getSection() == 2) {
-					entry.getMessage().gropInfo(gropid, entry.getSystemd().init(message.getSegment(1)).make(3));
-				} else {
-					entry.getMessage().gropInfo(gropid, this.MESSAGE_init);
-				}
-				return true;
-			case "debug":
-				String temp = entry.switchDEBUG() ? "ENABLE" : "DISABLE";
-				entry.getMessage().gropInfo(gropid, "DEBUG → " + temp);
-				return true;
-			case "say":
-				entry.getMessage().gropInfo(gropid, message.join(1));
-				return true;
-			case "message":
-				switch (message.getSegment()[1]) {
-				case "revoke":
-					entry.getMessage().revokeMessage(gropid);
-					System.out.print(message);
-					break;
-				}
-				return true;
-			case "report":
-				entry.getSystemd().sendModuleReport(message);
-				return true;
-			}
-
+			entry.diszInfo(diszid, "你不是我的Master");
 			return false;
 		}
 	}
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
-		return null;
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+		if (entry.isAdmin(userid)) {
+			if (message.getSection() == 0) {
+				entry.adminInfo(entry.getSystemd().generateReport(0, message, null, null));
+			} else {
+				switch (message.getSegment(0)) {
+				case "report":
+					entry.gropInfo(gropid, entry.getSystemd().generateReport(10, message, null, null));
+					break;
+				case "debug":
+					entry.gropInfo(gropid, entry.switchDEBUG() ? "DEBUG → Enable" : "DEBUG → Disable");
+					break;
+				}
+			}
+			return true;
+		} else {
+			entry.gropInfo(gropid, "你不是我的Master");
+			return false;
+		}
 	}
+
+	// ==========================================================================================================================================================
+	//
+	// 工具函数
+	//
+	// ==========================================================================================================================================================
+
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
+		return new String[0];
+	}
+
 }

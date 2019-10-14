@@ -86,25 +86,25 @@ public class Executor_echo extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().userInfo(userid, message.getSection() == 0 ? "echo null" : message.getOptions());
+		entry.userInfo(userid, message.getSection() == 0 ? "echo null" : message.getOptions());
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().diszInfo(diszid, userid, message.getSection() == 0 ? "echo null" : message.getOptions());
+		entry.diszInfo(diszid, userid, message.getSection() == 0 ? "echo null" : message.getOptions());
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.getMessage().gropInfo(gropid, userid, message.getSection() == 0 ? "echo null" : message.getOptions());
+		entry.gropInfo(gropid, userid, message.getSection() == 0 ? "echo null" : message.getOptions());
 		return true;
 	}
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		return null;
+		return new String[0];
 	}
 
 }

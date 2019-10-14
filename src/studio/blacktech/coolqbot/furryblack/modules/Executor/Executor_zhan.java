@@ -161,7 +161,7 @@ public class Executor_zhan extends ModuleExecutor {
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		if (message.getSection() == 0) {
-			entry.getMessage().userInfo(userid, "你不能占卜空气");
+			entry.userInfo(userid, "你不能占卜空气");
 		} else {
 			SecureRandom random = new SecureRandom();
 			int urandom = random.nextInt(43) + 1;
@@ -171,7 +171,7 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append(" 抽到了：\r\n");
 			builder.append(this.CARD.get(urandom));
 			this.FREQ.set(urandom, this.FREQ.get(urandom) + 1);
-			entry.getMessage().userInfo(userid, builder.toString());
+			entry.userInfo(userid, builder.toString());
 		}
 		return true;
 	}
@@ -179,7 +179,7 @@ public class Executor_zhan extends ModuleExecutor {
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		if (message.getSection() == 0) {
-			entry.getMessage().diszInfo(diszid, userid, "你不能占卜空气");
+			entry.diszInfo(diszid, userid, "你不能占卜空气");
 		} else {
 			SecureRandom random = new SecureRandom();
 			int urandom = random.nextInt(43) + 1;
@@ -189,7 +189,7 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append(" 抽到了：\r\n");
 			builder.append(this.CARD.get(urandom));
 			this.FREQ.set(urandom, this.FREQ.get(urandom) + 1);
-			entry.getMessage().diszInfo(diszid, userid, builder.toString());
+			entry.diszInfo(diszid, userid, builder.toString());
 		}
 		return true;
 	}
@@ -197,7 +197,7 @@ public class Executor_zhan extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		if (message.getSection() == 0) {
-			entry.getMessage().gropInfo(gropid, userid, "你不能占卜空气");
+			entry.gropInfo(gropid, userid, "你不能占卜空气");
 		} else {
 			SecureRandom random = new SecureRandom();
 			int urandom = random.nextInt(43) + 1;
@@ -207,7 +207,7 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append(" 抽到了：\r\n");
 			builder.append(this.CARD.get(urandom));
 			this.FREQ.set(urandom, this.FREQ.get(urandom) + 1);
-			entry.getMessage().gropInfo(gropid, userid, builder.toString());
+			entry.gropInfo(gropid, userid, builder.toString());
 		}
 		return true;
 	}
@@ -231,8 +231,9 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append(this.FREQ.get(i) * 100 / coverage);
 			builder.append("%");
 		}
-		String[] res = new String[1];
-		res[0] = builder.toString().substring(2);
+		String[] res = new String[] {
+				builder.toString()
+		};
 		return res;
 	}
 

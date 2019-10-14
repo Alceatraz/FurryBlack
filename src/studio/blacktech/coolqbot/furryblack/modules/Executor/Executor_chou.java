@@ -37,7 +37,7 @@ public class Executor_chou extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "chou";
 	private static String MODULE_DISPLAYNAME = "随机抽人";
 	private static String MODULE_DESCRIPTION = "从当前群随机选择一个成员";
-	private static String MODULE_VERSION = "5.0";
+	private static String MODULE_VERSION = "6.0";
 	private static String[] MODULE_USAGE = new String[] {
 			"/chou - 随机抽一个人",
 			"/chou 理由 - 以某个理由抽一个人"
@@ -92,23 +92,33 @@ public class Executor_chou extends ModuleExecutor {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_IGNORE_USER), StandardCharsets.UTF_8));
 
+		long gropid;
+		long userid;
 		String line;
 		String[] temp;
 
-		long gropid;
-		long userid;
-
 		while ((line = reader.readLine()) != null) {
-			if (line.startsWith("#")) { continue; }
-			if (!line.contains(":")) { continue; }
-			temp = line.split(":");
-			if (temp.length != 2) {
-				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
+			if (line.startsWith("#")) {
+				// #开头为注释
 			} else {
-				gropid = Long.parseLong(temp[0]);
-				userid = Long.parseLong(temp[1]);
-				this.IGNORES.get(gropid).add(userid);
-				logger.seek(MODULE_PACKAGENAME, "排除用户", line);
+				if (line.contains(":")) {
+					if (line.contains("#")) {
+						// 内容 # 之后为注释
+						line = line.substring(0, line.indexOf("#"));
+						line = line.trim();
+					}
+					temp = line.split(":");
+					if (temp.length != 2) {
+						logger.mini(MODULE_PACKAGENAME, "配置错误 - 不止一个:", line);
+					} else {
+						gropid = Long.parseLong(temp[0]);
+						userid = Long.parseLong(temp[1]);
+						this.IGNORES.get(gropid).add(userid);
+						logger.seek(MODULE_PACKAGENAME, "排除用户", line);
+					}
+				} else {
+					logger.mini(MODULE_PACKAGENAME, "配置错误 - 不含:", line);
+				}
 			}
 		}
 
@@ -123,7 +133,7 @@ public class Executor_chou extends ModuleExecutor {
 			tempIgnores = this.IGNORES.get(group.getId());
 
 			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
-				if (entry.getMessage().isMyself(member.getQQId())) { continue; }
+				if (entry.isMyself(member.getQQId())) { continue; }
 				if (tempIgnores.contains(member.getQQId())) { continue; }
 				tempMembers.add(member.getQQId());
 			}
@@ -199,7 +209,7 @@ public class Executor_chou extends ModuleExecutor {
 		ArrayList<Long> members = this.MEMBERS.get(gropid);
 		int size = members.size();
 		if (size < 3) {
-			entry.getMessage().gropInfo(gropid, userid, "至少需要三个成员");
+			entry.gropInfo(gropid, userid, "至少需要三个成员");
 		} else {
 			long chouid = 0;
 			do {
@@ -207,9 +217,9 @@ public class Executor_chou extends ModuleExecutor {
 			} while (chouid == userid);
 			QQInfo member = entry.getCQ().getStrangerInfo(chouid);
 			if (message.getSection() == 1) {
-				entry.getMessage().gropInfo(gropid, userid, "随机抽到 " + entry.getNickmap().getGropnick(gropid, member.getQQId()) + "(" + chouid + ")");
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")");
 			} else {
-				entry.getMessage().gropInfo(gropid, userid, "随机抽到 " + entry.getNickmap().getGropnick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getOptions());
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getOptions());
 			}
 		}
 		return true;
@@ -223,6 +233,6 @@ public class Executor_chou extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		return null;
+		return new String[0];
 	}
 }

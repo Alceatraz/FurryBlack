@@ -192,8 +192,9 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		builder.append(this.COUNT_CHANGE);
 		builder.append("\r\n访问失败：");
 		builder.append(this.COUNT_FAILED);
-		String[] res = new String[1];
-		res[0] = builder.toString();
+		String[] res = new String[] {
+				builder.toString()
+		};
 		return res;
 
 	}
@@ -264,7 +265,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 						}
 						if (failcount > 6) {
 							failcount = 0;
-							entry.getMessage().adminInfo("[DDNS] 警告 更新失败\r\n需要手动介入\r\n已连续失败六次");
+							entry.adminInfo("[DDNS] 警告 更新失败\r\n需要手动介入\r\n已连续失败六次");
 						}
 						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果 " + respons); }
 						// =======================================================
@@ -296,7 +297,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.getMessage().adminInfo(MODULE_PACKAGENAME + " 获取异常 " + exception.getMessage());
+			entry.adminInfo(MODULE_PACKAGENAME + " 获取异常 " + exception.getMessage());
 			this.COUNT_GETIP_FAILED++;
 			return null;
 		}
@@ -320,7 +321,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		} catch (IOException exception) {
 			this.COUNT_SETIP_FAILED++;
 			exception.printStackTrace();
-			entry.getMessage().adminInfo(MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
+			entry.adminInfo(MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;
 		}
 	}
@@ -343,7 +344,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		} catch (IOException exception) {
 			this.COUNT_FRESH_FAILED++;
 			exception.printStackTrace();
-			entry.getMessage().adminInfo(MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
+			entry.adminInfo(MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;
 		}
 	}

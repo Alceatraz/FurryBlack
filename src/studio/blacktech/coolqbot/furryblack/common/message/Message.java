@@ -373,6 +373,16 @@ public class Message implements Serializable {
 		return this.switchs.get(name);
 	}
 
+	/**
+	 * 是否包含指定名字的开关
+	 *
+	 * @param name 名称
+	 * @return 值
+	 */
+	public boolean hasSwitch(String name) {
+		return this.switchs.containsKey(name);
+	}
+
 	// ===================================================================================
 
 	/**
