@@ -170,7 +170,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		readerDisz.close();
 		readerGrop.close();
 
-		this.USER_IGNORE.add(10000000L); // QQ通知
+		this.USER_IGNORE.add(1000000L); // QQ通知
 		this.USER_IGNORE.add(50000000L); // QQ坦白说
 		this.USER_IGNORE.add(2854196306L); // QQ小冰机器人
 
