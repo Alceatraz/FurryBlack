@@ -36,6 +36,7 @@ import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_admin;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_chou;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_dice;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_echo;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_food;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_jrjp;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_jrrp;
 import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_kong;
@@ -326,6 +327,7 @@ public class Systemd extends Module {
 		this.instantiationExecutor(new Executor_chou());
 		this.instantiationExecutor(new Executor_dice());
 		this.instantiationExecutor(new Executor_echo());
+		this.instantiationExecutor(new Executor_food());
 		this.instantiationExecutor(new Executor_jrjp());
 		this.instantiationExecutor(new Executor_jrrp());
 		this.instantiationExecutor(new Executor_kong());
@@ -1245,12 +1247,12 @@ public class Systemd extends Module {
 					builder02.append("/");
 					builder02.append(instance.ENABLE_GROP() ? instance.BLOCK_GROP() : "关");
 					builder02.append("\r\n");
-					
+
 					for (String part : instance.generateReport(0, message, null, null)) {
 						builder02.append(part);
 						builder02.append("\r\n");
 					}
-					
+
 					builder02.append("\r\n");
 				}
 
