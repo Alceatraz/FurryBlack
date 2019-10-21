@@ -81,4 +81,5 @@ JcqSDK会为jar（即插件）生成同名的文件夹
 
 - `Systemd` 是整个系统的核心，负责了包括消息路由、消息发送、模块管理、模块生命周期管理等所有框架功能。  
 - `Message` `MessageUser` `MessageDisz` `MessageGrop` 所有传入消息都会被包装成Message对象，并根据消息来源包装成对应的子类。  
-- `LoggerX` 一个假的精简版LoggerX，本质是加了格式的StringBuffer而且不带任何保存和特殊功能（原版的目的是替代log4j，含文件、缓存）。  
+- `LoggerX` 一个假的精简版LoggerX，本质是加了格式的StringBuffer而且不带任何保存和特殊功能。  
+

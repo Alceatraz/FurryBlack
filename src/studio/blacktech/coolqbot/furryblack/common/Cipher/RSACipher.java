@@ -14,6 +14,7 @@ import java.security.Security;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
@@ -35,6 +36,10 @@ public class RSACipher {
 	private Cipher encrypter;
 	private Cipher decrypter;
 
+	/**
+	 * 公共构造方法 生成新密钥和传入密钥几乎没有共同的部分
+	 *
+	 */
 	public RSACipher() {
 		this.encoder = new BASE64Encoder();
 		this.decoder = new BASE64Decoder();
@@ -48,22 +53,34 @@ public class RSACipher {
 	 */
 	public RSACipher(String secretKey, int keyLength) {
 		this();
+
 		try {
+
 			Provider provider = Security.getProvider("SUN");
+
 			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", provider);
 			random.setSeed(secretKey.getBytes(UTF_8));
+
 			KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
 			generator.initialize(keyLength, random);
+
 			KeyPair keyPair = generator.generateKeyPair();
+
 			this.publicKey = (RSAPublicKey) keyPair.getPublic();
 			this.privateKey = (RSAPrivateKey) keyPair.getPrivate();
+
 			this.encrypter = Cipher.getInstance("RSA");
 			this.decrypter = Cipher.getInstance("RSA");
+
 			this.encrypter.init(Cipher.ENCRYPT_MODE, this.publicKey);
 			this.decrypter.init(Cipher.DECRYPT_MODE, this.privateKey);
+
 		} catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException exception) {
+			exception.printStackTrace();
 			// 这些异常不可能发生 (非标准JVM和lib除外，经过测试ADoptOpenJDK不会出现错误)
 			// NoSuchAlgorithmException ----------- 不能自定义算法保证绝对合法
+			// NoSuchPaddingException ------------- 不能自定义补位保证绝对合法
+			// InvalidKeyException ---------------- 密钥由生成器生成保证绝对合法
 		}
 	}
 
@@ -73,25 +90,40 @@ public class RSACipher {
 	 * @param publicKey  x509公钥 Base64
 	 * @param privateKey x509私钥 Base64
 	 * @throws IOException             传入错误密钥将会产生异常 - 应经过BASE64编码
-	 * @throws InvalidKeySpecException 传入错误密钥将会产生异常 - 不是X509密钥
+	 * @throws InvalidKeyException     传入错误密钥将会产生异常 - 不是X509密钥
+	 * @throws InvalidKeySpecException 传入错误密钥将会产生异常 - 不是PKCS8密钥
 	 */
-	public RSACipher(String publicKey, String privateKey) throws InvalidKeySpecException, IOException {
+	public RSACipher(String publicKey, String privateKey) throws InvalidKeyException {
 		this();
+
 		try {
+
 			byte[] publicKeyString = this.decoder.decodeBuffer(publicKey);
 			byte[] privateKeyString = this.decoder.decodeBuffer(privateKey);
+
 			KeyFactory factory = KeyFactory.getInstance("RSA");
+
 			this.publicKey = (RSAPublicKey) factory.generatePublic(new X509EncodedKeySpec(publicKeyString));
-			this.privateKey = (RSAPrivateKey) factory.generatePrivate(new X509EncodedKeySpec(privateKeyString));
+			this.privateKey = (RSAPrivateKey) factory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyString));
+
 			this.encrypter = Cipher.getInstance("RSA");
 			this.decrypter = Cipher.getInstance("RSA");
+
 			this.encrypter.init(Cipher.ENCRYPT_MODE, this.publicKey);
 			this.decrypter.init(Cipher.DECRYPT_MODE, this.privateKey);
-		} catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException exception) {
+
+		} catch (IOException | InvalidKeyException | InvalidKeySpecException exception) {
+
+			exception.printStackTrace();
+			throw new InvalidKeyException("传入了不合法的密钥");
+
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException exception) {
+			exception.printStackTrace();
 			// 这些异常不可能发生 (非标准JVM和lib除外，经过测试ADoptOpenJDK不会出现错误)
 			// NoSuchAlgorithmException ----------- 不能自定义算法保证绝对合法
 			// NoSuchPaddingException ------------- 不能自定义补位保证绝对合法
 			// InvalidKeyException ---------------- 密钥由生成器生成保证绝对合法
+
 		}
 	}
 
@@ -137,6 +169,7 @@ public class RSACipher {
 			byte[] tmp2 = this.encrypter.doFinal(tmp1);
 			return this.encoder.encode(tmp2);
 		} catch (Exception exception) {
+			exception.printStackTrace();
 			return null;
 		}
 	}
@@ -154,6 +187,7 @@ public class RSACipher {
 			byte[] tmp2 = this.decrypter.doFinal(tmp1);
 			return new String(tmp2, UTF_8);
 		} catch (Exception exception) {
+			exception.printStackTrace();
 			return null;
 		}
 	}
@@ -175,4 +209,5 @@ public class RSACipher {
 	public String getPrivateKeyBase64() {
 		return this.encoder.encode(this.privateKey.getEncoded());
 	}
+
 }

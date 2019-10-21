@@ -265,8 +265,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
 	public int groupAdmin(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
-		// 这里处理消息
-
 		return MSG_IGNORE;
 	}
 
@@ -282,8 +280,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
 	public int groupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-		// 这里处理消息
-
 		return MSG_IGNORE;
 	}
 

@@ -1,5 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.common.Cipher;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,18 +30,26 @@ public class TimeBaseVerification {
 		String raw = RandomTools.genRandomString(64);
 		this.challenge = this.makeChallenge(raw);
 		this.response = this.makeResponse(this.challenge);
-		String res = this.cipher.unsafeEncrypt(this.challenge);
+		String res = this.cipher.encrypt(this.challenge);
 		return res;
 	}
 
 	public String generateResponse(String challenge) {
-		this.challenge = this.cipher.unsafeDecrypt(challenge);
-		this.response = this.makeResponse(this.challenge);
-		return this.cipher.unsafeEncrypt(this.response);
+		try {
+			this.challenge = this.cipher.decrypt(challenge);
+			this.response = this.makeResponse(this.challenge);
+			return this.cipher.encrypt(this.response);
+		} catch (IOException exception) {
+			return null;
+		}
 	}
 
 	public boolean verifyResponse(String raw) {
-		return this.cipher.unsafeDecrypt(raw).equals(this.response);
+		try {
+			return this.cipher.decrypt(raw).equals(this.response);
+		} catch (IOException exception) {
+			return false;
+		}
 	}
 
 	private String makeChallenge(String code) {
