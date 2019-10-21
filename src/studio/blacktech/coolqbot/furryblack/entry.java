@@ -46,7 +46,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 *
 	 * startup, enable, disable, exit
 	 *
-	 * @param parameters
+	 * @param parameters 命令行参数
 	 */
 	public static void main(String[] parameters) {
 		System.out.println("This is a JCQ plugin, Not a executable jar file!");

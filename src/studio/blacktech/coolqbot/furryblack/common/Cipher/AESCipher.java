@@ -182,7 +182,6 @@ public class AESCipher {
 	 *
 	 * @param content 原文
 	 * @return 密文
-	 * @throws GeneralSecurityException
 	 */
 	public String encrypt(String content) {
 
@@ -206,6 +205,7 @@ public class AESCipher {
 	 *
 	 * @param content 密文
 	 * @return 原文
+	 * @throws IOException 输入错误的内容
 	 */
 	public String decrypt(String content) throws IOException {
 

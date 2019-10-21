@@ -52,8 +52,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	}
 
 	/**
-	 * 用main方法调试可以最大化的加快开发效率，检测和定位错误位置<br/>
-	 * 以下就是使用Main方法进行测试的一个简易案例
+	 * 用main方法调试可以最大化的加快开发效率，检测和定位错误位置 以下就是使用Main方法进行测试的一个简易案例
 	 *
 	 * @param args 系统参数
 	 */
@@ -63,7 +62,8 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		JcqDemo_131 demo = new JcqDemo_131();
 		// 获取当前酷Q操作对象
 		CoolQ CQ = demo.getCoolQ();
-		CQ.logInfo("[JCQ] TEST Demo", "测试启动");// 现在就可以用CQ变量来执行任何想要的操作了
+		CQ.logInfo("[JCQ] TEST Demo", "测试启动");
+		// 现在就可以用CQ变量来执行任何想要的操作了
 		// 下面对主类进行各方法测试,按照JCQ运行过程，模拟实际情况
 		demo.startup();// 程序运行开始 调用应用初始化方法
 		demo.enable();// 程序初始化完成后，启用应用，让应用正常工作
@@ -96,7 +96,8 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 */
 	public String appInfo() {
 		// 应用AppID,规则见 http://d.cqp.me/Pro/开发/基础信息#appid
-		String AppID = "com.example.demo";// 记住编译后的文件和json也要使用appid做文件名
+		String AppID = "com.example.demo";
+		// 记住编译后的文件和json也要使用appid做文件名
 		/**
 		 * 本函数【禁止】处理其他任何代码，以免发生异常情况。 如需执行初始化代码请在 startup 事件中执行（Type=1001）。
 		 */

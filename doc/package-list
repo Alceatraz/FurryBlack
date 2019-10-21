@@ -1,0 +1,16 @@
+studio.blacktech.coolqbot.furryblack
+studio.blacktech.coolqbot.furryblack.common
+studio.blacktech.coolqbot.furryblack.common.Cipher
+studio.blacktech.coolqbot.furryblack.common.LoggerX
+studio.blacktech.coolqbot.furryblack.common.Utility
+studio.blacktech.coolqbot.furryblack.common.exception
+studio.blacktech.coolqbot.furryblack.common.message
+studio.blacktech.coolqbot.furryblack.common.module
+studio.blacktech.coolqbot.furryblack.modules
+studio.blacktech.coolqbot.furryblack.modules.Executor
+studio.blacktech.coolqbot.furryblack.modules.Listener
+studio.blacktech.coolqbot.furryblack.modules.Scheduler
+studio.blacktech.coolqbot.furryblack.modules.Trigger
+test
+test.Cipher
+test.Modules

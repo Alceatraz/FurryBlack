@@ -143,8 +143,7 @@ public class DiffieHellmanX {
 	 *
 	 * @param publicKeyString 接收方的公钥
 	 * @return SecretKeySpec密钥
-	 * @throws GeneralSecurityException 传入了错误的密钥，请确保是init(String
-	 *                                  publicKeyString)方法返回的密钥
+	 * @throws InvalidKeyException 传入了错误的密钥
 	 */
 	public SecretKeySpec generateFinalKey(String publicKeyString) throws InvalidKeyException {
 		try {

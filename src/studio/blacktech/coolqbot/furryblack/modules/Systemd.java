@@ -1,13 +1,10 @@
 package studio.blacktech.coolqbot.furryblack.modules;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,7 +14,6 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.meowy.cqp.jcq.entity.Group;
-import org.meowy.cqp.jcq.entity.Member;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
@@ -759,18 +755,18 @@ public class Systemd extends Module {
 		// =======================================================================================================================
 		// 转储当前的昵称表
 
-		StringBuilder builder = new StringBuilder();
-		builder.append("\r\n# 转储 " + LoggerX.datetime() + "\r\n");
-		for (Group group : entry.getCQ().getGroupList()) {
-			long groupid = group.getId();
-			for (Member member : entry.getCQ().getGroupMemberList(groupid)) {
-				builder.append(groupid + ":" + member.getQQId() + ":" + member.getNick() + "\r\n");
-			}
-		}
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_NICKNAME_MAP, true), StandardCharsets.UTF_8));
-		writer.append(builder.toString().substring(0, builder.length() - 2));
-		writer.flush();
-		writer.close();
+//		StringBuilder builder = new StringBuilder();
+//		builder.append("\r\n# 转储 " + LoggerX.datetime() + "\r\n");
+//		for (Group group : entry.getCQ().getGroupList()) {
+//			long groupid = group.getId();
+//			for (Member member : entry.getCQ().getGroupMemberList(groupid)) {
+//				builder.append(groupid + ":" + member.getQQId() + ":" + member.getNick() + "\r\n");
+//			}
+//		}
+//		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_NICKNAME_MAP, true), StandardCharsets.UTF_8));
+//		writer.append(builder.toString().substring(0, builder.length() - 2));
+//		writer.flush();
+//		writer.close();
 
 	}
 
@@ -920,6 +916,13 @@ public class Systemd extends Module {
 
 	/**
 	 * 你永远不应该执行这个方法
+	 * 
+	 * @param typeid      你永远不应该执行这个方法
+	 * @param userid      你永远不应该执行这个方法
+	 * @param message     你永远不应该执行这个方法
+	 * @param messageid   你永远不应该执行这个方法
+	 * @param messagefont 你永远不应该执行这个方法
+	 * @throws Exception 你永远不应该执行这个方法
 	 */
 	public void doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
@@ -980,6 +983,13 @@ public class Systemd extends Module {
 
 	/**
 	 * 你永远不应该执行这个方法
+	 * 
+	 * @param diszid      你永远不应该执行这个方法
+	 * @param userid      你永远不应该执行这个方法
+	 * @param message     你永远不应该执行这个方法
+	 * @param messageid   你永远不应该执行这个方法
+	 * @param messagefont 你永远不应该执行这个方法
+	 * @throws Exception 你永远不应该执行这个方法
 	 */
 	public void doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
@@ -1042,6 +1052,13 @@ public class Systemd extends Module {
 
 	/**
 	 * 你永远不应该执行这个方法
+	 * 
+	 * @param gropid      你永远不应该执行这个方法
+	 * @param userid      你永远不应该执行这个方法
+	 * @param message     你永远不应该执行这个方法
+	 * @param messageid   你永远不应该执行这个方法
+	 * @param messagefont 你永远不应该执行这个方法
+	 * @throws Exception 你永远不应该执行这个方法
 	 */
 	public void doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
@@ -1116,7 +1133,7 @@ public class Systemd extends Module {
 		this.TRIGGER_INSTANCE.put(instance.MODULE_COMMANDNAME(), instance);
 	}
 
-	public void instantiationListener(ModuleListener instance) {
+	private void instantiationListener(ModuleListener instance) {
 		this.LISTENER_INSTANCE.put(instance.MODULE_COMMANDNAME(), instance);
 	}
 
@@ -1393,6 +1410,10 @@ public class Systemd extends Module {
 
 	/**
 	 * 你永远不应该执行这个方法
+	 * 
+	 * @param level 你永远不应该执行这个方法
+	 * @return 你永远不应该执行这个方法
+	 * @throws Exception 你永远不应该执行这个方法
 	 */
 	public LoggerX doInit(String level) throws Exception {
 
@@ -1458,7 +1479,7 @@ public class Systemd extends Module {
 	 * @param triggers  触发器列表
 	 * @param listeners 监听器列表
 	 * @param executors 执行器列表
-	 * @return
+	 * @return 生成好的/list
 	 */
 	private String generateListMessage(String flagname, ArrayList<ModuleTrigger> triggers, ArrayList<ModuleListener> listeners, TreeMap<String, ModuleExecutor> executors) {
 
