@@ -4,8 +4,12 @@
 
 联通毫无预兆的屏蔽了443端口，非标准端口的网站怎么看都像是钓鱼网站，所以以添加了多个remote，我的私人Gitlab和GitEE，所以贡献者名字会变得很怪异，我将优先使自己Gitlab服务器里名字更好看。
 
+"2019-10-21" 你敢信吗 Gitee被阿里云取消解析了 国内真不是搞技术的地方 再添加一个GitHub的remote
+
 `https://git.blacktech.studio:8888/blacktechstudio/furryblack`  
 `https://gitee.com/BlackTechStudio/FurryBlackBot`  
+`https://github.com/Alceatraz/FurryBlack`
+
 
 GitEE的组织名字居然会过长不能写，蛋疼，请记住这个群组名应该叫做**BlackTechStudio - Offical**  
 
