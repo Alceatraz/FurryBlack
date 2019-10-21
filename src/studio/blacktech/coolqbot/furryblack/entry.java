@@ -309,24 +309,26 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	@Override
 	public int groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[成员增加] - " + LoggerX.time() + "\r\n");
+		builder.append("类型：" + (typeid == 1 ? "自主申请" : "邀请进群") + "\r\n");
+		builder.append("群聊ID：" + gropid + "\r\n");
+		builder.append("管理ID：" + operid + "(" + SYSTEMD.getNickname(operid) + ")" + "\r\n");
+		builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")" + "\r\n");
 		try {
 			entry.SYSTEMD.groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
 		} catch (Exception exception) {
 			exception.printStackTrace();
-			StringBuilder builder = new StringBuilder();
-			builder.append("[成员增加异常] - " + LoggerX.time() + "\r\n");
-			builder.append("类型：" + (typeid == 1 ? "自主申请" : "邀请进群") + "\r\n");
-			builder.append("群聊ID：" + gropid + "\r\n");
-			builder.append("管理ID：" + operid + "\r\n");
-			builder.append("用户ID：" + userid + "\r\n");
+			builder.append("[发生异常]\r\n");
 			builder.append("异常原因：" + exception.getCause() + "\r\n");
 			builder.append("异常消息：" + exception.getMessage() + "\r\n");
 			builder.append("异常栈：" + exception.getClass().getName() + "\r\n");
 			for (StackTraceElement temp : exception.getStackTrace()) {
 				builder.append("        at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 			}
-			SYSTEMD.adminInfo(builder.toString());
+		} finally {
 			System.out.println(builder.toString());
+			SYSTEMD.adminInfo(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -336,24 +338,26 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	@Override
 	public int groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[成员减少] - " + LoggerX.time() + "\r\n");
+		builder.append("类型：" + (typeid == 1 ? "自主退群" : "管理踢出") + "\r\n");
+		builder.append("群聊ID：" + gropid + "\r\n");
+		builder.append("管理ID：" + operid + "(" + SYSTEMD.getNickname(operid) + ")" + "\r\n");
+		builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")" + "\r\n");
 		try {
 			entry.SYSTEMD.groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
 		} catch (Exception exception) {
 			exception.printStackTrace();
-			StringBuilder builder = new StringBuilder();
-			builder.append("[成员减少异常] - " + LoggerX.time() + "\r\n");
-			builder.append("类型：" + (typeid == 1 ? "自主退群" : "管理踢出") + "\r\n");
-			builder.append("群聊ID：" + gropid + "\r\n");
-			builder.append("管理ID：" + operid + "\r\n");
-			builder.append("用户ID：" + userid + "\r\n");
+			builder.append("[发生异常]\r\n");
 			builder.append("异常原因：" + exception.getCause() + "\r\n");
 			builder.append("异常消息：" + exception.getMessage() + "\r\n");
 			builder.append("异常栈：" + exception.getClass().getName() + "\r\n");
 			for (StackTraceElement temp : exception.getStackTrace()) {
 				builder.append("        at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 			}
-			SYSTEMD.adminInfo(builder.toString());
+		} finally {
 			System.out.println(builder.toString());
+			SYSTEMD.adminInfo(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -410,14 +414,14 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			builder.append("群聊ID：" + gropid + "\r\n");
 			builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")\r\n");
 			builder.append("请求时间：" + sendtime + "\r\n");
-			builder.append("验证消息：" + message + "\r\n");
+			builder.append("验证消息：" + (message.length() == 0 ? "无" : message));
 			break;
 		case 2:
 			builder.append("[邀请入群] - " + LoggerX.time() + "\r\n");
 			builder.append("群聊ID：" + gropid + "\r\n");
 			builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")\r\n");
 			builder.append("请求时间：" + sendtime + "\r\n");
-			builder.append("验证消息：" + message + "\r\n");
+			builder.append("验证消息：" + (message.length() == 0 ? "无" : message));
 			CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
 			break;
 		}
@@ -597,18 +601,6 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public static void sendHelp(long userid, String name) {
 		SYSTEMD.sendHelp(userid, name);
 	}
-
-//	public static void sendHelp(long userid, ModuleTrigger module) {
-//		SYSTEMD.sendHelp(userid, module);
-//	}
-//
-//	public static void sendHelp(long userid, ModuleListener module) {
-//		SYSTEMD.sendHelp(userid, module);
-//	}
-//
-//	public static void sendHelp(long userid, ModuleExecutor module) {
-//		SYSTEMD.sendHelp(userid, module);
-//	}
 
 	public static void sendListUser(long userid) {
 		SYSTEMD.sendListUser(userid);

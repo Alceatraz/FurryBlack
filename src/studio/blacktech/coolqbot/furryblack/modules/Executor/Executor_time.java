@@ -48,7 +48,7 @@ public class Executor_time extends ModuleExecutor {
 	private static final TimeZone zone_W4 = TimeZone.getTimeZone("America/New_York");
 	private static final TimeZone zone_00 = TimeZone.getTimeZone("UTC");
 	private static final TimeZone zone_E0 = TimeZone.getTimeZone("Europe/London");
-	private static final TimeZone zone_E1 = TimeZone.getTimeZone("Europe/Stockholm");
+//	private static final TimeZone zone_E1 = TimeZone.getTimeZone("Europe/Stockholm");
 	private static final TimeZone zone_E8 = TimeZone.getTimeZone("Asia/Shanghai");
 
 	// ==========================================================================================================================================================
@@ -122,7 +122,7 @@ public class Executor_time extends ModuleExecutor {
 		"美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", zone_W8) + this.format(zone_W8) + "\r\n" +
         "美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", zone_W4) + this.format(zone_W4) + "\r\n" +
         "欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", zone_E0) + this.format(zone_E0) + "\r\n" +
-        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
+//        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
         "亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", zone_E8)
         // @formatter:on
 		;

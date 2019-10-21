@@ -788,21 +788,6 @@ public class Systemd extends Module {
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 
-		// 发送管理员消息
-
-		StringBuilder builder = new StringBuilder();
-		builder.append("[加群] - " + LoggerX.datetime() + "\r\n" + "类型：");
-		if (typeid == 1) {
-			builder.append("自主申请\r\n" + "管理：" + this.getNickname(operid) + "(" + operid + ")" + "\r\n");
-		} else {
-			builder.append("邀请加群\r\n");
-		}
-		builder.append("群号：" + gropid + "\r\n");
-		builder.append("成员：" + this.getNickname(userid) + "(" + userid + ")" + "\r\n");
-		this.adminInfo(builder.toString());
-
-		// Nickmap 写入当前成员
-
 		FileWriter writer = new FileWriter(this.FILE_NICKNAME_MAP, true);
 		writer.append("\r\n\r\n# Member Increase " + LoggerX.datetime() + "\r\n" + gropid + ":" + userid + ":" + entry.getCQ().getStrangerInfo(userid));
 		writer.flush();
@@ -821,21 +806,6 @@ public class Systemd extends Module {
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
-
-		// 发送管理员消息
-
-		StringBuilder builder = new StringBuilder();
-		builder.append("[退群] - " + LoggerX.datetime() + "\r\n" + "类型：");
-		if (typeid == 1) {
-			builder.append("自主退群\r\n");
-		} else {
-			builder.append("管理踢出\r\n" + "管理：" + this.getNickname(operid) + "(" + operid + ")" + "\r\n");
-		}
-		builder.append("群号：" + gropid + "\r\n");
-		builder.append("成员：" + this.getNickname(userid) + "(" + userid + ")" + "\r\n");
-		this.adminInfo(builder.toString());
-
-		// Nickmap 移除不存在的人
 
 		if (this.NICKNAME_MAP.containsKey(gropid)) {
 			TreeMap<Long, String> temp = this.NICKNAME_MAP.get(gropid);
@@ -1498,18 +1468,6 @@ public class Systemd extends Module {
 			entry.getCQ().sendPrivateMsg(userid, "不存在名叫" + name + "的模块。请使用/list查询。");
 		}
 	}
-
-//	public void sendHelp(long userid, ModuleTrigger module) {
-//		entry.getCQ().sendPrivateMsg(userid, module.MODULE_FULLHELP());
-//	}
-//
-//	public void sendHelp(long userid, ModuleListener module) {
-//		entry.getCQ().sendPrivateMsg(userid, module.MODULE_FULLHELP());
-//	}
-//
-//	public void sendHelp(long userid, ModuleExecutor module) {
-//		entry.getCQ().sendPrivateMsg(userid, module.MODULE_FULLHELP());
-//	}
 
 	public void sendListUser(long userid) {
 		entry.getCQ().sendPrivateMsg(userid, this.MESSAGE_LIST_USER);

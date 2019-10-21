@@ -329,7 +329,7 @@ public class Executor_food extends ModuleExecutor {
 			for (int j = 0; j < tempmenu.length; j++) {
 				tempmap.put(j, tempmenu[j]);
 			}
-			MENU.put(i, tempmap);
+			this.MENU.put(i, tempmap);
 		}
 
 		this.ENABLE_USER = true;
