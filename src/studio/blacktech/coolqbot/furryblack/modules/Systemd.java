@@ -916,7 +916,7 @@ public class Systemd extends Module {
 
 	/**
 	 * 你永远不应该执行这个方法
-	 * 
+	 *
 	 * @param typeid      你永远不应该执行这个方法
 	 * @param userid      你永远不应该执行这个方法
 	 * @param message     你永远不应该执行这个方法
@@ -983,7 +983,7 @@ public class Systemd extends Module {
 
 	/**
 	 * 你永远不应该执行这个方法
-	 * 
+	 *
 	 * @param diszid      你永远不应该执行这个方法
 	 * @param userid      你永远不应该执行这个方法
 	 * @param message     你永远不应该执行这个方法
@@ -1052,7 +1052,7 @@ public class Systemd extends Module {
 
 	/**
 	 * 你永远不应该执行这个方法
-	 * 
+	 *
 	 * @param gropid      你永远不应该执行这个方法
 	 * @param userid      你永远不应该执行这个方法
 	 * @param message     你永远不应该执行这个方法
@@ -1410,7 +1410,7 @@ public class Systemd extends Module {
 
 	/**
 	 * 你永远不应该执行这个方法
-	 * 
+	 *
 	 * @param level 你永远不应该执行这个方法
 	 * @return 你永远不应该执行这个方法
 	 * @throws Exception 你永远不应该执行这个方法
