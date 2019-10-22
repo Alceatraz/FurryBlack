@@ -16,6 +16,8 @@ import studio.blacktech.coolqbot.furryblack.common.Security.Cipher.RSACipher;
 import studio.blacktech.coolqbot.furryblack.common.Security.Utility.DiffieHellmanKeyGenerator;
 import studio.blacktech.coolqbot.furryblack.common.Security.Utility.TimeBaseVerification;
 
+// 这里范例
+
 @SuppressWarnings("all")
 public class CipherTest {
 
