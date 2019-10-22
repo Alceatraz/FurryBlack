@@ -32,7 +32,7 @@ import sun.misc.BASE64Encoder;
  *
  * 00 00 00 00 , 00 00 00 00 - 00 00 00 00 , 00 00 00 00 - XXXX
  *
- * 前8位 原始消息getBytes(UTF-8)后数组的长度 int -> hexString -> getBytes(UTF-8)
+ * 前8位 原始消息getBytes(UTF-8)后数组的长度 int → hexString → getBytes(UTF-8)
  *
  * 后8位 SHA-384的前8位
  *

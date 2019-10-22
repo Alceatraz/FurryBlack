@@ -34,7 +34,7 @@ import sun.misc.BASE64Encoder;
  *
  * 00 00 00 00 , 00 00 00 00 - 00 00 00 00 , 00 00 00 00 - XXXX
  *
- * 前8位 原始消息getBytes(UTF-8)后数组的长度 int -> hexString -> getBytes(UTF-8)
+ * 前8位 原始消息getBytes(UTF-8)后数组的长度 int → hexString → getBytes(UTF-8)
  *
  * 后8位 SHA-384的前8位
  *
@@ -69,7 +69,7 @@ public class RSACipher {
 	 *
 	 * @param secretKey 随机种子，作为密钥生成器的随机数生成器的种子
 	 * @param keyLength 密钥长度，至少为512
-	 * @throws InvalidKeyException
+	 * @throws InvalidKeyException 错误的密钥
 	 */
 	public RSACipher(String secretKey, int keyLength) throws InvalidKeyException {
 		this(generateKeyPair(secretKey, keyLength));

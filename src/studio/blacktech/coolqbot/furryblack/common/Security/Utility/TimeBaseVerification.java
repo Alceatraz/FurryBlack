@@ -95,7 +95,7 @@ public class TimeBaseVerification {
 	/**
 	 * 这个方法含有安全隐患，会导致挑战原文流出
 	 *
-	 * @return
+	 * @return 挑战原文
 	 */
 	@Deprecated
 	@SuppressWarnings("unused")
@@ -106,7 +106,7 @@ public class TimeBaseVerification {
 	/**
 	 * 这个方法含有安全隐患，会导致应答原文流出
 	 *
-	 * @return
+	 * @return 应答原文
 	 */
 	@Deprecated
 	@SuppressWarnings("unused")
