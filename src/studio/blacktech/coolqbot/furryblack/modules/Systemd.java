@@ -79,7 +79,7 @@ public class Systemd extends Module {
 	private static String MODULE_COMMANDNAME = "systemd";
 	private static String MODULE_DISPLAYNAME = "核心模块";
 	private static String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
-	private static String MODULE_VERSION = "27.0";
+	private static String MODULE_VERSION = "27.1";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -869,10 +869,14 @@ public class Systemd extends Module {
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 
-		FileWriter writer = new FileWriter(this.FILE_NICKNAME_MAP, true);
-		writer.append("\r\n\r\n# Member Increase " + LoggerX.datetime() + "\r\n" + gropid + ":" + userid + ":" + entry.getCQ().getStrangerInfo(userid));
-		writer.flush();
-		writer.close();
+		if (this.isMyself(userid)) {
+			this.MESSAGE_HISTORY.put(gropid, new LinkedList<>());
+		} else {
+			FileWriter writer = new FileWriter(this.FILE_NICKNAME_MAP, true);
+			writer.append("\r\n\r\n# Member Increase " + LoggerX.datetime() + "\r\n" + gropid + ":" + userid + ":" + entry.getCQ().getStrangerInfo(userid));
+			writer.flush();
+			writer.close();
+		}
 
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
 			this.TRIGGER_INSTANCE.get(name).groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
@@ -890,6 +894,12 @@ public class Systemd extends Module {
 	 */
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
+
+		if (this.isMyself(userid)) {
+			this.MESSAGE_HISTORY.remove(gropid);
+		} else {
+
+		}
 
 		if (this.NICKNAME_MAP.containsKey(gropid)) {
 			TreeMap<Long, String> temp = this.NICKNAME_MAP.get(gropid);

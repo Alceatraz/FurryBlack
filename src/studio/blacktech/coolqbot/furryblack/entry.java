@@ -59,7 +59,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// ==========================================================================================================================================================
 
 	// 版本ID
-	public final static String VerID = "12.0 2019-10-14 (00:00)";
+	public final static String VerID = "12.1 2019-10-27 (19:00)";
 
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();
