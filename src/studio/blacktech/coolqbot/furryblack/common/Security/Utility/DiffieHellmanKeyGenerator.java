@@ -70,10 +70,9 @@ public class DiffieHellmanKeyGenerator {
 			return this.encoder.encode(this.keyPair.getPublic().getEncoded());
 
 		} catch (NoSuchAlgorithmException | InvalidKeyException exception) {
-
-			// 这些异常不可能发生 (非标准JVM和lib除外，经过测试ADoptOpenJDK不会出现错误)
-			// NoSuchAlgorithmException ----------- 不能自定义算法保证绝对合法
-			// InvalidKeyException ---------------- 密钥由生成器生成保证绝对合法
+			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
+			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
+			// InvalidKeyException ---------------- 密钥由生成器生成
 			return null;
 
 		}
