@@ -150,6 +150,7 @@ public class Systemd extends Module {
 	private TreeMap<String, ModuleExecutor> EXECUTOR_GROP;
 
 	private File FILE_NICKNAME_MAP;
+	private File FILE_NICKNAME_LOG;
 	private File FILE_MESSAGE_HELP;
 	private File FILE_MESSAGE_INFO;
 	private File FILE_MESSAGE_EULA;
@@ -285,12 +286,14 @@ public class Systemd extends Module {
 
 		this.FILE_SILENCE_GROP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config_mute.txt").toFile();
 		this.FILE_NICKNAME_MAP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config_nickmap.txt").toFile();
+		this.FILE_NICKNAME_LOG = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config_nicklog.txt").toFile();
 		this.FILE_MESSAGE_HELP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_help.txt").toFile();
 		this.FILE_MESSAGE_INFO = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_info.txt").toFile();
 		this.FILE_MESSAGE_EULA = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_eula.txt").toFile();
 
 		if (!this.FILE_SILENCE_GROP.exists()) { if (!this.FILE_SILENCE_GROP.createNewFile()) { throw new InitializationException("无法创建文件mute.txt"); } }
-		if (!this.FILE_NICKNAME_MAP.exists()) { if (!this.FILE_NICKNAME_MAP.createNewFile()) { throw new InitializationException("无法创建文件nickmap.txt"); } }
+		if (!this.FILE_NICKNAME_MAP.exists()) { if (!this.FILE_NICKNAME_MAP.createNewFile()) { throw new InitializationException("无法创建文件config_nickmap.txt"); } }
+		if (!this.FILE_NICKNAME_LOG.exists()) { if (!this.FILE_NICKNAME_LOG.createNewFile()) { throw new InitializationException("无法创建文件config_nicklog.txt"); } }
 		if (!this.FILE_MESSAGE_HELP.exists()) { if (!this.FILE_MESSAGE_HELP.createNewFile()) { throw new InitializationException("无法创建文件message_help.txt"); } }
 		if (!this.FILE_MESSAGE_INFO.exists()) { if (!this.FILE_MESSAGE_INFO.createNewFile()) { throw new InitializationException("无法创建文件message_info.txt"); } }
 		if (!this.FILE_MESSAGE_EULA.exists()) { if (!this.FILE_MESSAGE_EULA.createNewFile()) { throw new InitializationException("无法创建文件message_eula.txt"); } }
@@ -303,6 +306,34 @@ public class Systemd extends Module {
 		BufferedReader readerEula = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_MESSAGE_EULA), StandardCharsets.UTF_8));
 		BufferedReader readerMute = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_SILENCE_GROP), StandardCharsets.UTF_8));
 		BufferedReader readerNick = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_NICKNAME_MAP), StandardCharsets.UTF_8));
+
+		StringBuilder builder = new StringBuilder();
+
+		while ((line = readerHelp.readLine()) != null) {
+			builder.append(line + "\r\n");
+		}
+		builder.setLength(builder.length() - 2);
+		this.MESSAGE_HELP = builder.toString();
+		builder.setLength(0);
+
+		while ((line = readerInfo.readLine()) != null) {
+			builder.append(line + "\r\n");
+			this.MESSAGE_INFO = this.MESSAGE_INFO + line + "\r\n";
+		}
+		builder.setLength(builder.length() - 2);
+		this.MESSAGE_INFO = builder.toString();
+		builder.setLength(0);
+
+		while ((line = readerEula.readLine()) != null) {
+			builder.append(line + "\r\n");
+		}
+		builder.setLength(builder.length() - 2);
+		this.MESSAGE_EULA = builder.toString();
+		builder.setLength(0);
+
+		this.MESSAGE_HELP = this.MESSAGE_HELP.replaceAll("REPLACE_VERSION", entry.VerID);
+		this.MESSAGE_INFO = this.MESSAGE_INFO.replaceAll("REPLACE_VERSION", entry.VerID);
+		this.MESSAGE_EULA = this.MESSAGE_EULA.replaceAll("REPLACE_VERSION", entry.VerID);
 
 		while ((line = readerMute.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
@@ -319,29 +350,15 @@ public class Systemd extends Module {
 				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
 				continue;
 			}
-			this.NICKNAME_MAP.get(Long.parseLong(temp[0])).put(Long.parseLong(temp[1]), temp[2]);
+			long gropid = Long.parseLong(temp[0]);
+			long userid = Long.parseLong(temp[1]);
+			if (this.NICKNAME_MAP.containsKey(gropid)) { this.NICKNAME_MAP.get(gropid).put(userid, temp[2]); }
 		}
 
 		logger.seek(MODULE_PACKAGENAME, "读取昵称表", this.NICKNAME_MAP.size());
 		for (long nickmap : this.NICKNAME_MAP.keySet()) {
 			logger.seek(MODULE_PACKAGENAME, "群" + nickmap, this.NICKNAME_MAP.get(nickmap).size() + "个");
 		}
-
-		while ((line = readerHelp.readLine()) != null) {
-			this.MESSAGE_HELP = this.MESSAGE_HELP + line + "\r\n";
-		}
-
-		while ((line = readerInfo.readLine()) != null) {
-			this.MESSAGE_INFO = this.MESSAGE_INFO + line + "\r\n";
-		}
-
-		while ((line = readerEula.readLine()) != null) {
-			this.MESSAGE_EULA = this.MESSAGE_EULA + line + "\r\n";
-		}
-
-		this.MESSAGE_HELP = this.MESSAGE_HELP.replaceAll("REPLACE_VERSION", entry.VerID);
-		this.MESSAGE_INFO = this.MESSAGE_INFO.replaceAll("REPLACE_VERSION", entry.VerID);
-		this.MESSAGE_EULA = this.MESSAGE_EULA.replaceAll("REPLACE_VERSION", entry.VerID);
 
 		List<Group> groups = entry.getCQ().getGroupList();
 		for (Group group : groups) {
@@ -872,8 +889,8 @@ public class Systemd extends Module {
 		if (this.isMyself(userid)) {
 			this.MESSAGE_HISTORY.put(gropid, new LinkedList<>());
 		} else {
-			FileWriter writer = new FileWriter(this.FILE_NICKNAME_MAP, true);
-			writer.append("\r\n\r\n# Member Increase " + LoggerX.datetime() + "\r\n" + gropid + ":" + userid + ":" + entry.getCQ().getStrangerInfo(userid));
+			FileWriter writer = new FileWriter(this.FILE_NICKNAME_LOG, true);
+			writer.append("\r\n\r\n# Member Increase " + LoggerX.datetime() + "\r\n" + gropid + ":" + userid + ":" + entry.getCQ().getStrangerInfo(userid).getNick());
 			writer.flush();
 			writer.close();
 		}

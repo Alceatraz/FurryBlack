@@ -391,7 +391,7 @@ public class Executor_food extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		return null;
+		return new String[0];
 	}
 
 	public String chooseFood(Message message) {
