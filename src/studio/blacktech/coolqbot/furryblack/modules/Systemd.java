@@ -9,8 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.TreeMap;
 
 import org.meowy.cqp.jcq.entity.Group;
@@ -164,9 +162,9 @@ public class Systemd extends Module {
 	private String MESSAGE_LIST_DISZ = "";
 	private String MESSAGE_LIST_GROP = "";
 
-	private HashSet<Long> MUTE;
 	private TreeMap<Long, TreeMap<Long, String>> NICKNAME_MAP;
-	private TreeMap<Long, LinkedList<Integer>> MESSAGE_HISTORY;
+
+	private HashSet<Long> MESSAGE_MUTE;
 
 	private boolean LOCK_INIT = false;
 
@@ -215,7 +213,6 @@ public class Systemd extends Module {
 		// =======================================================================================================================
 
 		this.initConfFolder();
-		this.initDataFolder();
 		this.initCofigurtion();
 
 		// =======================================================================================================================
@@ -240,8 +237,7 @@ public class Systemd extends Module {
 		this.EXECUTOR_DISZ = new TreeMap<>();
 		this.EXECUTOR_GROP = new TreeMap<>();
 
-		this.MUTE = new HashSet<>();
-		this.MESSAGE_HISTORY = new TreeMap<>();
+		this.MESSAGE_MUTE = new HashSet<>();
 
 		this.NICKNAME_MAP = new TreeMap<>();
 
@@ -314,22 +310,21 @@ public class Systemd extends Module {
 		}
 		builder.setLength(builder.length() - 2);
 		this.MESSAGE_HELP = builder.toString();
-		builder.setLength(0);
 
+		builder = new StringBuilder();
 		while ((line = readerInfo.readLine()) != null) {
 			builder.append(line + "\r\n");
 			this.MESSAGE_INFO = this.MESSAGE_INFO + line + "\r\n";
 		}
 		builder.setLength(builder.length() - 2);
 		this.MESSAGE_INFO = builder.toString();
-		builder.setLength(0);
 
+		builder = new StringBuilder();
 		while ((line = readerEula.readLine()) != null) {
 			builder.append(line + "\r\n");
 		}
 		builder.setLength(builder.length() - 2);
 		this.MESSAGE_EULA = builder.toString();
-		builder.setLength(0);
 
 		this.MESSAGE_HELP = this.MESSAGE_HELP.replaceAll("REPLACE_VERSION", entry.VerID);
 		this.MESSAGE_INFO = this.MESSAGE_INFO.replaceAll("REPLACE_VERSION", entry.VerID);
@@ -337,7 +332,7 @@ public class Systemd extends Module {
 
 		while ((line = readerMute.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			this.MUTE.add(Long.valueOf(line));
+			this.MESSAGE_MUTE.add(Long.valueOf(line));
 			logger.seek(MODULE_PACKAGENAME, "关闭发言", line);
 		}
 
@@ -355,21 +350,16 @@ public class Systemd extends Module {
 			if (this.NICKNAME_MAP.containsKey(gropid)) { this.NICKNAME_MAP.get(gropid).put(userid, temp[2]); }
 		}
 
-		logger.seek(MODULE_PACKAGENAME, "读取昵称表", this.NICKNAME_MAP.size());
-		for (long nickmap : this.NICKNAME_MAP.keySet()) {
-			logger.seek(MODULE_PACKAGENAME, "群" + nickmap, this.NICKNAME_MAP.get(nickmap).size() + "个");
-		}
-
-		List<Group> groups = entry.getCQ().getGroupList();
-		for (Group group : groups) {
-			this.MESSAGE_HISTORY.put(group.getId(), new LinkedList<>());
-		}
-
 		readerHelp.close();
 		readerInfo.close();
 		readerEula.close();
 		readerNick.close();
 		readerMute.close();
+
+		logger.seek(MODULE_PACKAGENAME, "读取昵称表", this.NICKNAME_MAP.size());
+		for (long nickmap : this.NICKNAME_MAP.keySet()) {
+			logger.seek(MODULE_PACKAGENAME, "群" + nickmap, this.NICKNAME_MAP.get(nickmap).size() + "个");
+		}
 
 		// =======================================================================================================================
 		// 实例化模块
@@ -887,8 +877,9 @@ public class Systemd extends Module {
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 
 		if (this.isMyself(userid)) {
-			this.MESSAGE_HISTORY.put(gropid, new LinkedList<>());
+
 		} else {
+
 			FileWriter writer = new FileWriter(this.FILE_NICKNAME_LOG, true);
 			writer.append("\r\n\r\n# Member Increase " + LoggerX.datetime() + "\r\n" + gropid + ":" + userid + ":" + entry.getCQ().getStrangerInfo(userid).getNick());
 			writer.flush();
@@ -911,12 +902,6 @@ public class Systemd extends Module {
 	 */
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
-
-		if (this.isMyself(userid)) {
-			this.MESSAGE_HISTORY.remove(gropid);
-		} else {
-
-		}
 
 		if (this.NICKNAME_MAP.containsKey(gropid)) {
 			TreeMap<Long, String> temp = this.NICKNAME_MAP.get(gropid);
@@ -1328,17 +1313,11 @@ public class Systemd extends Module {
 				builder01.append("定时器：" + this.SCHEDULER_ENABLED.size() + "个" + "\r\n");
 
 				for (ModuleScheduler instance : this.SCHEDULER_ENABLED) {
-					if (instance.ENABLE()) {
 
-						String[] temp = instance.generateReport(0, message, null, null);
+					String[] temp = instance.generateReport(0, message, null, null);
 
-						if (temp == null) {
-							builder01.append(instance.MODULE_PACKAGENAME() + "：" + instance.COUNT() + "关\r\n");
-						} else {
-							builder01.append(instance.MODULE_PACKAGENAME() + "：" + instance.COUNT() + "开\r\n");
-						}
+					if (temp == null) { builder01.append(instance.MODULE_PACKAGENAME() + "：" + instance.COUNT() + "无\r\n"); }
 
-					}
 				}
 
 				// part 2 触发器
@@ -1359,7 +1338,11 @@ public class Systemd extends Module {
 					builder02.append(instance.ENABLE_GROP() ? instance.BLOCK_GROP() : "关");
 					builder02.append("\r\n");
 
-					for (String part : instance.generateReport(0, message, null, null)) {
+					String[] tempReport = instance.generateReport(0, message, null, null);
+
+					if (tempReport == null) { continue; }
+
+					for (String part : tempReport) {
 						builder02.append(part);
 						builder02.append("\r\n");
 					}
@@ -1385,7 +1368,11 @@ public class Systemd extends Module {
 					builder03.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
 					builder03.append("\r\n");
 
-					for (String part : instance.generateReport(0, message, null, null)) {
+					String[] tempReport = instance.generateReport(0, message, null, null);
+
+					if (tempReport == null) { continue; }
+
+					for (String part : tempReport) {
 						builder03.append(part);
 						builder03.append("\r\n");
 					}
@@ -1411,7 +1398,11 @@ public class Systemd extends Module {
 					builder04.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
 					builder04.append("\r\n");
 
-					for (String part : instance.generateReport(0, message, null, null)) {
+					String[] tempReport = instance.generateReport(0, message, null, null);
+
+					if (tempReport == null) { continue; }
+
+					for (String part : tempReport) {
 						builder04.append(part);
 						builder04.append("\r\n");
 					}
@@ -1661,10 +1652,10 @@ public class Systemd extends Module {
 	 * @param message 消息
 	 */
 	public void gropInfo(long gropid, String message) {
-		if (this.MUTE.contains(gropid)) {
+		if (this.MESSAGE_MUTE.contains(gropid)) {
 			System.out.println("关闭发言 " + gropid + "：" + message);
 		} else {
-			this.MESSAGE_HISTORY.get(gropid).add(entry.getCQ().sendGroupMsg(gropid, message));
+			entry.getCQ().sendGroupMsg(gropid, message);
 		}
 	}
 
@@ -1675,11 +1666,11 @@ public class Systemd extends Module {
 	 * @param message 消息
 	 */
 	public void gropInfo(long gropid, String[] message) {
-		if (this.MUTE.contains(gropid)) {
+		if (this.MESSAGE_MUTE.contains(gropid)) {
 			System.out.println("关闭发言 " + gropid + "：" + message);
 		} else {
 			for (String temp : message) {
-				this.MESSAGE_HISTORY.get(gropid).add(entry.getCQ().sendGroupMsg(gropid, temp));
+				entry.getCQ().sendGroupMsg(gropid, temp);
 			}
 		}
 	}
@@ -1692,10 +1683,10 @@ public class Systemd extends Module {
 	 * @param message 消息
 	 */
 	public void gropInfo(long gropid, long userid, String message) {
-		if (this.MUTE.contains(gropid)) {
+		if (this.MESSAGE_MUTE.contains(gropid)) {
 			System.out.println("关闭发言 " + gropid + "：" + message);
 		} else {
-			this.MESSAGE_HISTORY.get(gropid).add(entry.getCQ().sendGroupMsg(gropid, "[CQ:at,qq=" + userid + "] " + message));
+			entry.getCQ().sendGroupMsg(gropid, "[CQ:at,qq=" + userid + "] " + message);
 		}
 	}
 
@@ -1765,15 +1756,6 @@ public class Systemd extends Module {
 	 */
 	public void sendListGrop(long userid) {
 		entry.getCQ().sendPrivateMsg(userid, this.MESSAGE_LIST_GROP);
-	}
-
-	/**
-	 * 撤回上一条消息 需要CoolQ Pro版本 entry对此方法进行了转发请勿在此执行
-	 *
-	 * @param gropid 群组ID
-	 */
-	public void revokeMessage(long gropid) {
-		entry.getCQ().deleteMsg(this.MESSAGE_HISTORY.get(gropid).pollLast());
 	}
 
 	// ==========================================================================================================================================================

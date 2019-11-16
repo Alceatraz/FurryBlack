@@ -88,38 +88,57 @@ public class Listener_TopSpeak extends ModuleListener {
 		this.CONFIG_GROUP_REPORT = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "grop_report.txt").toFile();
 		this.GROUP_STATUS_SERIAL = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeak.serial").toFile();
 
+		String line;
+
 		if (this.CONFIG_GROUP_REPORT.exists()) {
+
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_GROUP_REPORT), StandardCharsets.UTF_8));
-			String line;
+
 			while ((line = reader.readLine()) != null) {
+
 				if (line.startsWith("#")) { continue; }
+				if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+
 				this.GROUP_REPORT.add(Long.parseLong(line));
-				logger.seek(MODULE_PACKAGENAME, "每日汇报", line);
+
+				logger.seek(MODULE_PACKAGENAME, "每日汇报启用", line);
 			}
+
 			reader.close();
+
 		} else {
+
 			this.CONFIG_GROUP_REPORT.createNewFile();
 		}
 
 		if (this.GROUP_STATUS_SERIAL.exists()) {
+
 			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(this.GROUP_STATUS_SERIAL));
 			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
 			loader.close();
-			logger.seek(MODULE_PACKAGENAME, "读取存档", this.GROUP_STATUS == null ? "空" : "包含" + this.GROUP_STATUS.size() + "个群");
+
+			logger.seek(MODULE_PACKAGENAME, "读取存档", this.GROUP_STATUS.size() == 0 ? "空" : "包含" + this.GROUP_STATUS.size() + "个群");
+
 			for (long gropid : this.GROUP_STATUS.keySet()) {
+
 				long time = this.GROUP_STATUS.get(gropid).initdt;
 				logger.seek(MODULE_PACKAGENAME, LoggerX.datetime(new Date(time)) + "(" + time + ")", gropid);
 			}
-			File OLD_STORAGE = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeak_" + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".serial").toFile();
-			this.GROUP_STATUS_SERIAL.renameTo(OLD_STORAGE);
+
+			this.GROUP_STATUS_SERIAL.renameTo(Paths.get(this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile());
+
 		} else {
+
 			this.GROUP_STATUS = new HashMap<>();
+
 		}
 
 		List<Group> groups = entry.getCQ().getGroupList();
 
 		for (Group group : groups) {
+
 			if (!this.GROUP_STATUS.containsKey(group.getId())) {
+
 				this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
 				logger.seek(MODULE_PACKAGENAME, " 添加新群 " + group.getName() + "(" + group.getId() + ")");
 			}
@@ -132,24 +151,35 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
+
 		logger.info(MODULE_PACKAGENAME, "启动工作线程");
+
 		this.thread = new Thread(new Worker());
 		this.thread.start();
+
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+
 		logger.info(MODULE_PACKAGENAME, "终止工作线程");
+
 		this.thread.interrupt();
 		this.thread.join();
+
 	}
 
 	@Override
 	public void save(LoggerX logger) throws Exception {
+
 		logger.info(MODULE_PACKAGENAME, "数据序列化");
+
+		if (this.GROUP_STATUS_SERIAL.exists()) { this.GROUP_STATUS_SERIAL.delete(); }
+
 		ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(this.GROUP_STATUS_SERIAL));
 		saver.writeObject(this.GROUP_STATUS);
 		saver.close();
+
 	}
 
 	@Override
@@ -530,7 +560,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						Thread.sleep(time);
 						// =======================================================
 						entry.getCQ().logDebug(MODULE_PACKAGENAME, "执行");
-						File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), "dailybackup_" + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".serial").toFile();
+						File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
 						ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(Listener_TopSpeak.this.GROUP_STATUS_SERIAL));
 						saver.writeObject(DAILY_BACKUP);
 						saver.close();
@@ -557,13 +587,18 @@ public class Listener_TopSpeak extends ModuleListener {
 }
 
 class GroupStatus implements Serializable {
+
 	private static final long serialVersionUID = 1L;
+
 	public long gropid = 0;
 	public long initdt = 0;
+
 	public HashMap<Long, UserStatus> USER_STATUS = new HashMap<>();
+
 	public LinkedList<String> GROP_SENTENCE;
 	public LinkedList<String> GROP_COMMANDS;
 	public LinkedList<String> GROP_PICTURES;
+
 	public int GROP_SNAPSHOT = 0;
 	public int GROP_HONGBAOS = 0;
 	public int GROP_TAPVIDEO = 0;
@@ -584,38 +619,52 @@ class GroupStatus implements Serializable {
 	}
 
 	public GroupStatus sum() {
+
 		this.GROP_SENTENCE = new LinkedList<>();
 		this.GROP_COMMANDS = new LinkedList<>();
 		this.GROP_PICTURES = new LinkedList<>();
+
 		this.GROP_SNAPSHOT = 0;
 		this.GROP_HONGBAOS = 0;
 		this.GROP_TAPVIDEO = 0;
 		this.GROP_MESSAGES = 0;
 		this.GROP_CHARACTER = 0;
 		this.GROP_PURECCODE = 0;
+
 		for (long userid : this.USER_STATUS.keySet()) {
+
 			UserStatus userStauts = this.USER_STATUS.get(userid).sum();
 			this.GROP_SENTENCE.addAll(userStauts.USER_SENTENCE);
 			this.GROP_COMMANDS.addAll(userStauts.USER_COMMANDS);
 			this.GROP_PICTURES.addAll(userStauts.USER_PICTURES);
+
 			this.GROP_SNAPSHOT = this.GROP_SNAPSHOT + userStauts.USER_SNAPSHOT;
 			this.GROP_HONGBAOS = this.GROP_HONGBAOS + userStauts.USER_HONGBAOS;
 			this.GROP_TAPVIDEO = this.GROP_TAPVIDEO + userStauts.USER_TAPVIDEO;
+
 			this.GROP_MESSAGES = this.GROP_MESSAGES + userStauts.MESSAGES.size();
+
 			this.GROP_CHARACTER = this.GROP_CHARACTER + userStauts.USER_CHARACTER;
 			this.GROP_PURECCODE = this.GROP_PURECCODE + userStauts.USER_PURECCODE;
 		}
+
 		return this;
+
 	}
 }
 
 class UserStatus implements Serializable {
+
 	private static final long serialVersionUID = 1L;
+
 	public long userid = 0;
+
 	public LinkedList<MessageGrop> MESSAGES = new LinkedList<>();
+
 	public LinkedList<String> USER_COMMANDS;
 	public LinkedList<String> USER_SENTENCE;
 	public LinkedList<String> USER_PICTURES;
+
 	public int USER_SNAPSHOT = 0;
 	public int USER_HONGBAOS = 0;
 	public int USER_TAPVIDEO = 0;
@@ -631,15 +680,19 @@ class UserStatus implements Serializable {
 	}
 
 	public UserStatus sum() {
+
 		this.USER_SENTENCE = new LinkedList<>();
 		this.USER_COMMANDS = new LinkedList<>();
 		this.USER_PICTURES = new LinkedList<>();
+
 		this.USER_CHARACTER = 0;
 		this.USER_PURECCODE = 0;
 		this.USER_SNAPSHOT = 0;
 		this.USER_TAPVIDEO = 0;
 		this.USER_HONGBAOS = 0;
+
 		for (MessageGrop temp : this.MESSAGES) {
+
 			if (temp.isCommand()) {
 				this.USER_COMMANDS.add(temp.getCommand());
 			} else if (temp.isSnappic()) {

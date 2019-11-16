@@ -117,19 +117,15 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 		while ((line = readerUser.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			if (line.indexOf("#") > 0) { line = line.substring(0, line.indexOf("#")).trim(); }
-			logger.seek(MODULE_PACKAGENAME, "禁止私聊用户", line);
+			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
 			this.USER_IGNORE.add(Long.parseLong(line));
+			logger.seek(MODULE_PACKAGENAME, "禁止私聊用户", line);
 		}
 
 		while ((line = readerDisz.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			if (!line.contains(":")) {
-				logger.mini(MODULE_PACKAGENAME, "配置错误 - 不含:", line);
-				continue;
-			}
+			if (!line.contains(":")) { continue; }
 			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
-			logger.seek(MODULE_PACKAGENAME, "禁止组聊用户", line);
 			temp = line.split(":");
 			diszid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
@@ -142,16 +138,14 @@ public class Trigger_UserDeny extends ModuleTrigger {
 				}
 				this.DISZ_IGNORE_ONE.get(diszid).add(userid);
 			}
+			logger.seek(MODULE_PACKAGENAME, "禁止组聊用户", line);
 		}
 
 		while ((line = readerGrop.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
-			if (!line.contains(":")) {
-				logger.mini(MODULE_PACKAGENAME, "配置错误 - 不含:", line);
-				continue;
-			}
-			if (line.indexOf("#") > 0) { line = line.substring(0, line.indexOf("#")).trim(); }
-			logger.seek(MODULE_PACKAGENAME, "禁止群聊用户", line);
+			if (!line.contains(":")) { continue; }
+			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+			temp = line.split(":");
 			temp = line.split(":");
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
@@ -164,18 +158,14 @@ public class Trigger_UserDeny extends ModuleTrigger {
 				}
 				this.GROP_IGNORE_ONE.get(gropid).add(userid);
 			}
+			logger.seek(MODULE_PACKAGENAME, "禁止群聊用户", line);
 		}
 
 		readerUser.close();
 		readerDisz.close();
 		readerGrop.close();
 
-		this.USER_IGNORE.add(1000000L); // QQ通知
-		this.USER_IGNORE.add(50000000L); // QQ坦白说
-		this.USER_IGNORE.add(2854196306L); // QQ小冰机器人
-
-		// 固定添加了屏蔽用户，不需要统计过程，必然为true，取决于配置开关
-		// this.ENABLE_USER = this.ENABLE_USER && this.USER_IGNORE.size() > 0;
+		this.ENABLE_USER = this.ENABLE_USER && this.USER_IGNORE.size() > 0;
 		this.ENABLE_DISZ = this.ENABLE_DISZ && this.DISZ_IGNORE.size() + this.DISZ_IGNORE_ONE.size() > 0;
 		this.ENABLE_GROP = this.ENABLE_GROP && this.GROP_IGNORE.size() + this.GROP_IGNORE_ONE.size() > 0;
 
