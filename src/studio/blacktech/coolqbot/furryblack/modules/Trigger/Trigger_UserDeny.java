@@ -1,9 +1,12 @@
 package studio.blacktech.coolqbot.furryblack.modules.Trigger;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -59,6 +62,10 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	private File FILE_DISZIGNORE;
 	private File FILE_GROPIGNORE;
 
+	private File FILE_DENY_USER;
+	private File FILE_DENY_DISZ;
+	private File FILE_DENY_GROP;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -73,6 +80,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	public void init(LoggerX logger) throws Exception {
 
 		this.initConfFolder();
+		this.initDataFolder();
 		this.initCofigurtion();
 
 		this.USER_IGNORE = new HashSet<>(100);
@@ -97,9 +105,17 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		this.FILE_DISZIGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_disz.txt").toFile();
 		this.FILE_GROPIGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_grop.txt").toFile();
 
+		this.FILE_DENY_USER = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "ignore_user_log.txt").toFile();
+		this.FILE_DENY_DISZ = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "ignore_disz_log.txt").toFile();
+		this.FILE_DENY_GROP = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "ignore_grop_log.txt").toFile();
+
 		if (!this.FILE_USERIGNORE.exists()) { this.FILE_USERIGNORE.createNewFile(); }
 		if (!this.FILE_DISZIGNORE.exists()) { this.FILE_DISZIGNORE.createNewFile(); }
 		if (!this.FILE_GROPIGNORE.exists()) { this.FILE_GROPIGNORE.createNewFile(); }
+
+		if (!this.FILE_DENY_USER.exists()) { this.FILE_DENY_USER.createNewFile(); }
+		if (!this.FILE_DENY_DISZ.exists()) { this.FILE_DENY_DISZ.createNewFile(); }
+		if (!this.FILE_DENY_GROP.exists()) { this.FILE_DENY_GROP.createNewFile(); }
 
 		this.ENABLE_USER = Boolean.parseBoolean(this.CONFIG.getProperty("enable_user", "false"));
 		this.ENABLE_DISZ = Boolean.parseBoolean(this.CONFIG.getProperty("enable_disz", "false"));
@@ -223,37 +239,77 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+
 		if (this.USER_IGNORE.contains(userid)) {
+
 			this.DENY_USER_COUNT.put(userid, this.DENY_USER_COUNT.get(userid) + 1);
+
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENY_USER, true), StandardCharsets.UTF_8));
+			writer.write(message.toString());
+			writer.write("\r\n\r\n\r\n\r\n");
+			writer.flush();
+			writer.close();
+
 			return true;
+
 		} else {
+
 			return false;
+
 		}
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+
 		if (this.USER_IGNORE.contains(userid)) {
+
 			this.DENY_USER_COUNT.put(userid, this.DENY_USER_COUNT.get(userid) + 1);
+
 		} else if (this.DISZ_IGNORE.contains(diszid) && this.DISZ_IGNORE_ONE.get(diszid).contains(userid)) {
+
 			TreeMap<Long, Integer> temp = this.DENY_DISZ_COUNT.get(diszid);
 			temp.put(userid, temp.get(userid) + 1);
+
 		} else {
+
 			return false;
+
 		}
+
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENY_DISZ, true), StandardCharsets.UTF_8));
+		writer.write(message.toString());
+		writer.write("\r\n\r\n\r\n\r\n");
+		writer.flush();
+		writer.close();
+
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+
 		if (this.USER_IGNORE.contains(userid)) {
+
 			this.DENY_USER_COUNT.put(userid, this.DENY_USER_COUNT.get(userid) + 1);
+
 		} else if (this.GROP_IGNORE.contains(gropid) && this.GROP_IGNORE_ONE.get(gropid).contains(userid)) {
+
 			TreeMap<Long, Integer> temp = this.DENY_GROP_COUNT.get(gropid);
 			temp.put(userid, temp.get(userid) + 1);
+
 		} else {
+
 			return false;
+
 		}
+
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENY_GROP, true), StandardCharsets.UTF_8));
+		writer.write(message.toString());
+		writer.write("\r\n\r\n\r\n\r\n");
+		writer.flush();
+		writer.close();
+
 		return true;
 	}
 

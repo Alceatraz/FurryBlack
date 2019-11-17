@@ -63,8 +63,9 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	private Thread thread;
 
-	private File CONFIG_GROUP_REPORT;
-	private File GROUP_STATUS_SERIAL;
+	private File CONFIG_ENABLE_REPORT;
+
+	private File GROUP_STATUS_STORAGE;
 
 	// ==========================================================================================================================================================
 	//
@@ -85,14 +86,14 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		this.GROUP_REPORT = new ArrayList<>();
 
-		this.CONFIG_GROUP_REPORT = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "grop_report.txt").toFile();
-		this.GROUP_STATUS_SERIAL = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeak.serial").toFile();
+		this.CONFIG_ENABLE_REPORT = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "daily_report.txt").toFile();
+		this.GROUP_STATUS_STORAGE = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeaks.serial").toFile();
 
 		String line;
 
-		if (this.CONFIG_GROUP_REPORT.exists()) {
+		if (this.CONFIG_ENABLE_REPORT.exists()) {
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_GROUP_REPORT), StandardCharsets.UTF_8));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8));
 
 			while ((line = reader.readLine()) != null) {
 
@@ -100,20 +101,24 @@ public class Listener_TopSpeak extends ModuleListener {
 				if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
 
 				this.GROUP_REPORT.add(Long.parseLong(line));
+			}
 
-				logger.seek(MODULE_PACKAGENAME, "每日汇报启用", line);
+			logger.seek(MODULE_PACKAGENAME, "每日汇报启用");
+
+			for (Long temp : GROUP_REPORT) {
+				logger.seek(MODULE_PACKAGENAME, "  " + temp);
 			}
 
 			reader.close();
 
 		} else {
 
-			this.CONFIG_GROUP_REPORT.createNewFile();
+			this.CONFIG_ENABLE_REPORT.createNewFile();
 		}
 
-		if (this.GROUP_STATUS_SERIAL.exists()) {
+		if (this.GROUP_STATUS_STORAGE.exists()) {
 
-			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(this.GROUP_STATUS_SERIAL));
+			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(this.GROUP_STATUS_STORAGE));
 			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
 			loader.close();
 
@@ -125,7 +130,9 @@ public class Listener_TopSpeak extends ModuleListener {
 				logger.seek(MODULE_PACKAGENAME, LoggerX.datetime(new Date(time)) + "(" + time + ")", gropid);
 			}
 
-			this.GROUP_STATUS_SERIAL.renameTo(Paths.get(this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile());
+			File GROUP_STATUS_LEGACY = Paths.get(this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
+			this.GROUP_STATUS_STORAGE.renameTo(GROUP_STATUS_LEGACY);
+			this.GROUP_STATUS_STORAGE.delete();
 
 		} else {
 
@@ -140,7 +147,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			if (!this.GROUP_STATUS.containsKey(group.getId())) {
 
 				this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
-				logger.seek(MODULE_PACKAGENAME, " 添加新群 " + group.getName() + "(" + group.getId() + ")");
+				logger.seek(MODULE_PACKAGENAME, "  添加新群 " + group.getName() + "(" + group.getId() + ")");
 			}
 		}
 
@@ -174,9 +181,9 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		logger.info(MODULE_PACKAGENAME, "数据序列化");
 
-		if (this.GROUP_STATUS_SERIAL.exists()) { this.GROUP_STATUS_SERIAL.delete(); }
+		if (this.GROUP_STATUS_STORAGE.exists()) { this.GROUP_STATUS_STORAGE.delete(); }
 
-		ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(this.GROUP_STATUS_SERIAL));
+		ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(this.GROUP_STATUS_STORAGE));
 		saver.writeObject(this.GROUP_STATUS);
 		saver.close();
 
@@ -561,7 +568,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						// =======================================================
 						entry.getCQ().logDebug(MODULE_PACKAGENAME, "执行");
 						File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
-						ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(Listener_TopSpeak.this.GROUP_STATUS_SERIAL));
+						ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream(Listener_TopSpeak.this.GROUP_STATUS_STORAGE));
 						saver.writeObject(DAILY_BACKUP);
 						saver.close();
 						for (long temp : Listener_TopSpeak.this.GROUP_STATUS.keySet()) {

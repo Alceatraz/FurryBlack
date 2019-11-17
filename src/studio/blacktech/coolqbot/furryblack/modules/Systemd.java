@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.TreeMap;
 
 import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
@@ -213,6 +214,7 @@ public class Systemd extends Module {
 		// =======================================================================================================================
 
 		this.initConfFolder();
+		this.initDataFolder();
 		this.initCofigurtion();
 
 		// =======================================================================================================================
@@ -281,8 +283,8 @@ public class Systemd extends Module {
 		// =======================================================================================================================
 
 		this.FILE_SILENCE_GROP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config_mute.txt").toFile();
+		this.FILE_NICKNAME_LOG = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "config_nicklog.txt").toFile();
 		this.FILE_NICKNAME_MAP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config_nickmap.txt").toFile();
-		this.FILE_NICKNAME_LOG = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config_nicklog.txt").toFile();
 		this.FILE_MESSAGE_HELP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_help.txt").toFile();
 		this.FILE_MESSAGE_INFO = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_info.txt").toFile();
 		this.FILE_MESSAGE_EULA = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_eula.txt").toFile();
@@ -821,15 +823,19 @@ public class Systemd extends Module {
 	 */
 	@Override
 	public void reload(LoggerX logger) throws Exception {
+
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
 			this.TRIGGER_INSTANCE.get(name).reload(logger);
 		}
+
 		for (String name : this.LISTENER_INSTANCE.keySet()) {
 			this.LISTENER_INSTANCE.get(name).reload(logger);
 		}
+
 		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
 			this.EXECUTOR_INSTANCE.get(name).reload(logger);
 		}
+
 	}
 
 	/**
@@ -837,13 +843,17 @@ public class Systemd extends Module {
 	 */
 	@Override
 	public void exec(LoggerX logger, Message message) throws Exception {
+
 		logger.info(LoggerX.datetime());
 		String module = message.getSwitch("module");
+
 		if (module == null) {
 			logger.info("参数错误 --module 为空");
 			return;
 		}
+
 		// /admin exec --mode=systemd
+
 		if (module.equals("systemd")) {
 			logger.info("systemd", message.getOptions());
 		} else if (this.SCHEDULER_INSTANCE.containsKey(module)) {
@@ -876,22 +886,31 @@ public class Systemd extends Module {
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 
+		FileWriter writer = new FileWriter(this.FILE_NICKNAME_LOG, true);
+
 		if (this.isMyself(userid)) {
+
+			writer.append("# Bot Join Group " + LoggerX.datetime() + "\n");
+			for (Member memeber : entry.getCQ().getGroupMemberList(gropid)) {
+				writer.append(gropid + ":" + memeber.getQQId() + ":" + entry.getCQ().getStrangerInfo(memeber.getQQId()).getNick() + "\n");
+			}
 
 		} else {
 
-			FileWriter writer = new FileWriter(this.FILE_NICKNAME_LOG, true);
-			writer.append("\r\n\r\n# Member Increase " + LoggerX.datetime() + "\r\n" + gropid + ":" + userid + ":" + entry.getCQ().getStrangerInfo(userid).getNick());
-			writer.flush();
-			writer.close();
+			writer.append("# Member Increase " + LoggerX.datetime() + "\n" + gropid + ":=" + userid + ":" + entry.getCQ().getStrangerInfo(userid).getNick() + "\n");
 		}
+
+		writer.flush();
+		writer.close();
 
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
 			this.TRIGGER_INSTANCE.get(name).groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
 		}
+
 		for (String name : this.LISTENER_INSTANCE.keySet()) {
 			this.LISTENER_INSTANCE.get(name).groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
 		}
+
 		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
 			this.EXECUTOR_INSTANCE.get(name).groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
 		}
@@ -903,17 +922,14 @@ public class Systemd extends Module {
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 
-		if (this.NICKNAME_MAP.containsKey(gropid)) {
-			TreeMap<Long, String> temp = this.NICKNAME_MAP.get(gropid);
-			temp.remove(userid);
-		}
-
 		for (String name : this.TRIGGER_INSTANCE.keySet()) {
 			this.TRIGGER_INSTANCE.get(name).groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
 		}
+
 		for (String name : this.LISTENER_INSTANCE.keySet()) {
 			this.LISTENER_INSTANCE.get(name).groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
 		}
+
 		for (String name : this.EXECUTOR_INSTANCE.keySet()) {
 			this.EXECUTOR_INSTANCE.get(name).groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
 		}
