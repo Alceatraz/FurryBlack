@@ -128,9 +128,10 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				long time = this.GROUP_STATUS.get(gropid).initdt;
 				logger.seek(MODULE_PACKAGENAME, LoggerX.datetime(new Date(time)) + "(" + time + ")", gropid);
+
 			}
 
-			File GROUP_STATUS_LEGACY = Paths.get(this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
+			File GROUP_STATUS_LEGACY = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "  " + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
 			this.GROUP_STATUS_STORAGE.renameTo(GROUP_STATUS_LEGACY);
 			this.GROUP_STATUS_STORAGE.delete();
 
@@ -142,13 +143,29 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		List<Group> groups = entry.getCQ().getGroupList();
 
+		logger.seek(MODULE_PACKAGENAME, "存档一致性检查");
+
 		for (Group group : groups) {
 
-			if (!this.GROUP_STATUS.containsKey(group.getId())) {
+			if (this.GROUP_STATUS.containsKey(group.getId())) {
+
+				GroupStatus groupStatus = this.GROUP_STATUS.get(group.getId());
+				List<Member> members = entry.getCQ().getGroupMemberList(group.getId());
+
+				for (Member member : members) {
+					if (!groupStatus.USER_STATUS.containsKey(member.getQQId())) {
+						groupStatus.USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
+						logger.seek(MODULE_PACKAGENAME, "  新建成员" + group.getId() + " > " + entry.getNickname(member.getQQId()) + "(" + member.getQQId() + ")");
+					}
+				}
+
+			} else {
 
 				this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
-				logger.seek(MODULE_PACKAGENAME, "  添加新群 " + group.getName() + "(" + group.getId() + ")");
+				logger.seek(MODULE_PACKAGENAME, "  新建群" + group.getName() + "(" + group.getId() + ")");
+
 			}
+
 		}
 
 		this.ENABLE_USER = false;

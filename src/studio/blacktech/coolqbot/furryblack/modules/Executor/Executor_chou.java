@@ -90,36 +90,31 @@ public class Executor_chou extends ModuleExecutor {
 			this.IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_IGNORE_USER), StandardCharsets.UTF_8));
-
 		long gropid;
 		long userid;
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_IGNORE_USER), StandardCharsets.UTF_8));
+
 		String line;
 		String[] temp;
 
 		while ((line = reader.readLine()) != null) {
-			if (line.startsWith("#")) {
-				// #开头为注释
+
+			if (line.startsWith("#")) { continue; }
+			if (!line.contains(":")) { continue; }
+			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+			temp = line.split(":");
+
+			gropid = Long.parseLong(temp[0]);
+			userid = Long.parseLong(temp[1]);
+
+			if (this.IGNORES.containsKey(gropid)) {
+				this.IGNORES.get(gropid).add(userid);
+				logger.seek(MODULE_PACKAGENAME, "排除用户", gropid + " - " + userid);
 			} else {
-				if (line.contains(":")) {
-					if (line.contains("#")) {
-						// 内容 # 之后为注释
-						line = line.substring(0, line.indexOf("#"));
-						line = line.trim();
-					}
-					temp = line.split(":");
-					if (temp.length != 2) {
-						logger.mini(MODULE_PACKAGENAME, "配置错误 - 不止一个:", line);
-					} else {
-						gropid = Long.parseLong(temp[0]);
-						userid = Long.parseLong(temp[1]);
-						this.IGNORES.get(gropid).add(userid);
-						logger.seek(MODULE_PACKAGENAME, "排除用户", line);
-					}
-				} else {
-					logger.mini(MODULE_PACKAGENAME, "配置错误 - 不含:", line);
-				}
+				logger.seek(MODULE_PACKAGENAME, "排除用户", "群不存在 " + gropid);
 			}
+
 		}
 
 		reader.close();

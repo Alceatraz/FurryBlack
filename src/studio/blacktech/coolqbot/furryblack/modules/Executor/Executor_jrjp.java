@@ -99,26 +99,30 @@ public class Executor_jrjp extends ModuleExecutor {
 			this.IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
 
+		long gropid;
+		long userid;
+
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.USER_IGNORE), StandardCharsets.UTF_8));
+
 		String line;
 		String[] temp;
+
 		while ((line = reader.readLine()) != null) {
+
 			if (line.startsWith("#")) { continue; }
-			if (!line.contains(":")) {
-				logger.mini(MODULE_PACKAGENAME, "配置错误 - 不含:", line);
-				continue;
-			}
+			if (!line.contains(":")) { continue; }
 			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
 			temp = line.split(":");
 			if (temp.length != 2) {
 				logger.mini(MODULE_PACKAGENAME, "配置错误 - 不止一个:", line);
 			} else {
-				long gropid = Long.parseLong(temp[0]);
-				long userid = Long.parseLong(temp[1]);
+				gropid = Long.parseLong(temp[0]);
+				userid = Long.parseLong(temp[1]);
 				this.IGNORES.get(gropid).add(userid);
 				logger.seek(MODULE_PACKAGENAME, "排除用户", line);
 			}
 		}
+
 		reader.close();
 
 		for (Group group : groups) {
