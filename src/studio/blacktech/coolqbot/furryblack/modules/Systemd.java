@@ -663,19 +663,19 @@ public class Systemd extends Module {
 
 		logger.info(MODULE_PACKAGENAME, "模块状态");
 
-		logger.info("计时器 - 全局", this.ENABLE_SCHEDULER ? "启用 - " + this.SCHEDULER_ENABLED.size() + "个" : "禁用");
+		logger.info(MODULE_PACKAGENAME, "计时器 - 全局", this.ENABLE_SCHEDULER ? "启用 - " + this.SCHEDULER_ENABLED.size() + "个" : "禁用");
 
-		logger.info("触发器 - 私聊", this.ENABLE_TRIGGER_USER ? "启用 - " + this.TRIGGER_USER.size() + "个" : "禁用");
-		logger.info("触发器 - 组聊", this.ENABLE_TRIGGER_DISZ ? "启用 - " + this.TRIGGER_DISZ.size() + "个" : "禁用");
-		logger.info("触发器 - 群聊", this.ENABLE_TRIGGER_GROP ? "启用 - " + this.TRIGGER_GROP.size() + "个" : "禁用");
+		logger.info(MODULE_PACKAGENAME, "触发器 - 私聊", this.ENABLE_TRIGGER_USER ? "启用 - " + this.TRIGGER_USER.size() + "个" : "禁用");
+		logger.info(MODULE_PACKAGENAME, "触发器 - 组聊", this.ENABLE_TRIGGER_DISZ ? "启用 - " + this.TRIGGER_DISZ.size() + "个" : "禁用");
+		logger.info(MODULE_PACKAGENAME, "触发器 - 群聊", this.ENABLE_TRIGGER_GROP ? "启用 - " + this.TRIGGER_GROP.size() + "个" : "禁用");
 
-		logger.info("监听器 - 私聊", this.ENABLE_LISENTER_USER ? "启用 - " + this.LISTENER_DISZ.size() + "个" : "禁用");
-		logger.info("监听器 - 组聊", this.ENABLE_LISENTER_DISZ ? "启用 - " + this.LISTENER_DISZ.size() + "个" : "禁用");
-		logger.info("监听器 - 群聊", this.ENABLE_LISENTER_GROP ? "启用 - " + this.LISTENER_GROP.size() + "个" : "禁用");
+		logger.info(MODULE_PACKAGENAME, "监听器 - 私聊", this.ENABLE_LISENTER_USER ? "启用 - " + this.LISTENER_DISZ.size() + "个" : "禁用");
+		logger.info(MODULE_PACKAGENAME, "监听器 - 组聊", this.ENABLE_LISENTER_DISZ ? "启用 - " + this.LISTENER_DISZ.size() + "个" : "禁用");
+		logger.info(MODULE_PACKAGENAME, "监听器 - 群聊", this.ENABLE_LISENTER_GROP ? "启用 - " + this.LISTENER_GROP.size() + "个" : "禁用");
 
-		logger.info("执行器 - 私聊", this.ENABLE_EXECUTOR_USER ? "启用 - " + this.EXECUTOR_USER.size() + "个" : "禁用");
-		logger.info("执行器 - 组聊", this.ENABLE_EXECUTOR_DISZ ? "启用 - " + this.EXECUTOR_DISZ.size() + "个" : "禁用");
-		logger.info("执行器 - 群聊", this.ENABLE_EXECUTOR_GROP ? "启用 - " + this.EXECUTOR_GROP.size() + "个" : "禁用");
+		logger.info(MODULE_PACKAGENAME, "执行器 - 私聊", this.ENABLE_EXECUTOR_USER ? "启用 - " + this.EXECUTOR_USER.size() + "个" : "禁用");
+		logger.info(MODULE_PACKAGENAME, "执行器 - 组聊", this.ENABLE_EXECUTOR_DISZ ? "启用 - " + this.EXECUTOR_DISZ.size() + "个" : "禁用");
+		logger.info(MODULE_PACKAGENAME, "执行器 - 群聊", this.ENABLE_EXECUTOR_GROP ? "启用 - " + this.EXECUTOR_GROP.size() + "个" : "禁用");
 
 		// =======================================================================================================================
 		// 预生成 list 的信息

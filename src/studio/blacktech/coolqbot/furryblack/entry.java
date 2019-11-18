@@ -1,6 +1,7 @@
 package studio.blacktech.coolqbot.furryblack;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.nio.file.Paths;
 
 import org.meowy.cqp.jcq.entity.CoolQ;
@@ -79,6 +80,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	private static File FOLDER_CONF;
 	// data/ 对象的持有
 	private static File FOLDER_DATA;
+	// 日志文件夹
+	private static File FOLDER_LOGS;
+	private static File FILE_LOGGER;
 	// 启动日志
 	private static LoggerX bootLoggerX;
 	// systemd 对象的持有
@@ -143,12 +147,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 			FOLDER_CONF = Paths.get(appDirectory, "conf").toFile();
 			FOLDER_DATA = Paths.get(appDirectory, "data").toFile();
+			FOLDER_LOGS = Paths.get(appDirectory, "logs").toFile();
+
+			FILE_LOGGER = Paths.get(FOLDER_LOGS.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
 
 			// ==========================================================================================================================
 
 			bootLoggerX.full("FurryBlack", "工作目录", appDirectory);
 			bootLoggerX.full("FurryBlack", "配置文件目录", FOLDER_CONF.getPath());
 			bootLoggerX.full("FurryBlack", "数据文件目录", FOLDER_DATA.getPath());
+			bootLoggerX.full("FurryBlack", "日志文件目录", FOLDER_LOGS.getPath());
 
 			// ==========================================================================================================================
 			// 初始化文件夹
@@ -163,8 +171,14 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 				FOLDER_DATA.mkdirs();
 			}
 
+			if (!FOLDER_LOGS.exists()) {
+				bootLoggerX.seek("FurryBlack", "创建目录", FOLDER_LOGS.getName());
+				FOLDER_LOGS.mkdirs();
+			}
+
 			if (!FOLDER_CONF.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + FOLDER_CONF.getAbsolutePath()); }
 			if (!FOLDER_DATA.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + FOLDER_DATA.getAbsolutePath()); }
+			if (!FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath()); }
 
 			// ==========================================================================================================================
 			// 初始化Systemd
@@ -180,9 +194,14 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 			// ==========================================================================================================================
 
-			CQ.logInfo("FurryBlack", bootLoggerX.make(3));
-
 			SYSTEMD.adminInfo(bootLoggerX.make(0));
+
+			FileWriter writer = new FileWriter(FILE_LOGGER, true);
+			writer.append("Bootup ->");
+			writer.append(bootLoggerX.make(3));
+			writer.append("\n");
+			writer.flush();
+			writer.close();
 
 			// ==========================================================================================================================
 			// 启动完成 关闭debug
@@ -211,7 +230,12 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			SYSTEMD.save(logger);
 			logger.mini("[FurryBlack] - 结束");
 			SYSTEMD.shut(logger);
-			SYSTEMD.adminInfo(logger.make(0));
+			FileWriter writer = new FileWriter(FILE_LOGGER, true);
+			writer.append("Shutdown ->");
+			writer.append(logger.make(3));
+			writer.append("\n");
+			writer.flush();
+			writer.close();
 		} catch (Exception exception) {
 			logger.mini(exception.getMessage());
 		}
