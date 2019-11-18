@@ -127,11 +127,11 @@ public class Listener_TopSpeak extends ModuleListener {
 			for (long gropid : this.GROUP_STATUS.keySet()) {
 
 				long time = this.GROUP_STATUS.get(gropid).initdt;
-				logger.seek(MODULE_PACKAGENAME, LoggerX.datetime(new Date(time)) + "(" + time + ")", gropid);
+				logger.seek(MODULE_PACKAGENAME, "  " + LoggerX.datetime(new Date(time)) + "(" + time + ")", gropid);
 
 			}
 
-			File GROUP_STATUS_LEGACY = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "  " + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
+			File GROUP_STATUS_LEGACY = Paths.get(this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
 			this.GROUP_STATUS_STORAGE.renameTo(GROUP_STATUS_LEGACY);
 			this.GROUP_STATUS_STORAGE.delete();
 

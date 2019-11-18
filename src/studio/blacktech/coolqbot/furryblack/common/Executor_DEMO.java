@@ -325,17 +325,17 @@ public class Executor_DEMO extends ModuleExecutor {
 						time = time * 1000;
 
 						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 休眠：" + time);
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time);
 
 						Thread.sleep(time);
 
 						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 执行");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行");
 
 						// 此处执行实际任务
 
 						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 结果");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果");
 
 					}
 
@@ -346,13 +346,13 @@ public class Executor_DEMO extends ModuleExecutor {
 					if (entry.isEnable()) {
 
 						// 如果框架运行中，则遇到了真正意义上的异常，应观察发生了什么
-						entry.getCQ().logWarning(MODULE_PACKAGENAME, "[Executor_DEMO] 异常");
+						entry.getCQ().logWarning(MODULE_PACKAGENAME, "异常");
 						exception.printStackTrace();
 
 					} else {
 
 						// 如果框架关闭，则并非真的异常 此时将会跳出主循环 结束worker
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 关闭");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
 
 					}
 				}
