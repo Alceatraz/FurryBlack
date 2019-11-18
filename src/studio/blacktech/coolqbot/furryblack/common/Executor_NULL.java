@@ -19,8 +19,8 @@ public class Executor_NULL extends ModuleExecutor {
 
 	private static String MODULE_PACKAGENAME = "Executor_NULL";
 	private static String MODULE_COMMANDNAME = "null";
-	private static String MODULE_DISPLAYNAME = "实例模块";
-	private static String MODULE_DESCRIPTION = "实例模块";
+	private static String MODULE_DISPLAYNAME = "模板模块";
+	private static String MODULE_DESCRIPTION = "模板模块";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
@@ -39,18 +39,30 @@ public class Executor_NULL extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+	// @formatter:off
+
 	public Executor_NULL() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+
+		super(
+			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
+			MODULE_DESCRIPTION,
+			MODULE_VERSION,
+			MODULE_USAGE,
+			MODULE_PRIVACY_STORED,
+			MODULE_PRIVACY_CACHED,
+			MODULE_PRIVACY_OBTAIN
+		);
 	}
+
+	// @formatter:on
 
 	@Override
 	public void init(LoggerX logger) throws Exception {
 
 		if (this.NEW_CONFIG) {
-			this.CONFIG.setProperty("config1", "none");
-			this.CONFIG.setProperty("config2", "none");
-			this.CONFIG.setProperty("config3", "none");
-			this.CONFIG.setProperty("config4", "none");
+			this.CONFIG.setProperty("", "");
 			this.saveConfig();
 		} else {
 			this.loadConfig();

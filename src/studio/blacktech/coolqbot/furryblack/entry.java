@@ -25,7 +25,7 @@ import studio.blacktech.coolqbot.furryblack.modules.Systemd;
  * 整个BOT的核心，JcqApp的入口类文件 Jcq将会调用约定的生命周期函数
  *
  * 我们不用IoC 我们不用DI 我们只制作高度耦合的专用框架 专用的永远是最好的
- * 
+ *
  * 拒绝反射地狱 拒绝注解噩梦 拒绝配置 直观 简单 见名知意
  *
  * @author Alceatraz Warprays
@@ -61,7 +61,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// ==========================================================================================================================================================
 
 	// 版本ID
-	public final static String VerID = "12.1 2019-10-27 (19:00)";
+	public final static String VerID = "12.2 2019-11-18 (20:30)";
 
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();

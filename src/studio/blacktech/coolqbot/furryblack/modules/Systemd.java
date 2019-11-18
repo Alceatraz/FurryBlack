@@ -78,7 +78,7 @@ public class Systemd extends Module {
 	private static String MODULE_COMMANDNAME = "systemd";
 	private static String MODULE_DISPLAYNAME = "核心模块";
 	private static String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
-	private static String MODULE_VERSION = "27.1";
+	private static String MODULE_VERSION = "27.3";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -339,17 +339,23 @@ public class Systemd extends Module {
 		}
 
 		while ((line = readerNick.readLine()) != null) {
+
 			if (line.startsWith("#")) { continue; }
 			if (!line.contains(":")) { continue; }
 			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+
 			temp = line.split(":");
+
 			if (temp.length != 3) {
 				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
 				continue;
 			}
+
 			long gropid = Long.parseLong(temp[0]);
 			long userid = Long.parseLong(temp[1]);
+
 			if (this.NICKNAME_MAP.containsKey(gropid)) { this.NICKNAME_MAP.get(gropid).put(userid, temp[2]); }
+
 		}
 
 		readerHelp.close();

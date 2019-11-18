@@ -287,16 +287,19 @@ public class Executor_DEMO extends ModuleExecutor {
 		/**
 		 * 模块应当自己负责计划任务 框架不提供统一的计划任务 必须按照此格式写Worker
 		 */
+
 		@SuppressWarnings("deprecation")
 		@Override
 		public void run() {
 
 			// 成员变量
+
 			long time;
 			Date date;
 
 			// 最外层循环用于处理发生异常时是否继续运行
 			// 休眠被打断会产生InterruptedException
+
 			do {
 
 				try {
@@ -321,9 +324,6 @@ public class Executor_DEMO extends ModuleExecutor {
 						// 转换为毫秒
 						time = time * 1000;
 
-						// 计算以上流程大约为5毫秒 视性能不同时间也不同
-						// time = time - 5;
-
 						// 应当输出log以便于观察定时任务的状况
 						entry.getCQ().logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 休眠：" + time);
 
@@ -340,16 +340,23 @@ public class Executor_DEMO extends ModuleExecutor {
 					}
 
 				} catch (Exception exception) {
+
 					// shut时 应打断休眠此时会产生异常
-					// 如果框架关闭，则并非真的异常 此时将会跳出主循环 结束worker
-					// 如果框架运行中，则遇到了真正意义上的异常，应观察发生了什么
+
 					if (entry.isEnable()) {
+
+						// 如果框架运行中，则遇到了真正意义上的异常，应观察发生了什么
 						entry.getCQ().logWarning(MODULE_PACKAGENAME, "[Executor_DEMO] 异常");
 						exception.printStackTrace();
+
 					} else {
+
+						// 如果框架关闭，则并非真的异常 此时将会跳出主循环 结束worker
 						entry.getCQ().logInfo(MODULE_PACKAGENAME, "[Executor_DEMO] 关闭");
+
 					}
 				}
+
 			} while (entry.isEnable());
 		}
 	}

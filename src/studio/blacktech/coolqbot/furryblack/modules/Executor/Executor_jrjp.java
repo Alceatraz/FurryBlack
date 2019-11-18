@@ -37,7 +37,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "jrjp";
 	private static String MODULE_DISPLAYNAME = "祭祀";
 	private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
-	private static String MODULE_VERSION = "1.1";
+	private static String MODULE_VERSION = "1.2";
 	private static String[] MODULE_USAGE = new String[] {
 			"/jrjp - 查看今日祭品"
 	};
@@ -112,29 +112,44 @@ public class Executor_jrjp extends ModuleExecutor {
 			if (line.startsWith("#")) { continue; }
 			if (!line.contains(":")) { continue; }
 			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+
 			temp = line.split(":");
+
 			if (temp.length != 2) {
-				logger.mini(MODULE_PACKAGENAME, "配置错误 - 不止一个:", line);
-			} else {
-				gropid = Long.parseLong(temp[0]);
-				userid = Long.parseLong(temp[1]);
-				this.IGNORES.get(gropid).add(userid);
-				logger.seek(MODULE_PACKAGENAME, "排除用户", line);
+				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
+				continue;
 			}
+
+			gropid = Long.parseLong(temp[0]);
+			userid = Long.parseLong(temp[1]);
+
+			if (this.IGNORES.containsKey(gropid)) {
+				this.IGNORES.get(gropid).add(userid);
+				logger.seek(MODULE_PACKAGENAME, "排除用户", gropid + " - " + userid);
+			} else {
+				logger.seek(MODULE_PACKAGENAME, "排除用户", "群不存在 " + gropid);
+			}
+
 		}
 
 		reader.close();
 
 		for (Group group : groups) {
+
 			ArrayList<Long> tempMembers = this.MEMBERS.get(group.getId());
 			ArrayList<Long> tempIgnores = this.IGNORES.get(group.getId());
+
 			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
+
 				if (entry.isMyself(member.getQQId())) { continue; }
 				if (tempIgnores.contains(member.getQQId())) { continue; }
+
 				tempMembers.add(member.getQQId());
 			}
+
 			Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(this.random.nextInt(tempMembers.size())));
-			Executor_jrjp.this.AVCODE.put(group.getId(), (long) this.random.nextInt(60000000));
+			Executor_jrjp.this.AVCODE.put(group.getId(), (long) this.random.nextInt(70000000));
+
 		}
 
 		this.ENABLE_USER = false;
@@ -144,16 +159,20 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@Override
 	public void boot(LoggerX logger) throws Exception {
+
 		logger.info(MODULE_PACKAGENAME, "启动工作线程");
 		this.thread = new Thread(new Worker());
 		this.thread.start();
+
 	}
 
 	@Override
 	public void shut(LoggerX logger) throws Exception {
+
 		logger.info(MODULE_PACKAGENAME, "终止工作线程");
 		this.thread.interrupt();
 		this.thread.join();
+
 	}
 
 	@Override
@@ -188,9 +207,11 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+
 		long victim = this.VICTIM.get(gropid);
 		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.AVCODE.get(gropid));
 		return true;
+
 	}
 	// ==========================================================================================================================================================
 	//

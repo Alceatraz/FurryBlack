@@ -37,7 +37,7 @@ public class Executor_chou extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "chou";
 	private static String MODULE_DISPLAYNAME = "随机抽人";
 	private static String MODULE_DESCRIPTION = "从当前群随机选择一个成员";
-	private static String MODULE_VERSION = "6.0";
+	private static String MODULE_VERSION = "6.2";
 	private static String[] MODULE_USAGE = new String[] {
 			"/chou - 随机抽一个人",
 			"/chou 理由 - 以某个理由抽一个人"
@@ -103,7 +103,13 @@ public class Executor_chou extends ModuleExecutor {
 			if (line.startsWith("#")) { continue; }
 			if (!line.contains(":")) { continue; }
 			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+
 			temp = line.split(":");
+
+			if (temp.length != 2) {
+				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
+				continue;
+			}
 
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
