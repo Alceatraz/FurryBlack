@@ -39,7 +39,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 	@Override
 	public String appInfo() {
-		return ICQVer.CQAPIVER + "," + entry.AppID;
+		return ICQVer.CQAPIVER + "," + AppID;
 	}
 
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
@@ -62,7 +62,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// ==========================================================================================================================================================
 
 	// 版本ID
-	public final static String VerID = "12.2 2019-11-18 (20:30)";
+	public final static String VerID = "13.2 2019-11-19 (17:30)";
 
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();
@@ -76,15 +76,15 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// 是否启用DEBUG的开关 启动过程为true 启动完成时改为false 此设计有助于debug和启动时异常排查
 	private static boolean DEBUG = true;
 
-	// conf/ 对象的持有
-	private static File FOLDER_CONF;
-	// data/ 对象的持有
-	private static File FOLDER_DATA;
-	// 日志文件夹
-	private static File FOLDER_LOGS;
-	private static File FILE_LOGGER;
+	private File FOLDER_ROOT;
+//	private File FOLDER_CONF;
+//	private File FOLDER_DATA;
+	private File FOLDER_LOGS;
+	private File FILE_LOGGER;
+
 	// 启动日志
 	private static LoggerX bootLoggerX;
+
 	// Systemd 对象的持有
 	private static Systemd SYSTEMD;
 
@@ -96,8 +96,10 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 	// CQ对象的持有
 	private static CoolQ CQ;
+
 	// 继承自JCQ JcqAbstract包含这个对象
 	private static boolean enable = false;
+
 	// 继承自JCQ JcqAbstract包含这个对象
 	private static String appDirectory;
 
@@ -114,6 +116,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 *
 	 * @param CQ CQ对象
 	 */
+
 	public entry(CoolQ CQ) {
 		super(CQ);
 		entry.CQ = CQ;
@@ -133,65 +136,68 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int enable() {
 
-		entry.bootLoggerX = new LoggerX();
+		bootLoggerX = new LoggerX();
+
+		bootLoggerX.info(LoggerX.datetime());
 
 		try {
 
-			entry.bootLoggerX.info("FurryBlack", "启动", LoggerX.datetime());
+			bootLoggerX.info("Core_Entry", "启动", LoggerX.datetime());
 
 			// ==========================================================================================================================
 			// 获取APP存储目录 继承自JCQ JcqAbstract包含这个对象
 
-			entry.appDirectory = entry.CQ.getAppDirectory();
+			appDirectory = CQ.getAppDirectory();
 
 			// ==========================================================================================================================
-			// 实例化 conf/ 与 data/ 对象
+			// 实例化 data/ logs/ 对象
 
-			entry.FOLDER_CONF = Paths.get(entry.appDirectory, "conf").toFile();
-			entry.FOLDER_DATA = Paths.get(entry.appDirectory, "data").toFile();
-			entry.FOLDER_LOGS = Paths.get(entry.appDirectory, "logs").toFile();
+			this.FOLDER_ROOT = Paths.get(appDirectory, "Core_Entry").toFile();
+//			this.FOLDER_CONF = Paths.get(appDirectory, "Core_Entry", "conf").toFile();
+//			this.FOLDER_DATA = Paths.get(appDirectory, "Core_Entry", "data").toFile();
+			this.FOLDER_LOGS = Paths.get(appDirectory, "Core_Entry", "logs").toFile();
+			this.FILE_LOGGER = Paths.get(appDirectory, "Core_Entry", "logs", LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
 
-			entry.FILE_LOGGER = Paths.get(entry.FOLDER_LOGS.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
+			this.FOLDER_ROOT = Paths.get(entry.getAppDirectory(), "Core_Entry").toFile();
+//			this.FOLDER_CONF = Paths.get(entry.getAppDirectory(), "Core_Entry", "conf").toFile();
+//			this.FOLDER_DATA = Paths.get(entry.getAppDirectory(), "Core_Entry", "data").toFile();
+			this.FOLDER_LOGS = Paths.get(entry.getAppDirectory(), "Core_Entry", "logs").toFile();
 
 			// ==========================================================================================================================
 
-			entry.bootLoggerX.full("FurryBlack", "工作目录", entry.appDirectory);
-			entry.bootLoggerX.full("FurryBlack", "配置文件目录", entry.FOLDER_CONF.getPath());
-			entry.bootLoggerX.full("FurryBlack", "数据文件目录", entry.FOLDER_DATA.getPath());
-			entry.bootLoggerX.full("FurryBlack", "日志文件目录", entry.FOLDER_LOGS.getPath());
+			bootLoggerX.full("Core_Entry", "存储目录", appDirectory);
 
 			// ==========================================================================================================================
 			// 初始化文件夹
 
-			if (!entry.FOLDER_CONF.exists()) { entry.bootLoggerX.seek("FurryBlack", "创建目录", entry.FOLDER_CONF.getName()); entry.FOLDER_CONF.mkdirs(); }
+			if (!this.FOLDER_ROOT.exists()) { bootLoggerX.seek("Core_Entry", "创建目录", this.FOLDER_ROOT.getAbsolutePath()); this.FOLDER_ROOT.mkdirs(); }
+//			if (!this.FOLDER_CONF.exists()) { bootLoggerX.seek("Core_Entry", "创建目录", this.FOLDER_CONF.getAbsolutePath()); this.FOLDER_CONF.mkdirs(); }
+//			if (!this.FOLDER_DATA.exists()) { bootLoggerX.seek("Core_Entry", "创建目录", this.FOLDER_DATA.getAbsolutePath()); this.FOLDER_DATA.mkdirs(); }
+			if (!this.FOLDER_LOGS.exists()) { bootLoggerX.seek("Core_Entry", "创建目录", this.FOLDER_LOGS.getAbsolutePath()); this.FOLDER_LOGS.mkdirs(); }
 
-			if (!entry.FOLDER_DATA.exists()) { entry.bootLoggerX.seek("FurryBlack", "创建目录", entry.FOLDER_DATA.getName()); entry.FOLDER_DATA.mkdirs(); }
-
-			if (!entry.FOLDER_LOGS.exists()) { entry.bootLoggerX.seek("FurryBlack", "创建目录", entry.FOLDER_LOGS.getName()); entry.FOLDER_LOGS.mkdirs(); }
-
-			if (!entry.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + entry.FOLDER_CONF.getAbsolutePath()); }
-			if (!entry.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + entry.FOLDER_DATA.getAbsolutePath()); }
-			if (!entry.FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + entry.FOLDER_LOGS.getAbsolutePath()); }
-
-			// ==========================================================================================================================
-			// 初始化Systemd
-
-			entry.SYSTEMD = new Systemd();
-			entry.SYSTEMD.init(entry.bootLoggerX);
-			entry.SYSTEMD.boot(entry.bootLoggerX);
+			if (!this.FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_ROOT.getAbsolutePath()); }
+//			if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_CONF.getAbsolutePath()); }
+//			if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_DATA.getAbsolutePath()); }
+			if (!this.FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_LOGS.getAbsolutePath()); }
 
 			// ==========================================================================================================================
+			// 初始化 启动 系统
 
-			entry.bootLoggerX.info("FurryBlack", "完成", LoggerX.datetime());
-			entry.bootLoggerX.info("FurryBlack", "耗时", (System.currentTimeMillis() - entry.BOOTTIME) + "ms");
+			SYSTEMD = new Systemd();
+
+			SYSTEMD.init(bootLoggerX);
+			SYSTEMD.boot(bootLoggerX);
 
 			// ==========================================================================================================================
 
-			entry.SYSTEMD.adminInfo(entry.bootLoggerX.make(0));
+			bootLoggerX.info("Core_Entry", "完成", LoggerX.datetime());
+			bootLoggerX.info("Core_Entry", "耗时", (System.currentTimeMillis() - BOOTTIME) + "ms");
 
-			FileWriter writer = new FileWriter(entry.FILE_LOGGER, true);
+			// ==========================================================================================================================
+
+			FileWriter writer = new FileWriter(this.FILE_LOGGER, true);
 			writer.append("Bootup -> ");
-			writer.append(entry.bootLoggerX.make(3));
+			writer.append(bootLoggerX.make(3));
 			writer.append("\n");
 			writer.flush();
 			writer.close();
@@ -199,13 +205,13 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			// ==========================================================================================================================
 			// 启动完成 关闭debug
 			// 启动完成 启动Jcq的开关
-			entry.DEBUG = false;
-			entry.enable = true;
+			DEBUG = false;
+			enable = true;
 
 		} catch (Exception exce) {
 			exce.printStackTrace();
-			entry.enable = false;
-			entry.SYSTEMD.adminInfo(entry.bootLoggerX.make(3));
+			enable = false;
+			SYSTEMD.adminInfo(bootLoggerX.make(3));
 		}
 		return 0;
 	}
@@ -216,21 +222,20 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int disable() {
 		LoggerX logger = new LoggerX();
-		entry.enable = false;
+		enable = false;
 		try {
-			logger.mini(LoggerX.datetime());
-			logger.mini("[FurryBlack] - 保存");
-			entry.SYSTEMD.save(logger);
-			logger.mini("[FurryBlack] - 结束");
-			entry.SYSTEMD.shut(logger);
-			FileWriter writer = new FileWriter(entry.FILE_LOGGER, true);
+			logger.info(LoggerX.datetime());
+			bootLoggerX.info("Core_Entry", "保存", LoggerX.datetime());
+			SYSTEMD.save(logger);
+			bootLoggerX.info("Core_Entry", "关闭", LoggerX.datetime());
+			SYSTEMD.shut(logger);
+			FileWriter writer = new FileWriter(this.FILE_LOGGER, true);
 			writer.append("Shutdown -> ");
 			writer.append(logger.make(3));
-			writer.append("\n");
 			writer.flush();
 			writer.close();
 		} catch (Exception exception) {
-			logger.mini(exception.getMessage());
+			logger.info(exception.getMessage());
 		}
 		return 0;
 	}
@@ -255,7 +260,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int privateMsg(int typeid, int messageid, long userid, String message, int messagefont) {
 		try {
-			entry.SYSTEMD.doUserMessage(typeid, userid, new MessageUser(typeid, userid, message, messageid, messagefont), messageid, messagefont);
+			SYSTEMD.doUserMessage(typeid, userid, new MessageUser(typeid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			StringBuilder builder = new StringBuilder();
@@ -270,7 +275,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			for (StackTraceElement temp : exception.getStackTrace()) {
 				builder.append("        at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 			}
-			entry.SYSTEMD.adminInfo(builder.toString());
+			SYSTEMD.adminInfo(builder.toString());
 			System.out.println(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
@@ -282,7 +287,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int discussMsg(int typeid, int messageid, long diszid, long userid, String message, int messagefont) {
 		try {
-			entry.SYSTEMD.doDiszMessage(diszid, userid, new MessageDisz(diszid, userid, message, messageid, messagefont), messageid, messagefont);
+			SYSTEMD.doDiszMessage(diszid, userid, new MessageDisz(diszid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			StringBuilder builder = new StringBuilder();
@@ -298,7 +303,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			for (StackTraceElement temp : exception.getStackTrace()) {
 				builder.append("        at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 			}
-			entry.SYSTEMD.adminInfo(builder.toString());
+			SYSTEMD.adminInfo(builder.toString());
 			System.out.println(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
@@ -310,7 +315,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
 		try {
-			entry.SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
+			SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			StringBuilder builder = new StringBuilder();
@@ -326,7 +331,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			for (StackTraceElement temp : exception.getStackTrace()) {
 				builder.append("        at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 			}
-			entry.SYSTEMD.adminInfo(builder.toString());
+			SYSTEMD.adminInfo(builder.toString());
 			System.out.println(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
@@ -347,10 +352,10 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		builder.append("[成员增加] - " + LoggerX.time() + "\r\n");
 		builder.append("类型：" + (typeid == 1 ? "自主申请" : "邀请进群") + "\r\n");
 		builder.append("群聊ID：" + gropid + "\r\n");
-		builder.append("管理ID：" + operid + "(" + entry.SYSTEMD.getNickname(operid) + ")" + "\r\n");
-		builder.append("用户ID：" + userid + "(" + entry.SYSTEMD.getNickname(userid) + ")" + "\r\n");
+		builder.append("管理ID：" + operid + "(" + SYSTEMD.getNickname(operid) + ")" + "\r\n");
+		builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")" + "\r\n");
 		try {
-			entry.SYSTEMD.groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
+			SYSTEMD.groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			builder.append("[发生异常]\r\n");
@@ -362,7 +367,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			}
 		} finally {
 			System.out.println(builder.toString());
-			entry.SYSTEMD.adminInfo(builder.toString());
+			SYSTEMD.adminInfo(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -376,10 +381,10 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		builder.append("[成员减少] - " + LoggerX.time() + "\r\n");
 		builder.append("类型：" + (typeid == 1 ? "自主退群" : "管理踢出") + "\r\n");
 		builder.append("群聊ID：" + gropid + "\r\n");
-		builder.append("管理ID：" + operid + "(" + entry.SYSTEMD.getNickname(operid) + ")" + "\r\n");
-		builder.append("用户ID：" + userid + "(" + entry.SYSTEMD.getNickname(userid) + ")" + "\r\n");
+		builder.append("管理ID：" + operid + "(" + SYSTEMD.getNickname(operid) + ")" + "\r\n");
+		builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")" + "\r\n");
 		try {
-			entry.SYSTEMD.groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
+			SYSTEMD.groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			builder.append("[发生异常]\r\n");
@@ -391,7 +396,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			}
 		} finally {
 			System.out.println(builder.toString());
-			entry.SYSTEMD.adminInfo(builder.toString());
+			SYSTEMD.adminInfo(builder.toString());
 		}
 		return IMsg.MSG_IGNORE;
 	}
@@ -415,12 +420,12 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	}
 
 	private void sendFriendAddMessage(long userid) {
-		entry.SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
-		entry.SYSTEMD.sendEula(userid);
-		entry.SYSTEMD.sendHelp(userid);
-		entry.SYSTEMD.sendListUser(userid);
-		entry.SYSTEMD.sendListDisz(userid);
-		entry.SYSTEMD.sendListGrop(userid);
+		SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
+		SYSTEMD.sendEula(userid);
+		SYSTEMD.sendHelp(userid);
+		SYSTEMD.sendListUser(userid);
+		SYSTEMD.sendListDisz(userid);
+		SYSTEMD.sendListGrop(userid);
 	}
 
 	/**
@@ -430,11 +435,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public int requestAddFriend(int typeid, int sendtime, long userid, String message, String flag) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[添加好友请求] - " + LoggerX.time() + "\r\n");
-		builder.append("用户ID：" + userid + "(" + entry.SYSTEMD.getNickname(userid) + ")\r\n");
+		builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")\r\n");
 		builder.append("请求时间：" + sendtime + "\r\n");
 		builder.append("验证消息：" + message + "\r\n");
-		entry.SYSTEMD.adminInfo(builder.toString());
-		entry.CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, String.valueOf(userid));
+		SYSTEMD.adminInfo(builder.toString());
+		CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, String.valueOf(userid));
 		return 0;
 	}
 
@@ -448,21 +453,21 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		case 1:
 			builder.append("[申请入群] - " + LoggerX.time() + "\r\n");
 			builder.append("群聊ID：" + gropid + "\r\n");
-			builder.append("用户ID：" + userid + "(" + entry.SYSTEMD.getNickname(userid) + ")\r\n");
+			builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")\r\n");
 			builder.append("请求时间：" + sendtime + "\r\n");
 			builder.append("验证消息：" + (message.length() == 0 ? "无" : message));
 			break;
 		case 2:
 			builder.append("[邀请入群] - " + LoggerX.time() + "\r\n");
 			builder.append("群聊ID：" + gropid + "\r\n");
-			builder.append("用户ID：" + userid + "(" + entry.SYSTEMD.getNickname(userid) + ")\r\n");
+			builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")\r\n");
 			builder.append("请求时间：" + sendtime + "\r\n");
 			builder.append("验证消息：" + (message.length() == 0 ? "无" : message));
-			entry.CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
+			CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
 			break;
 		}
 
-		entry.SYSTEMD.adminInfo(builder.toString());
+		SYSTEMD.adminInfo(builder.toString());
 		return 0;
 	}
 
@@ -477,10 +482,10 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		builder.append(typeid == 1 ? "解禁]" : "禁言]");
 		builder.append(LoggerX.time() + "\r\n");
 		builder.append("群聊ID：" + gropid + "\r\n");
-		builder.append("管理ID：" + operid + "(" + entry.SYSTEMD.getNickname(operid) + ")\r\n");
-		if (userid != 0) { builder.append("用户ID：" + userid + "(" + entry.SYSTEMD.getNickname(userid) + ")\r\n"); }
+		builder.append("管理ID：" + operid + "(" + SYSTEMD.getNickname(operid) + ")\r\n");
+		if (userid != 0) { builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")\r\n"); }
 		if (userid != 1) { builder.append("时间：" + duration); }
-		entry.SYSTEMD.adminInfo(builder.toString());
+		SYSTEMD.adminInfo(builder.toString());
 		return 0;
 	}
 
@@ -502,8 +507,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		builder.append(typeid == 1 ? "解除" : "任命");
 		builder.append("管理] - " + LoggerX.time() + "\r\n");
 		builder.append("群聊ID：" + gropid + "\r\n");
-		builder.append("用户ID：" + userid + "(" + entry.SYSTEMD.getNickname(userid) + ")\r\n");
-		entry.SYSTEMD.adminInfo(builder.toString());
+		builder.append("用户ID：" + userid + "(" + SYSTEMD.getNickname(userid) + ")\r\n");
+		SYSTEMD.adminInfo(builder.toString());
 		return 0;
 	}
 
@@ -514,30 +519,12 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// ==========================================================================================================================================================
 
 	/**
-	 * 获取配置文件根目录
-	 *
-	 * @return 配置文件根目录
-	 */
-	public static File FOLDER_CONF() {
-		return entry.FOLDER_CONF;
-	}
-
-	/**
-	 * 获取数据文件根目录
-	 *
-	 * @return 数据文件根目录
-	 */
-	public static File FOLDER_DATA() {
-		return entry.FOLDER_DATA;
-	}
-
-	/**
 	 * 获取Systemd对象
 	 *
 	 * @return Systemd对象
 	 */
 	public static Systemd getSystemd() {
-		return entry.SYSTEMD;
+		return SYSTEMD;
 	}
 
 	/**
@@ -546,8 +533,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 是否开启DEBUG模式
 	 */
 	public static boolean switchDEBUG() {
-		entry.DEBUG = !entry.DEBUG;
-		return entry.DEBUG;
+		DEBUG = !DEBUG;
+		return DEBUG;
 	}
 
 	/**
@@ -556,7 +543,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 是否开启DEBUG模式
 	 */
 	public static boolean DEBUG() {
-		return entry.DEBUG;
+		return DEBUG;
 	}
 
 	/**
@@ -566,7 +553,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 启动日志
 	 */
 	public static String getBootLogger(int level) {
-		return entry.bootLoggerX.make(level);
+		return bootLoggerX.make(level);
 	}
 
 	/**
@@ -575,7 +562,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 开 / 关
 	 */
 	public static boolean isEnable() {
-		return entry.enable;
+		return enable;
 	}
 
 	/**
@@ -584,7 +571,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param mode 开 / 关
 	 */
 	public static void setEnable(boolean mode) {
-		entry.enable = mode;
+		enable = mode;
 	}
 
 	/**
@@ -593,7 +580,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return CQ对象
 	 */
 	public static CoolQ getCQ() {
-		return entry.CQ;
+		return CQ;
 	}
 
 	/**
@@ -602,7 +589,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 存储路径
 	 */
 	public static String getAppDirectory() {
-		return entry.appDirectory;
+		return appDirectory;
 	}
 
 	// ==========================================================================================================================================================
@@ -618,7 +605,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 是 / 否
 	 */
 	public static boolean isMyself(long userid) {
-		return entry.SYSTEMD.isMyself(userid);
+		return SYSTEMD.isMyself(userid);
 	}
 
 	/**
@@ -628,7 +615,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 是 / 否
 	 */
 	public static boolean isAdmin(long userid) {
-		return entry.SYSTEMD.isAdmin(userid);
+		return SYSTEMD.isAdmin(userid);
 	}
 
 	/**
@@ -637,7 +624,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void adminInfo(String message) {
-		entry.SYSTEMD.adminInfo(message);
+		SYSTEMD.adminInfo(message);
 	}
 
 	/**
@@ -646,7 +633,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void adminInfo(String[] message) {
-		entry.SYSTEMD.adminInfo(message);
+		SYSTEMD.adminInfo(message);
 	}
 
 	/**
@@ -656,7 +643,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void userInfo(long userid, String message) {
-		entry.SYSTEMD.userInfo(userid, message);
+		SYSTEMD.userInfo(userid, message);
 	}
 
 	/**
@@ -666,7 +653,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void userInfo(long userid, String[] message) {
-		entry.SYSTEMD.userInfo(userid, message);
+		SYSTEMD.userInfo(userid, message);
 	}
 
 	/**
@@ -676,7 +663,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void diszInfo(long diszid, String message) {
-		entry.SYSTEMD.diszInfo(diszid, message);
+		SYSTEMD.diszInfo(diszid, message);
 	}
 
 	/**
@@ -686,7 +673,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void diszInfo(long diszid, String[] message) {
-		entry.SYSTEMD.diszInfo(diszid, message);
+		SYSTEMD.diszInfo(diszid, message);
 	}
 
 	/**
@@ -697,7 +684,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void diszInfo(long diszid, long userid, String message) {
-		entry.SYSTEMD.diszInfo(diszid, userid, message);
+		SYSTEMD.diszInfo(diszid, userid, message);
 	}
 
 	/**
@@ -707,7 +694,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void gropInfo(long gropid, String message) {
-		entry.SYSTEMD.gropInfo(gropid, message);
+		SYSTEMD.gropInfo(gropid, message);
 	}
 
 	/**
@@ -717,7 +704,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void gropInfo(long gropid, String[] message) {
-		entry.SYSTEMD.gropInfo(gropid, message);
+		SYSTEMD.gropInfo(gropid, message);
 	}
 
 	/**
@@ -728,7 +715,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void gropInfo(long gropid, long userid, String message) {
-		entry.SYSTEMD.gropInfo(gropid, userid, message);
+		SYSTEMD.gropInfo(gropid, userid, message);
 	}
 
 	/**
@@ -737,7 +724,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendInfo(long userid) {
-		entry.SYSTEMD.sendInfo(userid);
+		SYSTEMD.sendInfo(userid);
 	}
 
 	/**
@@ -746,7 +733,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendEula(long userid) {
-		entry.SYSTEMD.sendEula(userid);
+		SYSTEMD.sendEula(userid);
 	}
 
 	/**
@@ -755,7 +742,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendHelp(long userid) {
-		entry.SYSTEMD.sendHelp(userid);
+		SYSTEMD.sendHelp(userid);
 	}
 
 	/**
@@ -765,7 +752,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param name   模块名
 	 */
 	public static void sendHelp(long userid, String name) {
-		entry.SYSTEMD.sendHelp(userid, name);
+		SYSTEMD.sendHelp(userid, name);
 	}
 
 	/**
@@ -774,7 +761,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendListUser(long userid) {
-		entry.SYSTEMD.sendListUser(userid);
+		SYSTEMD.sendListUser(userid);
 	}
 
 	/**
@@ -783,7 +770,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendListDisz(long userid) {
-		entry.SYSTEMD.sendListDisz(userid);
+		SYSTEMD.sendListDisz(userid);
 	}
 
 	/**
@@ -792,7 +779,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendListGrop(long userid) {
-		entry.SYSTEMD.sendListGrop(userid);
+		SYSTEMD.sendListGrop(userid);
 	}
 
 	/**
@@ -802,7 +789,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 昵称
 	 */
 	public static String getNickname(long userid) {
-		return entry.SYSTEMD.getNickname(userid);
+		return SYSTEMD.getNickname(userid);
 	}
 
 	/**
@@ -813,7 +800,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 昵称
 	 */
 	public static String getGropnick(long gropid, long userid) {
-		return entry.SYSTEMD.getGropnick(gropid, userid);
+		return SYSTEMD.getGropnick(gropid, userid);
 	}
 
 	/**
@@ -823,7 +810,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 实例
 	 */
 	public static ModuleScheduler getScheduler(String name) {
-		return entry.SYSTEMD.getScheduler(name);
+		return SYSTEMD.getScheduler(name);
 	}
 
 	/**
@@ -833,7 +820,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 实例
 	 */
 	public static ModuleTrigger getTrigger(String name) {
-		return entry.SYSTEMD.getTrigger(name);
+		return SYSTEMD.getTrigger(name);
 	}
 
 	/**
@@ -843,7 +830,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 实例
 	 */
 	public static ModuleListener getListener(String name) {
-		return entry.SYSTEMD.getListener(name);
+		return SYSTEMD.getListener(name);
 	}
 
 	/**
@@ -853,7 +840,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 实例
 	 */
 	public static ModuleExecutor getExecutor(String name) {
-		return entry.SYSTEMD.getExecutor(name);
+		return SYSTEMD.getExecutor(name);
 	}
 
 }

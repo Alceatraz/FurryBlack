@@ -52,17 +52,17 @@ public class Executor_acon extends ModuleExecutor {
 		// @formatter:off
 
 		super(
-			MODULE_PACKAGENAME,
-			MODULE_COMMANDNAME,
-			MODULE_DISPLAYNAME,
-			MODULE_DESCRIPTION,
-			MODULE_VERSION,
-			MODULE_USAGE,
-			MODULE_PRIVACY_STORED,
-			MODULE_PRIVACY_CACHED,
-			MODULE_PRIVACY_OBTAIN
-		);
-		
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
 		// @formatter:on
 
 	}
@@ -123,18 +123,20 @@ public class Executor_acon extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
-		long current = System.currentTimeMillis() / 1000;
-		long elapse = 0L;
+		long currentTime = System.currentTimeMillis() / 1000;
+		long elapseTime = 0L;
 
-		if (!this.CONSUMPTION.containsKey(gropid)) { this.CONSUMPTION.put(gropid, BigInteger.ZERO); this.LASTCHANGED.put(gropid, current); this.WORKINGMODE.put(gropid, 0L); }
+		if (!this.CONSUMPTION.containsKey(gropid)) { this.CONSUMPTION.put(gropid, BigInteger.ZERO); this.LASTCHANGED.put(gropid, currentTime); this.WORKINGMODE.put(gropid, 0L); }
 
 		if (message.getSection() > 0) {
 
-			BigInteger consumption = this.CONSUMPTION.get(gropid);
-			long lastchanged = this.LASTCHANGED.get(gropid);
+			BigInteger powerConsumption = this.CONSUMPTION.get(gropid);
+			long lastChangModeTime = this.LASTCHANGED.get(gropid);
 			long workingmode = this.WORKINGMODE.get(gropid);
 
-			elapse = current - lastchanged;
+			elapseTime = currentTime - lastChangModeTime;
+
+			boolean isChangeMode = true;
 
 			switch (message.getSegment()[0]) {
 
@@ -159,12 +161,12 @@ public class Executor_acon extends ModuleExecutor {
 				break;
 
 			case "cool":
-				entry.gropInfo(gropid, "切换至制冷模式 20°");
+				entry.gropInfo(gropid, "切换至制冷模式 26.5°");
 				this.WORKINGMODE.put(gropid, 7350L);
 				break;
 
 			case "warm":
-				entry.gropInfo(gropid, "切换至制热模式 23°");
+				entry.gropInfo(gropid, "切换至制热模式 25.5°");
 				this.WORKINGMODE.put(gropid, 7350L);
 				break;
 
@@ -249,15 +251,20 @@ public class Executor_acon extends ModuleExecutor {
 				break;
 
 			case "cost":
+
+				powerConsumption = powerConsumption.add(BigInteger.valueOf(elapseTime * workingmode));
+
+				isChangeMode = false;
+
 				// @formatter:off
-				entry.gropInfo(gropid,
-						String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元",
-								consumption.divide(BigInteger.valueOf(1000)).toString(),
-								consumption.divide(BigInteger.valueOf(3600000L)).toString(),
-								consumption.divide(BigInteger.valueOf(1936800L)).toString()
-								)
-						);
+				entry.gropInfo(gropid, String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元",
+						powerConsumption.divide(BigInteger.valueOf(1000)).toString(),
+						powerConsumption.divide(BigInteger.valueOf(3600000L)).toString(),
+						powerConsumption.divide(BigInteger.valueOf(1936800L)).toString()
+						));
+
 				// @formatter:on
+
 				break;
 
 			default:
@@ -265,10 +272,10 @@ public class Executor_acon extends ModuleExecutor {
 
 			}
 
-			consumption = consumption.add(BigInteger.valueOf(elapse * workingmode));
+			if (isChangeMode) { powerConsumption = powerConsumption.add(BigInteger.valueOf(elapseTime * workingmode)); }
 
-			this.CONSUMPTION.put(gropid, consumption);
-			this.LASTCHANGED.put(gropid, current);
+			this.CONSUMPTION.put(gropid, powerConsumption);
+			this.LASTCHANGED.put(gropid, currentTime);
 
 		}
 

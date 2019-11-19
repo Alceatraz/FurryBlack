@@ -149,11 +149,12 @@ public class Systemd extends Module {
 	private TreeMap<String, ModuleExecutor> EXECUTOR_GROP;
 
 	private File FILE_NICKNAME_MAP;
-	private File FILE_NICKNAME_LOG;
 	private File FILE_MESSAGE_HELP;
 	private File FILE_MESSAGE_INFO;
 	private File FILE_MESSAGE_EULA;
 	private File FILE_SILENCE_GROP;
+
+	private File FILE_MEMBERCHANGE;
 
 	private String MESSAGE_HELP = "";
 	private String MESSAGE_INFO = "";
@@ -180,17 +181,17 @@ public class Systemd extends Module {
 		// @formatter:off
 
 		super(
-			MODULE_PACKAGENAME,
-			MODULE_COMMANDNAME,
-			MODULE_DISPLAYNAME,
-			MODULE_DESCRIPTION,
-			MODULE_VERSION,
-			MODULE_USAGE,
-			MODULE_PRIVACY_STORED,
-			MODULE_PRIVACY_CACHED,
-			MODULE_PRIVACY_OBTAIN
-		);
-		
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
 		// @formatter:on
 
 	}
@@ -214,9 +215,9 @@ public class Systemd extends Module {
 		// 初始化目录
 		// =======================================================================================================================
 
-		this.initConfFolder();
-		this.initDataFolder();
-		this.initCofigurtion();
+		this.initAppFolder(logger);
+		this.initConfFolder(logger);
+		this.initLogsFolder(logger);
 
 		// =======================================================================================================================
 		// 初始化内存结构
@@ -284,18 +285,20 @@ public class Systemd extends Module {
 		// =======================================================================================================================
 
 		this.FILE_SILENCE_GROP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config_mute.txt").toFile();
-		this.FILE_NICKNAME_LOG = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "config_nicklog.txt").toFile();
-		this.FILE_NICKNAME_MAP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config_nickmap.txt").toFile();
+		this.FILE_NICKNAME_MAP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "nickmap_grop.txt").toFile();
 		this.FILE_MESSAGE_HELP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_help.txt").toFile();
 		this.FILE_MESSAGE_INFO = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_info.txt").toFile();
 		this.FILE_MESSAGE_EULA = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_eula.txt").toFile();
 
-		if (!this.FILE_SILENCE_GROP.exists()) { if (!this.FILE_SILENCE_GROP.createNewFile()) { throw new InitializationException("无法创建文件mute.txt"); } }
-		if (!this.FILE_NICKNAME_MAP.exists()) { if (!this.FILE_NICKNAME_MAP.createNewFile()) { throw new InitializationException("无法创建文件config_nickmap.txt"); } }
-		if (!this.FILE_NICKNAME_LOG.exists()) { if (!this.FILE_NICKNAME_LOG.createNewFile()) { throw new InitializationException("无法创建文件config_nicklog.txt"); } }
+		this.FILE_MEMBERCHANGE = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "member_change.txt").toFile();
+
+		if (!this.FILE_SILENCE_GROP.exists()) { if (!this.FILE_SILENCE_GROP.createNewFile()) { throw new InitializationException("无法创建文件config_mute.txt"); } }
+		if (!this.FILE_NICKNAME_MAP.exists()) { if (!this.FILE_NICKNAME_MAP.createNewFile()) { throw new InitializationException("无法创建文件nickmap_grop.txt"); } }
 		if (!this.FILE_MESSAGE_HELP.exists()) { if (!this.FILE_MESSAGE_HELP.createNewFile()) { throw new InitializationException("无法创建文件message_help.txt"); } }
 		if (!this.FILE_MESSAGE_INFO.exists()) { if (!this.FILE_MESSAGE_INFO.createNewFile()) { throw new InitializationException("无法创建文件message_info.txt"); } }
 		if (!this.FILE_MESSAGE_EULA.exists()) { if (!this.FILE_MESSAGE_EULA.createNewFile()) { throw new InitializationException("无法创建文件message_eula.txt"); } }
+
+		if (!this.FILE_MEMBERCHANGE.exists()) { if (!this.FILE_MEMBERCHANGE.createNewFile()) { throw new InitializationException("无法创建文件member_change.txt"); } }
 
 		String line;
 		String[] temp;
@@ -311,21 +314,24 @@ public class Systemd extends Module {
 		while ((line = readerHelp.readLine()) != null) {
 			builder.append(line + "\r\n");
 		}
+
 		builder.setLength(builder.length() - 2);
 		this.MESSAGE_HELP = builder.toString();
-
 		builder = new StringBuilder();
+
 		while ((line = readerInfo.readLine()) != null) {
 			builder.append(line + "\r\n");
 			this.MESSAGE_INFO = this.MESSAGE_INFO + line + "\r\n";
 		}
+
 		builder.setLength(builder.length() - 2);
 		this.MESSAGE_INFO = builder.toString();
-
 		builder = new StringBuilder();
+
 		while ((line = readerEula.readLine()) != null) {
 			builder.append(line + "\r\n");
 		}
+
 		builder.setLength(builder.length() - 2);
 		this.MESSAGE_EULA = builder.toString();
 
@@ -765,6 +771,57 @@ public class Systemd extends Module {
 	 * 你永远不应该执行这个方法
 	 */
 	@Override
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+
+		String module = message.getSwitch("module");
+
+		if (module == null) { logger.info("参数错误 --module 为空"); return logger; }
+
+		logger.info(LoggerX.datetime());
+		logger.info(MODULE_PACKAGENAME, "指定模块名", module);
+
+		if (module.equals("systemd")) {
+
+			logger.info("systemd", message.getOptions());
+
+		} else if (this.SCHEDULER_INSTANCE.containsKey(module)) {
+
+			ModuleScheduler instance = this.SCHEDULER_INSTANCE.get(module);
+			logger.info(MODULE_PACKAGENAME, "查找到定时器", instance.MODULE_PACKAGENAME());
+			instance.exec(logger, message);
+
+		} else if (this.TRIGGER_INSTANCE.containsKey(module)) {
+
+			ModuleTrigger instance = this.TRIGGER_INSTANCE.get(module);
+			logger.info(MODULE_PACKAGENAME, "查找到触发器", instance.MODULE_PACKAGENAME());
+			instance.exec(logger, message);
+
+		} else if (this.LISTENER_INSTANCE.containsKey(module)) {
+
+			ModuleListener instance = this.LISTENER_INSTANCE.get(module);
+			logger.info(MODULE_PACKAGENAME, "查找到监听器", instance.MODULE_PACKAGENAME());
+			instance.exec(logger, message);
+
+		} else if (this.EXECUTOR_INSTANCE.containsKey(module)) {
+
+			ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(module);
+			logger.info(MODULE_PACKAGENAME, "查找到执行器", instance.MODULE_PACKAGENAME());
+			instance.exec(logger, message);
+
+		} else {
+
+			logger.mini("模块不存在");
+
+		}
+
+		return logger;
+
+	}
+
+	/**
+	 * 你永远不应该执行这个方法
+	 */
+	@Override
 	public LoggerX shut(LoggerX logger) throws Exception {
 
 		// =======================================================================================================================
@@ -803,42 +860,6 @@ public class Systemd extends Module {
 
 	}
 
-	/**
-	 * 你永远不应该执行这个方法
-	 */
-	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-
-		logger.info(LoggerX.datetime());
-
-		String module = message.getSwitch("module");
-
-		if (module == null) { logger.info("参数错误 --module 为空"); return logger; }
-
-		// /admin exec --mode=systemd
-
-		if (module.equals("systemd")) {
-			logger.info("systemd", message.getOptions());
-		} else if (this.SCHEDULER_INSTANCE.containsKey(module)) {
-			logger.info("定时器", module);
-			this.SCHEDULER_INSTANCE.get(module).exec(logger, message);
-		} else if (this.TRIGGER_INSTANCE.containsKey(module)) {
-			logger.info("触发器", module);
-			this.TRIGGER_INSTANCE.get(module).exec(logger, message);
-		} else if (this.LISTENER_INSTANCE.containsKey(module)) {
-			logger.info("监听器", module);
-			this.LISTENER_INSTANCE.get(module).exec(logger, message);
-		} else if (this.EXECUTOR_INSTANCE.containsKey(module)) {
-			logger.info("执行器", module);
-			this.EXECUTOR_INSTANCE.get(module).exec(logger, message);
-		} else {
-			logger.mini("模块不存在");
-		}
-
-		return logger;
-
-	}
-
 	// ==========================================================================================================================================================
 	//
 	// 事件处理
@@ -851,7 +872,7 @@ public class Systemd extends Module {
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 
-		FileWriter writer = new FileWriter(this.FILE_NICKNAME_LOG, true);
+		FileWriter writer = new FileWriter(this.FILE_MEMBERCHANGE, true);
 
 		if (this.isMyself(userid)) {
 
@@ -1239,7 +1260,7 @@ public class Systemd extends Module {
 
 			break;
 
-		// 模式10 - 模块简报 如不包含 module 开关 则生成所有模块的简报
+			// 模式10 - 模块简报 如不包含 module 开关 则生成所有模块的简报
 		case 0x0A:
 
 			boolean hasModule = message.hasSwitch("module");

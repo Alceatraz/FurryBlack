@@ -75,17 +75,17 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		// @formatter:off
 
 		super(
-			MODULE_PACKAGENAME,
-			MODULE_COMMANDNAME,
-			MODULE_DISPLAYNAME,
-			MODULE_DESCRIPTION,
-			MODULE_VERSION,
-			MODULE_USAGE,
-			MODULE_PRIVACY_STORED,
-			MODULE_PRIVACY_CACHED,
-			MODULE_PRIVACY_OBTAIN
-		);
-		
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
 		// @formatter:on
 
 	}
@@ -93,9 +93,9 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	@Override
 	public LoggerX init(LoggerX logger) throws Exception {
 
-		this.initConfFolder();
-		this.initDataFolder();
-		this.initCofigurtion();
+		this.initAppFolder(logger);
+		this.initConfFolder(logger);
+		this.initLogsFolder(logger);
 
 		this.USER_IGNORE = new HashSet<>(100);
 		this.DISZ_IGNORE = new HashSet<>();
@@ -119,9 +119,9 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		this.FILE_DISZIGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_disz.txt").toFile();
 		this.FILE_GROPIGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_grop.txt").toFile();
 
-		this.FILE_DENY_USER = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "ignore_user_log.txt").toFile();
-		this.FILE_DENY_DISZ = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "ignore_disz_log.txt").toFile();
-		this.FILE_DENY_GROP = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "ignore_grop_log.txt").toFile();
+		this.FILE_DENY_USER = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "ignore_user_log.txt").toFile();
+		this.FILE_DENY_DISZ = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "ignore_disz_log.txt").toFile();
+		this.FILE_DENY_GROP = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "ignore_grop_log.txt").toFile();
 
 		if (!this.FILE_USERIGNORE.exists()) { this.FILE_USERIGNORE.createNewFile(); }
 		if (!this.FILE_DISZIGNORE.exists()) { this.FILE_DISZIGNORE.createNewFile(); }

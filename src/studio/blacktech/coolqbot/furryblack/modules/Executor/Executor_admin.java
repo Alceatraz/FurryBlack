@@ -48,26 +48,28 @@ public class Executor_admin extends ModuleExecutor {
 		// @formatter:off
 
 		super(
-			MODULE_PACKAGENAME,
-			MODULE_COMMANDNAME,
-			MODULE_DISPLAYNAME,
-			MODULE_DESCRIPTION,
-			MODULE_VERSION,
-			MODULE_USAGE,
-			MODULE_PRIVACY_STORED,
-			MODULE_PRIVACY_CACHED,
-			MODULE_PRIVACY_OBTAIN
-		);
-		
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
 		// @formatter:on
 
 	}
 
 	@Override
 	public LoggerX init(LoggerX logger) throws Exception {
+
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;
 		this.ENABLE_GROP = true;
+
 		return logger;
 	}
 
@@ -101,7 +103,9 @@ public class Executor_admin extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+
 		if (entry.isAdmin(userid)) {
+
 			if (message.getSection() == 0) {
 				entry.adminInfo(entry.getSystemd().generateReport(0, message, null, null));
 			} else {
@@ -117,10 +121,14 @@ public class Executor_admin extends ModuleExecutor {
 					break;
 				}
 			}
+
 			return true;
+
 		} else {
+
 			entry.userInfo(userid, "你不是我的Master");
 			return false;
+
 		}
 	}
 

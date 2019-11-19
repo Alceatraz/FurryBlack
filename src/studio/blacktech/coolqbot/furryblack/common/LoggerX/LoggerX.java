@@ -24,10 +24,10 @@ public class LoggerX {
 		this.builder_seek = new StringBuilder();
 		this.builder_full = new StringBuilder();
 
-		this.builder_mini.append(LoggerX.datetime());
-		this.builder_info.append(LoggerX.datetime());
-		this.builder_seek.append(LoggerX.datetime());
-		this.builder_full.append(LoggerX.datetime());
+		// this.builder_mini.append(LoggerX.datetime());
+		// this.builder_info.append(LoggerX.datetime());
+		// this.builder_seek.append(LoggerX.datetime());
+		// this.builder_full.append(LoggerX.datetime());
 
 		this.builder_mini.append("\r\n");
 		this.builder_info.append("\r\n");

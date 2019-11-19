@@ -4,8 +4,8 @@ public class CantReinitializationException extends InitializationException {
 
 	private static final long serialVersionUID = 1L;
 
-	public CantReinitializationException(String string) {
-		super(string);
+	public CantReinitializationException(String message) {
+		super(message);
 	}
 
 }

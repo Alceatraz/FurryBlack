@@ -71,17 +71,17 @@ public class Executor_jrjp extends ModuleExecutor {
 		// @formatter:off
 
 		super(
-			MODULE_PACKAGENAME,
-			MODULE_COMMANDNAME,
-			MODULE_DISPLAYNAME,
-			MODULE_DESCRIPTION,
-			MODULE_VERSION,
-			MODULE_USAGE,
-			MODULE_PRIVACY_STORED,
-			MODULE_PRIVACY_CACHED,
-			MODULE_PRIVACY_OBTAIN
-		);
-		
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
 		// @formatter:on
 
 	}
@@ -89,7 +89,8 @@ public class Executor_jrjp extends ModuleExecutor {
 	@Override
 	public LoggerX init(LoggerX logger) throws Exception {
 
-		this.initConfFolder();
+		this.initAppFolder(logger);
+		this.initConfFolder(logger);
 
 		this.AVCODE = new HashMap<>();
 		this.VICTIM = new HashMap<>();

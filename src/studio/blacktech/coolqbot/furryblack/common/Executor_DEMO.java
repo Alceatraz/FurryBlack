@@ -95,7 +95,23 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * @throws Exception 发生任何错误应扔出
 	 */
 	public Executor_DEMO() throws Exception {
-		super(Executor_DEMO.MODULE_PACKAGENAME, Executor_DEMO.MODULE_COMMANDNAME, Executor_DEMO.MODULE_DISPLAYNAME, Executor_DEMO.MODULE_DESCRIPTION, Executor_DEMO.MODULE_VERSION, Executor_DEMO.MODULE_USAGE, Executor_DEMO.MODULE_PRIVACY_STORED, Executor_DEMO.MODULE_PRIVACY_CACHED, Executor_DEMO.MODULE_PRIVACY_OBTAIN);
+
+		// @formatter:off
+
+		super(
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
+		// @formatter:on
+
 	}
 
 	/**
@@ -109,14 +125,11 @@ public class Executor_DEMO extends ModuleExecutor {
 		// ==================================================================================
 		// 1：初始化配置及数据文件
 
-		// 在系统配置文件夹 内确保MODULE_PACKAGENAME文件夹存在 即FOLDER_CONF对象
-		this.initConfFolder();
-
-		// 在系统数据文件夹 内确保MODULE_PACKAGENAME文件夹存在 即FOLDER_DATA对象
-		this.initDataFolder();
-
-		// 在模块配置文件夹 内确保config.properties文件存在 同时初始化FILE_CONFIG对象
-		this.initCofigurtion();
+		this.initAppFolder(logger);
+		this.initConfFolder(logger);
+		this.initDataFolder(logger);
+		this.initLogsFolder(logger);
+		this.initPropertiesConfigurtion(logger);
 
 		// ==================================================================================
 		// 2：生成所有内存结构
@@ -124,7 +137,7 @@ public class Executor_DEMO extends ModuleExecutor {
 
 		this.MAP = new HashMap<>();
 
-		// 关于文件路径：应使用Paths工具类以及内置的 FOLDER_CONF FOLDER_DATA 来表示文件
+		// 关于文件路径：应使用Paths工具类以及内置的 FOLDER_CONF FOLDER_DATA FOLDER_LOGS来表示文件
 		this.FILE_CUSTOM = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "custom.txt").toFile();
 
 		if (!this.FILE_CUSTOM.exists()) { this.FILE_CUSTOM.createNewFile(); }
@@ -312,17 +325,17 @@ public class Executor_DEMO extends ModuleExecutor {
 						time = time * 1000;
 
 						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(Executor_DEMO.MODULE_PACKAGENAME, "休眠：" + time);
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time);
 
 						Thread.sleep(time);
 
 						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(Executor_DEMO.MODULE_PACKAGENAME, "执行");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行");
 
 						// 此处执行实际任务
 
 						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(Executor_DEMO.MODULE_PACKAGENAME, "结果");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果");
 
 					}
 
@@ -333,13 +346,13 @@ public class Executor_DEMO extends ModuleExecutor {
 					if (entry.isEnable()) {
 
 						// 如果框架运行中，则遇到了真正意义上的异常，应观察发生了什么
-						entry.getCQ().logWarning(Executor_DEMO.MODULE_PACKAGENAME, "异常");
+						entry.getCQ().logWarning(MODULE_PACKAGENAME, "异常");
 						exception.printStackTrace();
 
 					} else {
 
 						// 如果框架关闭，则并非真的异常 此时将会跳出主循环 结束worker
-						entry.getCQ().logInfo(Executor_DEMO.MODULE_PACKAGENAME, "关闭");
+						entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
 
 					}
 				}

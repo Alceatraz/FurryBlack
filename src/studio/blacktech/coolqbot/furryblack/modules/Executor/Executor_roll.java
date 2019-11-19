@@ -54,17 +54,17 @@ public class Executor_roll extends ModuleExecutor {
 		// @formatter:off
 
 		super(
-			MODULE_PACKAGENAME,
-			MODULE_COMMANDNAME,
-			MODULE_DISPLAYNAME,
-			MODULE_DESCRIPTION,
-			MODULE_VERSION,
-			MODULE_USAGE,
-			MODULE_PRIVACY_STORED,
-			MODULE_PRIVACY_CACHED,
-			MODULE_PRIVACY_OBTAIN
-		);
-		
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
 		// @formatter:on
 
 	}
@@ -143,7 +143,7 @@ public class Executor_roll extends ModuleExecutor {
 			this.mode_1++;
 			break;
 
-		// ============================================================
+			// ============================================================
 
 		case 1:
 			int range = 100;
@@ -164,7 +164,7 @@ public class Executor_roll extends ModuleExecutor {
 			}
 			break;
 
-		// ============================================================
+			// ============================================================
 
 		case 2:
 			int min = 100;

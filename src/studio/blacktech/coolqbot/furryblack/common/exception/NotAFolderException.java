@@ -4,8 +4,8 @@ public class NotAFolderException extends InitializationException {
 
 	private static final long serialVersionUID = 1L;
 
-	public NotAFolderException(String string) {
-		super(string);
+	public NotAFolderException(String message) {
+		super(message);
 	}
 
 }

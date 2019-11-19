@@ -1,12 +1,10 @@
 package studio.blacktech.coolqbot.furryblack.modules.Trigger;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -53,7 +51,9 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	private File FILE_BLACKLIST;
 
-	private File FILE_DENYEDMSG;
+	private File FILE_DENY_USER;
+	private File FILE_DENY_DISZ;
+	private File FILE_DENY_GROP;
 
 	private TreeMap<String, LinkedList<MessageUser>> BLOCK_USER_STORE;
 	private TreeMap<String, LinkedList<MessageDisz>> BLOCK_DISZ_STORE;
@@ -70,17 +70,17 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		// @formatter:off
 
 		super(
-			MODULE_PACKAGENAME,
-			MODULE_COMMANDNAME,
-			MODULE_DISPLAYNAME,
-			MODULE_DESCRIPTION,
-			MODULE_VERSION,
-			MODULE_USAGE,
-			MODULE_PRIVACY_STORED,
-			MODULE_PRIVACY_CACHED,
-			MODULE_PRIVACY_OBTAIN
-		);
-		
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
 		// @formatter:on
 
 	}
@@ -88,9 +88,9 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public LoggerX init(LoggerX logger) throws Exception {
 
-		this.initConfFolder();
-		this.initDataFolder();
-		this.initCofigurtion();
+		this.initAppFolder(logger);
+		this.initConfFolder(logger);
+		this.initLogsFolder(logger);
 
 		this.BLACKLIST = new ArrayList<>(100);
 
@@ -112,10 +112,14 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		this.ENABLE_GROP = Boolean.parseBoolean(this.CONFIG.getProperty("enable_grop", "false"));
 
 		this.FILE_BLACKLIST = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "blacklist.txt").toFile();
-		this.FILE_DENYEDMSG = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "deny.txt").toFile();
+		this.FILE_DENY_USER = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "denied_user_log.txt").toFile();
+		this.FILE_DENY_DISZ = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "denied_disz_log.txt").toFile();
+		this.FILE_DENY_GROP = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "denied_grop_log.txt").toFile();
 
 		if (!this.FILE_BLACKLIST.exists()) { this.FILE_BLACKLIST.createNewFile(); }
-		if (!this.FILE_DENYEDMSG.exists()) { this.FILE_DENYEDMSG.createNewFile(); }
+		if (!this.FILE_DENY_USER.exists()) { this.FILE_DENY_USER.createNewFile(); }
+		if (!this.FILE_DENY_DISZ.exists()) { this.FILE_DENY_DISZ.createNewFile(); }
+		if (!this.FILE_DENY_GROP.exists()) { this.FILE_DENY_GROP.createNewFile(); }
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_BLACKLIST), StandardCharsets.UTF_8));
 
@@ -175,7 +179,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		for (String temp : this.BLACKLIST) {
-			if (Pattern.matches(temp, message.getRawMessage())) { entry.adminInfo("私聊过滤：" + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage()); this.BLOCK_USER_STORE.get(temp).add(message); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8)); writer.write(message.toString()); writer.write("\r\n\r\n\r\n\r\n"); writer.flush(); writer.close(); return true; }
+			if (Pattern.matches(temp, message.getRawMessage())) { entry.adminInfo("私聊过滤：" + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage()); this.BLOCK_USER_STORE.get(temp).add(message); FileWriter writer = new FileWriter(this.FILE_DENY_USER, true); writer.write(message.toString()); writer.write("\n\n\n\n"); writer.flush(); writer.close(); return true; }
 		}
 		return false;
 	}
@@ -183,7 +187,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		for (String temp : this.BLACKLIST) {
-			if (Pattern.matches(temp, message.getRawMessage())) { entry.adminInfo("组聊过滤：" + diszid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage()); this.BLOCK_DISZ_STORE.get(temp).add(message); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8)); writer.write(message.toString()); writer.write("\r\n\r\n\r\n\r\n"); writer.flush(); writer.close(); return true; }
+			if (Pattern.matches(temp, message.getRawMessage())) { entry.adminInfo("组聊过滤：" + diszid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage()); this.BLOCK_DISZ_STORE.get(temp).add(message); FileWriter writer = new FileWriter(this.FILE_DENY_DISZ, true); writer.write(message.toString()); writer.write("\n\n\n\n"); writer.flush(); writer.close(); return true; }
 		}
 		return false;
 	}
@@ -191,7 +195,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		for (String temp : this.BLACKLIST) {
-			if (Pattern.matches(temp, message.getRawMessage())) { entry.adminInfo("群聊过滤：" + gropid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage()); this.BLOCK_GROP_STORE.get(temp).add(message); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8)); writer.write(message.toString()); writer.write("\r\n\r\n\r\n\r\n"); writer.flush(); writer.close(); return true; }
+			if (Pattern.matches(temp, message.getRawMessage())) { entry.adminInfo("群聊过滤：" + gropid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage()); this.BLOCK_GROP_STORE.get(temp).add(message); FileWriter writer = new FileWriter(this.FILE_DENY_GROP, true); writer.write(message.toString()); writer.write("\n\n\n\n"); writer.flush(); writer.close(); return true; }
 		}
 		return false;
 	}

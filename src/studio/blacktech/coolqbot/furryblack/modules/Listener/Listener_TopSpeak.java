@@ -76,17 +76,17 @@ public class Listener_TopSpeak extends ModuleListener {
 		// @formatter:off
 
 		super(
-			MODULE_PACKAGENAME,
-			MODULE_COMMANDNAME,
-			MODULE_DISPLAYNAME,
-			MODULE_DESCRIPTION,
-			MODULE_VERSION,
-			MODULE_USAGE,
-			MODULE_PRIVACY_STORED,
-			MODULE_PRIVACY_CACHED,
-			MODULE_PRIVACY_OBTAIN
-		);
-		
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
 		// @formatter:on
 
 	}
@@ -95,8 +95,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public LoggerX init(LoggerX logger) throws Exception {
 
-		this.initConfFolder();
-		this.initDataFolder();
+		this.initAppFolder(logger);
+		this.initConfFolder(logger);
+		this.initDataFolder(logger);
 
 		this.GROUP_REPORT = new ArrayList<>();
 
@@ -117,10 +118,10 @@ public class Listener_TopSpeak extends ModuleListener {
 				this.GROUP_REPORT.add(Long.parseLong(line));
 			}
 
-			logger.seek(Listener_TopSpeak.MODULE_PACKAGENAME, "每日汇报启用");
+			logger.seek(MODULE_PACKAGENAME, "每日汇报启用");
 
 			for (Long temp : this.GROUP_REPORT) {
-				logger.seek(Listener_TopSpeak.MODULE_PACKAGENAME, "  " + temp);
+				logger.seek(MODULE_PACKAGENAME, "  " + temp);
 			}
 
 			reader.close();
@@ -136,12 +137,12 @@ public class Listener_TopSpeak extends ModuleListener {
 			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
 			loader.close();
 
-			logger.seek(Listener_TopSpeak.MODULE_PACKAGENAME, "读取存档", this.GROUP_STATUS.size() == 0 ? "空" : "包含" + this.GROUP_STATUS.size() + "个群");
+			logger.seek(MODULE_PACKAGENAME, "读取存档", this.GROUP_STATUS.size() == 0 ? "空" : "包含" + this.GROUP_STATUS.size() + "个群");
 
 			for (long gropid : this.GROUP_STATUS.keySet()) {
 
 				long time = this.GROUP_STATUS.get(gropid).initdt;
-				logger.seek(Listener_TopSpeak.MODULE_PACKAGENAME, "创建时间", gropid + " " + LoggerX.datetime(new Date(time)) + "(" + time + ")");
+				logger.seek(MODULE_PACKAGENAME, "创建时间", gropid + " " + LoggerX.datetime(new Date(time)) + "(" + time + ")");
 
 			}
 
@@ -157,7 +158,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		List<Group> groups = entry.getCQ().getGroupList();
 
-		logger.seek(Listener_TopSpeak.MODULE_PACKAGENAME, "存档一致性检查");
+		logger.seek(MODULE_PACKAGENAME, "存档一致性检查");
 
 		for (Group group : groups) {
 
@@ -172,7 +173,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 						groupStatus.USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
 
-						logger.seek(Listener_TopSpeak.MODULE_PACKAGENAME, "新建成员" + group.getId() + " > " + entry.getNickname(member.getQQId()) + "(" + member.getQQId() + ")");
+						logger.seek(MODULE_PACKAGENAME, "新建成员" + group.getId() + " > " + entry.getNickname(member.getQQId()) + "(" + member.getQQId() + ")");
 
 					}
 				}
@@ -181,7 +182,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
 
-				logger.seek(Listener_TopSpeak.MODULE_PACKAGENAME, "新建群" + group.getName() + "(" + group.getId() + ")");
+				logger.seek(MODULE_PACKAGENAME, "新建群" + group.getName() + "(" + group.getId() + ")");
 
 			}
 
@@ -228,6 +229,25 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+
+		if (message.getSection() < 1) { logger.info(MODULE_PACKAGENAME, "参数不足"); return logger; }
+
+		String command = message.getSegment()[1];
+
+		switch (command) {
+
+		case "save":
+
+			File DAILY_BACKUP = Paths.get(this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
+
+			this.saveData(DAILY_BACKUP);
+
+			logger.info(MODULE_PACKAGENAME, "保存存档", DAILY_BACKUP.getAbsolutePath());
+
+			break;
+
+		}
+
 		return logger;
 	}
 
@@ -634,9 +654,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						Listener_TopSpeak.this.saveData(DAILY_BACKUP);
 
 						for (long temp : Listener_TopSpeak.this.GROUP_REPORT) {
-
 							entry.gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp, 10, 10, 3));
-
 						}
 
 						entry.getCQ().logDebug(Listener_TopSpeak.MODULE_PACKAGENAME, "结果", "备份于" + DAILY_BACKUP.getAbsolutePath());

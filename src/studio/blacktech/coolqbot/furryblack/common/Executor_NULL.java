@@ -43,20 +43,23 @@ public class Executor_NULL extends ModuleExecutor {
 
 	public Executor_NULL() throws Exception {
 
-		super(
-				Executor_NULL.MODULE_PACKAGENAME,
-				Executor_NULL.MODULE_COMMANDNAME,
-				Executor_NULL.MODULE_DISPLAYNAME,
-				Executor_NULL.MODULE_DESCRIPTION,
-				Executor_NULL.MODULE_VERSION,
-				Executor_NULL.MODULE_USAGE,
-				Executor_NULL.MODULE_PRIVACY_STORED,
-				Executor_NULL.MODULE_PRIVACY_CACHED,
-				Executor_NULL.MODULE_PRIVACY_OBTAIN
-				);
-	}
+		// @formatter:off
 
-	// @formatter:on
+		super(
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
+		// @formatter:on
+
+	}
 
 	@Override
 	public LoggerX init(LoggerX logger) throws Exception {

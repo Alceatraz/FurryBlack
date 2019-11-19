@@ -9,7 +9,6 @@ import java.util.Properties;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 
@@ -31,15 +30,18 @@ public abstract class Module implements Serializable {
 
 	protected Properties CONFIG = new Properties();
 
+	protected File FOLDER_ROOT;
+
 	protected File FOLDER_CONF;
 	protected File FOLDER_DATA;
+	protected File FOLDER_LOGS;
+
 	protected File FILE_CONFIG;
 
 	protected boolean NEW_CONFIG = false;
 
-	private boolean init_conf_folder = false;
-
 	// @formatter:off
+
 	public Module(
 			String MODULE_PACKAGENAME,
 			String MODULE_COMMANDNAME,
@@ -64,29 +66,69 @@ public abstract class Module implements Serializable {
 
 		this.MODULE_FULLHELP = this.genFullHelp();
 
+		this.FOLDER_ROOT = Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME).toFile();
+		this.FOLDER_CONF =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "conf").toFile();
+		this.FOLDER_DATA =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "data").toFile();
+		this.FOLDER_LOGS =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "logs").toFile();
+		this.FILE_CONFIG =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "config.properties").toFile();
+
 	}
+
 	// @formatter:on
 
-	public void initConfFolder() throws Exception {
-		this.FOLDER_CONF = Paths.get(entry.FOLDER_CONF().getAbsolutePath(), this.MODULE_PACKAGENAME).toFile();
-		if (!this.FOLDER_CONF.exists()) { this.FOLDER_CONF.mkdirs(); }
-		if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + this.FOLDER_CONF.getAbsolutePath()); }
-		this.init_conf_folder = true;
-	}
+	public LoggerX initAppFolder(LoggerX logger) throws Exception {
 
-	public void initDataFolder() throws Exception {
-		this.FOLDER_DATA = Paths.get(entry.FOLDER_DATA().getAbsolutePath(), this.MODULE_PACKAGENAME).toFile();
-		if (!this.FOLDER_DATA.exists()) { this.FOLDER_DATA.mkdirs(); }
-		if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("配置文件夹被文件占位：" + this.FOLDER_DATA.getAbsolutePath()); }
-	}
-
-	public void initCofigurtion() throws Exception {
-		if (this.init_conf_folder) {
-			this.FILE_CONFIG = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
-			if (!this.FILE_CONFIG.exists()) { this.FILE_CONFIG.createNewFile(); this.NEW_CONFIG = true; }
+		if (this.FOLDER_ROOT.exists()) {
+			if (!this.FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_ROOT.getAbsolutePath()); }
 		} else {
-			throw new InitializationException("还未对配置目录初始化");
+			logger.seek(this.MODULE_PACKAGENAME, "创建目录", this.FOLDER_ROOT.getAbsolutePath());
+			this.FOLDER_ROOT.mkdirs();
 		}
+
+		return logger;
+	}
+
+	public LoggerX initConfFolder(LoggerX logger) throws Exception {
+
+		if (this.FOLDER_CONF.exists()) {
+			if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_CONF.getAbsolutePath()); }
+		} else {
+			logger.seek(this.MODULE_PACKAGENAME, "创建目录", this.FOLDER_CONF.getAbsolutePath());
+			this.FOLDER_CONF.mkdirs();
+		}
+
+		return logger;
+	}
+
+	public LoggerX initDataFolder(LoggerX logger) throws Exception {
+
+		if (this.FOLDER_DATA.exists()) {
+			if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_DATA.getAbsolutePath()); }
+		} else {
+			logger.seek(this.MODULE_PACKAGENAME, "创建目录", this.FOLDER_DATA.getAbsolutePath());
+			this.FOLDER_DATA.mkdirs();
+		}
+
+		return logger;
+	}
+
+	public LoggerX initLogsFolder(LoggerX logger) throws Exception {
+
+		if (this.FOLDER_LOGS.exists()) {
+			if (!this.FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_LOGS.getAbsolutePath()); }
+		} else {
+			logger.seek(this.MODULE_PACKAGENAME, "创建目录", this.FOLDER_LOGS.getName());
+			this.FOLDER_LOGS.mkdirs();
+		}
+
+		return logger;
+	}
+
+	public LoggerX initPropertiesConfigurtion(LoggerX logger) throws Exception {
+
+		if (!this.FILE_CONFIG.exists()) { logger.seek(this.MODULE_PACKAGENAME, "创建文件", this.FILE_CONFIG.getAbsolutePath()); this.FILE_CONFIG.createNewFile(); this.NEW_CONFIG = true; }
+
+		return logger;
 	}
 
 	public abstract LoggerX init(LoggerX logger) throws Exception;

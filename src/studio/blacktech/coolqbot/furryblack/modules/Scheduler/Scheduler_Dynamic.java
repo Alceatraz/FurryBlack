@@ -68,17 +68,17 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		// @formatter:off
 
 		super(
-			MODULE_PACKAGENAME,
-			MODULE_COMMANDNAME,
-			MODULE_DISPLAYNAME,
-			MODULE_DESCRIPTION,
-			MODULE_VERSION,
-			MODULE_USAGE,
-			MODULE_PRIVACY_STORED,
-			MODULE_PRIVACY_CACHED,
-			MODULE_PRIVACY_OBTAIN
-		);
-		
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
+
 		// @formatter:on
 
 	}
@@ -86,8 +86,8 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	@Override
 	public LoggerX init(LoggerX logger) throws Exception {
 
-		this.initConfFolder();
-		this.initCofigurtion();
+		this.initAppFolder(logger);
+		this.initPropertiesConfigurtion(logger);
 
 		if (this.NEW_CONFIG) {
 			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "配置文件不存在 - 生成默认配置");
