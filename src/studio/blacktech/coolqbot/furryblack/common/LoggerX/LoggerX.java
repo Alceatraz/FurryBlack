@@ -29,10 +29,10 @@ public class LoggerX {
 		// this.builder_seek.append(LoggerX.datetime());
 		// this.builder_full.append(LoggerX.datetime());
 
-		this.builder_mini.append("\r\n");
-		this.builder_info.append("\r\n");
-		this.builder_seek.append("\r\n");
-		this.builder_full.append("\r\n");
+		// this.builder_mini.append("\r\n");
+		// this.builder_info.append("\r\n");
+		// this.builder_seek.append("\r\n");
+		// this.builder_full.append("\r\n");
 	}
 
 	public String make(int level) {

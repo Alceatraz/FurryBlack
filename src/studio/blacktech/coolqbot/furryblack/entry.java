@@ -196,7 +196,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			// ==========================================================================================================================
 
 			FileWriter writer = new FileWriter(this.FILE_LOGGER, true);
-			writer.append("Bootup -> ");
+			writer.append("Bootup ->\n");
 			writer.append(bootLoggerX.make(3));
 			writer.append("\n");
 			writer.flush();
@@ -230,7 +230,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			bootLoggerX.info("Core_Entry", "关闭", LoggerX.datetime());
 			SYSTEMD.shut(logger);
 			FileWriter writer = new FileWriter(this.FILE_LOGGER, true);
-			writer.append("Shutdown -> ");
+			writer.append("Shutdown ->\n");
 			writer.append(logger.make(3));
 			writer.flush();
 			writer.close();
