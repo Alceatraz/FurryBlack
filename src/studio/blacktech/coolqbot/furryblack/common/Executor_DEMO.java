@@ -53,16 +53,27 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	// 命令用法，数组的每个元素应为一个参数组合用法及其说明
 	// 减号左右各一个空格
-	private static String[] MODULE_USAGE = new String[] { "命令1 - 命令用法1", "命令2 - 命令用法2", "命令3 - 命令用法3", "命令4 - 命令用法4", };
+	private static String[] MODULE_USAGE = new String[] {
+			"命令1 - 命令用法1",
+			"命令2 - 命令用法2",
+			"命令3 - 命令用法3",
+			"命令4 - 命令用法4",
+	};
 
 	// 如果需要将数据存储为文件 则应写明存储的内容及其用途 有效时限
-	public static String[] MODULE_PRIVACY_STORED = new String[] { "隐私级别 - 用途" };
+	public static String[] MODULE_PRIVACY_STORED = new String[] {
+			"隐私级别 - 用途"
+	};
 
 	// 如果需要将数据存储在内存 则应写明存储的内容及其用途 有效时限
-	public static String[] MODULE_PRIVACY_CACHED = new String[] { "隐私级别 - 用途" };
+	public static String[] MODULE_PRIVACY_CACHED = new String[] {
+			"隐私级别 - 用途"
+	};
 
 	// 如果需要获取用户相关的信息 则应写明内容及其用途 且获取的信息不应该储存 如果需要存储则将此功能写入MODULE_PRIVACY_CACHED
-	public static String[] MODULE_PRIVACY_OBTAIN = new String[] { "隐私级别 - 用途" };
+	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"隐私级别 - 用途"
+	};
 
 	// ==========================================================================================================================================================
 	//
@@ -174,7 +185,11 @@ public class Executor_DEMO extends ModuleExecutor {
 		// 则直接跳注册阶段
 		// 模块不需要每次doMessage时都判断 if ( enable )
 
-		if (this.ENABLE_DEMO) { this.ENABLE_USER = true; this.ENABLE_DISZ = true; this.ENABLE_GROP = true; }
+		if (this.ENABLE_DEMO) {
+			this.ENABLE_USER = true;
+			this.ENABLE_DISZ = true;
+			this.ENABLE_GROP = true;
+		}
 
 		return logger;
 

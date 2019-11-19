@@ -25,10 +25,15 @@ public class Executor_dice extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "掷骰子";
 	private static String MODULE_DESCRIPTION = "发送一个骰子的魔法表情";
 	private static String MODULE_VERSION = "1.0";
-	private static String[] MODULE_USAGE = new String[] { "/dice - 发送一个魔法表情", "/dice 理由 - 为某事投掷一枚骰子" };
+	private static String[] MODULE_USAGE = new String[] {
+			"/dice - 发送一个魔法表情",
+			"/dice 理由 - 为某事投掷一枚骰子"
+	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] { "获取命令发送人" };
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"获取命令发送人"
+	};
 
 	// ==========================================================================================================================================================
 	//

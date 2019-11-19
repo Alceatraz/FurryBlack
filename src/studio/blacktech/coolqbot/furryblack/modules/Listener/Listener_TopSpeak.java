@@ -46,7 +46,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_DESCRIPTION = "水群统计";
 	private static String MODULE_VERSION = "29.1";
 	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_STORED = new String[] { "按照\"群-成员-消息\"的层级关系保存所有聊天内容" };
+	private static String[] MODULE_PRIVACY_STORED = new String[] {
+			"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
+	};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
@@ -230,7 +232,10 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public LoggerX exec(LoggerX logger, Message message) throws Exception {
 
-		if (message.getSection() < 1) { logger.info(MODULE_PACKAGENAME, "参数不足"); return logger; }
+		if (message.getSection() < 1) {
+			logger.info(MODULE_PACKAGENAME, "参数不足");
+			return logger;
+		}
 
 		String command = message.getSegment()[1];
 
@@ -344,7 +349,9 @@ public class Listener_TopSpeak extends ModuleListener {
 
 			} else {
 
-				report = new String[] { "参数错误 --gropid 为空" };
+				report = new String[] {
+						"参数错误 --gropid 为空"
+				};
 
 			}
 			break;
@@ -435,7 +442,11 @@ public class Listener_TopSpeak extends ModuleListener {
 						limit++;
 						slice++;
 
-						if (slice == 30) { report.add(builder.substring(0, builder.length() - 2).toString()); builder = new StringBuilder(); slice = 0; }
+						if (slice == 30) {
+							report.add(builder.substring(0, builder.length() - 2).toString());
+							builder = new StringBuilder();
+							slice = 0;
+						}
 
 						if ((limitRank != 0) && (limit >= limitRank)) { break; }
 					}
@@ -540,7 +551,11 @@ public class Listener_TopSpeak extends ModuleListener {
 						builder.append("No." + order + " - " + messageRank + "次：" + messageContent + "\r\n");
 						limit++;
 						slice++;
-						if (slice == 50) { report.add(builder.substring(0, builder.length() - 2).toString()); builder = new StringBuilder(); slice = 0; }
+						if (slice == 50) {
+							report.add(builder.substring(0, builder.length() - 2).toString());
+							builder = new StringBuilder();
+							slice = 0;
+						}
 						if ((limitRepeat != 0) && (limit >= limitRepeat)) { break; }
 					}
 					if ((limitRepeat != 0) && (limit >= limitRepeat)) { break; }
@@ -628,26 +643,26 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@SuppressWarnings("deprecation")
 	class Worker implements Runnable {
+
 		@Override
 		public void run() {
+
 			long time;
 			Date date;
+
 			do {
+
 				try {
-					// =======================================================
+
 					while (true) {
+
 						date = new Date();
 						time = 86400L;
 						time = time - date.getSeconds();
 						time = time - (date.getMinutes() * 60);
 						time = time - (date.getHours() * 3600);
 						time = time * 1000;
-						entry.getCQ().logDebug(Listener_TopSpeak.MODULE_PACKAGENAME, "休眠：" + time);
 						Thread.sleep(time);
-
-						// =======================================================
-
-						entry.getCQ().logDebug(Listener_TopSpeak.MODULE_PACKAGENAME, "执行");
 
 						File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
 
@@ -659,7 +674,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
 						entry.getCQ().logDebug(Listener_TopSpeak.MODULE_PACKAGENAME, "结果", "备份于" + DAILY_BACKUP.getAbsolutePath());
 
-						// =======================================================
 					}
 				} catch (Exception exception) {
 					if (entry.isEnable()) {

@@ -30,7 +30,9 @@ public class Executor_time extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "环球时间";
 	private static String MODULE_DESCRIPTION = "那谁睡觉了吗";
 	private static String MODULE_VERSION = "1.0";
-	private static String[] MODULE_USAGE = new String[] { "/time 看看谁该睡觉了" };
+	private static String[] MODULE_USAGE = new String[] {
+			"/time 看看谁该睡觉了"
+	};
 
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -134,7 +136,7 @@ public class Executor_time extends ModuleExecutor {
 
 	private String getTime() {
 		return
-				// @formatter:off
+		// @formatter:off
 				//
 				"世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", Executor_time.zone_00) + "\r\n" +
 				"美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + this.format(Executor_time.zone_W8) + "\r\n" +
@@ -143,7 +145,7 @@ public class Executor_time extends ModuleExecutor {
 				//        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
 				"亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
 				// @formatter:on
-				;
+		;
 	}
 
 	@SuppressWarnings("deprecation")

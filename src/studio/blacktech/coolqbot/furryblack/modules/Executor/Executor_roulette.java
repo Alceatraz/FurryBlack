@@ -30,10 +30,16 @@ public class Executor_roulette extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "俄罗斯轮盘赌";
 	private static String MODULE_DESCRIPTION = "你看这子弹又尖又长，这名单又大又宽";
 	private static String MODULE_VERSION = "1.0";
-	private static String[] MODULE_USAGE = new String[] { "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌，十分钟仍未满员则自动解散对局" };
+	private static String[] MODULE_USAGE = new String[] {
+			"/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌，十分钟仍未满员则自动解散对局"
+	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] { "按照\"群-成员-回合\"的层级关系存储 - 回合结束或超时后下一次第一名玩家加入时释放" };
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] { "获取命令发送人" };
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {
+			"按照\"群-成员-回合\"的层级关系存储 - 回合结束或超时后下一次第一名玩家加入时释放"
+	};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"获取命令发送人"
+	};
 
 	// ==========================================================================================================================================================
 	//
@@ -134,7 +140,10 @@ public class Executor_roulette extends ModuleExecutor {
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		// 只有命令 没下注
-		if (message.getSection() == 0) { entry.gropInfo(gropid, userid, "不下注是8koi的"); return true; }
+		if (message.getSection() == 0) {
+			entry.gropInfo(gropid, userid, "不下注是8koi的");
+			return true;
+		}
 
 		// 对局不存在 创建一个
 		if (!this.ROULETTE_ROUNDS.containsKey(gropid)) { this.ROULETTE_ROUNDS.put(gropid, new RouletteRound()); }
@@ -150,7 +159,12 @@ public class Executor_roulette extends ModuleExecutor {
 		}
 
 		// 对局超时就新建一个
-		if ((round.time.getTime() + 600000) < new Date().getTime()) { this.ROUND_EXPIRED++; round = new RouletteRound(); this.ROULETTE_ROUNDS.remove(gropid); this.ROULETTE_ROUNDS.put(gropid, round); }
+		if ((round.time.getTime() + 600000) < new Date().getTime()) {
+			this.ROUND_EXPIRED++;
+			round = new RouletteRound();
+			this.ROULETTE_ROUNDS.remove(gropid);
+			this.ROULETTE_ROUNDS.put(gropid, round);
+		}
 
 		if (round.join(gropid, userid, message)) {
 
@@ -257,7 +271,9 @@ public class Executor_roulette extends ModuleExecutor {
 			builder.append((this.ROULETTE_FREQ.get(5) * 100) / this.ROUND_SUCCESS);
 			builder.append("%");
 		}
-		String[] res = new String[] { builder.toString() };
+		String[] res = new String[] {
+				builder.toString()
+		};
 		return res;
 	}
 }

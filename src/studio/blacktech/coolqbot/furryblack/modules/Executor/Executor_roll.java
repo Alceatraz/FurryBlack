@@ -25,10 +25,16 @@ public class Executor_roll extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "生成随机数";
 	private static String MODULE_DESCRIPTION = "生成随机数";
 	private static String MODULE_VERSION = "1.1";
-	private static String[] MODULE_USAGE = new String[] { "/roll - 抽取真假", "/roll 数字 - 从零到给定数字任选一个数字", "/roll 数字 数字 - 从给定两个数字中间抽取一个" };
+	private static String[] MODULE_USAGE = new String[] {
+			"/roll - 抽取真假",
+			"/roll 数字 - 从零到给定数字任选一个数字",
+			"/roll 数字 数字 - 从给定两个数字中间抽取一个"
+	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] { "获取命令发送人" };
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"获取命令发送人"
+	};
 
 	// ==========================================================================================================================================================
 	//
@@ -143,7 +149,7 @@ public class Executor_roll extends ModuleExecutor {
 			this.mode_1++;
 			break;
 
-			// ============================================================
+		// ============================================================
 
 		case 1:
 			int range = 100;
@@ -164,7 +170,7 @@ public class Executor_roll extends ModuleExecutor {
 			}
 			break;
 
-			// ============================================================
+		// ============================================================
 
 		case 2:
 			int min = 100;
@@ -201,7 +207,9 @@ public class Executor_roll extends ModuleExecutor {
 		builder.append(this.mode_2);
 		builder.append("\r\n模式3 - 双限: ");
 		builder.append(this.mode_3);
-		String[] res = new String[] { builder.toString() };
+		String[] res = new String[] {
+				builder.toString()
+		};
 		return res;
 	}
 

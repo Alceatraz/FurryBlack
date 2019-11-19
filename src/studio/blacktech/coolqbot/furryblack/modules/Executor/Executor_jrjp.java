@@ -38,10 +38,18 @@ public class Executor_jrjp extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "祭祀";
 	private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
 	private static String MODULE_VERSION = "1.2";
-	private static String[] MODULE_USAGE = new String[] { "/jrjp - 查看今日祭品" };
+	private static String[] MODULE_USAGE = new String[] {
+			"/jrjp - 查看今日祭品"
+	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] { "群号-QQ号对应表 - 每日UTC+8 00:00 清空", "群号-AV号对应表 - 每日UTC+8 00:00 清空" };
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] { "获取命令发送人", "被抽到成员的昵称和群昵称" };
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {
+			"群号-QQ号对应表 - 每日UTC+8 00:00 清空",
+			"群号-AV号对应表 - 每日UTC+8 00:00 清空"
+	};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"获取命令发送人",
+			"被抽到成员的昵称和群昵称"
+	};
 
 	// ==========================================================================================================================================================
 	//
@@ -124,7 +132,10 @@ public class Executor_jrjp extends ModuleExecutor {
 
 			temp = line.split(":");
 
-			if (temp.length != 2) { logger.mini(Executor_jrjp.MODULE_PACKAGENAME, "配置错误", line); continue; }
+			if (temp.length != 2) {
+				logger.mini(Executor_jrjp.MODULE_PACKAGENAME, "配置错误", line);
+				continue;
+			}
 
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
@@ -235,47 +246,60 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@SuppressWarnings("deprecation")
 	class Worker implements Runnable {
+
 		@Override
 		public void run() {
+
 			long time;
 			Date date;
+
 			do {
+
 				try {
-					// =======================================================
+
 					while (true) {
+
 						date = new Date();
 						time = 86400L;
 						time = time - date.getSeconds();
 						time = time - (date.getMinutes() * 60);
 						time = time - (date.getHours() * 3600);
 						time = time * 1000;
-						entry.getCQ().logDebug(Executor_jrjp.MODULE_PACKAGENAME, "休眠：" + time);
 						Thread.sleep(time);
-						// =======================================================
-						entry.getCQ().logDebug(Executor_jrjp.MODULE_PACKAGENAME, "执行");
+
 						Executor_jrjp.this.AVCODE.clear();
 						Executor_jrjp.this.VICTIM.clear();
+
 						ArrayList<Long> temp;
+
 						long victim;
 						long avcode;
+
 						StringBuilder builder = new StringBuilder();
+
 						for (Long group : Executor_jrjp.this.MEMBERS.keySet()) {
+
 							temp = Executor_jrjp.this.MEMBERS.get(group);
 							victim = temp.get(Executor_jrjp.this.random.nextInt(temp.size()));
 							avcode = Executor_jrjp.this.random.nextInt(60000000);
+
 							Executor_jrjp.this.VICTIM.put(group, victim);
 							Executor_jrjp.this.AVCODE.put(group, avcode);
+
 							builder.append(group + " - " + " AV" + avcode + "\r\n");
+
 						}
-						entry.getCQ().logDebug(Executor_jrjp.MODULE_PACKAGENAME, "结果" + builder.toString());
 					}
+
 				} catch (InterruptedException exception) {
+
 					if (entry.isEnable()) {
 						entry.getCQ().logWarning(Executor_jrjp.MODULE_PACKAGENAME, "异常");
 					} else {
 						entry.getCQ().logInfo(Executor_jrjp.MODULE_PACKAGENAME, "关闭");
 					}
 				}
+
 			} while (entry.isEnable());
 		}
 	}

@@ -23,10 +23,14 @@ public class Executor_echo extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "回显";
 	private static String MODULE_DESCRIPTION = "&0>1";
 	private static String MODULE_VERSION = "1.0";
-	private static String[] MODULE_USAGE = new String[] { "/echo 内容 - &0>1" };
+	private static String[] MODULE_USAGE = new String[] {
+			"/echo 内容 - &0>1"
+	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] { "获取命令发送人" };
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"获取命令发送人"
+	};
 
 	// ==========================================================================================================================================================
 	//

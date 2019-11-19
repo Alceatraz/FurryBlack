@@ -27,11 +27,15 @@ public class Executor_zhan extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "占卜";
 	private static String MODULE_DESCRIPTION = "大阿卡那塔罗牌占卜";
 	private static String MODULE_VERSION = "1.0";
-	private static String[] MODULE_USAGE = new String[] { "/zhan 理由 - 为某事占卜" };
+	private static String[] MODULE_USAGE = new String[] {
+			"/zhan 理由 - 为某事占卜"
+	};
 
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] { "获取命令发送人" };
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"获取命令发送人"
+	};
 
 	// ==========================================================================================================================================================
 	//
@@ -244,7 +248,9 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append((this.FREQ.get(i) * 100) / coverage);
 			builder.append("%");
 		}
-		String[] res = new String[] { builder.toString() };
+		String[] res = new String[] {
+				builder.toString()
+		};
 		return res;
 	}
 

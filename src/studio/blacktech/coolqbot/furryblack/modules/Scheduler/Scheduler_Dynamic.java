@@ -127,7 +127,11 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	@Override
 	public LoggerX boot(LoggerX logger) throws Exception {
-		if (this.ENABLE) { logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "启动工作线程"); this.thread = new Thread(new WorkerProcerss()); this.thread.start(); }
+		if (this.ENABLE) {
+			logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "启动工作线程");
+			this.thread = new Thread(new WorkerProcerss());
+			this.thread.start();
+		}
 		return logger;
 	}
 
@@ -138,14 +142,21 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	@Override
 	public LoggerX shut(LoggerX logger) throws Exception {
-		if (this.ENABLE) { logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "终止工作线程"); this.thread.interrupt(); this.thread.join(); }
+		if (this.ENABLE) {
+			logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "终止工作线程");
+			this.thread.interrupt();
+			this.thread.join();
+		}
 		return logger;
 	}
 
 	@Override
 	public LoggerX exec(LoggerX logger, Message message) throws Exception {
 
-		if (message.getSection() < 2) { logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "参数不足"); return logger; }
+		if (message.getSection() < 2) {
+			logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "参数不足");
+			return logger;
+		}
 
 		String command = message.getSegment()[1];
 
@@ -198,7 +209,9 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		builder.append(this.COUNT_CHANGE);
 		builder.append("\r\n访问失败：");
 		builder.append(this.COUNT_FAILED);
-		String[] res = new String[] { builder.toString() };
+		String[] res = new String[] {
+				builder.toString()
+		};
 		return res;
 
 	}
@@ -267,7 +280,10 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 							// 如果发生改变API返回内容为 good 123.123.123.123
 							if (respons.startsWith("good")) { Scheduler_Dynamic.this.COUNT_CHANGE++; }
 						}
-						if (failcount > 6) { failcount = 0; entry.adminInfo("[DDNS] 警告 更新失败\r\n需要手动介入\r\n已连续失败六次"); }
+						if (failcount > 6) {
+							failcount = 0;
+							entry.adminInfo("[DDNS] 警告 更新失败\r\n需要手动介入\r\n已连续失败六次");
+						}
 						if (entry.DEBUG()) { entry.getCQ().logInfo(Scheduler_Dynamic.MODULE_PACKAGENAME, "结果 " + respons); }
 						// =======================================================
 					}

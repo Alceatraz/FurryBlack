@@ -62,7 +62,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// ==========================================================================================================================================================
 
 	// 版本ID
-	public final static String VerID = "13.2 2019-11-19 (17:30)";
+	public final static String VerID = "13.3 2019-11-19 (20:30)";
 
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();
@@ -170,10 +170,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			// ==========================================================================================================================
 			// 初始化文件夹
 
-			if (!this.FOLDER_ROOT.exists()) { bootLoggerX.seek("Core_Entry", "创建目录", this.FOLDER_ROOT.getAbsolutePath()); this.FOLDER_ROOT.mkdirs(); }
+			if (!this.FOLDER_ROOT.exists()) {
+				bootLoggerX.seek("Core_Entry", "创建目录", this.FOLDER_ROOT.getAbsolutePath());
+				this.FOLDER_ROOT.mkdirs();
+			}
 //			if (!this.FOLDER_CONF.exists()) { bootLoggerX.seek("Core_Entry", "创建目录", this.FOLDER_CONF.getAbsolutePath()); this.FOLDER_CONF.mkdirs(); }
 //			if (!this.FOLDER_DATA.exists()) { bootLoggerX.seek("Core_Entry", "创建目录", this.FOLDER_DATA.getAbsolutePath()); this.FOLDER_DATA.mkdirs(); }
-			if (!this.FOLDER_LOGS.exists()) { bootLoggerX.seek("Core_Entry", "创建目录", this.FOLDER_LOGS.getAbsolutePath()); this.FOLDER_LOGS.mkdirs(); }
+			if (!this.FOLDER_LOGS.exists()) {
+				bootLoggerX.seek("Core_Entry", "创建目录", this.FOLDER_LOGS.getAbsolutePath());
+				this.FOLDER_LOGS.mkdirs();
+			}
 
 			if (!this.FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_ROOT.getAbsolutePath()); }
 //			if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_CONF.getAbsolutePath()); }
@@ -205,8 +211,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			// ==========================================================================================================================
 			// 启动完成 关闭debug
 			// 启动完成 启动Jcq的开关
+
 			DEBUG = false;
 			enable = true;
+
+			entry.adminInfo("启动完成 " + LoggerX.datetime());
 
 		} catch (Exception exce) {
 			exce.printStackTrace();
@@ -800,7 +809,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 昵称
 	 */
 	public static String getGropnick(long gropid, long userid) {
-		return SYSTEMD.getGropnick(gropid, userid);
+		return SYSTEMD.getGropNick(gropid, userid);
 	}
 
 	/**

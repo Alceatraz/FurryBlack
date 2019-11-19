@@ -126,7 +126,11 @@ public abstract class Module implements Serializable {
 
 	public LoggerX initPropertiesConfigurtion(LoggerX logger) throws Exception {
 
-		if (!this.FILE_CONFIG.exists()) { logger.seek(this.MODULE_PACKAGENAME, "创建文件", this.FILE_CONFIG.getAbsolutePath()); this.FILE_CONFIG.createNewFile(); this.NEW_CONFIG = true; }
+		if (!this.FILE_CONFIG.exists()) {
+			logger.seek(this.MODULE_PACKAGENAME, "创建文件", this.FILE_CONFIG.getAbsolutePath());
+			this.FILE_CONFIG.createNewFile();
+			this.NEW_CONFIG = true;
+		}
 
 		return logger;
 	}

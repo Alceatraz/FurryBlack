@@ -36,7 +36,9 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	private static String MODULE_DESCRIPTION = "用户过滤器";
 	private static String MODULE_VERSION = "2.0";
 	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_STORED = new String[] { "按照\"群-成员\"的层级关系手动配置被阻止的用户" };
+	private static String[] MODULE_PRIVACY_STORED = new String[] {
+			"按照\"群-成员\"的层级关系手动配置被阻止的用户"
+	};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
@@ -162,7 +164,10 @@ public class Trigger_UserDeny extends ModuleTrigger {
 			if (userid == 0) {
 				this.DISZ_IGNORE.add(diszid);
 			} else {
-				if (!this.DISZ_IGNORE_ONE.containsKey(diszid)) { HashSet<Long> tempSet = new HashSet<>(); this.DISZ_IGNORE_ONE.put(diszid, tempSet); }
+				if (!this.DISZ_IGNORE_ONE.containsKey(diszid)) {
+					HashSet<Long> tempSet = new HashSet<>();
+					this.DISZ_IGNORE_ONE.put(diszid, tempSet);
+				}
 				this.DISZ_IGNORE_ONE.get(diszid).add(userid);
 			}
 			logger.seek(Trigger_UserDeny.MODULE_PACKAGENAME, "禁止组聊用户", line);
@@ -179,7 +184,10 @@ public class Trigger_UserDeny extends ModuleTrigger {
 			if (userid == 0) {
 				this.GROP_IGNORE.add(gropid);
 			} else {
-				if (!this.GROP_IGNORE_ONE.containsKey(gropid)) { HashSet<Long> tempSet = new HashSet<>(); this.GROP_IGNORE_ONE.put(gropid, tempSet); }
+				if (!this.GROP_IGNORE_ONE.containsKey(gropid)) {
+					HashSet<Long> tempSet = new HashSet<>();
+					this.GROP_IGNORE_ONE.put(gropid, tempSet);
+				}
 				this.GROP_IGNORE_ONE.get(gropid).add(userid);
 			}
 			logger.seek(Trigger_UserDeny.MODULE_PACKAGENAME, "禁止群聊用户", line);
@@ -406,7 +414,9 @@ public class Trigger_UserDeny extends ModuleTrigger {
 				}
 			}
 		}
-		String[] res = new String[] { builder.toString() };
+		String[] res = new String[] {
+				builder.toString()
+		};
 		return res;
 	}
 
