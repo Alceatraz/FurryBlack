@@ -284,21 +284,19 @@ public class Systemd extends Module {
 		// 读取独立配置文件
 		// =======================================================================================================================
 
-		this.FILE_SILENCE_GROP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config_mute.txt").toFile();
+		this.FILE_SILENCE_GROP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "mute_grop.txt").toFile();
 		this.FILE_NICKNAME_MAP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "nickmap_grop.txt").toFile();
 		this.FILE_MESSAGE_HELP = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_help.txt").toFile();
 		this.FILE_MESSAGE_INFO = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_info.txt").toFile();
 		this.FILE_MESSAGE_EULA = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "message_eula.txt").toFile();
-
 		this.FILE_MEMBERCHANGE = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "member_change.txt").toFile();
 
-		if (!this.FILE_SILENCE_GROP.exists()) { if (!this.FILE_SILENCE_GROP.createNewFile()) { throw new InitializationException("无法创建文件config_mute.txt"); } }
-		if (!this.FILE_NICKNAME_MAP.exists()) { if (!this.FILE_NICKNAME_MAP.createNewFile()) { throw new InitializationException("无法创建文件nickmap_grop.txt"); } }
-		if (!this.FILE_MESSAGE_HELP.exists()) { if (!this.FILE_MESSAGE_HELP.createNewFile()) { throw new InitializationException("无法创建文件message_help.txt"); } }
-		if (!this.FILE_MESSAGE_INFO.exists()) { if (!this.FILE_MESSAGE_INFO.createNewFile()) { throw new InitializationException("无法创建文件message_info.txt"); } }
-		if (!this.FILE_MESSAGE_EULA.exists()) { if (!this.FILE_MESSAGE_EULA.createNewFile()) { throw new InitializationException("无法创建文件message_eula.txt"); } }
-
-		if (!this.FILE_MEMBERCHANGE.exists()) { if (!this.FILE_MEMBERCHANGE.createNewFile()) { throw new InitializationException("无法创建文件member_change.txt"); } }
+		if (!this.FILE_SILENCE_GROP.exists()) { if (!this.FILE_SILENCE_GROP.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+		if (!this.FILE_NICKNAME_MAP.exists()) { if (!this.FILE_NICKNAME_MAP.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+		if (!this.FILE_MESSAGE_HELP.exists()) { if (!this.FILE_MESSAGE_HELP.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+		if (!this.FILE_MESSAGE_INFO.exists()) { if (!this.FILE_MESSAGE_INFO.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+		if (!this.FILE_MESSAGE_EULA.exists()) { if (!this.FILE_MESSAGE_EULA.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+		if (!this.FILE_MEMBERCHANGE.exists()) { if (!this.FILE_MEMBERCHANGE.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
 
 		String line;
 		String[] temp;
@@ -369,6 +367,7 @@ public class Systemd extends Module {
 		readerMute.close();
 
 		logger.seek(Systemd.MODULE_PACKAGENAME, "读取昵称表", this.NICKNAME_MAP.size());
+		
 		for (long nickmap : this.NICKNAME_MAP.keySet()) {
 			logger.seek(Systemd.MODULE_PACKAGENAME, "群" + nickmap, this.NICKNAME_MAP.get(nickmap).size() + "个");
 		}
@@ -637,19 +636,19 @@ public class Systemd extends Module {
 
 		logger.info(Systemd.MODULE_PACKAGENAME, "模块状态");
 
-		logger.info(Systemd.MODULE_PACKAGENAME, "计时器 - 全局", this.ENABLE_SCHEDULER ? "启用 - " + this.SCHEDULER_ENABLED.size() + "个" : "禁用");
+		logger.info(Systemd.MODULE_PACKAGENAME, "计时器 全局", this.ENABLE_SCHEDULER ? "启用 " + this.SCHEDULER_ENABLED.size() + "个" : "禁用");
 
-		logger.info(Systemd.MODULE_PACKAGENAME, "触发器 - 私聊", this.ENABLE_TRIGGER_USER ? "启用 - " + this.TRIGGER_USER.size() + "个" : "禁用");
-		logger.info(Systemd.MODULE_PACKAGENAME, "触发器 - 组聊", this.ENABLE_TRIGGER_DISZ ? "启用 - " + this.TRIGGER_DISZ.size() + "个" : "禁用");
-		logger.info(Systemd.MODULE_PACKAGENAME, "触发器 - 群聊", this.ENABLE_TRIGGER_GROP ? "启用 - " + this.TRIGGER_GROP.size() + "个" : "禁用");
+		logger.info(Systemd.MODULE_PACKAGENAME, "触发器 私聊", this.ENABLE_TRIGGER_USER ? "启用 " + this.TRIGGER_USER.size() + "个" : "禁用");
+		logger.info(Systemd.MODULE_PACKAGENAME, "触发器 组聊", this.ENABLE_TRIGGER_DISZ ? "启用 " + this.TRIGGER_DISZ.size() + "个" : "禁用");
+		logger.info(Systemd.MODULE_PACKAGENAME, "触发器 群聊", this.ENABLE_TRIGGER_GROP ? "启用 " + this.TRIGGER_GROP.size() + "个" : "禁用");
 
-		logger.info(Systemd.MODULE_PACKAGENAME, "监听器 - 私聊", this.ENABLE_LISENTER_USER ? "启用 - " + this.LISTENER_DISZ.size() + "个" : "禁用");
-		logger.info(Systemd.MODULE_PACKAGENAME, "监听器 - 组聊", this.ENABLE_LISENTER_DISZ ? "启用 - " + this.LISTENER_DISZ.size() + "个" : "禁用");
-		logger.info(Systemd.MODULE_PACKAGENAME, "监听器 - 群聊", this.ENABLE_LISENTER_GROP ? "启用 - " + this.LISTENER_GROP.size() + "个" : "禁用");
+		logger.info(Systemd.MODULE_PACKAGENAME, "监听器 私聊", this.ENABLE_LISENTER_USER ? "启用 " + this.LISTENER_DISZ.size() + "个" : "禁用");
+		logger.info(Systemd.MODULE_PACKAGENAME, "监听器 组聊", this.ENABLE_LISENTER_DISZ ? "启用 " + this.LISTENER_DISZ.size() + "个" : "禁用");
+		logger.info(Systemd.MODULE_PACKAGENAME, "监听器 群聊", this.ENABLE_LISENTER_GROP ? "启用 " + this.LISTENER_GROP.size() + "个" : "禁用");
 
-		logger.info(Systemd.MODULE_PACKAGENAME, "执行器 - 私聊", this.ENABLE_EXECUTOR_USER ? "启用 - " + this.EXECUTOR_USER.size() + "个" : "禁用");
-		logger.info(Systemd.MODULE_PACKAGENAME, "执行器 - 组聊", this.ENABLE_EXECUTOR_DISZ ? "启用 - " + this.EXECUTOR_DISZ.size() + "个" : "禁用");
-		logger.info(Systemd.MODULE_PACKAGENAME, "执行器 - 群聊", this.ENABLE_EXECUTOR_GROP ? "启用 - " + this.EXECUTOR_GROP.size() + "个" : "禁用");
+		logger.info(Systemd.MODULE_PACKAGENAME, "执行器 私聊", this.ENABLE_EXECUTOR_USER ? "启用 " + this.EXECUTOR_USER.size() + "个" : "禁用");
+		logger.info(Systemd.MODULE_PACKAGENAME, "执行器 组聊", this.ENABLE_EXECUTOR_DISZ ? "启用 " + this.EXECUTOR_DISZ.size() + "个" : "禁用");
+		logger.info(Systemd.MODULE_PACKAGENAME, "执行器 群聊", this.ENABLE_EXECUTOR_GROP ? "启用 " + this.EXECUTOR_GROP.size() + "个" : "禁用");
 
 		// =======================================================================================================================
 		// 预生成 list 的信息
@@ -1260,7 +1259,7 @@ public class Systemd extends Module {
 
 			break;
 
-			// 模式10 - 模块简报 如不包含 module 开关 则生成所有模块的简报
+		// 模式10 - 模块简报 如不包含 module 开关 则生成所有模块的简报
 		case 0x0A:
 
 			boolean hasModule = message.hasSwitch("module");

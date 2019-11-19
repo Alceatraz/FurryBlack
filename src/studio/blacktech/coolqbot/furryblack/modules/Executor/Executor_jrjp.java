@@ -131,7 +131,7 @@ public class Executor_jrjp extends ModuleExecutor {
 
 			if (this.IGNORES.containsKey(gropid)) {
 				this.IGNORES.get(gropid).add(userid);
-				logger.seek(Executor_jrjp.MODULE_PACKAGENAME, "排除用户", gropid + " - " + userid);
+				logger.seek(Executor_jrjp.MODULE_PACKAGENAME, "排除用户", gropid + " > " + userid);
 			} else {
 				logger.seek(Executor_jrjp.MODULE_PACKAGENAME, "排除用户", "群不存在 " + gropid);
 			}

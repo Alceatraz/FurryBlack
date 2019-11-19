@@ -142,7 +142,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			for (long gropid : this.GROUP_STATUS.keySet()) {
 
 				long time = this.GROUP_STATUS.get(gropid).initdt;
-				logger.seek(MODULE_PACKAGENAME, "创建时间", gropid + " " + LoggerX.datetime(new Date(time)) + "(" + time + ")");
+				logger.seek(MODULE_PACKAGENAME, "群 " + gropid, LoggerX.datetime(new Date(time)) + "(" + time + ")");
 
 			}
 
