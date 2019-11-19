@@ -12,10 +12,10 @@ public class LoggerX {
 	private StringBuilder builder_seek;
 	private StringBuilder builder_full;
 
-//	private static StringBuilder builder_mini = new StringBuilder();
-//	private static StringBuilder builder_info = new StringBuilder();
-//	private static StringBuilder builder_seek = new StringBuilder();
-//	private static StringBuilder builder_full = new StringBuilder();
+	// private static StringBuilder builder_mini = new StringBuilder();
+	// private static StringBuilder builder_info = new StringBuilder();
+	// private static StringBuilder builder_seek = new StringBuilder();
+	// private static StringBuilder builder_full = new StringBuilder();
 
 	public LoggerX() {
 
@@ -24,10 +24,10 @@ public class LoggerX {
 		this.builder_seek = new StringBuilder();
 		this.builder_full = new StringBuilder();
 
-		this.builder_mini.append(datetime());
-		this.builder_info.append(datetime());
-		this.builder_seek.append(datetime());
-		this.builder_full.append(datetime());
+		this.builder_mini.append(LoggerX.datetime());
+		this.builder_info.append(LoggerX.datetime());
+		this.builder_seek.append(LoggerX.datetime());
+		this.builder_full.append(LoggerX.datetime());
 
 		this.builder_mini.append("\r\n");
 		this.builder_info.append("\r\n");
@@ -60,22 +60,22 @@ public class LoggerX {
 	// =====================================
 
 	public String mini(String message) {
-		this.builder_mini.append("[" + time() + "]" + message + "\r\n");
+		this.builder_mini.append("[" + LoggerX.time() + "]" + message + "\r\n");
 		return this.info(message);
 	}
 
 	public String info(String message) {
-		this.builder_info.append("[" + time() + "]" + message + "\r\n");
+		this.builder_info.append("[" + LoggerX.time() + "]" + message + "\r\n");
 		return this.seek(message);
 	}
 
 	public String seek(String message) {
-		this.builder_seek.append("[" + time() + "]" + message + "\r\n");
+		this.builder_seek.append("[" + LoggerX.time() + "]" + message + "\r\n");
 		return this.full(message);
 	}
 
 	public String full(String message) {
-		this.builder_full.append("[" + time() + "]" + message + "\r\n");
+		this.builder_full.append("[" + LoggerX.time() + "]" + message + "\r\n");
 		return message;
 	}
 
@@ -86,22 +86,22 @@ public class LoggerX {
 	// =====================================
 
 	public String mini(String category, String message) {
-		this.builder_mini.append("[" + time() + "][" + category + "]" + message + "\r\n");
+		this.builder_mini.append("[" + LoggerX.time() + "][" + category + "]" + message + "\r\n");
 		return this.info(category, message);
 	}
 
 	public String info(String category, String message) {
-		this.builder_info.append("[" + time() + "][" + category + "]" + message + "\r\n");
+		this.builder_info.append("[" + LoggerX.time() + "][" + category + "]" + message + "\r\n");
 		return this.seek(category, message);
 	}
 
 	public String seek(String category, String message) {
-		this.builder_seek.append("[" + time() + "][" + category + "]" + message + "\r\n");
+		this.builder_seek.append("[" + LoggerX.time() + "][" + category + "]" + message + "\r\n");
 		return this.full(category, message);
 	}
 
 	public String full(String category, String message) {
-		this.builder_full.append("[" + time() + "][" + category + "]" + message + "\r\n");
+		this.builder_full.append("[" + LoggerX.time() + "][" + category + "]" + message + "\r\n");
 		return message;
 	}
 
@@ -112,66 +112,66 @@ public class LoggerX {
 	// =====================================
 
 	public String mini(String packname, String key, String value) {
-		this.builder_mini.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_mini.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return this.info(packname, key, value);
 	}
 
 	public String info(String packname, String key, String value) {
-		this.builder_info.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_info.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return this.seek(packname, key, value);
 	}
 
 	public String seek(String packname, String key, String value) {
-		this.builder_seek.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_seek.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return this.full(packname, key, value);
 	}
 
 	public String full(String packname, String key, String value) {
-		this.builder_full.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_full.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return value;
 	}
 
 	// ========================================================
 
 	public int mini(String packname, String key, int value) {
-		this.builder_mini.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_mini.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return this.info(packname, key, value);
 	}
 
 	public int info(String packname, String key, int value) {
-		this.builder_mini.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_mini.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return this.seek(packname, key, value);
 	}
 
 	public int seek(String packname, String key, int value) {
-		this.builder_seek.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_seek.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return this.full(packname, key, value);
 	}
 
 	public int full(String packname, String key, int value) {
-		this.builder_full.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_full.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return value;
 	}
 
 	// ========================================================
 
 	public long mini(String packname, String key, long value) {
-		this.builder_mini.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_mini.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return this.info(packname, key, value);
 	}
 
 	public long info(String packname, String key, long value) {
-		this.builder_info.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_info.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return this.seek(packname, key, value);
 	}
 
 	public long seek(String packname, String key, long value) {
-		this.builder_seek.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_seek.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return this.full(packname, key, value);
 	}
 
 	public long full(String packname, String key, long value) {
-		this.builder_full.append("[" + time() + "][" + packname + "]" + key + " - " + value + "\r\n");
+		this.builder_full.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
 		return value;
 	}
 
@@ -211,39 +211,39 @@ public class LoggerX {
 	// ================================================================
 
 	public static String date() {
-		return formater_date.format(new Date());
+		return LoggerX.formater_date.format(new Date());
 	}
 
 	public static String date(Date date) {
-		return formater_date.format(date);
+		return LoggerX.formater_date.format(date);
 	}
 
 	public static String date(long timestamp) {
-		return formater_date.format(new Date(timestamp));
+		return LoggerX.formater_date.format(new Date(timestamp));
 	}
 
 	public static String time() {
-		return formater_time.format(new Date());
+		return LoggerX.formater_time.format(new Date());
 	}
 
 	public static String time(Date date) {
-		return formater_time.format(date);
+		return LoggerX.formater_time.format(date);
 	}
 
 	public static String time(long timestamp) {
-		return formater_time.format(new Date(timestamp));
+		return LoggerX.formater_time.format(new Date(timestamp));
 	}
 
 	public static String datetime() {
-		return formater_full.format(new Date());
+		return LoggerX.formater_full.format(new Date());
 	}
 
 	public static String datetime(Date date) {
-		return formater_full.format(date);
+		return LoggerX.formater_full.format(date);
 	}
 
 	public static String datetime(long timestamp) {
-		return formater_full.format(new Date(timestamp));
+		return LoggerX.formater_full.format(new Date(timestamp));
 	}
 
 	// ================================================================

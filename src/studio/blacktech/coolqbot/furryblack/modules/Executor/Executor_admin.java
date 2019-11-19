@@ -44,35 +44,51 @@ public class Executor_admin extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_admin() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+
+		// @formatter:off
+
+		super(
+			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
+			MODULE_DESCRIPTION,
+			MODULE_VERSION,
+			MODULE_USAGE,
+			MODULE_PRIVACY_STORED,
+			MODULE_PRIVACY_CACHED,
+			MODULE_PRIVACY_OBTAIN
+		);
+		
+		// @formatter:on
+
 	}
 
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;
 		this.ENABLE_GROP = true;
+		return logger;
 	}
 
 	@Override
-	public void boot(LoggerX logger) throws Exception {
-
+	public LoggerX boot(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void shut(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void save(LoggerX logger) throws Exception {
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void reload(LoggerX logger) throws Exception {
-	}
-
-	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+		return logger;
 	}
 
 	@Override
@@ -92,6 +108,9 @@ public class Executor_admin extends ModuleExecutor {
 				switch (message.getSegment(0)) {
 				case "report":
 					entry.adminInfo(entry.getSystemd().generateReport(10, message, null, null));
+					break;
+				case "exec":
+					entry.adminInfo(entry.getSystemd().exec(new LoggerX(), message).make(3));
 					break;
 				case "debug":
 					entry.adminInfo(entry.switchDEBUG() ? "DEBUG → Enable" : "DEBUG → Disable");

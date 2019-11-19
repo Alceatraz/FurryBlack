@@ -23,14 +23,10 @@ public class Executor_kong extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "变臭";
 	private static String MODULE_DESCRIPTION = "给文字添加空格";
 	private static String MODULE_VERSION = "1.0";
-	private static String[] MODULE_USAGE = new String[] {
-			"/kong 原句 - 给原句添加空格"
-	};
+	private static String[] MODULE_USAGE = new String[] { "/kong 原句 - 给原句添加空格" };
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"获取命令发送人"
-	};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] { "获取命令发送人" };
 
 	// ==========================================================================================================================================================
 	//
@@ -45,34 +41,52 @@ public class Executor_kong extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_kong() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+
+		// @formatter:off
+
+		super(
+			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
+			MODULE_DESCRIPTION,
+			MODULE_VERSION,
+			MODULE_USAGE,
+			MODULE_PRIVACY_STORED,
+			MODULE_PRIVACY_CACHED,
+			MODULE_PRIVACY_OBTAIN
+		);
+		
+		// @formatter:on
+
 	}
 
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;
 		this.ENABLE_GROP = true;
+
+		return logger;
 	}
 
 	@Override
-	public void boot(LoggerX logger) throws Exception {
+	public LoggerX boot(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void shut(LoggerX logger) throws Exception {
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void save(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void reload(LoggerX logger) throws Exception {
-	}
-
-	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+		return logger;
 	}
 
 	@Override

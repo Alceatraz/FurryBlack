@@ -22,7 +22,7 @@ public class TimeBaseVerification {
 		Date date = new Date(current);
 		int ss = Integer.parseInt(new SimpleDateFormat("ss").format(date));
 		if (55 < ss) { date = new Date(current + 60000); }
-		long timebase = (date.getTime() / 1000 - ss) * 1000;
+		long timebase = ((date.getTime() / 1000) - ss) * 1000;
 		this.cipher = new AESCipher(key, Long.toString(timebase));
 	}
 
@@ -57,14 +57,14 @@ public class TimeBaseVerification {
 		StringBuilder builder = new StringBuilder();
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-512");
-			digest.update(code.getBytes(UTF_8));
+			digest.update(code.getBytes(TimeBaseVerification.UTF_8));
 			sha = digest.digest();
 		} catch (NoSuchAlgorithmException exception) {
 			exception.printStackTrace();
 			return null;
 		}
 		for (int i = 0; i < 32; i++) {
-			builder.append(Integer.toHexString(sha[i] & 0x000000FF | 0xFFFFFF00).substring(6));
+			builder.append(Integer.toHexString((sha[i] & 0x000000FF) | 0xFFFFFF00).substring(6));
 		}
 		return builder.toString();
 	}
@@ -74,7 +74,7 @@ public class TimeBaseVerification {
 		StringBuilder builder = new StringBuilder();
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-512");
-			digest.update(code.getBytes(UTF_8));
+			digest.update(code.getBytes(TimeBaseVerification.UTF_8));
 			sha = digest.digest();
 		} catch (NoSuchAlgorithmException exception) {
 			exception.printStackTrace();
@@ -85,7 +85,7 @@ public class TimeBaseVerification {
 		String hex;
 		for (int i = 0; i < 32; i++) {
 			hbit = sha[2 * i] + 0x80;
-			lbit = sha[2 * i + 1] + 0x80;
+			lbit = sha[(2 * i) + 1] + 0x80;
 			hex = Integer.toString(hbit) + Integer.toString(lbit);
 			builder.append(Character.toChars(Integer.valueOf(hex) & 0xFFFF));
 		}

@@ -23,10 +23,7 @@ import org.meowy.cqp.jcq.event.JcqAppAbstract;
  * CC}({@link org.meowy.cqp.jcq.message.CQCode 酷Q码操作类}), 具体功能可以查看文档
  */
 
-@SuppressWarnings({
-		"deprecation",
-		"unused"
-})
+@SuppressWarnings({ "deprecation", "unused" })
 
 public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
@@ -94,6 +91,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 *
 	 * @return 返回应用的ApiVer、Appid
 	 */
+	@Override
 	public String appInfo() {
 		// 应用AppID,规则见 http://d.cqp.me/Pro/开发/基础信息#appid
 		String AppID = "com.example.demo";
@@ -101,7 +99,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		/**
 		 * 本函数【禁止】处理其他任何代码，以免发生异常情况。 如需执行初始化代码请在 startup 事件中执行（Type=1001）。
 		 */
-		return CQAPIVER + "," + AppID;
+		return ICQVer.CQAPIVER + "," + AppID;
 	}
 
 	/**
@@ -112,6 +110,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 *
 	 * @return 请固定返回0
 	 */
+	@Override
 	public int startup() {
 		// 获取应用数据目录(无需储存数据时，请将此行注释)
 		this.appDirectory = this.CQ.getAppDirectory();
@@ -127,6 +126,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 *
 	 * @return 请固定返回0，返回后酷Q将很快关闭，请不要再通过线程等方式执行其他代码。
 	 */
+	@Override
 	public int exit() {
 		return 0;
 	}
@@ -140,6 +140,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 *
 	 * @return 请固定返回0。
 	 */
+	@Override
 	public int enable() {
 		this.enable = true;
 		return 0;
@@ -153,6 +154,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 *
 	 * @return 请固定返回0。
 	 */
+	@Override
 	public int disable() {
 		this.enable = false;
 		return 0;
@@ -173,10 +175,11 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 *         如果不回复消息，交由之后的应用/过滤器处理，这里 返回 {@link IMsg#MSG_IGNORE MSG_IGNORE} -
 	 *         忽略本条消息
 	 */
+	@Override
 	public int privateMsg(int subType, int msgId, long fromQQ, String msg, int font) {
 		// 这里处理消息
 		this.CQ.sendPrivateMsg(fromQQ, "你发送了这样的消息：" + msg + "\n来自Java插件");
-		return MSG_IGNORE;
+		return IMsg.MSG_IGNORE;
 	}
 
 	/**
@@ -192,9 +195,10 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param font          字体
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
+	@Override
 	public int groupMsg(int subType, int msgId, long fromGroup, long fromQQ, String fromAnonymous, String msg, int font) {
 		// 如果消息来自匿名者
-		if (fromQQ == 80000000L && !fromAnonymous.equals("")) {
+		if ((fromQQ == 80000000L) && !fromAnonymous.equals("")) {
 			// 将匿名用户信息放到 anonymous 变量中
 			Anonymous anonymous = this.CQ.getAnonymous(fromAnonymous);
 		}
@@ -214,7 +218,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		if (fromGroup == 0L) { // 这里的 0L 可以换成您的测试群
 			this.CQ.sendGroupMsg(fromGroup, this.CC.at(fromQQ) + "你发送了这样的消息：" + msg + "\n来自Java插件");
 		}
-		return MSG_IGNORE;
+		return IMsg.MSG_IGNORE;
 	}
 
 	/**
@@ -229,10 +233,11 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param font        字体
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
+	@Override
 	public int discussMsg(int subtype, int msgId, long fromDiscuss, long fromQQ, String msg, int font) {
 		// 这里处理消息
 
-		return MSG_IGNORE;
+		return IMsg.MSG_IGNORE;
 	}
 
 	/**
@@ -246,13 +251,14 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param file      上传文件信息
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
+	@Override
 	public int groupUpload(int subType, int sendTime, long fromGroup, long fromQQ, String file) {
 		GroupFile groupFile = this.CQ.getGroupFile(file);
 		if (groupFile == null) { // 解析群文件信息，如果失败直接忽略该消息
-			return MSG_IGNORE;
+			return IMsg.MSG_IGNORE;
 		}
 		// 这里处理消息
-		return MSG_IGNORE;
+		return IMsg.MSG_IGNORE;
 	}
 
 	/**
@@ -265,8 +271,9 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param beingOperateQQ 被操作QQ
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
+	@Override
 	public int groupAdmin(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
-		return MSG_IGNORE;
+		return IMsg.MSG_IGNORE;
 	}
 
 	/**
@@ -280,8 +287,9 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param beingOperateQQ 被操作QQ
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
+	@Override
 	public int groupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-		return MSG_IGNORE;
+		return IMsg.MSG_IGNORE;
 	}
 
 	/**
@@ -295,12 +303,13 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param beingOperateQQ 被操作QQ(即加群的QQ)
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
+	@Override
 	public int groupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
 		// 这里处理消息
 		this.CQ.logInfo("fromGroup", "" + fromGroup);
 		this.CQ.logInfo("fromQQ", "" + fromQQ);
 		this.CQ.logInfo("beingOperateQQ", "" + beingOperateQQ);
-		return MSG_IGNORE;
+		return IMsg.MSG_IGNORE;
 	}
 
 	/**
@@ -315,6 +324,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param duration       禁言时长(单位 秒，仅子类型为2时可用)
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
+	@Override
 	public int groupBan(int subType, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ, long duration) {
 		// 这里处理消息
 
@@ -330,10 +340,11 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param fromQQ   来源QQ
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
+	@Override
 	public int friendAdd(int subtype, int sendTime, long fromQQ) {
 		// 这里处理消息
 
-		return MSG_IGNORE;
+		return IMsg.MSG_IGNORE;
 	}
 
 	/**
@@ -347,6 +358,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param responseFlag 反馈标识(处理请求用)
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
+	@Override
 	public int requestAddFriend(int subtype, int sendTime, long fromQQ, String msg, String responseFlag) {
 		// 这里处理消息
 
@@ -355,7 +367,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		 */
 
 		// CQ.setFriendAddRequest(responseFlag, REQUEST_ADOPT, null); // 同意好友添加请求
-		return MSG_IGNORE;
+		return IMsg.MSG_IGNORE;
 	}
 
 	/**
@@ -370,6 +382,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param responseFlag 反馈标识(处理请求用)
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
+	@Override
 	public int requestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
 		// 这里处理消息
 
@@ -383,7 +396,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		 * CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_INVITE, REQUEST_ADOPT,
 		 * null);// 同意进受邀群 }
 		 */
-		return MSG_IGNORE;
+		return IMsg.MSG_IGNORE;
 	}
 
 	/**

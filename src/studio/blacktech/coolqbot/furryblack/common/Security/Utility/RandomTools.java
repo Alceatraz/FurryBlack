@@ -12,21 +12,21 @@ public class RandomTools {
 	}
 
 	public static final String genRandomString() {
-		return genRandomString(new SecureRandom());
+		return RandomTools.genRandomString(new SecureRandom());
 	}
 
 	public static final String genRandomString(int size) {
-		return genRandomString(new SecureRandom(), size);
+		return RandomTools.genRandomString(new SecureRandom(), size);
 	}
 
 	public static final String genRandomString(SecureRandom random) {
-		return genRandomString(new SecureRandom(), 16);
+		return RandomTools.genRandomString(new SecureRandom(), 16);
 	}
 
 	public static final String genRandomString(SecureRandom random, int size) {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < size; i++) {
-			builder.append(RANDOMRANGE.charAt(random.nextInt(62)));
+			builder.append(RandomTools.RANDOMRANGE.charAt(random.nextInt(62)));
 		}
 		return builder.toString();
 	}

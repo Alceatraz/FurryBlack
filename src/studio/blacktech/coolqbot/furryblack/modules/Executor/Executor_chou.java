@@ -38,17 +38,11 @@ public class Executor_chou extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "随机抽人";
 	private static String MODULE_DESCRIPTION = "从当前群随机选择一个成员";
 	private static String MODULE_VERSION = "6.2";
-	private static String[] MODULE_USAGE = new String[] {
-			"/chou - 随机抽一个人",
-			"/chou 理由 - 以某个理由抽一个人"
-	};
+	private static String[] MODULE_USAGE = new String[] { "/chou - 随机抽一个人", "/chou 理由 - 以某个理由抽一个人" };
 
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"获取命令发送人",
-			"获取群成员列表"
-	};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] { "获取命令发送人", "获取群成员列表" };
 
 	// ==========================================================================================================================================================
 	//
@@ -68,11 +62,27 @@ public class Executor_chou extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_chou() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+
+		// @formatter:off
+
+		super(
+			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
+			MODULE_DESCRIPTION,
+			MODULE_VERSION,
+			MODULE_USAGE,
+			MODULE_PRIVACY_STORED,
+			MODULE_PRIVACY_CACHED,
+			MODULE_PRIVACY_OBTAIN
+		);
+		
+		// @formatter:on
+
 	}
 
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 
 		this.initConfFolder();
 
@@ -106,19 +116,16 @@ public class Executor_chou extends ModuleExecutor {
 
 			temp = line.split(":");
 
-			if (temp.length != 2) {
-				logger.mini(MODULE_PACKAGENAME, "配置错误", line);
-				continue;
-			}
+			if (temp.length != 2) { logger.mini(Executor_chou.MODULE_PACKAGENAME, "配置错误", line); continue; }
 
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
 
 			if (this.IGNORES.containsKey(gropid)) {
 				this.IGNORES.get(gropid).add(userid);
-				logger.seek(MODULE_PACKAGENAME, "排除用户", gropid + " - " + userid);
+				logger.seek(Executor_chou.MODULE_PACKAGENAME, "排除用户", gropid + " - " + userid);
 			} else {
-				logger.seek(MODULE_PACKAGENAME, "排除用户", "群不存在 " + gropid);
+				logger.seek(Executor_chou.MODULE_PACKAGENAME, "排除用户", "群不存在 " + gropid);
 			}
 
 		}
@@ -144,26 +151,28 @@ public class Executor_chou extends ModuleExecutor {
 		this.ENABLE_DISZ = false;
 		this.ENABLE_GROP = true;
 
+		return logger;
+
 	}
 
 	@Override
-	public void boot(LoggerX logger) throws Exception {
+	public LoggerX boot(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void shut(LoggerX logger) throws Exception {
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void save(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void reload(LoggerX logger) throws Exception {
-	}
-
-	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+		return logger;
 	}
 
 	@Override

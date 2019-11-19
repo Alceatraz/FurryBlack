@@ -25,16 +25,10 @@ public class Executor_roll extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "生成随机数";
 	private static String MODULE_DESCRIPTION = "生成随机数";
 	private static String MODULE_VERSION = "1.1";
-	private static String[] MODULE_USAGE = new String[] {
-			"/roll - 抽取真假",
-			"/roll 数字 - 从零到给定数字任选一个数字",
-			"/roll 数字 数字 - 从给定两个数字中间抽取一个"
-	};
+	private static String[] MODULE_USAGE = new String[] { "/roll - 抽取真假", "/roll 数字 - 从零到给定数字任选一个数字", "/roll 数字 数字 - 从给定两个数字中间抽取一个" };
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"获取命令发送人"
-	};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] { "获取命令发送人" };
 
 	// ==========================================================================================================================================================
 	//
@@ -56,34 +50,51 @@ public class Executor_roll extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_roll() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+
+		// @formatter:off
+
+		super(
+			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
+			MODULE_DESCRIPTION,
+			MODULE_VERSION,
+			MODULE_USAGE,
+			MODULE_PRIVACY_STORED,
+			MODULE_PRIVACY_CACHED,
+			MODULE_PRIVACY_OBTAIN
+		);
+		
+		// @formatter:on
+
 	}
 
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;
 		this.ENABLE_GROP = true;
+		return logger;
 	}
 
 	@Override
-	public void boot(LoggerX logger) throws Exception {
+	public LoggerX boot(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void shut(LoggerX logger) throws Exception {
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void save(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void reload(LoggerX logger) throws Exception {
-	}
-
-	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+		return logger;
 	}
 
 	@Override
@@ -165,7 +176,7 @@ public class Executor_roll extends ModuleExecutor {
 				return "参数必须是罗马数字";
 			}
 			int temp = random.nextInt(max);
-			if (temp < min) { temp = temp / max * (max - min) + min; }
+			if (temp < min) { temp = ((temp / max) * (max - min)) + min; }
 			res = Integer.toString(temp);
 			this.mode_3++;
 			break;
@@ -178,7 +189,7 @@ public class Executor_roll extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null; }
+		if ((this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP) == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		builder.append("模式1 - 真假: ");
 		builder.append(this.mode_1);
@@ -190,9 +201,7 @@ public class Executor_roll extends ModuleExecutor {
 		builder.append(this.mode_2);
 		builder.append("\r\n模式3 - 双限: ");
 		builder.append(this.mode_3);
-		String[] res = new String[] {
-				builder.toString()
-		};
+		String[] res = new String[] { builder.toString() };
 		return res;
 	}
 

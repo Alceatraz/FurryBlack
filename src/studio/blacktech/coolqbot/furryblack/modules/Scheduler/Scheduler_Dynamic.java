@@ -64,17 +64,33 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	// ==========================================================================================================================================================
 
 	public Scheduler_Dynamic() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+
+		// @formatter:off
+
+		super(
+			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
+			MODULE_DESCRIPTION,
+			MODULE_VERSION,
+			MODULE_USAGE,
+			MODULE_PRIVACY_STORED,
+			MODULE_PRIVACY_CACHED,
+			MODULE_PRIVACY_OBTAIN
+		);
+		
+		// @formatter:on
+
 	}
 
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 
 		this.initConfFolder();
 		this.initCofigurtion();
 
 		if (this.NEW_CONFIG) {
-			logger.seek(MODULE_PACKAGENAME, "配置文件不存在 - 生成默认配置");
+			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "配置文件不存在 - 生成默认配置");
 			this.CONFIG.setProperty("enable", "false");
 			this.CONFIG.setProperty("getaddress", "");
 			this.CONFIG.setProperty("setaddress", "");
@@ -88,7 +104,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 		this.ENABLE = Boolean.parseBoolean(this.CONFIG.getProperty("enable", "false"));
 
-		logger.seek(MODULE_PACKAGENAME, "开关 ", this.ENABLE ? "启用" : "禁用");
+		logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "开关 ", this.ENABLE ? "启用" : "禁用");
 
 		if (this.ENABLE) {
 
@@ -98,64 +114,54 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			this.HOSTNAME = this.CONFIG.getProperty("hostname", "");
 			this.PASSWORD = this.CONFIG.getProperty("password", "");
 
-			logger.seek(MODULE_PACKAGENAME, "获取", this.API_GETADDRESS);
-			logger.seek(MODULE_PACKAGENAME, "刷新", this.API_SETADDRESS);
-			logger.seek(MODULE_PACKAGENAME, "标识", this.CLIENTUA);
-			logger.seek(MODULE_PACKAGENAME, "域名", this.HOSTNAME);
-			logger.seek(MODULE_PACKAGENAME, "密码", this.PASSWORD.substring(6, 12));
+			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "获取", this.API_GETADDRESS);
+			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "刷新", this.API_SETADDRESS);
+			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "标识", this.CLIENTUA);
+			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "域名", this.HOSTNAME);
+			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "密码", this.PASSWORD.substring(6, 12));
 
 		}
+
+		return logger;
 	}
 
 	@Override
-	public void boot(LoggerX logger) throws Exception {
-		if (this.ENABLE) {
-			logger.info(MODULE_PACKAGENAME, "启动工作线程");
-			this.thread = new Thread(new WorkerProcerss());
-			this.thread.start();
-		}
+	public LoggerX boot(LoggerX logger) throws Exception {
+		if (this.ENABLE) { logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "启动工作线程"); this.thread = new Thread(new WorkerProcerss()); this.thread.start(); }
+		return logger;
 	}
 
 	@Override
-	public void shut(LoggerX logger) throws Exception {
-		if (this.ENABLE) {
-			logger.info(MODULE_PACKAGENAME, "终止工作线程");
-			this.thread.interrupt();
-			this.thread.join();
-		}
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void save(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+		if (this.ENABLE) { logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "终止工作线程"); this.thread.interrupt(); this.thread.join(); }
+		return logger;
 	}
 
 	@Override
-	public void reload(LoggerX logger) throws Exception {
-	}
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
 
-	// admin exec --module=dynamic get
-	// admin exec --module=dynamic set
-	// admin exec --module=dynamic set 123.123.123.123
+		if (message.getSection() < 2) { logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "参数不足"); return logger; }
 
-	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
-		if (message.getSection() < 2) {
-			logger.info(MODULE_PACKAGENAME, "参数不足");
-			return;
-		}
 		String command = message.getSegment()[1];
+
 		switch (command) {
 		case "get":
-			logger.info(MODULE_PACKAGENAME, this.getAddress());
-			return;
+			logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, this.getAddress());
+			break;
 		case "set":
 			if (message.getSection() == 2) {
-				logger.info(MODULE_PACKAGENAME, this.setAddress());
+				logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, this.setAddress());
 			} else {
-				logger.info(MODULE_PACKAGENAME, this.setAddress(message.getSegment(2)));
+				logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, this.setAddress(message.getSegment(2)));
 			}
-			return;
+			break;
 		}
+		return logger;
 	}
 
 	@Override
@@ -192,9 +198,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		builder.append(this.COUNT_CHANGE);
 		builder.append("\r\n访问失败：");
 		builder.append(this.COUNT_FAILED);
-		String[] res = new String[] {
-				builder.toString()
-		};
+		String[] res = new String[] { builder.toString() };
 		return res;
 
 	}
@@ -216,15 +220,15 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 						date = new Date();
 						time = 300L;
 						time = time - date.getSeconds();
-						time = time - date.getMinutes() % 10 * 60;
+						time = time - ((date.getMinutes() % 10) * 60);
 						if (time < 60) { time = time + 300; }
 						time = time * 1000;
-						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(Scheduler_Dynamic.MODULE_PACKAGENAME, "休眠：" + time); }
 						Thread.sleep(time);
 						// =======================================================
 						Scheduler_Dynamic.this.COUNT++;
 						// =======================================================
-						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行"); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(Scheduler_Dynamic.MODULE_PACKAGENAME, "执行"); }
 						respons = Scheduler_Dynamic.this.setAddress();
 						// 直接更新地址
 						if (respons == null) {
@@ -263,18 +267,15 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 							// 如果发生改变API返回内容为 good 123.123.123.123
 							if (respons.startsWith("good")) { Scheduler_Dynamic.this.COUNT_CHANGE++; }
 						}
-						if (failcount > 6) {
-							failcount = 0;
-							entry.adminInfo("[DDNS] 警告 更新失败\r\n需要手动介入\r\n已连续失败六次");
-						}
-						if (entry.DEBUG()) { entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果 " + respons); }
+						if (failcount > 6) { failcount = 0; entry.adminInfo("[DDNS] 警告 更新失败\r\n需要手动介入\r\n已连续失败六次"); }
+						if (entry.DEBUG()) { entry.getCQ().logInfo(Scheduler_Dynamic.MODULE_PACKAGENAME, "结果 " + respons); }
 						// =======================================================
 					}
 				} catch (InterruptedException exception) {
 					if (entry.isEnable()) {
-						entry.getCQ().logWarning(MODULE_PACKAGENAME, "异常");
+						entry.getCQ().logWarning(Scheduler_Dynamic.MODULE_PACKAGENAME, "异常");
 					} else {
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
+						entry.getCQ().logInfo(Scheduler_Dynamic.MODULE_PACKAGENAME, "关闭");
 					}
 				}
 			} while (entry.isEnable());
@@ -297,7 +298,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
-			entry.adminInfo(MODULE_PACKAGENAME + " 获取异常 " + exception.getMessage());
+			entry.adminInfo(Scheduler_Dynamic.MODULE_PACKAGENAME + " 获取异常 " + exception.getMessage());
 			this.COUNT_GETIP_FAILED++;
 			return null;
 		}
@@ -321,7 +322,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		} catch (IOException exception) {
 			this.COUNT_SETIP_FAILED++;
 			exception.printStackTrace();
-			entry.adminInfo(MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
+			entry.adminInfo(Scheduler_Dynamic.MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;
 		}
 	}
@@ -344,7 +345,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		} catch (IOException exception) {
 			this.COUNT_FRESH_FAILED++;
 			exception.printStackTrace();
-			entry.adminInfo(MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
+			entry.adminInfo(Scheduler_Dynamic.MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;
 		}
 	}

@@ -53,27 +53,16 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	// 命令用法，数组的每个元素应为一个参数组合用法及其说明
 	// 减号左右各一个空格
-	private static String[] MODULE_USAGE = new String[] {
-			"命令1 - 命令用法1",
-			"命令2 - 命令用法2",
-			"命令3 - 命令用法3",
-			"命令4 - 命令用法4",
-	};
+	private static String[] MODULE_USAGE = new String[] { "命令1 - 命令用法1", "命令2 - 命令用法2", "命令3 - 命令用法3", "命令4 - 命令用法4", };
 
 	// 如果需要将数据存储为文件 则应写明存储的内容及其用途 有效时限
-	public static String[] MODULE_PRIVACY_STORED = new String[] {
-			"隐私级别 - 用途"
-	};
+	public static String[] MODULE_PRIVACY_STORED = new String[] { "隐私级别 - 用途" };
 
 	// 如果需要将数据存储在内存 则应写明存储的内容及其用途 有效时限
-	public static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"隐私级别 - 用途"
-	};
+	public static String[] MODULE_PRIVACY_CACHED = new String[] { "隐私级别 - 用途" };
 
 	// 如果需要获取用户相关的信息 则应写明内容及其用途 且获取的信息不应该储存 如果需要存储则将此功能写入MODULE_PRIVACY_CACHED
-	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"隐私级别 - 用途"
-	};
+	public static String[] MODULE_PRIVACY_OBTAIN = new String[] { "隐私级别 - 用途" };
 
 	// ==========================================================================================================================================================
 	//
@@ -106,7 +95,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * @throws Exception 发生任何错误应扔出
 	 */
 	public Executor_DEMO() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(Executor_DEMO.MODULE_PACKAGENAME, Executor_DEMO.MODULE_COMMANDNAME, Executor_DEMO.MODULE_DISPLAYNAME, Executor_DEMO.MODULE_DESCRIPTION, Executor_DEMO.MODULE_VERSION, Executor_DEMO.MODULE_USAGE, Executor_DEMO.MODULE_PRIVACY_STORED, Executor_DEMO.MODULE_PRIVACY_CACHED, Executor_DEMO.MODULE_PRIVACY_OBTAIN);
 	}
 
 	/**
@@ -115,7 +104,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * 1：初始化配置及数据文件 2：生成所有内存结构 3：读取配置并应用 4：分析 ENABLE_MODE
 	 */
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 
 		// ==================================================================================
 		// 1：初始化配置及数据文件
@@ -172,11 +161,9 @@ public class Executor_DEMO extends ModuleExecutor {
 		// 则直接跳注册阶段
 		// 模块不需要每次doMessage时都判断 if ( enable )
 
-		if (this.ENABLE_DEMO) {
-			this.ENABLE_USER = true;
-			this.ENABLE_DISZ = true;
-			this.ENABLE_GROP = true;
-		}
+		if (this.ENABLE_DEMO) { this.ENABLE_USER = true; this.ENABLE_DISZ = true; this.ENABLE_GROP = true; }
+
+		return logger;
 
 	}
 
@@ -184,17 +171,20 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * 如果有 应在此处初始化工作线程并运行 如果ENABLE_MODE=false则不会注册 则不会执行boot的内容
 	 */
 	@Override
-	public void boot(LoggerX logger) throws Exception {
+	public LoggerX boot(LoggerX logger) throws Exception {
+
 		this.thread = new Thread(new Worker());
 		this.thread.start();
+
+		return logger;
 	}
 
 	/**
 	 * 如果需要保存数据 则应该在此处保存数据 注意 这个函数不意味着结束
 	 */
 	@Override
-	public void save(LoggerX logger) throws Exception {
-
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	/**
@@ -205,25 +195,22 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * 有可能会使用 /admin init X 强制执行生命周期函数 但是此命令不属于正常使用范畴 可以不考虑此情况
 	 */
 	@Override
-	public void shut(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+
 		// 如果包含子线程 应在此时中断
 		this.thread.interrupt();
 		this.thread.join();
-	}
 
-	/**
-	 * 重载配置使用 暂时无用
-	 */
-	@Override
-	public void reload(LoggerX logger) throws Exception {
-		// 暂时不会被调用
+		return logger;
 	}
 
 	/**
 	 * 用于管理和debug /admin exec --module=demo xxx xxxx xxx xxxx xxxxx xxxxxxx
 	 */
 	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+
+		return logger;
 	}
 
 	/**
@@ -317,25 +304,25 @@ public class Executor_DEMO extends ModuleExecutor {
 						// 减去当前秒数 以对齐秒 使其能在 xx:xx:00 执行
 						time = time - date.getSeconds();
 						// 减去当前分钟 以对齐分 使其能在 xx:00:00 执行
-						time = time - date.getMinutes() * 60;
+						time = time - (date.getMinutes() * 60);
 						// 减去当前分钟 以对齐时 使其能在 00:00:00 执行
-						time = time - date.getHours() * 3600;
+						time = time - (date.getHours() * 3600);
 
 						// 转换为毫秒
 						time = time * 1000;
 
 						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time);
+						entry.getCQ().logInfo(Executor_DEMO.MODULE_PACKAGENAME, "休眠：" + time);
 
 						Thread.sleep(time);
 
 						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行");
+						entry.getCQ().logInfo(Executor_DEMO.MODULE_PACKAGENAME, "执行");
 
 						// 此处执行实际任务
 
 						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果");
+						entry.getCQ().logInfo(Executor_DEMO.MODULE_PACKAGENAME, "结果");
 
 					}
 
@@ -346,13 +333,13 @@ public class Executor_DEMO extends ModuleExecutor {
 					if (entry.isEnable()) {
 
 						// 如果框架运行中，则遇到了真正意义上的异常，应观察发生了什么
-						entry.getCQ().logWarning(MODULE_PACKAGENAME, "异常");
+						entry.getCQ().logWarning(Executor_DEMO.MODULE_PACKAGENAME, "异常");
 						exception.printStackTrace();
 
 					} else {
 
 						// 如果框架关闭，则并非真的异常 此时将会跳出主循环 结束worker
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
+						entry.getCQ().logInfo(Executor_DEMO.MODULE_PACKAGENAME, "关闭");
 
 					}
 				}

@@ -36,9 +36,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	private static String MODULE_DESCRIPTION = "用户过滤器";
 	private static String MODULE_VERSION = "2.0";
 	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {
-			"按照\"群-成员\"的层级关系手动配置被阻止的用户"
-	};
+	private static String[] MODULE_PRIVACY_STORED = new String[] { "按照\"群-成员\"的层级关系手动配置被阻止的用户" };
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
@@ -73,11 +71,27 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	// ==========================================================================================================================================================
 
 	public Trigger_UserDeny() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+
+		// @formatter:off
+
+		super(
+			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
+			MODULE_DESCRIPTION,
+			MODULE_VERSION,
+			MODULE_USAGE,
+			MODULE_PRIVACY_STORED,
+			MODULE_PRIVACY_CACHED,
+			MODULE_PRIVACY_OBTAIN
+		);
+		
+		// @formatter:on
+
 	}
 
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 
 		this.initConfFolder();
 		this.initDataFolder();
@@ -135,7 +149,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 			if (line.startsWith("#")) { continue; }
 			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
 			this.USER_IGNORE.add(Long.parseLong(line));
-			logger.seek(MODULE_PACKAGENAME, "禁止私聊用户", line);
+			logger.seek(Trigger_UserDeny.MODULE_PACKAGENAME, "禁止私聊用户", line);
 		}
 
 		while ((line = readerDisz.readLine()) != null) {
@@ -148,13 +162,10 @@ public class Trigger_UserDeny extends ModuleTrigger {
 			if (userid == 0) {
 				this.DISZ_IGNORE.add(diszid);
 			} else {
-				if (!this.DISZ_IGNORE_ONE.containsKey(diszid)) {
-					HashSet<Long> tempSet = new HashSet<>();
-					this.DISZ_IGNORE_ONE.put(diszid, tempSet);
-				}
+				if (!this.DISZ_IGNORE_ONE.containsKey(diszid)) { HashSet<Long> tempSet = new HashSet<>(); this.DISZ_IGNORE_ONE.put(diszid, tempSet); }
 				this.DISZ_IGNORE_ONE.get(diszid).add(userid);
 			}
-			logger.seek(MODULE_PACKAGENAME, "禁止组聊用户", line);
+			logger.seek(Trigger_UserDeny.MODULE_PACKAGENAME, "禁止组聊用户", line);
 		}
 
 		while ((line = readerGrop.readLine()) != null) {
@@ -168,22 +179,19 @@ public class Trigger_UserDeny extends ModuleTrigger {
 			if (userid == 0) {
 				this.GROP_IGNORE.add(gropid);
 			} else {
-				if (!this.GROP_IGNORE_ONE.containsKey(gropid)) {
-					HashSet<Long> tempSet = new HashSet<>();
-					this.GROP_IGNORE_ONE.put(gropid, tempSet);
-				}
+				if (!this.GROP_IGNORE_ONE.containsKey(gropid)) { HashSet<Long> tempSet = new HashSet<>(); this.GROP_IGNORE_ONE.put(gropid, tempSet); }
 				this.GROP_IGNORE_ONE.get(gropid).add(userid);
 			}
-			logger.seek(MODULE_PACKAGENAME, "禁止群聊用户", line);
+			logger.seek(Trigger_UserDeny.MODULE_PACKAGENAME, "禁止群聊用户", line);
 		}
 
 		readerUser.close();
 		readerDisz.close();
 		readerGrop.close();
 
-		this.ENABLE_USER = this.ENABLE_USER && this.USER_IGNORE.size() > 0;
-		this.ENABLE_DISZ = this.ENABLE_DISZ && this.DISZ_IGNORE.size() + this.DISZ_IGNORE_ONE.size() > 0;
-		this.ENABLE_GROP = this.ENABLE_GROP && this.GROP_IGNORE.size() + this.GROP_IGNORE_ONE.size() > 0;
+		this.ENABLE_USER = this.ENABLE_USER && (this.USER_IGNORE.size() > 0);
+		this.ENABLE_DISZ = this.ENABLE_DISZ && ((this.DISZ_IGNORE.size() + this.DISZ_IGNORE_ONE.size()) > 0);
+		this.ENABLE_GROP = this.ENABLE_GROP && ((this.GROP_IGNORE.size() + this.GROP_IGNORE_ONE.size()) > 0);
 
 		for (Long tempuserid : this.USER_IGNORE) {
 			this.DENY_USER_COUNT.put(tempuserid, 0);
@@ -207,26 +215,28 @@ public class Trigger_UserDeny extends ModuleTrigger {
 			this.DENY_GROP_COUNT.put(tempgropid, tempcount);
 		}
 
+		return logger;
+
 	}
 
 	@Override
-	public void boot(LoggerX logger) throws Exception {
+	public LoggerX boot(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void shut(LoggerX logger) throws Exception {
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void save(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void reload(LoggerX logger) throws Exception {
-	}
-
-	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+		return logger;
 	}
 
 	@Override
@@ -336,7 +346,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 			}
 		}
 
-		if (this.COUNT_USER == 0 && this.COUNT_DISZ == 0 && this.COUNT_GROP == 0) { return null; }
+		if ((this.COUNT_USER == 0) && (this.COUNT_DISZ == 0) && (this.COUNT_GROP == 0)) { return null; }
 
 		StringBuilder builder = new StringBuilder();
 
@@ -396,9 +406,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 				}
 			}
 		}
-		String[] res = new String[] {
-				builder.toString()
-		};
+		String[] res = new String[] { builder.toString() };
 		return res;
 	}
 

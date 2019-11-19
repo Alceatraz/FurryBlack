@@ -39,9 +39,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	private static String MODULE_DESCRIPTION = "正则过滤器";
 	private static String MODULE_VERSION = "2.0";
 	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {
-			"按照\"成员-消息\"的层级关系记录违反ELUA的行为"
-	};
+	private static String[] MODULE_PRIVACY_STORED = new String[] { "按照\"成员-消息\"的层级关系记录违反ELUA的行为" };
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
@@ -68,11 +66,27 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	// ==========================================================================================================================================================
 
 	public Trigger_WordDeny() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+
+		// @formatter:off
+
+		super(
+			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
+			MODULE_DESCRIPTION,
+			MODULE_VERSION,
+			MODULE_USAGE,
+			MODULE_PRIVACY_STORED,
+			MODULE_PRIVACY_CACHED,
+			MODULE_PRIVACY_OBTAIN
+		);
+		
+		// @formatter:on
+
 	}
 
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 
 		this.initConfFolder();
 		this.initDataFolder();
@@ -110,7 +124,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 			if (line.startsWith("#")) { continue; }
 			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")); }
 			this.BLACKLIST.add(line.trim());
-			logger.seek(MODULE_PACKAGENAME, "过滤规则", line);
+			logger.seek(Trigger_WordDeny.MODULE_PACKAGENAME, "过滤规则", line);
 		}
 		reader.close();
 
@@ -126,26 +140,28 @@ public class Trigger_WordDeny extends ModuleTrigger {
 			this.BLOCK_GROP_STORE.put(templine, new LinkedList<>());
 		}
 
+		return logger;
+
 	}
 
 	@Override
-	public void boot(LoggerX logger) throws Exception {
+	public LoggerX boot(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void shut(LoggerX logger) throws Exception {
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void save(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void reload(LoggerX logger) throws Exception {
-	}
-
-	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+		return logger;
 	}
 
 	@Override
@@ -159,16 +175,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		for (String temp : this.BLACKLIST) {
-			if (Pattern.matches(temp, message.getRawMessage())) {
-				entry.adminInfo("私聊过滤：" + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
-				this.BLOCK_USER_STORE.get(temp).add(message);
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8));
-				writer.write(message.toString());
-				writer.write("\r\n\r\n\r\n\r\n");
-				writer.flush();
-				writer.close();
-				return true;
-			}
+			if (Pattern.matches(temp, message.getRawMessage())) { entry.adminInfo("私聊过滤：" + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage()); this.BLOCK_USER_STORE.get(temp).add(message); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8)); writer.write(message.toString()); writer.write("\r\n\r\n\r\n\r\n"); writer.flush(); writer.close(); return true; }
 		}
 		return false;
 	}
@@ -176,16 +183,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		for (String temp : this.BLACKLIST) {
-			if (Pattern.matches(temp, message.getRawMessage())) {
-				entry.adminInfo("组聊过滤：" + diszid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
-				this.BLOCK_DISZ_STORE.get(temp).add(message);
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8));
-				writer.write(message.toString());
-				writer.write("\r\n\r\n\r\n\r\n");
-				writer.flush();
-				writer.close();
-				return true;
-			}
+			if (Pattern.matches(temp, message.getRawMessage())) { entry.adminInfo("组聊过滤：" + diszid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage()); this.BLOCK_DISZ_STORE.get(temp).add(message); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8)); writer.write(message.toString()); writer.write("\r\n\r\n\r\n\r\n"); writer.flush(); writer.close(); return true; }
 		}
 		return false;
 	}
@@ -193,16 +191,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		for (String temp : this.BLACKLIST) {
-			if (Pattern.matches(temp, message.getRawMessage())) {
-				entry.adminInfo("群聊过滤：" + gropid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
-				this.BLOCK_GROP_STORE.get(temp).add(message);
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8));
-				writer.write(message.toString());
-				writer.write("\r\n\r\n\r\n\r\n");
-				writer.flush();
-				writer.close();
-				return true;
-			}
+			if (Pattern.matches(temp, message.getRawMessage())) { entry.adminInfo("群聊过滤：" + gropid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage()); this.BLOCK_GROP_STORE.get(temp).add(message); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENYEDMSG, true), StandardCharsets.UTF_8)); writer.write(message.toString()); writer.write("\r\n\r\n\r\n\r\n"); writer.flush(); writer.close(); return true; }
 		}
 		return false;
 	}
@@ -226,7 +215,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 			this.BLOCK_GROP = this.BLOCK_GROP + this.BLOCK_GROP_STORE.get(temp).size();
 		}
 
-		if (this.BLOCK_USER == 0 && this.BLOCK_DISZ == 0 && this.BLOCK_GROP == 0) { return null; }
+		if ((this.BLOCK_USER == 0) && (this.BLOCK_DISZ == 0) && (this.BLOCK_GROP == 0)) { return null; }
 
 		String[] res;
 		StringBuilder builder;

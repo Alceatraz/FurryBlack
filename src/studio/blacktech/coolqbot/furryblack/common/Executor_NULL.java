@@ -44,22 +44,22 @@ public class Executor_NULL extends ModuleExecutor {
 	public Executor_NULL() throws Exception {
 
 		super(
-			MODULE_PACKAGENAME,
-			MODULE_COMMANDNAME,
-			MODULE_DISPLAYNAME,
-			MODULE_DESCRIPTION,
-			MODULE_VERSION,
-			MODULE_USAGE,
-			MODULE_PRIVACY_STORED,
-			MODULE_PRIVACY_CACHED,
-			MODULE_PRIVACY_OBTAIN
-		);
+				Executor_NULL.MODULE_PACKAGENAME,
+				Executor_NULL.MODULE_COMMANDNAME,
+				Executor_NULL.MODULE_DISPLAYNAME,
+				Executor_NULL.MODULE_DESCRIPTION,
+				Executor_NULL.MODULE_VERSION,
+				Executor_NULL.MODULE_USAGE,
+				Executor_NULL.MODULE_PRIVACY_STORED,
+				Executor_NULL.MODULE_PRIVACY_CACHED,
+				Executor_NULL.MODULE_PRIVACY_OBTAIN
+				);
 	}
 
 	// @formatter:on
 
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 
 		if (this.NEW_CONFIG) {
 			this.CONFIG.setProperty("", "");
@@ -71,26 +71,29 @@ public class Executor_NULL extends ModuleExecutor {
 		this.ENABLE_USER = false;
 		this.ENABLE_DISZ = false;
 		this.ENABLE_GROP = false;
+
+		return logger;
+
 	}
 
 	@Override
-	public void boot(LoggerX logger) throws Exception {
+	public LoggerX boot(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void shut(LoggerX logger) throws Exception {
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void save(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void reload(LoggerX logger) throws Exception {
-	}
-
-	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+		return logger;
 	}
 
 	@Override

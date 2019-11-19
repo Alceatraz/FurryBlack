@@ -27,15 +27,11 @@ public class Executor_zhan extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "占卜";
 	private static String MODULE_DESCRIPTION = "大阿卡那塔罗牌占卜";
 	private static String MODULE_VERSION = "1.0";
-	private static String[] MODULE_USAGE = new String[] {
-			"/zhan 理由 - 为某事占卜"
-	};
+	private static String[] MODULE_USAGE = new String[] { "/zhan 理由 - 为某事占卜" };
 
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"获取命令发送人"
-	};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] { "获取命令发送人" };
 
 	// ==========================================================================================================================================================
 	//
@@ -53,11 +49,27 @@ public class Executor_zhan extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_zhan() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+
+		// @formatter:off
+
+		super(
+			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
+			MODULE_DESCRIPTION,
+			MODULE_VERSION,
+			MODULE_USAGE,
+			MODULE_PRIVACY_STORED,
+			MODULE_PRIVACY_CACHED,
+			MODULE_PRIVACY_OBTAIN
+		);
+		
+		// @formatter:on
+
 	}
 
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 
 		this.CARD = new TreeMap<>();
 		this.FREQ = new ArrayList<>();
@@ -115,39 +127,40 @@ public class Executor_zhan extends ModuleExecutor {
 		this.CARD.put(44, "XXI. THE WORLD 世界逆位\r\n惯性 固执 停滞 持久");
 
 		// @formatter:off
-        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
-        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
-        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
-        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
-        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
-        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
-        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
-        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
-        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        // @formatter:on
+		this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+		this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+		this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+		this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+		this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+		this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+		this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+		this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);
+		this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        this.FREQ.add(0);        // @formatter:on
 
 		this.ENABLE_USER = true;
 		this.ENABLE_DISZ = true;
 		this.ENABLE_GROP = true;
+		return logger;
 	}
 
 	@Override
-	public void boot(LoggerX logger) throws Exception {
+	public LoggerX boot(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void shut(LoggerX logger) throws Exception {
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void save(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void reload(LoggerX logger) throws Exception {
-	}
-
-	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+		return logger;
 	}
 
 	@Override
@@ -214,7 +227,7 @@ public class Executor_zhan extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null; }
+		if ((this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP) == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		int coverage = 0;
 		for (int i = 0; i < 44; i++) {
@@ -228,12 +241,10 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append(" 张 : ");
 			builder.append(this.FREQ.get(i));
 			builder.append(" - ");
-			builder.append(this.FREQ.get(i) * 100 / coverage);
+			builder.append((this.FREQ.get(i) * 100) / coverage);
 			builder.append("%");
 		}
-		String[] res = new String[] {
-				builder.toString()
-		};
+		String[] res = new String[] { builder.toString() };
 		return res;
 	}
 

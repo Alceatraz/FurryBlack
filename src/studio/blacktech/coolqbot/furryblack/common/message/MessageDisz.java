@@ -21,6 +21,7 @@ public class MessageDisz extends Message {
 		return this.userid;
 	}
 
+	@Override
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();

@@ -99,7 +99,7 @@ public class Message implements Serializable {
 				// 提取所有 --XX=XXXX 形式的开关
 				// 提取所有其他内容为参数
 				for (String temp : this.options.split(" ")) {
-					if (temp.startsWith("--") && temp.indexOf("=") > 0) {
+					if (temp.startsWith("--") && (temp.indexOf("=") > 0)) {
 						temp = temp.substring(2);
 						flag = temp.split("=");
 						this.switchs.put(flag[0], flag[1]);
@@ -175,6 +175,7 @@ public class Message implements Serializable {
 
 	// ===================================================================================
 
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("============================================\n");

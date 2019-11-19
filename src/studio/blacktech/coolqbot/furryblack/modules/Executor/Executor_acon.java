@@ -26,37 +26,9 @@ public class Executor_acon extends ModuleExecutor {
 	private static String MODULE_DISPLAYNAME = "空调";
 	private static String MODULE_DESCRIPTION = "本群冷气开放";
 	private static String MODULE_VERSION = "3.0";
-	private static String[] MODULE_USAGE = new String[] {
-			"/acon cost - 耗电量",
-			"/acon off - 关机",
-			"/acon wet - 加湿",
-			"/acon dry - 除湿",
-			"/acon cold - 制冰模式",
-			"/acon cool - 制冷模式",
-			"/acon warm - 制热模式",
-			"/acon bake - 烘烤模式",
-			"/acon burn - 烧烤模式",
-			"/acon fire - 焚化模式",
-			"/acon c2h2 - 乙炔炬模式",
-			"/acon argon - 氩气引弧模式",
-			"/acon plasma - 等离子模式",
-			"/acon nova - 点亮一颗新星",
-			"/acon cfnuke - 点燃一颗冷核武器",
-			"/acon trnuke - 点燃一颗热核武器",
-			"/acon tpnuke - 点燃一颗三相热核弹",
-			"/acon ianova - Ia级超新星吸积引燃",
-			"/acon ibnova - Ib级超新星吸积引燃",
-			"/acon icnova - Ic级超新星吸积引燃",
-			"/acon iinova - II级超新星吸积引燃",
-			"/acon ~!C??? - Fy:????",
-			"/acon ~!R[?? - FT//s??"
-	};
+	private static String[] MODULE_USAGE = new String[] { "/acon cost - 耗电量", "/acon off - 关机", "/acon wet - 加湿", "/acon dry - 除湿", "/acon cold - 制冰模式", "/acon cool - 制冷模式", "/acon warm - 制热模式", "/acon bake - 烘烤模式", "/acon burn - 烧烤模式", "/acon fire - 焚化模式", "/acon c2h2 - 乙炔炬模式", "/acon argon - 氩气引弧模式", "/acon plasma - 等离子模式", "/acon nova - 点亮一颗新星", "/acon cfnuke - 点燃一颗冷核武器", "/acon trnuke - 点燃一颗热核武器", "/acon tpnuke - 点燃一颗三相热核弹", "/acon ianova - Ia级超新星吸积引燃", "/acon ibnova - Ib级超新星吸积引燃", "/acon icnova - Ic级超新星吸积引燃", "/acon iinova - II级超新星吸积引燃", "/acon ~!C??? - Fy:????", "/acon ~!R[?? - FT//s??" };
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"按群存储耗电量 - JCQ停止时释放",
-			"按群存储耗工作模式 - JCQ停止时释放",
-			"按群存储上次更改模式的时间戳 - JCQ停止时释放",
-	};
+	private static String[] MODULE_PRIVACY_CACHED = new String[] { "按群存储耗电量 - JCQ停止时释放", "按群存储耗工作模式 - JCQ停止时释放", "按群存储上次更改模式的时间戳 - JCQ停止时释放", };
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
@@ -76,11 +48,27 @@ public class Executor_acon extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_acon() throws Exception {
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+
+		// @formatter:off
+
+		super(
+			MODULE_PACKAGENAME,
+			MODULE_COMMANDNAME,
+			MODULE_DISPLAYNAME,
+			MODULE_DESCRIPTION,
+			MODULE_VERSION,
+			MODULE_USAGE,
+			MODULE_PRIVACY_STORED,
+			MODULE_PRIVACY_CACHED,
+			MODULE_PRIVACY_OBTAIN
+		);
+		
+		// @formatter:on
+
 	}
 
 	@Override
-	public void init(LoggerX logger) throws Exception {
+	public LoggerX init(LoggerX logger) throws Exception {
 
 		this.CONSUMPTION = new HashMap<>();
 		this.LASTCHANGED = new HashMap<>();
@@ -89,27 +77,29 @@ public class Executor_acon extends ModuleExecutor {
 		this.ENABLE_USER = false;
 		this.ENABLE_DISZ = false;
 		this.ENABLE_GROP = true;
+
+		return logger;
 	}
 
 	@Override
-	public void boot(LoggerX logger) throws Exception {
+	public LoggerX boot(LoggerX logger) throws Exception {
+		return logger;
 
 	}
 
 	@Override
-	public void shut(LoggerX logger) throws Exception {
+	public LoggerX shut(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void save(LoggerX logger) throws Exception {
+	public LoggerX save(LoggerX logger) throws Exception {
+		return logger;
 	}
 
 	@Override
-	public void reload(LoggerX logger) throws Exception {
-	}
-
-	@Override
-	public void exec(LoggerX logger, Message message) throws Exception {
+	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+		return logger;
 	}
 
 	@Override
@@ -136,11 +126,7 @@ public class Executor_acon extends ModuleExecutor {
 		long current = System.currentTimeMillis() / 1000;
 		long elapse = 0L;
 
-		if (!this.CONSUMPTION.containsKey(gropid)) {
-			this.CONSUMPTION.put(gropid, BigInteger.ZERO);
-			this.LASTCHANGED.put(gropid, current);
-			this.WORKINGMODE.put(gropid, 0L);
-		}
+		if (!this.CONSUMPTION.containsKey(gropid)) { this.CONSUMPTION.put(gropid, BigInteger.ZERO); this.LASTCHANGED.put(gropid, current); this.WORKINGMODE.put(gropid, 0L); }
 
 		if (message.getSection() > 0) {
 
@@ -264,14 +250,14 @@ public class Executor_acon extends ModuleExecutor {
 
 			case "cost":
 				// @formatter:off
-                    entry.gropInfo(gropid,
-                            String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元",
-                                    consumption.divide(BigInteger.valueOf(1000)).toString(),
-                                    consumption.divide(BigInteger.valueOf(3600000L)).toString(),
-                                    consumption.divide(BigInteger.valueOf(1936800L)).toString()
-                            )
-                    );
-                    // @formatter:on
+				entry.gropInfo(gropid,
+						String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元",
+								consumption.divide(BigInteger.valueOf(1000)).toString(),
+								consumption.divide(BigInteger.valueOf(3600000L)).toString(),
+								consumption.divide(BigInteger.valueOf(1936800L)).toString()
+								)
+						);
+				// @formatter:on
 				break;
 
 			default:

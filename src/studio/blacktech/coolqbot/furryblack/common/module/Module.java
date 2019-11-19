@@ -50,7 +50,7 @@ public abstract class Module implements Serializable {
 			String[] MODULE_PRIVACY_STORED,
 			String[] MODULE_PRIVACY_CACHED,
 			String[] MODULE_PRIVACY_OBTAIN
-	) throws Exception {
+			) throws Exception {
 
 		this.MODULE_PACKAGENAME = MODULE_PACKAGENAME;
 		this.MODULE_COMMANDNAME = MODULE_COMMANDNAME;
@@ -83,26 +83,21 @@ public abstract class Module implements Serializable {
 	public void initCofigurtion() throws Exception {
 		if (this.init_conf_folder) {
 			this.FILE_CONFIG = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "config.properties").toFile();
-			if (!this.FILE_CONFIG.exists()) {
-				this.FILE_CONFIG.createNewFile();
-				this.NEW_CONFIG = true;
-			}
+			if (!this.FILE_CONFIG.exists()) { this.FILE_CONFIG.createNewFile(); this.NEW_CONFIG = true; }
 		} else {
 			throw new InitializationException("还未对配置目录初始化");
 		}
 	}
 
-	public abstract void init(LoggerX logger) throws Exception;
+	public abstract LoggerX init(LoggerX logger) throws Exception;
 
-	public abstract void boot(LoggerX logger) throws Exception;
+	public abstract LoggerX boot(LoggerX logger) throws Exception;
 
-	public abstract void shut(LoggerX logger) throws Exception;
+	public abstract LoggerX save(LoggerX logger) throws Exception;
 
-	public abstract void save(LoggerX logger) throws Exception;
+	public abstract LoggerX shut(LoggerX logger) throws Exception;
 
-	public abstract void reload(LoggerX logger) throws Exception;
-
-	public abstract void exec(LoggerX logger, Message message) throws Exception;
+	public abstract LoggerX exec(LoggerX logger, Message message) throws Exception;
 
 	public abstract void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
 
