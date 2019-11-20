@@ -98,7 +98,7 @@ public class Systemd extends Module {
 	private long USERID_CQBOT = 0;
 	private long USERID_ADMIN = 0;
 
-	boolean ENABLE_SCHEDULER = false;
+	private boolean ENABLE_SCHEDULER = false;
 	private boolean ENABLE_TRIGGER_USER = false;
 	private boolean ENABLE_TRIGGER_DISZ = false;
 	private boolean ENABLE_TRIGGER_GROP = false;
@@ -1713,8 +1713,8 @@ public class Systemd extends Module {
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
 			byte[] hashBytes = messageDigest.digest(message.getBytes(StandardCharsets.UTF_8));
 
-			for (int i = 0; i < hashBytes.length; i++) {
-				int value = (hashBytes[i]) & 0xff;
+			for (byte hashByte : hashBytes) {
+				int value = (hashByte) & 0xff;
 				if (value < 16) { hexString.append("0"); }
 				hexString.append(Integer.toHexString(value));
 			}

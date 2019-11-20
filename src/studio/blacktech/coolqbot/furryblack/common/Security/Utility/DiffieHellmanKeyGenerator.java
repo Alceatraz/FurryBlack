@@ -41,13 +41,20 @@ public class DiffieHellmanKeyGenerator {
 	 * 双方都使用此构造函数
 	 */
 	public DiffieHellmanKeyGenerator() {
+
 		this.encoder = new BASE64Encoder();
 		this.decoder = new BASE64Decoder();
+
 		try {
+
 			this.factory = KeyFactory.getInstance("DH");
 			this.agreement = KeyAgreement.getInstance(this.factory.getAlgorithm());
+
 		} catch (NoSuchAlgorithmException exception) {
+			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
+			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
 		}
+
 	}
 
 	/**
@@ -138,16 +145,24 @@ public class DiffieHellmanKeyGenerator {
 	 * @throws InvalidKeyException 传入了错误的密钥
 	 */
 	public SecretKeySpec generateFinalKey(String publicKeyString) throws InvalidKeyException {
+
 		try {
+
 			byte[] publicKeyByte = this.decoder.decodeBuffer(publicKeyString);
 			X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(publicKeyByte);
 			DHPublicKey publicKey = (DHPublicKey) this.factory.generatePublic(x509KeySpec);
+
 			this.agreement.doPhase(publicKey, true);
 			byte[] secret = this.agreement.generateSecret();
+
 			return new SecretKeySpec(secret, 0, 16, "AES");
+
 		} catch (IOException | InvalidKeyException exception) {
+
 			throw new InvalidKeyException("传入了不合法的密钥");
+
 		} catch (InvalidKeySpecException exception) {
+
 			// 这些异常不可能发生 (非标准JVM和lib除外，经过测试ADoptOpenJDK不会出现错误)
 			// InvalidKeySpecException ------------ 合法密钥不会生成无效值保证绝对合法
 			return null;

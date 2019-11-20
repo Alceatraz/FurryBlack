@@ -1,7 +1,7 @@
 package studio.blacktech.coolqbot.furryblack.common.Security.Cipher;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -25,8 +25,9 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 /***
- * 使用标准JavaCipher包装的AES-128
- * CBC分组模式工具类，包含三种加密模式：标准加密、使用HA-384进行消息验证、使用签名后不初始化的SHA-384进行消息验证。
+ * 使用标准JavaCipher包装的AES-128 CBC分组模式工具类，
+ *
+ * 包含三种加密模式：标准加密、使用HA-384进行消息验证、使用签名后不初始化的SHA-384进行消息验证。
  *
  * 带消息验证的数据帧为：
  *
@@ -44,8 +45,6 @@ import sun.misc.BASE64Encoder;
  *
  */
 public class AESCipher {
-
-	private static final Charset UTF_8 = Charset.forName("UTF-8");
 
 	private SecretKeySpec sk;
 	private IvParameterSpec iv;
@@ -159,7 +158,7 @@ public class AESCipher {
 		try {
 			Provider provider = Security.getProvider("SUN");
 			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", provider);
-			random.setSeed(secretKey.getBytes(UTF_8));
+			random.setSeed(secretKey.getBytes(StandardCharsets.UTF_8));
 			KeyGenerator generator = KeyGenerator.getInstance("AES");
 			generator.init(128, random);
 			SecretKey skey = generator.generateKey();
@@ -178,7 +177,7 @@ public class AESCipher {
 	private static IvParameterSpec generateIvParameterSpec(String initialVector) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("MD5");
-			digest.update(initialVector.getBytes(UTF_8));
+			digest.update(initialVector.getBytes(StandardCharsets.UTF_8));
 			return new IvParameterSpec(digest.digest());
 		} catch (NoSuchAlgorithmException exception) {
 			return null;
@@ -201,7 +200,7 @@ public class AESCipher {
 
 		try {
 
-			byte[] tmp1 = content.getBytes(UTF_8);
+			byte[] tmp1 = content.getBytes(StandardCharsets.UTF_8);
 			byte[] tmp2 = this.encrypter.doFinal(tmp1);
 			return this.encoder.encode(tmp2);
 
@@ -227,7 +226,7 @@ public class AESCipher {
 
 			byte[] tmp1 = this.decoder.decodeBuffer(content);
 			byte[] tmp2 = this.decrypter.doFinal(tmp1);
-			return new String(tmp2, UTF_8);
+			return new String(tmp2, StandardCharsets.UTF_8);
 
 		} catch (IOException exception) {
 			exception.printStackTrace();
@@ -252,7 +251,7 @@ public class AESCipher {
 
 		try {
 
-			byte[] rawMessage = content.getBytes(UTF_8);
+			byte[] rawMessage = content.getBytes(StandardCharsets.UTF_8);
 
 			byte[] sizePart = new byte[8];
 			byte[] hashPart = new byte[8];
@@ -260,7 +259,7 @@ public class AESCipher {
 			int rawMessageLength = rawMessage.length;
 			byte[] result = new byte[16 + rawMessageLength];
 
-			sizePart = Integer.toHexString(rawMessageLength).getBytes(UTF_8);
+			sizePart = Integer.toHexString(rawMessageLength).getBytes(StandardCharsets.UTF_8);
 			int sizePartLength = sizePart.length;
 			System.arraycopy(sizePart, 0, result, 8 - sizePartLength, sizePartLength);
 
@@ -313,7 +312,7 @@ public class AESCipher {
 
 			if (!isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
 
-			return new String(mesgPart, UTF_8);
+			return new String(mesgPart, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
 			return null;
@@ -327,7 +326,7 @@ public class AESCipher {
 
 		try {
 
-			byte[] rawMessage = content.getBytes(UTF_8);
+			byte[] rawMessage = content.getBytes(StandardCharsets.UTF_8);
 
 			byte[] sizePart = new byte[8];
 			byte[] hashPart = new byte[8];
@@ -335,7 +334,7 @@ public class AESCipher {
 			int rawMessageLength = rawMessage.length;
 			byte[] result = new byte[16 + rawMessageLength];
 
-			sizePart = Integer.toHexString(rawMessageLength).getBytes(UTF_8);
+			sizePart = Integer.toHexString(rawMessageLength).getBytes(StandardCharsets.UTF_8);
 			int sizePartLength = sizePart.length;
 			System.arraycopy(sizePart, 0, result, 8 - sizePartLength, sizePartLength);
 
@@ -380,7 +379,7 @@ public class AESCipher {
 
 			if (!isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
 
-			return new String(mesgPart, UTF_8);
+			return new String(mesgPart, StandardCharsets.UTF_8);
 
 		} catch (IOException exception) {
 			exception.printStackTrace();

@@ -1,7 +1,7 @@
 package studio.blacktech.coolqbot.furryblack.common.Security.Cipher;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -28,7 +28,9 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 /**
- * 使用标准JavaCipher包装的RSA工具类，包含三种加密模式：标准加密、使用HA-384进行消息验证、使用签名后不初始化的SHA-384进行消息验证。
+ * 使用标准JavaCipher包装的RSA工具类，
+ *
+ * 包含三种加密模式：标准加密、使用HA-384进行消息验证、使用签名后不初始化的SHA-384进行消息验证。
  *
  * 带消息验证的数据帧为：
  *
@@ -46,8 +48,6 @@ import sun.misc.BASE64Encoder;
  *
  */
 public class RSACipher {
-
-	private static final Charset UTF_8 = Charset.forName("UTF-8");
 
 	private Cipher encrypter;
 	private Cipher decrypter;
@@ -87,6 +87,16 @@ public class RSACipher {
 	/**
 	 * 构造方法
 	 *
+	 * @param publicKey Base64编码的X509格式公钥
+	 * @throws InvalidPublicKeyException 公钥格式错误
+	 */
+	public RSACipher(String publicKey) throws InvalidPublicKeyException {
+		this(getRSAPublicKeyFromString(publicKey));
+	}
+
+	/**
+	 * 构造方法
+	 *
 	 * @param publicKey  Base64编码的X509格式公钥
 	 * @param privateKey Base64编码的PKCS8格式私钥
 	 * @throws InvalidPublicKeyException  公钥格式错误
@@ -94,6 +104,34 @@ public class RSACipher {
 	 */
 	public RSACipher(String publicKey, String privateKey) throws InvalidPublicKeyException, InvalidPrivateKeyException {
 		this(getRSAPublicKeyFromString(publicKey), getRSAPrivateKeyFromString(privateKey));
+	}
+
+	/**
+	 * 构造方法
+	 *
+	 * @param publicKey RSA公钥
+	 */
+	public RSACipher(RSAPublicKey publicKey) {
+
+		try {
+
+			this.publicKey = publicKey;
+
+			this.encrypter = Cipher.getInstance("RSA");
+
+			this.encrypter.init(Cipher.ENCRYPT_MODE, this.publicKey);
+
+			this.encoder = new BASE64Encoder();
+
+			this.staticDigester = MessageDigest.getInstance("SHA-384");
+			this.oneoffDigester = MessageDigest.getInstance("SHA-384");
+
+		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException exception) {
+			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
+			// InvalidKeyException ---------------- 由密钥生成器生成，输入密钥错误已经在上一级构造方法抛出
+			// NoSuchPaddingException ------------- 不允许用户自定义算法
+			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
+		}
 	}
 
 	/**
@@ -163,7 +201,7 @@ public class RSACipher {
 
 			Provider provider = Security.getProvider("SUN");
 			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", provider);
-			random.setSeed(randomSeed.getBytes(UTF_8));
+			random.setSeed(randomSeed.getBytes(StandardCharsets.UTF_8));
 
 			KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
 			generator.initialize(keyLength, random);
@@ -193,7 +231,7 @@ public class RSACipher {
 
 		try {
 
-			byte[] tmp1 = content.getBytes(UTF_8);
+			byte[] tmp1 = content.getBytes(StandardCharsets.UTF_8);
 			byte[] tmp2 = this.encrypter.doFinal(tmp1);
 			return this.encoder.encode(tmp2);
 
@@ -219,7 +257,7 @@ public class RSACipher {
 
 			byte[] tmp1 = this.decoder.decodeBuffer(content);
 			byte[] tmp2 = this.decrypter.doFinal(tmp1);
-			return new String(tmp2, UTF_8);
+			return new String(tmp2, StandardCharsets.UTF_8);
 
 		} catch (IOException exception) {
 			exception.printStackTrace();
@@ -244,7 +282,7 @@ public class RSACipher {
 
 		try {
 
-			byte[] rawMessage = content.getBytes(UTF_8);
+			byte[] rawMessage = content.getBytes(StandardCharsets.UTF_8);
 
 			byte[] sizePart = new byte[8];
 			byte[] hashPart = new byte[8];
@@ -252,7 +290,7 @@ public class RSACipher {
 			int rawMessageLength = rawMessage.length;
 			byte[] result = new byte[16 + rawMessageLength];
 
-			sizePart = Integer.toHexString(rawMessageLength).getBytes(UTF_8);
+			sizePart = Integer.toHexString(rawMessageLength).getBytes(StandardCharsets.UTF_8);
 			int sizePartLength = sizePart.length;
 			System.arraycopy(sizePart, 0, result, 8 - sizePartLength, sizePartLength);
 
@@ -305,7 +343,7 @@ public class RSACipher {
 
 			if (!isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
 
-			return new String(mesgPart, UTF_8);
+			return new String(mesgPart, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
 			return null;
@@ -319,7 +357,7 @@ public class RSACipher {
 
 		try {
 
-			byte[] rawMessage = content.getBytes(UTF_8);
+			byte[] rawMessage = content.getBytes(StandardCharsets.UTF_8);
 
 			byte[] sizePart = new byte[8];
 			byte[] hashPart = new byte[8];
@@ -327,7 +365,7 @@ public class RSACipher {
 			int rawMessageLength = rawMessage.length;
 			byte[] result = new byte[16 + rawMessageLength];
 
-			sizePart = Integer.toHexString(rawMessageLength).getBytes(UTF_8);
+			sizePart = Integer.toHexString(rawMessageLength).getBytes(StandardCharsets.UTF_8);
 			int sizePartLength = sizePart.length;
 			System.arraycopy(sizePart, 0, result, 8 - sizePartLength, sizePartLength);
 
@@ -372,7 +410,7 @@ public class RSACipher {
 
 			if (!isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
 
-			return new String(mesgPart, UTF_8);
+			return new String(mesgPart, StandardCharsets.UTF_8);
 
 		} catch (IOException exception) {
 			exception.printStackTrace();

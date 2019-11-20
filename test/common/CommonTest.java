@@ -1,4 +1,4 @@
-package test;
+package common;
 
 public class CommonTest {
 
