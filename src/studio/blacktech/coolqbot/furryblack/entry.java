@@ -33,6 +33,12 @@ import studio.blacktech.coolqbot.furryblack.modules.Systemd;
  */
 public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener {
 
+	// ==========================================================================================================================================================
+	//
+	// 宇宙恒量
+	//
+	// ==========================================================================================================================================================
+
 	// 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
@@ -42,7 +48,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		return ICQVer.CQAPIVER + "," + AppID;
 	}
 
+	//
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+	//
 
 	/**
 	 * Java通常的入口方法，JCQ并不使用这个方法，JCQ使用以下生命周期函数
@@ -51,6 +59,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 *
 	 * @param parameters 命令行参数
 	 */
+
 	public static void main(String[] parameters) {
 		System.out.println("This is a JCQ plugin, Not a executable jar file!");
 	}
