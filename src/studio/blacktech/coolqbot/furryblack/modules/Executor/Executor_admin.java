@@ -111,7 +111,10 @@ public class Executor_admin extends ModuleExecutor {
 			} else {
 				switch (message.getSegment(0)) {
 				case "report":
-					entry.adminInfo(entry.getSystemd().generateReport(10, message, null, null));
+					entry.adminInfo(entry.getSystemd().reportSpecifiedModule(0, message, null, null));
+					break;
+				case "reportall":
+					entry.adminInfo(entry.getSystemd().reportAllModules(0, message, null, null));
 					break;
 				case "exec":
 					entry.adminInfo(entry.getSystemd().exec(new LoggerX(), message).make(3));

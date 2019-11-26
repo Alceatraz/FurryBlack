@@ -177,11 +177,14 @@ public class Message implements Serializable {
 
 	@Override
 	public String toString() {
+
 		StringBuilder builder = new StringBuilder();
+
 		builder.append("============================================\n");
 		builder.append("时间戳：" + LoggerX.datetime(new Date(this.sendTime)) + "(" + this.sendTime + ")" + "\n");
 		builder.append("消息ID：" + this.messageId + "\n");
 		builder.append("字体ID：" + this.messageFt + "\n");
+
 		builder.append("============================================\n");
 		builder.append("原始内容：" + this.rawMessage + "\n");
 		builder.append("原始长度：" + this.rawLength + "\n");
@@ -191,15 +194,18 @@ public class Message implements Serializable {
 			builder.append(Integer.toHexString(this.rawMessage.charAt(i) & 0xffff));
 		}
 		builder.append("\n");
+
 		builder.append("============================================\n");
 		builder.append("是否命令：" + (this.isCommand ? "True" : "False") + "\n");
+
 		if (this.isCommand) {
-			builder.append("\n");
+
 			builder.append("============================================\n");
 			builder.append("命令内容：" + this.cmdMessage + "\n");
 			builder.append("命令名字：" + this.command + "\n");
 			builder.append("命令参数：" + this.options + "\n");
 			builder.append("参数长度：" + this.section + "\n");
+
 			if (this.section > 0) {
 				builder.append("============================================\n");
 				builder.append("参数内容: \n");
@@ -207,6 +213,7 @@ public class Message implements Serializable {
 					builder.append(temp + "\n");
 				}
 			}
+
 			if (this.switchs != null) {
 				builder.append("============================================\n");
 				builder.append("参数开关：\n");
@@ -214,12 +221,15 @@ public class Message implements Serializable {
 					builder.append(name + " - " + this.switchs.get(name) + "\n");
 				}
 			}
+
 		} else {
+
 			builder.append("============================================\n");
 			builder.append("是否闪照：" + (this.isSnappic ? "True" : "False") + "\n");
 			builder.append("是否视频：" + (this.isQQVideo ? "True" : "False") + "\n");
 			builder.append("是否红包：" + (this.isHongbao ? "True" : "False") + "\n");
 			builder.append("是否纯码：" + (this.isPureCQC ? "True" : "False") + "\n");
+
 			builder.append("============================================\n");
 			builder.append("包含图片：" + (this.hasPicture ? "True" : "False") + "\n");
 			if (this.hasPicture) {
@@ -228,6 +238,7 @@ public class Message implements Serializable {
 					builder.append(temp + "\n");
 				}
 			}
+
 			builder.append("============================================\n");
 			builder.append("最终长度: " + this.resLength + "\n");
 			if (this.resLength == 0) {
@@ -243,6 +254,7 @@ public class Message implements Serializable {
 				builder.append("\n");
 			}
 		}
+
 		builder.append("============================================");
 
 		return builder.toString();

@@ -1042,7 +1042,7 @@ public class Systemd extends Module {
 
 		} else {
 
-			writer.append("# Member Increase " + LoggerX.datetime() + "\n" + gropid + ":=" + userid + ":" + entry.getCQ().getStrangerInfo(userid).getNick() + "\n");
+			writer.append("# Member Increase " + LoggerX.datetime() + "\n" + gropid + ":" + userid + ":" + entry.getCQ().getStrangerInfo(userid).getNick() + "\n\n");
 		}
 
 		writer.flush();
@@ -1101,7 +1101,9 @@ public class Systemd extends Module {
 
 		this.COUNT_USER_MESSAGE++;
 
-		if (entry.DEBUG()) { entry.getCQ().logDebug("FurryBlack", message.toString()); }
+		message.parse();
+
+		if (entry.DEBUG()) { System.out.println(message.toString()); }
 
 		if (this.ENABLE_TRIGGER_USER) {
 			for (ModuleTrigger temp : this.TRIGGER_USER) {
@@ -1115,7 +1117,7 @@ public class Systemd extends Module {
 			}
 		}
 
-		if (message.parse().isCommand()) {
+		if (message.isCommand()) {
 
 			switch (message.getCommand()) {
 
@@ -1168,7 +1170,9 @@ public class Systemd extends Module {
 
 		this.COUNT_DISZ_MESSAGE++;
 
-		if (entry.DEBUG()) { entry.getCQ().logDebug("FurryBlack", message.toString()); }
+		message.parse();
+
+		if (entry.DEBUG()) { System.out.println(message.toString()); }
 
 		if (this.ENABLE_TRIGGER_DISZ) {
 			for (ModuleTrigger temp : this.TRIGGER_DISZ) {
@@ -1182,7 +1186,7 @@ public class Systemd extends Module {
 			}
 		}
 
-		if (message.parse().isCommand()) {
+		if (message.isCommand()) {
 
 			switch (message.getCommand()) {
 
@@ -1237,7 +1241,9 @@ public class Systemd extends Module {
 
 		this.COUNT_GROP_MESSAGE++;
 
-		if (entry.DEBUG()) { entry.getCQ().logDebug("FurryBlack", message.toString()); }
+		message.parse();
+
+		if (entry.DEBUG()) { System.out.println(message.toString()); }
 
 		if (this.ENABLE_TRIGGER_GROP) {
 			for (ModuleTrigger temp : this.TRIGGER_GROP) {
@@ -1251,7 +1257,7 @@ public class Systemd extends Module {
 			}
 		}
 
-		if (message.parse().isCommand()) {
+		if (message.isCommand()) {
 
 			switch (message.getCommand()) {
 
@@ -1326,265 +1332,255 @@ public class Systemd extends Module {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
-		String[] report = new String[] {
-				"无可用消息"
+		StringBuilder builder = new StringBuilder();
+
+		long uptime = System.currentTimeMillis() - entry.BOOTTIME;
+
+		long uptimedd = uptime / 86400000;
+		uptime = uptime % 86400000;
+
+		long uptimehh = uptime / 3600000;
+		uptime = uptime % 3600000;
+
+		long uptimemm = uptime / 60000;
+		uptime = uptime % 60000;
+
+		long uptimess = uptime / 1000;
+
+		long totalMemory = Runtime.getRuntime().totalMemory() / 1024;
+		long freeMemory = Runtime.getRuntime().freeMemory() / 1024;
+
+		builder.append(LoggerX.datetime() + " - 状态简报" + "\r\n");
+
+		builder.append("运行时间：" + uptimedd + " - " + uptimehh + ":" + uptimemm + ":" + uptimess + "\r\n");
+		builder.append("系统内存：" + (totalMemory - freeMemory) + "KB/" + totalMemory + "KB" + "\r\n");
+
+		builder.append("私聊：" + this.COUNT_USER_MESSAGE + "次" + "\r\n");
+		builder.append("组聊：" + this.COUNT_DISZ_MESSAGE + "次" + "\r\n");
+		builder.append("群聊：" + this.COUNT_GROP_MESSAGE + "次" + "\r\n");
+
+		builder.append("定时器：" + this.SCHEDULER_ENABLED.size() + "个" + "\r\n");
+
+		for (ModuleScheduler instance : this.SCHEDULER_ENABLED) {
+			if (instance.ENABLE()) { builder.append(instance.MODULE_PACKAGENAME() + "：" + instance.COUNT() + "\r\n"); }
+		}
+
+		builder.append("触发器：" + this.TRIGGER_USER.size() + "/" + this.TRIGGER_DISZ.size() + "/" + this.TRIGGER_GROP.size() + "个" + "\r\n");
+
+		for (String temp : this.TRIGGER_INSTANCE.keySet()) {
+
+			ModuleTrigger instance = this.TRIGGER_INSTANCE.get(temp);
+
+			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { continue; }
+
+			builder.append(instance.MODULE_PACKAGENAME() + "：");
+			builder.append(instance.ENABLE_USER() ? instance.BLOCK_USER() : "关");
+			builder.append("/");
+			builder.append(instance.ENABLE_DISZ() ? instance.BLOCK_DISZ() : "关");
+			builder.append("/");
+			builder.append(instance.ENABLE_GROP() ? instance.BLOCK_GROP() : "关");
+
+			builder.append("\r\n");
+		}
+
+		builder.append("监听器：" + this.LISTENER_USER.size() + "/" + this.LISTENER_DISZ.size() + "/" + this.LISTENER_GROP.size() + "个" + "\r\n");
+
+		for (String temp : this.LISTENER_INSTANCE.keySet()) {
+
+			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
+
+			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { continue; }
+
+			builder.append(instance.MODULE_PACKAGENAME() + "：");
+			builder.append(instance.ENABLE_USER() ? instance.COUNT_USER() : "关");
+			builder.append("/");
+			builder.append(instance.ENABLE_DISZ() ? instance.COUNT_DISZ() : "关");
+			builder.append("/");
+			builder.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
+
+			builder.append("\r\n");
+		}
+
+		builder.append("执行器：" + this.EXECUTOR_USER.size() + "/" + this.EXECUTOR_DISZ.size() + "/" + this.EXECUTOR_GROP.size() + "个" + "\r\n");
+
+		for (String temp : this.EXECUTOR_INSTANCE.keySet()) {
+
+			ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(temp);
+
+			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { continue; }
+
+			builder.append(instance.MODULE_PACKAGENAME() + "：");
+			builder.append(instance.ENABLE_USER() ? instance.COUNT_USER() : "关");
+			builder.append("/");
+			builder.append(instance.ENABLE_DISZ() ? instance.COUNT_DISZ() : "关");
+			builder.append("/");
+			builder.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
+
+			builder.append("\r\n");
+		}
+
+		return new String[] {
+				builder.substring(0, builder.length() - 2).toString()
 		};
+	}
 
-		switch (mode) {
+	public String[] reportAllModules(int mode, Message message, Object... parameters) {
 
-		// 模式0 - 系统运行状态 即 systemd 自身
-		case 0x00:
+		StringBuilder builder01 = new StringBuilder();
+		StringBuilder builder02 = new StringBuilder();
+		StringBuilder builder03 = new StringBuilder();
+		StringBuilder builder04 = new StringBuilder();
 
-			StringBuilder builder = new StringBuilder();
+		// part 1 定时器
 
-			long uptime = System.currentTimeMillis() - entry.BOOTTIME;
-			long uptimedd = uptime / 86400000;
-			uptime = uptime % 86400000;
-			long uptimehh = uptime / 3600000;
-			uptime = uptime % 3600000;
-			long uptimemm = uptime / 60000;
-			uptime = uptime % 60000;
-			long uptimess = uptime / 1000;
+		builder01.append("定时器：" + this.SCHEDULER_ENABLED.size() + "个" + "\r\n");
 
-			long totalMemory = Runtime.getRuntime().totalMemory() / 1024;
-			long freeMemory = Runtime.getRuntime().freeMemory() / 1024;
+		for (ModuleScheduler instance : this.SCHEDULER_ENABLED) {
 
-			builder.append(LoggerX.datetime() + " - 状态简报" + "\r\n");
+			String[] temp = instance.generateReport(0, message, null, null);
 
-			builder.append("运行时间：" + uptimedd + " - " + uptimehh + ":" + uptimemm + ":" + uptimess + "\r\n");
-			builder.append("系统内存：" + (totalMemory - freeMemory) + "KB/" + totalMemory + "KB" + "\r\n");
-
-			builder.append("私聊：" + this.COUNT_USER_MESSAGE + "次" + "\r\n");
-			builder.append("组聊：" + this.COUNT_DISZ_MESSAGE + "次" + "\r\n");
-			builder.append("群聊：" + this.COUNT_GROP_MESSAGE + "次" + "\r\n");
-
-			builder.append("定时器：" + this.SCHEDULER_ENABLED.size() + "个" + "\r\n");
-			for (ModuleScheduler instance : this.SCHEDULER_ENABLED) {
-				if (instance.ENABLE()) { builder.append(instance.MODULE_PACKAGENAME() + "：" + instance.COUNT() + "\r\n"); }
-			}
-
-			builder.append("触发器：" + this.TRIGGER_USER.size() + "/" + this.TRIGGER_DISZ.size() + "/" + this.TRIGGER_GROP.size() + "个" + "\r\n");
-
-			for (String temp : this.TRIGGER_INSTANCE.keySet()) {
-
-				ModuleTrigger instance = this.TRIGGER_INSTANCE.get(temp);
-
-				if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { continue; }
-
-				builder.append(instance.MODULE_PACKAGENAME() + "：");
-				builder.append(instance.ENABLE_USER() ? instance.BLOCK_USER() : "关");
-				builder.append("/");
-				builder.append(instance.ENABLE_DISZ() ? instance.BLOCK_DISZ() : "关");
-				builder.append("/");
-				builder.append(instance.ENABLE_GROP() ? instance.BLOCK_GROP() : "关");
-
-				builder.append("\r\n");
-			}
-
-			builder.append("监听器：" + this.LISTENER_USER.size() + "/" + this.LISTENER_DISZ.size() + "/" + this.LISTENER_GROP.size() + "个" + "\r\n");
-
-			for (String temp : this.LISTENER_INSTANCE.keySet()) {
-
-				ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
-
-				if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { continue; }
-
-				builder.append(instance.MODULE_PACKAGENAME() + "：");
-				builder.append(instance.ENABLE_USER() ? instance.COUNT_USER() : "关");
-				builder.append("/");
-				builder.append(instance.ENABLE_DISZ() ? instance.COUNT_DISZ() : "关");
-				builder.append("/");
-				builder.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
-
-				builder.append("\r\n");
-			}
-
-			builder.append("执行器：" + this.EXECUTOR_USER.size() + "/" + this.EXECUTOR_DISZ.size() + "/" + this.EXECUTOR_GROP.size() + "个" + "\r\n");
-
-			for (String temp : this.EXECUTOR_INSTANCE.keySet()) {
-
-				ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(temp);
-
-				if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { continue; }
-
-				builder.append(instance.MODULE_PACKAGENAME() + "：");
-				builder.append(instance.ENABLE_USER() ? instance.COUNT_USER() : "关");
-				builder.append("/");
-				builder.append(instance.ENABLE_DISZ() ? instance.COUNT_DISZ() : "关");
-				builder.append("/");
-				builder.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
-
-				builder.append("\r\n");
-			}
-
-			report = new String[] {
-					builder.substring(0, builder.length() - 2).toString()
-			};
-
-			break;
-
-		// 模式10 - 模块简报 如不包含 module 开关 则生成所有模块的简报
-		case 0x0A:
-
-			boolean hasModule = message.hasSwitch("module");
-
-			if (hasModule) {
-
-				// 包含 module 开关
-
-				String module = message.getSwitch("module");
-
-				if (module.contains(":")) {
-
-					String temp[] = module.split(":");
-					String name = temp[0];
-					int submode = Integer.parseInt(temp[1]);
-
-					if (name.equals("systemd")) {
-						// /admin report --module=systemd:$
-						report = this.generateReport(0, message, null, null);
-					} else if (this.TRIGGER_INSTANCE.containsKey(name)) {
-						// /admin report --module=userdeny:0
-						report = this.TRIGGER_INSTANCE.get(name).generateReport(submode, message, null, null);
-					} else if (this.LISTENER_INSTANCE.containsKey(name)) {
-						// /admin report --module=shui:10 --group=1234567890
-						report = this.LISTENER_INSTANCE.get(name).generateReport(submode, message, null, null);
-					} else if (this.EXECUTOR_INSTANCE.containsKey(name)) {
-						// /admin report --module=acon --group=1234567890
-						report = this.EXECUTOR_INSTANCE.get(name).generateReport(submode, message, null, null);
-					} else {
-						report[0] = "模块不存在";
-					}
-
-				} else {
-					report[0] = "module参数错误：" + module;
-				}
-
-			} else {
-
-				// 不包含 module 开关
-
-				StringBuilder builder01 = new StringBuilder();
-				StringBuilder builder02 = new StringBuilder();
-				StringBuilder builder03 = new StringBuilder();
-				StringBuilder builder04 = new StringBuilder();
-
-				// part 1 定时器
-
-				builder01.append("定时器：" + this.SCHEDULER_ENABLED.size() + "个" + "\r\n");
-
-				for (ModuleScheduler instance : this.SCHEDULER_ENABLED) {
-
-					String[] temp = instance.generateReport(0, message, null, null);
-
-					if (temp == null) { builder01.append(instance.MODULE_PACKAGENAME() + "：" + instance.COUNT() + "无\r\n"); }
-
-				}
-
-				// part 2 触发器
-
-				builder02.append("触发器：" + this.TRIGGER_USER.size() + "/" + this.TRIGGER_DISZ.size() + "/" + this.TRIGGER_GROP.size() + "个" + "\r\n");
-
-				for (String temp : this.TRIGGER_INSTANCE.keySet()) {
-
-					ModuleTrigger instance = this.TRIGGER_INSTANCE.get(temp);
-
-					if (!instance.ENABLE_USER() || !instance.ENABLE_DISZ() || !instance.ENABLE_GROP()) { continue; }
-
-					builder02.append(instance.MODULE_PACKAGENAME() + "：");
-					builder02.append(instance.ENABLE_USER() ? instance.BLOCK_USER() : "关");
-					builder02.append("/");
-					builder02.append(instance.ENABLE_DISZ() ? instance.BLOCK_DISZ() : "关");
-					builder02.append("/");
-					builder02.append(instance.ENABLE_GROP() ? instance.BLOCK_GROP() : "关");
-					builder02.append("\r\n");
-
-					String[] tempReport = instance.generateReport(0, message, null, null);
-
-					if (tempReport == null) { continue; }
-
-					for (String part : tempReport) {
-						builder02.append(part);
-						builder02.append("\r\n");
-					}
-
-					builder02.append("\r\n");
-				}
-
-				// part 3 监听器
-
-				builder03.append("监听器：" + this.LISTENER_USER.size() + "/" + this.LISTENER_DISZ.size() + "/" + this.LISTENER_GROP.size() + "个" + "\r\n");
-
-				for (String temp : this.LISTENER_INSTANCE.keySet()) {
-
-					ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
-
-					if (!instance.ENABLE_USER() || !instance.ENABLE_DISZ() || !instance.ENABLE_GROP()) { continue; }
-
-					builder03.append(instance.MODULE_PACKAGENAME() + "：");
-					builder03.append(instance.ENABLE_USER() ? instance.COUNT_USER() : "关");
-					builder03.append("/");
-					builder03.append(instance.ENABLE_DISZ() ? instance.COUNT_DISZ() : "关");
-					builder03.append("/");
-					builder03.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
-					builder03.append("\r\n");
-
-					String[] tempReport = instance.generateReport(0, message, null, null);
-
-					if (tempReport == null) { continue; }
-
-					for (String part : tempReport) {
-						builder03.append(part);
-						builder03.append("\r\n");
-					}
-
-					builder03.append("\r\n");
-				}
-
-				// part 4 执行器
-
-				builder04.append("执行器：" + this.EXECUTOR_USER.size() + "/" + this.EXECUTOR_DISZ.size() + "/" + this.EXECUTOR_GROP.size() + "个" + "\r\n");
-
-				for (String temp : this.EXECUTOR_INSTANCE.keySet()) {
-
-					ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(temp);
-
-					if (!instance.ENABLE_USER() || !instance.ENABLE_DISZ() || !instance.ENABLE_GROP()) { continue; }
-
-					builder04.append(instance.MODULE_PACKAGENAME() + "：");
-					builder04.append(instance.ENABLE_USER() ? instance.COUNT_USER() : "关");
-					builder04.append("/");
-					builder04.append(instance.ENABLE_DISZ() ? instance.COUNT_DISZ() : "关");
-					builder04.append("/");
-					builder04.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
-					builder04.append("\r\n");
-
-					String[] tempReport = instance.generateReport(0, message, null, null);
-
-					if (tempReport == null) { continue; }
-
-					for (String part : tempReport) {
-						builder04.append(part);
-						builder04.append("\r\n");
-					}
-
-					builder04.append("\r\n");
-				}
-
-				report = new String[] {
-						builder01.substring(0, builder01.length() - 2).toString(),
-						builder02.substring(0, builder02.length() - 2).toString(),
-						builder03.substring(0, builder03.length() - 2).toString(),
-						builder04.substring(0, builder04.length() - 2).toString(),
-				};
-
-			}
-
-			break;
+			if (temp == null) { builder01.append(instance.MODULE_PACKAGENAME() + "：" + instance.COUNT() + "无\r\n"); }
 
 		}
 
+		// part 2 触发器
+
+		builder02.append("触发器：" + this.TRIGGER_USER.size() + "/" + this.TRIGGER_DISZ.size() + "/" + this.TRIGGER_GROP.size() + "个" + "\r\n");
+
+		for (String temp : this.TRIGGER_INSTANCE.keySet()) {
+
+			ModuleTrigger instance = this.TRIGGER_INSTANCE.get(temp);
+
+			if (!instance.ENABLE_USER() || !instance.ENABLE_DISZ() || !instance.ENABLE_GROP()) { continue; }
+
+			builder02.append(instance.MODULE_PACKAGENAME() + "：");
+			builder02.append(instance.ENABLE_USER() ? instance.BLOCK_USER() : "关");
+			builder02.append("/");
+			builder02.append(instance.ENABLE_DISZ() ? instance.BLOCK_DISZ() : "关");
+			builder02.append("/");
+			builder02.append(instance.ENABLE_GROP() ? instance.BLOCK_GROP() : "关");
+			builder02.append("\r\n");
+
+			String[] tempReport = instance.generateReport(0, message, null, null);
+
+			if (tempReport == null) { continue; }
+
+			for (String part : tempReport) {
+				builder02.append(part);
+				builder02.append("\r\n");
+			}
+
+			builder02.append("\r\n");
+		}
+
+		// part 3 监听器
+
+		builder03.append("监听器：" + this.LISTENER_USER.size() + "/" + this.LISTENER_DISZ.size() + "/" + this.LISTENER_GROP.size() + "个" + "\r\n");
+
+		for (String temp : this.LISTENER_INSTANCE.keySet()) {
+
+			ModuleListener instance = this.LISTENER_INSTANCE.get(temp);
+
+			if (!instance.ENABLE_USER() || !instance.ENABLE_DISZ() || !instance.ENABLE_GROP()) { continue; }
+
+			builder03.append(instance.MODULE_PACKAGENAME() + "：");
+			builder03.append(instance.ENABLE_USER() ? instance.COUNT_USER() : "关");
+			builder03.append("/");
+			builder03.append(instance.ENABLE_DISZ() ? instance.COUNT_DISZ() : "关");
+			builder03.append("/");
+			builder03.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
+			builder03.append("\r\n");
+
+			String[] tempReport = instance.generateReport(0, message, null, null);
+
+			if (tempReport == null) { continue; }
+
+			for (String part : tempReport) {
+				builder03.append(part);
+				builder03.append("\r\n");
+			}
+
+			builder03.append("\r\n");
+		}
+
+		// part 4 执行器
+
+		builder04.append("执行器：" + this.EXECUTOR_USER.size() + "/" + this.EXECUTOR_DISZ.size() + "/" + this.EXECUTOR_GROP.size() + "个" + "\r\n");
+
+		for (String temp : this.EXECUTOR_INSTANCE.keySet()) {
+
+			ModuleExecutor instance = this.EXECUTOR_INSTANCE.get(temp);
+
+			if (!instance.ENABLE_USER() || !instance.ENABLE_DISZ() || !instance.ENABLE_GROP()) { continue; }
+
+			builder04.append(instance.MODULE_PACKAGENAME() + "：");
+			builder04.append(instance.ENABLE_USER() ? instance.COUNT_USER() : "关");
+			builder04.append("/");
+			builder04.append(instance.ENABLE_DISZ() ? instance.COUNT_DISZ() : "关");
+			builder04.append("/");
+			builder04.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
+			builder04.append("\r\n");
+
+			String[] tempReport = instance.generateReport(0, message, null, null);
+
+			if (tempReport == null) { continue; }
+
+			for (String part : tempReport) {
+				builder04.append(part);
+				builder04.append("\r\n");
+			}
+
+			builder04.append("\r\n");
+		}
+
+		return new String[] {
+				builder01.substring(0, builder01.length() - 2).toString(),
+				builder02.substring(0, builder02.length() - 2).toString(),
+				builder03.substring(0, builder03.length() - 2).toString(),
+				builder04.substring(0, builder04.length() - 2).toString(),
+		};
+	}
+
+	public String[] reportSpecifiedModule(int mode, Message message, Object... parameters) {
+
+		String[] report = new String[1];
+
+		String module = message.getSwitch("module");
+
+		if (module.contains(":")) {
+
+			String temp[] = module.split(":");
+			String name = temp[0];
+			int submode = Integer.parseInt(temp[1]);
+
+			if (name.equals("systemd")) {
+
+				report = this.generateReport(0, message, null, null); // /admin report --module=systemd:$
+
+			} else if (this.TRIGGER_INSTANCE.containsKey(name)) {
+
+				report = this.TRIGGER_INSTANCE.get(name).generateReport(submode, message, null, null); // /admin report --module=userdeny:0
+
+			} else if (this.LISTENER_INSTANCE.containsKey(name)) {
+
+				report = this.LISTENER_INSTANCE.get(name).generateReport(submode, message, null, null); // /admin report --module=shui:20 --group=1234567890
+
+			} else if (this.EXECUTOR_INSTANCE.containsKey(name)) {
+
+				report = this.EXECUTOR_INSTANCE.get(name).generateReport(submode, message, null, null); // /admin report --module=acon --group=1234567890
+
+			} else {
+
+				report[0] = "模块不存在";
+
+			}
+
+		} else {
+			report[0] = "module参数错误：" + module;
+		}
+
 		return report;
+
 	}
 
 	/**

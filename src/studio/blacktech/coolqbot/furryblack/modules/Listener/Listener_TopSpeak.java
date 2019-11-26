@@ -44,7 +44,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群统计";
 	private static String MODULE_DESCRIPTION = "水群统计";
-	private static String MODULE_VERSION = "29.1";
+	private static String MODULE_VERSION = "30.2";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {
 			"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
@@ -104,7 +104,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		this.GROUP_REPORT = new ArrayList<>();
 
 		this.CONFIG_ENABLE_REPORT = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "daily_report.txt").toFile();
-		this.GROUP_STATUS_STORAGE = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "topspeaks.serial").toFile();
+		this.GROUP_STATUS_STORAGE = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "shui").toFile();
 
 		String line;
 
@@ -251,6 +251,10 @@ public class Listener_TopSpeak extends ModuleListener {
 
 			break;
 
+		case "dump":
+
+			break;
+
 		}
 
 		return logger;
@@ -314,7 +318,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
-		String report[] = null;
+		String report[] = new String[] {
+				"无可用消息"
+		};
 
 		switch (mode) {
 
@@ -354,18 +360,80 @@ public class Listener_TopSpeak extends ModuleListener {
 				};
 
 			}
+
 			break;
+
+		case 20:
+
+			System.out.println("DO MODE 20");
+
+			if (message.hasSwitch("gropid")) {
+
+				long gropid = Long.parseLong(message.getSwitch("gropid"));
+
+				System.out.println("GROP ID IS " + gropid);
+
+				int limitRank = 10;
+
+				if (message.hasSwitch("regex")) {
+
+					System.out.println("DO MODE REGEX");
+
+				} else if (message.hasSwitch("count")) {
+
+					System.out.println("DO MODE COUNT");
+
+					String match = message.getSwitch("count");
+
+					if (match.length() == 0) {
+
+						report = new String[] {
+								"参数错误 --count 为空"
+						};
+
+					} else {
+
+						if (message.hasSwitch("limit")) {
+
+							System.out.println("FOUND LIMIT PARA");
+
+							limitRank = Integer.parseInt(message.getSwitch("limit"));
+						}
+
+						report = this.generateMemberGrep(gropid, match, limitRank);
+					}
+
+				} else {
+
+					report = new String[] {
+							"参数错误 模式为空 需要 --count 或 --regex"
+					};
+
+				}
+
+			} else {
+
+				report = new String[] {
+						"参数错误 --gropid 为空"
+				};
+
+			}
+
+			break;
+
 		}
 
 		return report;
+
 	}
 
 	// ==========================================================================================================================
 
-	public String[] generateMemberRank(long gropid, int limitRank, int limitRepeat, int limitPicture) {
+	private String[] generateMemberRank(long gropid, int limitRank, int limitRepeat, int limitPicture) {
 
 		StringBuilder builder;
 		LinkedList<String> report = new LinkedList<>();
+
 		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid).sum();
 
 		// ===========================================================
@@ -403,11 +471,15 @@ public class Listener_TopSpeak extends ModuleListener {
 				if (userCharacter > 0) {
 
 					if (allMemberRank.containsKey(userCharacter)) {
+
 						allMemberRank.get(userCharacter).add(userid);
+
 					} else {
+
 						HashSet<Long> tempSet = new HashSet<>();
 						tempSet.add(userid);
 						allMemberRank.put(userCharacter, tempSet);
+
 					}
 
 				}
@@ -418,7 +490,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				builder = new StringBuilder();
 				builder.append("（2/4）成员排行：" + "\r\n");
 
-				int i = 1;
+				int order = 1;
 				int limit = 0;
 				int slice = 0;
 
@@ -430,7 +502,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 						userStatus = groupStatus.USER_STATUS.get(userid);
 
-						builder.append("No." + i + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "句/" + userStatus.USER_CHARACTER + "字");
+						builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "句/" + userStatus.USER_CHARACTER + "字");
 
 						if (userStatus.USER_PICTURES.size() > 0) { builder.append("/" + userStatus.USER_PICTURES.size() + "图"); }
 						if (userStatus.USER_SNAPSHOT > 0) { builder.append("/" + userStatus.USER_SNAPSHOT + "闪"); }
@@ -452,7 +524,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					}
 
 					if ((limitRank != 0) && (limit >= limitRank)) { break; }
-					i = i + tempSet.size();
+					order = order + tempSet.size();
 				}
 				report.add(builder.substring(0, builder.length() - 2).toString());
 			}
@@ -614,6 +686,83 @@ public class Listener_TopSpeak extends ModuleListener {
 		// ===========================================================
 
 		return report.toArray(new String[report.size()]);
+	}
+
+	private String[] generateMemberGrep(long gropid, String content, int limitRank) {
+
+		int totalMatchCount = 0;
+
+		StringBuilder builder = new StringBuilder();
+
+		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid).sum();
+
+		builder.append("自" + LoggerX.formatTime("yyyy-MM-dd HH", new Date(groupStatus.initdt)) + ":00 以来，在\r\n");
+		builder.append(groupStatus.GROP_MESSAGES + "条消息中(共" + groupStatus.GROP_CHARACTER + "字)\r\n");
+		builder.append("之中 " + content);
+
+		int position;
+		int contextLength = content.length();
+
+		TreeMap<Integer, HashSet<Long>> memberCountRank = new TreeMap<>((a, b) -> b - a);
+
+		for (Long userid : groupStatus.USER_STATUS.keySet()) {
+
+			int userMatchCount = 0;
+
+			UserStatus userStatus = groupStatus.USER_STATUS.get(userid);
+
+			for (String message : userStatus.USER_SENTENCE) {
+
+				while ((position = message.indexOf(content)) > 0) {
+					message = message.substring(position + contextLength);
+					userMatchCount++;
+					totalMatchCount++;
+				}
+			}
+
+			if (userMatchCount == 0) { continue; }
+
+			if (!memberCountRank.containsKey(userMatchCount)) { memberCountRank.put(userMatchCount, new HashSet<>()); }
+
+			memberCountRank.get(userMatchCount).add(userid);
+		}
+
+		builder.append(" 出现了：" + totalMatchCount + "次\r\n");
+
+		memberCountRank.remove(1);
+
+		if (memberCountRank.size() > 0) {
+
+			int order = 1;
+			int limit = 0;
+
+			for (int userMatchCount : memberCountRank.keySet()) {
+
+				HashSet<Long> tempSet = memberCountRank.get(userMatchCount);
+
+				for (Long userid : tempSet) {
+
+					limit++;
+
+					builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + userMatchCount + "次\r\n");
+
+					if ((limitRank != 0) && (limit >= limitRank)) { break; }
+
+				}
+
+				if ((limitRank != 0) && (limit >= limitRank)) { break; }
+
+				order = order + tempSet.size();
+
+			}
+		}
+
+		System.out.println(builder.toString());
+
+		return new String[] {
+				builder.substring(0, builder.length() - 1).toString()
+		};
+
 	}
 
 	private void saveData(File file) {
