@@ -157,7 +157,13 @@ public class Executor_admin extends ModuleExecutor {
 			} else {
 				switch (message.getSegment(0)) {
 				case "report":
-					entry.gropInfo(gropid, entry.getSystemd().generateReport(10, message, null, null));
+					entry.gropInfo(gropid, entry.getSystemd().reportSpecifiedModule(0, message, null, null));
+					break;
+				case "reportall":
+					entry.gropInfo(gropid, entry.getSystemd().reportAllModules(0, message, null, null));
+					break;
+				case "exec":
+					entry.gropInfo(gropid, entry.getSystemd().exec(new LoggerX(), message).make(3));
 					break;
 				case "debug":
 					entry.gropInfo(gropid, entry.switchDEBUG() ? "DEBUG → Enable" : "DEBUG → Disable");

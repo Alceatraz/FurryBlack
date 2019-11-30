@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
@@ -242,17 +244,12 @@ public class Listener_TopSpeak extends ModuleListener {
 		switch (command) {
 
 		case "save":
-
 			File DAILY_BACKUP = Paths.get(this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
-
 			this.saveData(DAILY_BACKUP);
-
 			logger.info(MODULE_PACKAGENAME, "保存存档", DAILY_BACKUP.getAbsolutePath());
-
 			break;
 
 		case "dump":
-
 			break;
 
 		}
@@ -264,13 +261,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		if (entry.isMyself(userid)) {
-
 			this.GROUP_STATUS.put(gropid, new GroupStatus(gropid));
-
 		} else {
-
 			this.GROUP_STATUS.get(gropid).USER_STATUS.put(userid, new UserStatus(userid));
-
 		}
 	}
 
@@ -278,13 +271,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		if (entry.isMyself(userid)) {
-
 			this.GROUP_STATUS.remove(gropid);
-
 		} else {
-
 			this.GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
-
 		}
 	}
 
@@ -318,112 +307,63 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
-		String report[] = new String[] {
-				"无可用消息"
-		};
+		if (!message.hasSwitch("gropid")) {
+			return new String[] {
+					"参数错误 --gropid 为空"
+			};
+		}
+
+		long gropid = Long.parseLong(message.getSwitch("gropid"));
+
+		int limitRank = 10;
+		int limitRepeat = 10;
+		int limitPicture = 3;
+
+		if (message.hasSwitch("limit")) {
+
+			String[] limits = message.getSwitch("limit").split(",");
+
+			switch (limits.length) {
+
+			case 3:
+				limitPicture = Integer.parseInt(limits[2]);
+			case 2:
+				limitRepeat = Integer.parseInt(limits[1]);
+			case 1:
+				limitRank = Integer.parseInt(limits[0]);
+			}
+		}
 
 		switch (mode) {
 
 		case 10:
 
-			if (message.hasSwitch("gropid")) {
-
-				long gropid = Long.parseLong(message.getSwitch("gropid"));
-
-				int limitRank = 10;
-				int limitRepeat = 10;
-				int limitPicture = 3;
-
-				if (message.hasSwitch("limit")) {
-
-					String[] limits = message.getSwitch("limit").split(",");
-
-					switch (limits.length) {
-
-					case 3:
-						limitPicture = Integer.parseInt(limits[2]);
-					case 2:
-						limitRepeat = Integer.parseInt(limits[1]);
-					case 1:
-						limitRank = Integer.parseInt(limits[0]);
-
-					}
-
-				}
-
-				report = this.generateMemberRank(gropid, limitRank, limitRepeat, limitPicture);
-
-			} else {
-
-				report = new String[] {
-						"参数错误 --gropid 为空"
-				};
-
-			}
-
-			break;
+			return this.generateMemberRank(gropid, limitRank, limitRepeat, limitPicture);
 
 		case 20:
 
-			System.out.println("DO MODE 20");
+			if (message.hasSwitch("match")) {
 
-			if (message.hasSwitch("gropid")) {
+				String match = message.getSwitch("match"); // @formatter:off
+				if (match.length() == 0) { return new String[] { "参数错误 --match 为空" }; } // @formatter:on
+				return this.generateMemberCountGrep(gropid, match, limitRank);
 
-				long gropid = Long.parseLong(message.getSwitch("gropid"));
+			} else if (message.hasSwitch("regex")) {
 
-				System.out.println("GROP ID IS " + gropid);
-
-				int limitRank = 10;
-
-				if (message.hasSwitch("regex")) {
-
-					System.out.println("DO MODE REGEX");
-
-				} else if (message.hasSwitch("count")) {
-
-					System.out.println("DO MODE COUNT");
-
-					String match = message.getSwitch("count");
-
-					if (match.length() == 0) {
-
-						report = new String[] {
-								"参数错误 --count 为空"
-						};
-
-					} else {
-
-						if (message.hasSwitch("limit")) {
-
-							System.out.println("FOUND LIMIT PARA");
-
-							limitRank = Integer.parseInt(message.getSwitch("limit"));
-						}
-
-						report = this.generateMemberGrep(gropid, match, limitRank);
-					}
-
-				} else {
-
-					report = new String[] {
-							"参数错误 模式为空 需要 --count 或 --regex"
-					};
-
-				}
+				String regex = message.getSwitch("regex"); // @formatter:off
+				if (regex.length() == 0) { return new String[] { "参数错误 --regex 为空" }; } // @formatter:on
+				return this.generateMemberRegexGrep(gropid, regex, limitRank);
 
 			} else {
-
-				report = new String[] {
-						"参数错误 --gropid 为空"
+				return new String[] {
+						"参数错误 模式为空 需要 --match 或 --regex"
 				};
-
 			}
-
-			break;
-
 		}
 
-		return report;
+		return new String[] {
+				"无可用消息"
+		};
 
 	}
 
@@ -623,12 +563,12 @@ public class Listener_TopSpeak extends ModuleListener {
 						builder.append("No." + order + " - " + messageRank + "次：" + messageContent + "\r\n");
 						limit++;
 						slice++;
+						if ((limitRepeat != 0) && (limit >= limitRepeat)) { break; }
 						if (slice == 50) {
 							report.add(builder.substring(0, builder.length() - 2).toString());
 							builder = new StringBuilder();
 							slice = 0;
 						}
-						if ((limitRepeat != 0) && (limit >= limitRepeat)) { break; }
 					}
 					if ((limitRepeat != 0) && (limit >= limitRepeat)) { break; }
 					order = order + tempSet.size();
@@ -667,17 +607,27 @@ public class Listener_TopSpeak extends ModuleListener {
 			allPictureRank.remove(1);
 
 			if (allPictureRank.size() > 0) {
+
 				int order = 1;
 				int limit = 0;
+
 				for (int pictureRank : allPictureRank.keySet()) {
+
 					HashSet<String> tempSet = allPictureRank.get(pictureRank);
+
 					for (String picture : tempSet) {
-						limit++;
+
+						if ((limitPicture != 0) && (limit >= limitPicture)) { break; }
+
 						String image = CQCode.getInstance().getCQImage(picture).getUrl();
 						report.add("No." + order + " - " + pictureRank + "次：" + image.substring(0, image.indexOf("?")));
-						if ((limitPicture != 0) && (limit >= limitPicture)) { break; }
+
+						limit++;
+
 					}
+
 					order = order + tempSet.size();
+
 					if ((limitPicture != 0) && (limit >= limitPicture)) { break; }
 				}
 			}
@@ -688,11 +638,12 @@ public class Listener_TopSpeak extends ModuleListener {
 		return report.toArray(new String[report.size()]);
 	}
 
-	private String[] generateMemberGrep(long gropid, String content, int limitRank) {
+	private String[] generateMemberCountGrep(long gropid, String content, int limitRank) {
 
 		int totalMatchCount = 0;
 
 		StringBuilder builder = new StringBuilder();
+		LinkedList<String> report = new LinkedList<>();
 
 		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid).sum();
 
@@ -727,7 +678,11 @@ public class Listener_TopSpeak extends ModuleListener {
 			memberCountRank.get(userMatchCount).add(userid);
 		}
 
-		builder.append(" 出现了：" + totalMatchCount + "次\r\n");
+		builder.append(" 出现了：" + totalMatchCount + "次");
+
+		report.add(builder.toString());
+
+		builder = new StringBuilder();
 
 		memberCountRank.remove(1);
 
@@ -735,6 +690,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 			int order = 1;
 			int limit = 0;
+			int slice = 0;
 
 			for (int userMatchCount : memberCountRank.keySet()) {
 
@@ -742,11 +698,17 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				for (Long userid : tempSet) {
 
-					limit++;
+					if ((limitRank != 0) && (limit >= limitRank)) { break; }
 
 					builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + userMatchCount + "次\r\n");
 
-					if ((limitRank != 0) && (limit >= limitRank)) { break; }
+					limit++;
+
+					if (slice == 50) {
+						report.add(builder.substring(0, builder.length() - 2).toString());
+						builder = new StringBuilder();
+						slice = 0;
+					}
 
 				}
 
@@ -755,13 +717,101 @@ public class Listener_TopSpeak extends ModuleListener {
 				order = order + tempSet.size();
 
 			}
+
+			report.add(builder.substring(0, builder.length() - 2).toString());
+
 		}
 
-		System.out.println(builder.toString());
+		return report.toArray(new String[report.size()]);
 
-		return new String[] {
-				builder.substring(0, builder.length() - 1).toString()
-		};
+	}
+
+	private String[] generateMemberRegexGrep(long gropid, String content, int limitRank) {
+
+		int totalMatchCount = 0;
+
+		StringBuilder builder = new StringBuilder();
+		LinkedList<String> report = new LinkedList<>();
+
+		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid).sum();
+
+		builder.append("自" + LoggerX.formatTime("yyyy-MM-dd HH", new Date(groupStatus.initdt)) + ":00 以来，在\r\n");
+		builder.append(groupStatus.GROP_MESSAGES + "条消息中(共" + groupStatus.GROP_CHARACTER + "字)\r\n");
+		builder.append("之中 " + content);
+
+		TreeMap<Integer, HashSet<Long>> memberCountRank = new TreeMap<>((a, b) -> b - a);
+
+		for (Long userid : groupStatus.USER_STATUS.keySet()) {
+
+			int userMatchCount = 0;
+
+			UserStatus userStatus = groupStatus.USER_STATUS.get(userid);
+
+			Pattern pattern = Pattern.compile(content);
+
+			for (String message : userStatus.USER_SENTENCE) {
+
+				Matcher matcher = pattern.matcher(message);
+
+				while (matcher.find()) {
+					userMatchCount++;
+					totalMatchCount++;
+				}
+
+			}
+
+			if (userMatchCount == 0) { continue; }
+
+			if (!memberCountRank.containsKey(userMatchCount)) { memberCountRank.put(userMatchCount, new HashSet<>()); }
+
+			memberCountRank.get(userMatchCount).add(userid);
+		}
+
+		builder.append(" 出现了：" + totalMatchCount + "次");
+
+		report.add(builder.toString());
+
+		builder = new StringBuilder();
+
+		memberCountRank.remove(1);
+
+		if (memberCountRank.size() > 0) {
+
+			int order = 1;
+			int limit = 0;
+			int slice = 0;
+
+			for (int userMatchCount : memberCountRank.keySet()) {
+
+				HashSet<Long> tempSet = memberCountRank.get(userMatchCount);
+
+				for (Long userid : tempSet) {
+
+					if ((limitRank != 0) && (limit >= limitRank)) { break; }
+
+					builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + userMatchCount + "次\r\n");
+
+					limit++;
+
+					if (slice == 50) {
+						report.add(builder.substring(0, builder.length() - 2).toString());
+						builder = new StringBuilder();
+						slice = 0;
+					}
+
+				}
+
+				if ((limitRank != 0) && (limit >= limitRank)) { break; }
+
+				order = order + tempSet.size();
+
+			}
+
+			report.add(builder.substring(0, builder.length() - 2).toString());
+
+		}
+
+		return report.toArray(new String[report.size()]);
 
 	}
 

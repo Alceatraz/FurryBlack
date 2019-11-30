@@ -293,6 +293,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			for (StackTraceElement temp : exception.getStackTrace()) {
 				builder.append("        at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 			}
+			builder.setLength(builder.length() - 1);
 			SYSTEMD.adminInfo(builder.toString());
 			System.out.println(builder.toString());
 		}
@@ -321,6 +322,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			for (StackTraceElement temp : exception.getStackTrace()) {
 				builder.append("        at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 			}
+			builder.setLength(builder.length() - 1);
 			SYSTEMD.adminInfo(builder.toString());
 			System.out.println(builder.toString());
 		}
@@ -349,6 +351,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			for (StackTraceElement temp : exception.getStackTrace()) {
 				builder.append("        at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 			}
+			builder.setLength(builder.length() - 1);
 			SYSTEMD.adminInfo(builder.toString());
 			System.out.println(builder.toString());
 		}
@@ -384,6 +387,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 				builder.append("        at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 			}
 		} finally {
+			builder.setLength(builder.length() - 1);
 			System.out.println(builder.toString());
 			SYSTEMD.adminInfo(builder.toString());
 		}
@@ -413,6 +417,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 				builder.append("        at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 			}
 		} finally {
+			builder.setLength(builder.length() - 1);
 			System.out.println(builder.toString());
 			SYSTEMD.adminInfo(builder.toString());
 		}
