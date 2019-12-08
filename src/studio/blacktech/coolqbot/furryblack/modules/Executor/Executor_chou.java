@@ -16,7 +16,6 @@ import org.meowy.cqp.jcq.entity.Member;
 import org.meowy.cqp.jcq.entity.QQInfo;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -37,7 +36,7 @@ public class Executor_chou extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "chou";
 	private static String MODULE_DISPLAYNAME = "随机抽人";
 	private static String MODULE_DESCRIPTION = "从当前群随机选择一个成员";
-	private static String MODULE_VERSION = "6.2";
+	private static String MODULE_VERSION = "6.3";
 	private static String[] MODULE_USAGE = new String[] {
 			"/chou - 随机抽一个人",
 			"/chou 理由 - 以某个理由抽一个人"
@@ -88,23 +87,23 @@ public class Executor_chou extends ModuleExecutor {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		this.initAppFolder(logger);
-		this.initConfFolder(logger);
+		initAppFolder();
+		initConfFolder();
 
-		this.MEMBERS = new HashMap<>();
-		this.IGNORES = new HashMap<>();
+		MEMBERS = new HashMap<>();
+		IGNORES = new HashMap<>();
 
-		this.FILE_IGNORE_USER = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
+		FILE_IGNORE_USER = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
-		if (!this.FILE_IGNORE_USER.exists()) { this.FILE_IGNORE_USER.createNewFile(); }
+		if (!FILE_IGNORE_USER.exists()) { FILE_IGNORE_USER.createNewFile(); }
 
 		List<Group> groups = entry.getCQ().getGroupList();
 
 		for (Group group : groups) {
-			this.MEMBERS.put(group.getId(), new ArrayList<Long>());
-			this.IGNORES.put(group.getId(), new ArrayList<Long>());
+			MEMBERS.put(group.getId(), new ArrayList<Long>());
+			IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
 
 		long gropid;
@@ -113,7 +112,7 @@ public class Executor_chou extends ModuleExecutor {
 		String line;
 		String[] temp;
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_IGNORE_USER), StandardCharsets.UTF_8));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_IGNORE_USER), StandardCharsets.UTF_8));
 
 		while ((line = reader.readLine()) != null) {
 
@@ -124,18 +123,18 @@ public class Executor_chou extends ModuleExecutor {
 			temp = line.split(":");
 
 			if (temp.length != 2) {
-				logger.mini(Executor_chou.MODULE_PACKAGENAME, "配置无效", line);
+				logger.warn("配置无效", line);
 				continue;
 			}
 
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
 
-			if (this.IGNORES.containsKey(gropid)) {
-				this.IGNORES.get(gropid).add(userid);
-				logger.seek(Executor_chou.MODULE_PACKAGENAME, "排除用户", gropid + " > " + userid);
+			if (IGNORES.containsKey(gropid)) {
+				IGNORES.get(gropid).add(userid);
+				logger.seek("排除用户", gropid + " > " + userid);
 			} else {
-				logger.seek(Executor_chou.MODULE_PACKAGENAME, "排除用户", "群不存在 " + gropid);
+				logger.seek("排除用户", "群不存在 " + gropid);
 			}
 
 		}
@@ -147,8 +146,8 @@ public class Executor_chou extends ModuleExecutor {
 
 		for (Group group : groups) {
 
-			tempMembers = this.MEMBERS.get(group.getId());
-			tempIgnores = this.IGNORES.get(group.getId());
+			tempMembers = MEMBERS.get(group.getId());
+			tempIgnores = IGNORES.get(group.getId());
 
 			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
 				if (entry.isMyself(member.getQQId())) { continue; }
@@ -157,39 +156,41 @@ public class Executor_chou extends ModuleExecutor {
 			}
 		}
 
-		this.ENABLE_USER = false;
-		this.ENABLE_DISZ = false;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = false;
+		ENABLE_DISZ = false;
+		ENABLE_GROP = true;
 
-		return logger;
+		return true;
 
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
-		return logger;
+	public boolean boot() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
-		return logger;
+	public boolean shut() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		ArrayList<Long> tempMembers = new ArrayList<>();
-		if (this.IGNORES.containsKey(gropid)) {
-			ArrayList<Long> tempIgnores = this.IGNORES.get(gropid);
+		if (IGNORES.containsKey(gropid)) {
+			ArrayList<Long> tempIgnores = IGNORES.get(gropid);
 			for (Member tempUserid : entry.getCQ().getGroupMemberList(gropid)) {
 				if (!tempIgnores.contains(tempUserid.getQQId())) { tempMembers.add(tempUserid.getQQId()); }
 			}
@@ -198,12 +199,12 @@ public class Executor_chou extends ModuleExecutor {
 				tempMembers.add(tempUserid.getQQId());
 			}
 		}
-		this.MEMBERS.put(gropid, tempMembers);
+		MEMBERS.put(gropid, tempMembers);
 	}
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-		ArrayList<Long> tempMembers = this.MEMBERS.get(gropid);
+		ArrayList<Long> tempMembers = MEMBERS.get(gropid);
 		tempMembers.remove(userid);
 	}
 
@@ -226,7 +227,7 @@ public class Executor_chou extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		SecureRandom random = new SecureRandom();
-		ArrayList<Long> members = this.MEMBERS.get(gropid);
+		ArrayList<Long> members = MEMBERS.get(gropid);
 		int size = members.size();
 		if (size < 3) {
 			entry.gropInfo(gropid, userid, "至少需要三个成员");

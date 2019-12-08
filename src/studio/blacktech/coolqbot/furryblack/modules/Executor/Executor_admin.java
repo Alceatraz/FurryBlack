@@ -1,7 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -22,7 +21,7 @@ public class Executor_admin extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "admin";
 	private static String MODULE_DISPLAYNAME = "管理工具";
 	private static String MODULE_DESCRIPTION = "管理员控制台";
-	private static String MODULE_VERSION = "11.0";
+	private static String MODULE_VERSION = "11.1";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -34,7 +33,6 @@ public class Executor_admin extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	public final static String MESSAGE_bootlog = "Logger Level\r\n0 mini - 必须介入的消息\r\n1 info - 需要知晓的消息\r\n2 seek - 自动执行的消息\r\n3 full - 所有消息";
 	public final static String MESSAGE_initlvl = "init 0 - 切换起停\r\ninit 1 - 初始化\r\ninit 2 - 启动\r\ninit 3 - 保存\r\ninit 4 - 丢弃关闭\r\ninit 5 - 保存关闭\r\ninit 6 - 保存重启";
 
 	// ==========================================================================================================================================================
@@ -64,33 +62,35 @@ public class Executor_admin extends ModuleExecutor {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
-		return logger;
+	public boolean boot() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
-		return logger;
+	public boolean shut() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public class Executor_admin extends ModuleExecutor {
 					entry.adminInfo(entry.getSystemd().reportAllModules(0, message, null, null));
 					break;
 				case "exec":
-					entry.adminInfo(entry.getSystemd().exec(new LoggerX(), message).make(3));
+					entry.adminInfo(entry.getSystemd().exec(message));
 					break;
 				case "debug":
 					entry.adminInfo(entry.switchDEBUG() ? "DEBUG → Enable" : "DEBUG → Disable");
@@ -163,7 +163,7 @@ public class Executor_admin extends ModuleExecutor {
 					entry.gropInfo(gropid, entry.getSystemd().reportAllModules(0, message, null, null));
 					break;
 				case "exec":
-					entry.gropInfo(gropid, entry.getSystemd().exec(new LoggerX(), message).make(3));
+					entry.gropInfo(gropid, entry.getSystemd().exec(message));
 					break;
 				case "debug":
 					entry.gropInfo(gropid, entry.switchDEBUG() ? "DEBUG → Enable" : "DEBUG → Disable");

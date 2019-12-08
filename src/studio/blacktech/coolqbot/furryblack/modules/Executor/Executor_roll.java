@@ -3,7 +3,6 @@ package studio.blacktech.coolqbot.furryblack.modules.Executor;
 import java.security.SecureRandom;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -76,31 +75,33 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
-		return logger;
+	public boolean init() throws Exception {
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
+		return true;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
-		return logger;
+	public boolean boot() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
-		return logger;
+	public boolean shut() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	@Override
@@ -113,19 +114,19 @@ public class Executor_roll extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.userInfo(userid, this.roll(message));
+		entry.userInfo(userid, roll(message));
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.diszInfo(diszid, userid, this.roll(message));
+		entry.diszInfo(diszid, userid, roll(message));
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.gropInfo(gropid, userid, this.roll(message));
+		entry.gropInfo(gropid, userid, roll(message));
 		return true;
 	}
 
@@ -140,13 +141,13 @@ public class Executor_roll extends ModuleExecutor {
 
 		case 0:
 			if (random.nextBoolean()) {
-				this.mode_fucker++;
+				mode_fucker++;
 				res = " [CQ:emoji,id=10000049]";
 			} else {
-				this.mode_fucked++;
+				mode_fucked++;
 				res = " [CQ:emoji,id=10000048]";
 			}
-			this.mode_1++;
+			mode_1++;
 			break;
 
 		// ============================================================
@@ -156,17 +157,17 @@ public class Executor_roll extends ModuleExecutor {
 			try {
 				range = Integer.parseInt(message.getSegment()[0]);
 				res = Integer.toString(random.nextInt(range));
-				this.mode_2++;
+				mode_2++;
 			} catch (Exception exce) {
 				res = message.getOptions() + " 是 ";
 				if (random.nextBoolean()) {
-					this.mode_fucker++;
+					mode_fucker++;
 					res = res + "[CQ:emoji,id=10000049]";
 				} else {
-					this.mode_fucked++;
+					mode_fucked++;
 					res = res + "[CQ:emoji,id=10000048]";
 				}
-				this.mode_1++;
+				mode_1++;
 			}
 			break;
 
@@ -184,7 +185,7 @@ public class Executor_roll extends ModuleExecutor {
 			int temp = random.nextInt(max);
 			if (temp < min) { temp = ((temp / max) * (max - min)) + min; }
 			res = Integer.toString(temp);
-			this.mode_3++;
+			mode_3++;
 			break;
 		}
 
@@ -195,18 +196,18 @@ public class Executor_roll extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		if ((this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP) == 0) { return null; }
+		if ((COUNT_USER + COUNT_DISZ + COUNT_GROP) == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		builder.append("模式1 - 真假: ");
-		builder.append(this.mode_1);
+		builder.append(mode_1);
 		builder.append(" (");
-		builder.append(this.mode_fucker);
+		builder.append(mode_fucker);
 		builder.append("/");
-		builder.append(this.mode_fucked);
+		builder.append(mode_fucked);
 		builder.append(")\r\n模式2 - 单限: ");
-		builder.append(this.mode_2);
+		builder.append(mode_2);
 		builder.append("\r\n模式3 - 双限: ");
-		builder.append(this.mode_3);
+		builder.append(mode_3);
 		String[] res = new String[] {
 				builder.toString()
 		};

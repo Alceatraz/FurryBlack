@@ -26,6 +26,7 @@ import org.meowy.cqp.jcq.message.CQCode;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -97,146 +98,134 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		this.initAppFolder(logger);
-		this.initConfFolder(logger);
-		this.initDataFolder(logger);
+		initAppFolder();
+		initConfFolder();
+		initDataFolder();
 
-		this.GROUP_REPORT = new ArrayList<>();
+		GROUP_REPORT = new ArrayList<>();
 
-		this.CONFIG_ENABLE_REPORT = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "daily_report.txt").toFile();
-		this.GROUP_STATUS_STORAGE = Paths.get(this.FOLDER_DATA.getAbsolutePath(), "shui").toFile();
+		GROUP_STATUS_STORAGE = Paths.get(FOLDER_DATA.getAbsolutePath(), "shui").toFile();
+		CONFIG_ENABLE_REPORT = Paths.get(FOLDER_CONF.getAbsolutePath(), "daily_report.txt").toFile();
+
+		if (!CONFIG_ENABLE_REPORT.exists()) { if (!CONFIG_ENABLE_REPORT.createNewFile()) { throw new InitializationException("无法创建文件" + CONFIG_ENABLE_REPORT.getName()); } }
+
+		// 读取每日自动汇报配置文件
 
 		String line;
 
-		if (this.CONFIG_ENABLE_REPORT.exists()) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8));
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8));
+		while ((line = reader.readLine()) != null) {
 
-			while ((line = reader.readLine()) != null) {
+			if (line.startsWith("#")) { continue; }
+			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
 
-				if (line.startsWith("#")) { continue; }
-				if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+			GROUP_REPORT.add(Long.parseLong(line));
 
-				this.GROUP_REPORT.add(Long.parseLong(line));
-			}
-
-			logger.seek(MODULE_PACKAGENAME, "每日汇报启用");
-
-			for (Long temp : this.GROUP_REPORT) {
-				logger.seek(MODULE_PACKAGENAME, "  " + temp);
-			}
-
-			reader.close();
-
-		} else {
-
-			this.CONFIG_ENABLE_REPORT.createNewFile();
+			logger.seek("启用每日汇报", line);
 		}
 
-		if (this.GROUP_STATUS_STORAGE.exists()) {
+		reader.close();
 
-			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(this.GROUP_STATUS_STORAGE));
-			this.GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
+		// 读取存档文件
+
+		if (GROUP_STATUS_STORAGE.exists()) {
+
+			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(GROUP_STATUS_STORAGE));
+			GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
 			loader.close();
 
-			logger.seek(MODULE_PACKAGENAME, "读取存档", this.GROUP_STATUS.size() == 0 ? "空" : "包含" + this.GROUP_STATUS.size() + "个群");
+			logger.seek("读取存档", GROUP_STATUS.size() == 0 ? "空" : "包含" + GROUP_STATUS.size() + "个群");
 
-			for (long gropid : this.GROUP_STATUS.keySet()) {
+			for (long gropid : GROUP_STATUS.keySet()) {
 
-				long time = this.GROUP_STATUS.get(gropid).initdt;
-				logger.seek(MODULE_PACKAGENAME, "群 " + gropid, LoggerX.datetime(new Date(time)) + "(" + time + ")");
+				long time = GROUP_STATUS.get(gropid).initdt;
+				logger.seek("群 " + gropid, LoggerX.datetime(new Date(time)) + "(" + time + ")");
 
 			}
 
-			File GROUP_STATUS_LEGACY = Paths.get(this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
-			this.GROUP_STATUS_STORAGE.renameTo(GROUP_STATUS_LEGACY);
-			this.GROUP_STATUS_STORAGE.delete();
+			File GROUP_STATUS_LEGACY = Paths.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
+			GROUP_STATUS_STORAGE.renameTo(GROUP_STATUS_LEGACY);
+			GROUP_STATUS_STORAGE.delete();
 
 		} else {
-
-			this.GROUP_STATUS = new HashMap<>();
-
+			logger.seek("存档不存在");
+			GROUP_STATUS = new HashMap<>();
 		}
 
 		List<Group> groups = entry.getCQ().getGroupList();
 
-		logger.seek(MODULE_PACKAGENAME, "存档一致性检查");
-
 		for (Group group : groups) {
 
-			if (this.GROUP_STATUS.containsKey(group.getId())) {
+			if (GROUP_STATUS.containsKey(group.getId())) {
 
-				GroupStatus groupStatus = this.GROUP_STATUS.get(group.getId());
+				GroupStatus groupStatus = GROUP_STATUS.get(group.getId());
 				List<Member> members = entry.getCQ().getGroupMemberList(group.getId());
 
 				for (Member member : members) {
 
 					if (!groupStatus.USER_STATUS.containsKey(member.getQQId())) {
-
 						groupStatus.USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
-
-						logger.seek(MODULE_PACKAGENAME, "新建成员" + group.getId() + " > " + entry.getNickname(member.getQQId()) + "(" + member.getQQId() + ")");
-
+						logger.seek("新建成员", group.getId() + " > " + entry.getNickname(member.getQQId()) + "(" + member.getQQId() + ")");
 					}
 				}
 
 			} else {
-
-				this.GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
-
-				logger.seek(MODULE_PACKAGENAME, "新建群" + group.getName() + "(" + group.getId() + ")");
-
+				GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
+				logger.seek("新建群", group.getName() + "(" + group.getId() + ")");
 			}
-
 		}
 
-		this.ENABLE_USER = false;
-		this.ENABLE_DISZ = false;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = false;
+		ENABLE_DISZ = false;
+		ENABLE_GROP = true;
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
+	public boolean boot() throws Exception {
 
-		logger.info(Listener_TopSpeak.MODULE_PACKAGENAME, "启动工作线程");
+		logger.info("启动工作线程");
 
-		this.thread = new Thread(new Worker());
-		this.thread.start();
+		thread = new Thread(new Worker());
+		thread.start();
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
+	public boolean save() throws Exception {
 
-		logger.info(Listener_TopSpeak.MODULE_PACKAGENAME, "数据序列化");
+		logger.info("数据序列化");
 
-		this.saveData(this.GROUP_STATUS_STORAGE);
+		saveData(GROUP_STATUS_STORAGE);
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
+	public boolean shut() throws Exception {
 
-		logger.info(Listener_TopSpeak.MODULE_PACKAGENAME, "终止工作线程");
+		logger.info("终止工作线程");
 
-		this.thread.interrupt();
-		this.thread.join();
+		thread.interrupt();
+		thread.join();
 
-		return logger;
+		logger.info("工作线程已终止");
+
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+	public String[] exec(Message message) throws Exception {
 
 		if (message.getSection() < 1) {
-			logger.info(MODULE_PACKAGENAME, "参数不足");
-			return logger;
+			return new String[] {
+					"参数不足"
+			};
 		}
 
 		String command = message.getSegment()[1];
@@ -244,26 +233,35 @@ public class Listener_TopSpeak extends ModuleListener {
 		switch (command) {
 
 		case "save":
-			File DAILY_BACKUP = Paths.get(this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
-			this.saveData(DAILY_BACKUP);
-			logger.info(MODULE_PACKAGENAME, "保存存档", DAILY_BACKUP.getAbsolutePath());
-			break;
+
+			File DAILY_BACKUP = Paths.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
+			saveData(DAILY_BACKUP);
+
+			return new String[] {
+					"保存存档 - " + DAILY_BACKUP.getName()
+			};
 
 		case "dump":
-			break;
 
+			return new String[] {
+					"暂未实现"
+			};
+
+		default:
+
+			return new String[] {
+					"参数不足 save/dump"
+			};
 		}
-
-		return logger;
 	}
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		if (entry.isMyself(userid)) {
-			this.GROUP_STATUS.put(gropid, new GroupStatus(gropid));
+			GROUP_STATUS.put(gropid, new GroupStatus(gropid));
 		} else {
-			this.GROUP_STATUS.get(gropid).USER_STATUS.put(userid, new UserStatus(userid));
+			GROUP_STATUS.get(gropid).USER_STATUS.put(userid, new UserStatus(userid));
 		}
 	}
 
@@ -271,9 +269,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		if (entry.isMyself(userid)) {
-			this.GROUP_STATUS.remove(gropid);
+			GROUP_STATUS.remove(gropid);
 		} else {
-			this.GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
+			GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
 		}
 	}
 
@@ -294,7 +292,17 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		this.GROUP_STATUS.get(gropid).say(userid, message);
+
+		// @formatter:off
+
+		// 用以确定是不存在组还是不存在人
+
+		GROUP_STATUS
+		.get(gropid)
+		.say(userid, message);
+
+		// @formatter:on
+
 		return true;
 	}
 
@@ -338,7 +346,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		case 10:
 
-			return this.generateMemberRank(gropid, limitRank, limitRepeat, limitPicture);
+			return generateMemberRank(gropid, limitRank, limitRepeat, limitPicture);
 
 		case 20:
 
@@ -346,13 +354,13 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				String match = message.getSwitch("match"); // @formatter:off
 				if (match.length() == 0) { return new String[] { "参数错误 --match 为空" }; } // @formatter:on
-				return this.generateMemberCountGrep(gropid, match, limitRank);
+				return generateMemberCountGrep(gropid, match, limitRank);
 
 			} else if (message.hasSwitch("regex")) {
 
 				String regex = message.getSwitch("regex"); // @formatter:off
 				if (regex.length() == 0) { return new String[] { "参数错误 --regex 为空" }; } // @formatter:on
-				return this.generateMemberRegexGrep(gropid, regex, limitRank);
+				return generateMemberRegexGrep(gropid, regex, limitRank);
 
 			} else {
 				return new String[] {
@@ -374,7 +382,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		StringBuilder builder;
 		LinkedList<String> report = new LinkedList<>();
 
-		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid).sum();
+		GroupStatus groupStatus = GROUP_STATUS.get(gropid).sum();
 
 		// ===========================================================
 
@@ -645,7 +653,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		StringBuilder builder = new StringBuilder();
 		LinkedList<String> report = new LinkedList<>();
 
-		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid).sum();
+		GroupStatus groupStatus = GROUP_STATUS.get(gropid).sum();
 
 		builder.append("自" + LoggerX.formatTime("yyyy-MM-dd HH", new Date(groupStatus.initdt)) + ":00 以来，在\r\n");
 		builder.append(groupStatus.GROP_MESSAGES + "条消息中(共" + groupStatus.GROP_CHARACTER + "字)\r\n");
@@ -733,7 +741,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		StringBuilder builder = new StringBuilder();
 		LinkedList<String> report = new LinkedList<>();
 
-		GroupStatus groupStatus = this.GROUP_STATUS.get(gropid).sum();
+		GroupStatus groupStatus = GROUP_STATUS.get(gropid).sum();
 
 		builder.append("自" + LoggerX.formatTime("yyyy-MM-dd HH", new Date(groupStatus.initdt)) + ":00 以来，在\r\n");
 		builder.append(groupStatus.GROP_MESSAGES + "条消息中(共" + groupStatus.GROP_CHARACTER + "字)\r\n");
@@ -819,11 +827,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		try {
 
-			if (file.exists()) {
-
-				file.delete();
-
-			}
+			if (file.exists()) { file.delete(); }
 
 			FileOutputStream stream = new FileOutputStream(file);
 
@@ -856,29 +860,38 @@ public class Listener_TopSpeak extends ModuleListener {
 					while (true) {
 
 						date = new Date();
+
 						time = 86400L;
 						time = time - date.getSeconds();
 						time = time - (date.getMinutes() * 60);
 						time = time - (date.getHours() * 3600);
 						time = time * 1000;
+
+						if (entry.DEBUG()) { logger.full("工作线程休眠：" + time); }
+
 						Thread.sleep(time);
+
+						if (entry.DEBUG()) { logger.full("工作线程执行"); }
 
 						File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
 
-						Listener_TopSpeak.this.saveData(DAILY_BACKUP);
+						saveData(DAILY_BACKUP);
 
-						for (long temp : Listener_TopSpeak.this.GROUP_REPORT) {
-							entry.gropInfo(temp, Listener_TopSpeak.this.generateMemberRank(temp, 10, 10, 3));
+						for (long temp : GROUP_REPORT) {
+							entry.gropInfo(temp, generateMemberRank(temp, 10, 10, 3));
 						}
 
-						entry.getCQ().logDebug(Listener_TopSpeak.MODULE_PACKAGENAME, "结果", "备份于" + DAILY_BACKUP.getAbsolutePath());
+						entry.getCQ().logDebug("结果", "备份于" + DAILY_BACKUP.getAbsolutePath());
 
 					}
+
 				} catch (Exception exception) {
 					if (entry.isEnable()) {
-						entry.getCQ().logWarning(Listener_TopSpeak.MODULE_PACKAGENAME, "异常");
+						long timeserial = System.currentTimeMillis();
+						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
+						logger.exception(timeserial, exception);
 					} else {
-						entry.getCQ().logInfo(Listener_TopSpeak.MODULE_PACKAGENAME, "关闭");
+						logger.full("关闭");
 					}
 				}
 			} while (entry.isEnable());
@@ -907,45 +920,45 @@ class GroupStatus implements Serializable {
 	public int GROP_PURECCODE = 0;
 
 	public GroupStatus(long gropid) {
-		this.initdt = System.currentTimeMillis();
+		initdt = System.currentTimeMillis();
 		this.gropid = gropid;
 		for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
-			this.USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
+			USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
 		}
 	}
 
 	public void say(long userid, MessageGrop message) {
-		this.USER_STATUS.get(userid).say(message);
+		USER_STATUS.get(userid).say(message);
 	}
 
 	public GroupStatus sum() {
 
-		this.GROP_SENTENCE = new LinkedList<>();
-		this.GROP_COMMANDS = new LinkedList<>();
-		this.GROP_PICTURES = new LinkedList<>();
+		GROP_SENTENCE = new LinkedList<>();
+		GROP_COMMANDS = new LinkedList<>();
+		GROP_PICTURES = new LinkedList<>();
 
-		this.GROP_SNAPSHOT = 0;
-		this.GROP_HONGBAOS = 0;
-		this.GROP_TAPVIDEO = 0;
-		this.GROP_MESSAGES = 0;
-		this.GROP_CHARACTER = 0;
-		this.GROP_PURECCODE = 0;
+		GROP_SNAPSHOT = 0;
+		GROP_HONGBAOS = 0;
+		GROP_TAPVIDEO = 0;
+		GROP_MESSAGES = 0;
+		GROP_CHARACTER = 0;
+		GROP_PURECCODE = 0;
 
-		for (long userid : this.USER_STATUS.keySet()) {
+		for (long userid : USER_STATUS.keySet()) {
 
-			UserStatus userStauts = this.USER_STATUS.get(userid).sum();
-			this.GROP_SENTENCE.addAll(userStauts.USER_SENTENCE);
-			this.GROP_COMMANDS.addAll(userStauts.USER_COMMANDS);
-			this.GROP_PICTURES.addAll(userStauts.USER_PICTURES);
+			UserStatus userStauts = USER_STATUS.get(userid).sum();
+			GROP_SENTENCE.addAll(userStauts.USER_SENTENCE);
+			GROP_COMMANDS.addAll(userStauts.USER_COMMANDS);
+			GROP_PICTURES.addAll(userStauts.USER_PICTURES);
 
-			this.GROP_SNAPSHOT = this.GROP_SNAPSHOT + userStauts.USER_SNAPSHOT;
-			this.GROP_HONGBAOS = this.GROP_HONGBAOS + userStauts.USER_HONGBAOS;
-			this.GROP_TAPVIDEO = this.GROP_TAPVIDEO + userStauts.USER_TAPVIDEO;
+			GROP_SNAPSHOT = GROP_SNAPSHOT + userStauts.USER_SNAPSHOT;
+			GROP_HONGBAOS = GROP_HONGBAOS + userStauts.USER_HONGBAOS;
+			GROP_TAPVIDEO = GROP_TAPVIDEO + userStauts.USER_TAPVIDEO;
 
-			this.GROP_MESSAGES = this.GROP_MESSAGES + userStauts.MESSAGES.size();
+			GROP_MESSAGES = GROP_MESSAGES + userStauts.MESSAGES.size();
 
-			this.GROP_CHARACTER = this.GROP_CHARACTER + userStauts.USER_CHARACTER;
-			this.GROP_PURECCODE = this.GROP_PURECCODE + userStauts.USER_PURECCODE;
+			GROP_CHARACTER = GROP_CHARACTER + userStauts.USER_CHARACTER;
+			GROP_PURECCODE = GROP_PURECCODE + userStauts.USER_PURECCODE;
 		}
 
 		return this;
@@ -976,43 +989,43 @@ class UserStatus implements Serializable {
 	}
 
 	public void say(MessageGrop message) {
-		this.MESSAGES.add(message);
+		MESSAGES.add(message);
 	}
 
 	public UserStatus sum() {
 
-		this.USER_SENTENCE = new LinkedList<>();
-		this.USER_COMMANDS = new LinkedList<>();
-		this.USER_PICTURES = new LinkedList<>();
+		USER_SENTENCE = new LinkedList<>();
+		USER_COMMANDS = new LinkedList<>();
+		USER_PICTURES = new LinkedList<>();
 
-		this.USER_CHARACTER = 0;
-		this.USER_PURECCODE = 0;
-		this.USER_SNAPSHOT = 0;
-		this.USER_TAPVIDEO = 0;
-		this.USER_HONGBAOS = 0;
+		USER_CHARACTER = 0;
+		USER_PURECCODE = 0;
+		USER_SNAPSHOT = 0;
+		USER_TAPVIDEO = 0;
+		USER_HONGBAOS = 0;
 
-		for (MessageGrop temp : this.MESSAGES) {
+		for (MessageGrop temp : MESSAGES) {
 
 			if (temp.isCommand()) {
-				this.USER_COMMANDS.add(temp.getCommand());
+				USER_COMMANDS.add(temp.getCommand());
 			} else if (temp.isSnappic()) {
-				this.USER_SNAPSHOT++;
+				USER_SNAPSHOT++;
 			} else if (temp.isQQVideo()) {
-				this.USER_TAPVIDEO++;
+				USER_TAPVIDEO++;
 			} else if (temp.isHongbao()) {
-				this.USER_HONGBAOS++;
+				USER_HONGBAOS++;
 			} else if (temp.hasPicture()) {
 				for (String image : temp.getPicture()) {
-					this.USER_PICTURES.add(image);
+					USER_PICTURES.add(image);
 				}
 			} else {
 				if (temp.isPureCQC()) {
-					this.USER_PURECCODE++;
-					this.USER_CHARACTER++;
+					USER_PURECCODE++;
+					USER_CHARACTER++;
 				} else {
 					if (temp.getResLength() == 0) { continue; }
-					this.USER_SENTENCE.add(temp.getResMessage());
-					this.USER_CHARACTER = this.USER_CHARACTER + temp.getResLength();
+					USER_SENTENCE.add(temp.getResMessage());
+					USER_CHARACTER = USER_CHARACTER + temp.getResLength();
 				}
 			}
 		}

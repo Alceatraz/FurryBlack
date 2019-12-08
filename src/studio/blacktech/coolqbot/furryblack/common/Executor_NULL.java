@@ -1,6 +1,5 @@
 package studio.blacktech.coolqbot.furryblack.common;
 
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -62,41 +61,45 @@ public class Executor_NULL extends ModuleExecutor {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		if (this.NEW_CONFIG) {
-			this.CONFIG.setProperty("", "");
-			this.saveConfig();
+		if (NEW_CONFIG) {
+			CONFIG.setProperty("", "");
+			saveConfig();
 		} else {
-			this.loadConfig();
+			loadConfig();
 		}
 
-		this.ENABLE_USER = false;
-		this.ENABLE_DISZ = false;
-		this.ENABLE_GROP = false;
+		ENABLE_USER = false;
+		ENABLE_DISZ = false;
+		ENABLE_GROP = false;
 
-		return logger;
-
+		return false;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
-		return logger;
+	public boolean boot() throws Exception {
+
+		return false;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+
+		return false;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
-		return logger;
+	public boolean shut() throws Exception {
+
+		return false;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	@Override

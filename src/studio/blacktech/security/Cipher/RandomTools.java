@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.common.Security.Utility;
+package studio.blacktech.security.Cipher;
 
 import java.security.SecureRandom;
 

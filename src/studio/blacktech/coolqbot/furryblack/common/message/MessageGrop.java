@@ -14,11 +14,11 @@ public class MessageGrop extends Message {
 	}
 
 	public long gropid() {
-		return this.gropid;
+		return gropid;
 	}
 
 	public long userid() {
-		return this.userid;
+		return userid;
 	}
 
 	@Override
@@ -26,8 +26,8 @@ public class MessageGrop extends Message {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("============================================\n");
-		builder.append("群聊ID: " + this.gropid + "\n");
-		builder.append("用户ID: " + this.userid + "\n");
+		builder.append("群聊ID: " + gropid + "\n");
+		builder.append("用户ID: " + userid + "\n");
 		builder.append(super.toString());
 		return builder.toString();
 	}

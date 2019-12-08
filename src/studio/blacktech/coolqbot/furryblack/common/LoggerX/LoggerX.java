@@ -1,51 +1,109 @@
 package studio.blacktech.coolqbot.furryblack.common.LoggerX;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.TimeZone;
 
+import studio.blacktech.coolqbot.furryblack.common.exception.CantReinitializationException;
+import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
+
+/**
+ * 唯一根模式
+ *
+ * @author AW
+ *
+ */
 public class LoggerX {
 
-	private StringBuilder builder_mini;
-	private StringBuilder builder_info;
-	private StringBuilder builder_seek;
-	private StringBuilder builder_full;
+	private static boolean INIT_LOCK = false;
+	private static File FILE_LOGGER;
 
-	// private static StringBuilder builder_mini = new StringBuilder();
-	// private static StringBuilder builder_info = new StringBuilder();
-	// private static StringBuilder builder_seek = new StringBuilder();
-	// private static StringBuilder builder_full = new StringBuilder();
+	private String name;
 
-	public LoggerX() {
-
-		this.builder_mini = new StringBuilder();
-		this.builder_info = new StringBuilder();
-		this.builder_seek = new StringBuilder();
-		this.builder_full = new StringBuilder();
-
-		// this.builder_mini.append(LoggerX.datetime());
-		// this.builder_info.append(LoggerX.datetime());
-		// this.builder_seek.append(LoggerX.datetime());
-		// this.builder_full.append(LoggerX.datetime());
-
-		// this.builder_mini.append("\r\n");
-		// this.builder_info.append("\r\n");
-		// this.builder_seek.append("\r\n");
-		// this.builder_full.append("\r\n");
+	public LoggerX(String name) {
+		this.name = name;
 	}
 
-	public String make(int level) {
-		switch (level) {
-		case 0:
-			return this.builder_mini.toString().substring(0, this.builder_mini.length() - 2);
-		case 1:
-			return this.builder_info.toString().substring(0, this.builder_info.length() - 2);
-		case 2:
-			return this.builder_seek.toString().substring(0, this.builder_seek.length() - 2);
-		default:
-			return this.builder_full.toString().substring(0, this.builder_full.length() - 2);
+	public LoggerX(Object thisInstance) {
+		name = thisInstance.getClass().getSimpleName();
+	}
+
+	/**
+	 * 必须传入绝对路径
+	 */
+	public static void init(File file) throws InitializationException {
+		if (INIT_LOCK) { throw new CantReinitializationException(); }
+		INIT_LOCK = true;
+		FILE_LOGGER = file;
+	}
+
+	// ==================================================================================================
+	//
+	//
+	// ==================================================================================================
+
+	public void exception(Exception exception) {
+
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("异常原因：" + exception.getCause());
+		builder.append("异常消息：" + exception.getMessage());
+		builder.append("异常调用：" + exception.getClass().getName());
+
+		for (StackTraceElement temp : exception.getStackTrace()) {
+			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 		}
+
+		builder.setLength(builder.length() - 1);
+
+		String temp = "[" + LoggerX.time() + "][EXCEPTION][" + name + "] 发生异常\r\n" + builder.toString();
+
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+	}
+
+	public void exception(long timestamp, Exception exception) {
+
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("异常原因：" + exception.getCause());
+		builder.append("异常消息：" + exception.getMessage());
+		builder.append("异常调用：" + exception.getClass().getName());
+
+		for (StackTraceElement temp : exception.getStackTrace()) {
+			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
+		}
+
+		builder.setLength(builder.length() - 1);
+
+		String temp = "[" + LoggerX.time() + "][EXCEPTION][" + name + "] 发生异常\r\n时间序列号: " + timestamp + builder.toString();
+
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+	}
+
+	public void exception(long timestamp, String catgory, Exception exception) {
+
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("异常原因：" + exception.getCause());
+		builder.append("异常消息：" + exception.getMessage());
+		builder.append("异常调用：" + exception.getClass().getName());
+
+		for (StackTraceElement temp : exception.getStackTrace()) {
+			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
+		}
+
+		builder.setLength(builder.length() - 1);
+
+		String temp = "[" + LoggerX.time() + "][EXCEPTION][" + name + "] " + catgory + "\r\n时间序列号: " + timestamp + builder.toString();
+
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
 	}
 
 	// ==================================================================================================
@@ -53,126 +111,179 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-	// =====================================
-	//
-	// [11:22:33] 消息内容
-	//
-	// =====================================
+	public String raw(long timestamp, String catgory, String message) {
+		String temp = "[" + LoggerX.time() + "][" + name + "]" + catgory + "\r\n时间序列号: " + timestamp + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
+	}
 
-	public String mini(String message) {
-		this.builder_mini.append("[" + LoggerX.time() + "]" + message + "\r\n");
-		return this.info(message);
+	public String raw(String category, String catgory, String message) {
+		String temp = "[" + LoggerX.time() + "][" + name + "][" + category + "]" + catgory + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
+	}
+
+	// ==================================================================================================
+	//
+	//
+	// ==================================================================================================
+
+	public String warn(String message) {
+		String temp = "[" + LoggerX.time() + "][WARN][" + name + "]" + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
 	}
 
 	public String info(String message) {
-		this.builder_info.append("[" + LoggerX.time() + "]" + message + "\r\n");
-		return this.seek(message);
+		String temp = "[" + LoggerX.time() + "][INFO][" + name + "]" + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
 	}
 
 	public String seek(String message) {
-		this.builder_seek.append("[" + LoggerX.time() + "]" + message + "\r\n");
-		return this.full(message);
+		String temp = "[" + LoggerX.time() + "][SEEK][" + name + "]" + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
 	}
 
 	public String full(String message) {
-		this.builder_full.append("[" + LoggerX.time() + "]" + message + "\r\n");
+		String temp = "[" + LoggerX.time() + "][FULL][" + name + "]" + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
 		return message;
 	}
 
-	// =====================================
+	// ==================================================================================================
 	//
-	// [11:22:33] 消息内容：消息内容
 	//
-	// =====================================
+	// ==================================================================================================
 
-	public String mini(String category, String message) {
-		this.builder_mini.append("[" + LoggerX.time() + "][" + category + "]" + message + "\r\n");
-		return this.info(category, message);
-	}
-
-	public String info(String category, String message) {
-		this.builder_info.append("[" + LoggerX.time() + "][" + category + "]" + message + "\r\n");
-		return this.seek(category, message);
-	}
-
-	public String seek(String category, String message) {
-		this.builder_seek.append("[" + LoggerX.time() + "][" + category + "]" + message + "\r\n");
-		return this.full(category, message);
-	}
-
-	public String full(String category, String message) {
-		this.builder_full.append("[" + LoggerX.time() + "][" + category + "]" + message + "\r\n");
+	public String warn(String catgory, String message) {
+		String temp = "[" + LoggerX.time() + "][WARN][" + name + "]" + catgory + ": " + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
 		return message;
 	}
 
-	// =====================================
+	public String info(String catgory, String message) {
+		String temp = "[" + LoggerX.time() + "][INFO][" + name + "]" + catgory + ": " + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
+	}
+
+	public String seek(String catgory, String message) {
+		String temp = "[" + LoggerX.time() + "][SEEK][" + name + "]" + catgory + ": " + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
+	}
+
+	public String full(String catgory, String message) {
+		String temp = "[" + LoggerX.time() + "][FULL][" + name + "]" + catgory + ": " + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
+	}
+
+	// ==================================================================================================
 	//
-	// [11:22:33][CORE] 消息内容：消息内容
 	//
-	// =====================================
+	// ==================================================================================================
 
-	public String mini(String packname, String key, String value) {
-		this.builder_mini.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return this.info(packname, key, value);
+	public long warn(String catgory, long message) {
+		String temp = "[" + LoggerX.time() + "][WARN][" + name + "]" + catgory + ": " + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
 	}
 
-	public String info(String packname, String key, String value) {
-		this.builder_info.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return this.seek(packname, key, value);
+	public long info(String catgory, long message) {
+		String temp = "[" + LoggerX.time() + "][INFO][" + name + "]" + catgory + ": " + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
 	}
 
-	public String seek(String packname, String key, String value) {
-		this.builder_seek.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return this.full(packname, key, value);
+	public long seek(String catgory, long message) {
+		String temp = "[" + LoggerX.time() + "][SEEK][" + name + "]" + catgory + ": " + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
 	}
 
-	public String full(String packname, String key, String value) {
-		this.builder_full.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return value;
+	public long full(String catgory, long message) {
+		String temp = "[" + LoggerX.time() + "][FULL][" + name + "]" + catgory + ": " + message;
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+		return message;
 	}
 
-	// ========================================================
+	// ==================================================================================================
+	//
+	//
+	// ==================================================================================================
 
-	public int mini(String packname, String key, int value) {
-		this.builder_mini.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return this.info(packname, key, value);
+	public String[] warn(String catgory, String... message) {
+		for (String line : message) {
+			String temp = "[" + LoggerX.time() + "][WARN][" + name + "]" + catgory + ": " + line;
+			LoggerX.PRINT(temp);
+			LoggerX.WRITE(temp);
+		}
+		return message;
 	}
 
-	public int info(String packname, String key, int value) {
-		this.builder_mini.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return this.seek(packname, key, value);
+	public String[] info(String catgory, String... message) {
+		for (String line : message) {
+			String temp = "[" + LoggerX.time() + "][INFO][" + name + "]" + catgory + ": " + line;
+			LoggerX.PRINT(temp);
+			LoggerX.WRITE(temp);
+		}
+		return message;
 	}
 
-	public int seek(String packname, String key, int value) {
-		this.builder_seek.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return this.full(packname, key, value);
+	public String[] seek(String catgory, String... message) {
+		for (String line : message) {
+			String temp = "[" + LoggerX.time() + "][SEEK][" + name + "]" + catgory + ": " + line;
+			LoggerX.PRINT(temp);
+			LoggerX.WRITE(temp);
+		}
+		return message;
 	}
 
-	public int full(String packname, String key, int value) {
-		this.builder_full.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return value;
+	public String[] full(String catgory, String... message) {
+		for (String line : message) {
+			String temp = "[" + LoggerX.time() + "][FULL][" + name + "]" + catgory + ": " + line;
+			LoggerX.PRINT(temp);
+			LoggerX.WRITE(temp);
+		}
+		return message;
 	}
 
-	// ========================================================
+	// ==================================================================================================
+	//
+	//
+	// ==================================================================================================
 
-	public long mini(String packname, String key, long value) {
-		this.builder_mini.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return this.info(packname, key, value);
+	private static void PRINT(String message) {
+		System.out.println(message);
 	}
 
-	public long info(String packname, String key, long value) {
-		this.builder_info.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return this.seek(packname, key, value);
-	}
-
-	public long seek(String packname, String key, long value) {
-		this.builder_seek.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return this.full(packname, key, value);
-	}
-
-	public long full(String packname, String key, long value) {
-		this.builder_full.append("[" + LoggerX.time() + "][" + packname + "]" + key + " - " + value + "\r\n");
-		return value;
+	private static void WRITE(String message) {
+		try {
+			FileWriter writer = new FileWriter(FILE_LOGGER, true);
+			writer.append(message);
+			writer.append("\r\n");
+			writer.flush();
+			writer.close();
+		} catch (IOException exception) {
+			System.err.println(exception.getMessage());
+		}
 	}
 
 	// ==================================================================================================
@@ -204,46 +315,46 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-	private static SimpleDateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
-	private static SimpleDateFormat formater_time = new SimpleDateFormat("HH:mm:ss");
-	private static SimpleDateFormat formater_full = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private final static SimpleDateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
+	private final static SimpleDateFormat formater_time = new SimpleDateFormat("HH:mm:ss");
+	private final static SimpleDateFormat formater_full = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	// ================================================================
 
 	public static String date() {
-		return LoggerX.formater_date.format(new Date());
+		return formater_date.format(new Date());
 	}
 
 	public static String date(Date date) {
-		return LoggerX.formater_date.format(date);
+		return formater_date.format(date);
 	}
 
 	public static String date(long timestamp) {
-		return LoggerX.formater_date.format(new Date(timestamp));
+		return formater_date.format(new Date(timestamp));
 	}
 
 	public static String time() {
-		return LoggerX.formater_time.format(new Date());
+		return formater_time.format(new Date());
 	}
 
 	public static String time(Date date) {
-		return LoggerX.formater_time.format(date);
+		return formater_time.format(date);
 	}
 
 	public static String time(long timestamp) {
-		return LoggerX.formater_time.format(new Date(timestamp));
+		return formater_time.format(new Date(timestamp));
 	}
 
 	public static String datetime() {
-		return LoggerX.formater_full.format(new Date());
+		return formater_full.format(new Date());
 	}
 
 	public static String datetime(Date date) {
-		return LoggerX.formater_full.format(date);
+		return formater_full.format(date);
 	}
 
 	public static String datetime(long timestamp) {
-		return LoggerX.formater_full.format(new Date(timestamp));
+		return formater_full.format(new Date(timestamp));
 	}
 
 	// ================================================================

@@ -3,7 +3,6 @@ package studio.blacktech.coolqbot.furryblack.modules.Executor;
 import java.security.SecureRandom;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -24,7 +23,7 @@ public class Executor_dice extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "dice";
 	private static String MODULE_DISPLAYNAME = "掷骰子";
 	private static String MODULE_DESCRIPTION = "发送一个骰子的魔法表情";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "1.1";
 	private static String[] MODULE_USAGE = new String[] {
 			"/dice - 发送一个魔法表情",
 			"/dice 理由 - 为某事投掷一枚骰子"
@@ -68,33 +67,35 @@ public class Executor_dice extends ModuleExecutor {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
-		return logger;
+	public boolean boot() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
-		return logger;
+	public boolean shut() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	@Override

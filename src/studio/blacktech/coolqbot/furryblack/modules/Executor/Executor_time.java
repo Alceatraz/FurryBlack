@@ -1,11 +1,8 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-
-import org.junit.jupiter.api.Test;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
@@ -79,33 +76,35 @@ public class Executor_time extends ModuleExecutor {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
-		return logger;
+	public boolean boot() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
-		return logger;
+	public boolean shut() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	@Override
@@ -118,19 +117,19 @@ public class Executor_time extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.userInfo(userid, this.getTime());
+		entry.userInfo(userid, getTime());
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.diszInfo(diszid, this.getTime());
+		entry.diszInfo(diszid, getTime());
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.gropInfo(gropid, this.getTime());
+		entry.gropInfo(gropid, getTime());
 		return true;
 	}
 
@@ -139,9 +138,9 @@ public class Executor_time extends ModuleExecutor {
 		// @formatter:off
 				//
 				"世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", Executor_time.zone_00) + "\r\n" +
-				"美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + this.format(Executor_time.zone_W8) + "\r\n" +
-				"美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + this.format(Executor_time.zone_W4) + "\r\n" +
-				"欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + this.format(Executor_time.zone_E0) + "\r\n" +
+				"美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + format(Executor_time.zone_W8) + "\r\n" +
+				"美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + format(Executor_time.zone_W4) + "\r\n" +
+				"欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + format(Executor_time.zone_E0) + "\r\n" +
 				//        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
 				"亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
 				// @formatter:on
@@ -196,17 +195,4 @@ public class Executor_time extends ModuleExecutor {
 		return new String[0];
 	}
 
-	@Test
-	void findAllDSTDate() {
-		TimeZone timezone = Executor_time.zone_E0;
-		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Calendar start = Calendar.getInstance(timezone);
-		start.setTime(new Date(0));
-		long end = Calendar.getInstance(timezone).getTimeInMillis();
-		System.out.println("Time Zone is " + timezone.getDisplayName() + " " + timezone.getID());
-		for (long i = start.getTimeInMillis(); i < end; i = start.getTimeInMillis()) {
-			start.add(Calendar.DATE, 1);
-			if (((start.getTimeInMillis() - i) % (24 * 3600 * 1000L)) != 0) { System.out.println("from " + fmt.format(new Date(i)) + " to " + fmt.format(start.getTime()) + " has " + (start.getTimeInMillis() - i) + "ms" + "[" + ((start.getTimeInMillis() - i) / (3600 * 1000L)) + "hours]"); }
-		}
-	}
 }

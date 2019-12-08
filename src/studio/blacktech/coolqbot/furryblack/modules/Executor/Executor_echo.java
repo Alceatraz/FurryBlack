@@ -1,7 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -22,7 +21,7 @@ public class Executor_echo extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "echo";
 	private static String MODULE_DISPLAYNAME = "回显";
 	private static String MODULE_DESCRIPTION = "&0>1";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "1.1";
 	private static String[] MODULE_USAGE = new String[] {
 			"/echo 内容 - &0>1"
 	};
@@ -65,33 +64,35 @@ public class Executor_echo extends ModuleExecutor {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
-		return logger;
+	public boolean boot() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
-		return logger;
+	public boolean shut() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	@Override

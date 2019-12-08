@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -131,50 +130,50 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * 1：初始化配置及数据文件 2：生成所有内存结构 3：读取配置并应用 4：分析 ENABLE_MODE
 	 */
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
 		// ==================================================================================
 		// 1：初始化配置及数据文件
 
-		this.initAppFolder(logger);
-		this.initConfFolder(logger);
-		this.initDataFolder(logger);
-		this.initLogsFolder(logger);
-		this.initPropertiesConfigurtion(logger);
+		initAppFolder();
+		initConfFolder();
+		initDataFolder();
+		initLogsFolder();
+		initPropertiesConfigurtion();
 
 		// ==================================================================================
 		// 2：生成所有内存结构
 		// 应在此处实例化成员变量
 
-		this.MAP = new HashMap<>();
+		MAP = new HashMap<>();
 
 		// 关于文件路径：应使用Paths工具类以及内置的 FOLDER_CONF FOLDER_DATA FOLDER_LOGS来表示文件
-		this.FILE_CUSTOM = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "custom.txt").toFile();
+		FILE_CUSTOM = Paths.get(FOLDER_CONF.getAbsolutePath(), "custom.txt").toFile();
 
-		if (!this.FILE_CUSTOM.exists()) { this.FILE_CUSTOM.createNewFile(); }
+		if (!FILE_CUSTOM.exists()) { FILE_CUSTOM.createNewFile(); }
 
 		// ==================================================================================
 		// 3：读取配置
 		// NEW_CONFIG=true 为初始化过程中发现配置不存在 创建了新的配置
 
-		if (this.NEW_CONFIG) {
+		if (NEW_CONFIG) {
 			// CONFIG对象为Java property对象
-			this.CONFIG.setProperty("enable", "true");
-			this.CONFIG.setProperty("config1", "none");
-			this.CONFIG.setProperty("config2", "none");
-			this.CONFIG.setProperty("config3", "none");
-			this.CONFIG.setProperty("config4", "none");
+			CONFIG.setProperty("enable", "true");
+			CONFIG.setProperty("config1", "none");
+			CONFIG.setProperty("config2", "none");
+			CONFIG.setProperty("config3", "none");
+			CONFIG.setProperty("config4", "none");
 			// 不要忘记保存
-			this.saveConfig();
+			saveConfig();
 		} else {
-			this.loadConfig();
+			loadConfig();
 		}
 
 		// 按需分析配置文件
-		this.ENABLE_DEMO = Boolean.parseBoolean(this.CONFIG.getProperty("enable"));
+		ENABLE_DEMO = Boolean.parseBoolean(CONFIG.getProperty("enable"));
 
 		// 按需初始化内存结构
-		this.MAP.put("1", "1");
+		MAP.put("1", "1");
 
 		// 如果需要包含需要获取所有群成员的功能，不应该在doMessage的时候获取 应通过初始化和增减成员函数来维护一个容器
 
@@ -185,13 +184,13 @@ public class Executor_DEMO extends ModuleExecutor {
 		// 则直接跳注册阶段
 		// 模块不需要每次doMessage时都判断 if ( enable )
 
-		if (this.ENABLE_DEMO) {
-			this.ENABLE_USER = true;
-			this.ENABLE_DISZ = true;
-			this.ENABLE_GROP = true;
+		if (ENABLE_DEMO) {
+			ENABLE_USER = true;
+			ENABLE_DISZ = true;
+			ENABLE_GROP = true;
 		}
 
-		return logger;
+		return true;
 
 	}
 
@@ -199,20 +198,18 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * 如果有 应在此处初始化工作线程并运行 如果ENABLE_MODE=false则不会注册 则不会执行boot的内容
 	 */
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
-
-		this.thread = new Thread(new Worker());
-		this.thread.start();
-
-		return logger;
+	public boolean boot() throws Exception {
+		thread = new Thread(new Worker());
+		thread.start();
+		return true;
 	}
 
 	/**
 	 * 如果需要保存数据 则应该在此处保存数据 注意 这个函数不意味着结束
 	 */
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	/**
@@ -223,22 +220,23 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * 有可能会使用 /admin init X 强制执行生命周期函数 但是此命令不属于正常使用范畴 可以不考虑此情况
 	 */
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
+	public boolean shut() throws Exception {
 
 		// 如果包含子线程 应在此时中断
-		this.thread.interrupt();
-		this.thread.join();
+		thread.interrupt();
+		thread.join();
 
-		return logger;
+		return true;
 	}
 
 	/**
 	 * 用于管理和debug /admin exec --module=demo xxx xxxx xxx xxxx xxxxx xxxxxxx
 	 */
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	/**

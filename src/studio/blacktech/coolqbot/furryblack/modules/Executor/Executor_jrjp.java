@@ -16,7 +16,6 @@ import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -37,7 +36,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "jrjp";
 	private static String MODULE_DISPLAYNAME = "祭祀";
 	private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
-	private static String MODULE_VERSION = "1.2";
+	private static String MODULE_VERSION = "1.3";
 	private static String[] MODULE_USAGE = new String[] {
 			"/jrjp - 查看今日祭品"
 	};
@@ -95,31 +94,31 @@ public class Executor_jrjp extends ModuleExecutor {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		this.initAppFolder(logger);
-		this.initConfFolder(logger);
+		initAppFolder();
+		initConfFolder();
 
-		this.AVCODE = new HashMap<>();
-		this.VICTIM = new HashMap<>();
-		this.MEMBERS = new HashMap<>();
-		this.IGNORES = new HashMap<>();
+		AVCODE = new HashMap<>();
+		VICTIM = new HashMap<>();
+		MEMBERS = new HashMap<>();
+		IGNORES = new HashMap<>();
 
-		this.USER_IGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
+		USER_IGNORE = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
-		if (!this.USER_IGNORE.exists()) { this.USER_IGNORE.createNewFile(); }
+		if (!USER_IGNORE.exists()) { USER_IGNORE.createNewFile(); }
 
 		List<Group> groups = entry.getCQ().getGroupList();
 
 		for (Group group : groups) {
-			this.MEMBERS.put(group.getId(), new ArrayList<Long>());
-			this.IGNORES.put(group.getId(), new ArrayList<Long>());
+			MEMBERS.put(group.getId(), new ArrayList<Long>());
+			IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
 
 		long gropid;
 		long userid;
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.USER_IGNORE), StandardCharsets.UTF_8));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
 
 		String line;
 		String[] temp;
@@ -133,18 +132,18 @@ public class Executor_jrjp extends ModuleExecutor {
 			temp = line.split(":");
 
 			if (temp.length != 2) {
-				logger.mini(Executor_jrjp.MODULE_PACKAGENAME, "配置错误", line);
+				logger.warn("配置错误", line);
 				continue;
 			}
 
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
 
-			if (this.IGNORES.containsKey(gropid)) {
-				this.IGNORES.get(gropid).add(userid);
-				logger.seek(Executor_jrjp.MODULE_PACKAGENAME, "排除用户", gropid + " > " + userid);
+			if (IGNORES.containsKey(gropid)) {
+				IGNORES.get(gropid).add(userid);
+				logger.seek("排除用户", gropid + " > " + userid);
 			} else {
-				logger.seek(Executor_jrjp.MODULE_PACKAGENAME, "排除用户", "群不存在 " + gropid);
+				logger.seek("排除用户", "群不存在 " + gropid);
 			}
 
 		}
@@ -153,8 +152,8 @@ public class Executor_jrjp extends ModuleExecutor {
 
 		for (Group group : groups) {
 
-			ArrayList<Long> tempMembers = this.MEMBERS.get(group.getId());
-			ArrayList<Long> tempIgnores = this.IGNORES.get(group.getId());
+			ArrayList<Long> tempMembers = MEMBERS.get(group.getId());
+			ArrayList<Long> tempIgnores = IGNORES.get(group.getId());
 
 			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
 
@@ -164,47 +163,52 @@ public class Executor_jrjp extends ModuleExecutor {
 				tempMembers.add(member.getQQId());
 			}
 
-			Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(this.random.nextInt(tempMembers.size())));
-			Executor_jrjp.this.AVCODE.put(group.getId(), (long) this.random.nextInt(70000000));
+			Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(random.nextInt(tempMembers.size())));
+			Executor_jrjp.this.AVCODE.put(group.getId(), (long) random.nextInt(70000000));
 
 		}
 
-		this.ENABLE_USER = false;
-		this.ENABLE_DISZ = false;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = false;
+		ENABLE_DISZ = false;
+		ENABLE_GROP = true;
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
+	public boolean boot() throws Exception {
 
-		logger.info(Executor_jrjp.MODULE_PACKAGENAME, "启动工作线程");
-		this.thread = new Thread(new Worker());
-		this.thread.start();
+		logger.info("启动工作线程");
 
-		return logger;
+		thread = new Thread(new Worker());
+		thread.start();
+
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
+	public boolean shut() throws Exception {
 
-		logger.info(Executor_jrjp.MODULE_PACKAGENAME, "终止工作线程");
-		this.thread.interrupt();
-		this.thread.join();
+		logger.info("终止工作线程");
 
-		return logger;
+		thread.interrupt();
+		thread.join();
 
+		logger.info("工作线程已终止");
+
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	@Override
@@ -228,8 +232,8 @@ public class Executor_jrjp extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
-		long victim = this.VICTIM.get(gropid);
-		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + this.AVCODE.get(gropid));
+		long victim = VICTIM.get(gropid);
+		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + AVCODE.get(gropid));
 		return true;
 
 	}
@@ -267,8 +271,8 @@ public class Executor_jrjp extends ModuleExecutor {
 						time = time * 1000;
 						Thread.sleep(time);
 
-						Executor_jrjp.this.AVCODE.clear();
-						Executor_jrjp.this.VICTIM.clear();
+						AVCODE.clear();
+						VICTIM.clear();
 
 						ArrayList<Long> temp;
 
@@ -277,14 +281,14 @@ public class Executor_jrjp extends ModuleExecutor {
 
 						StringBuilder builder = new StringBuilder();
 
-						for (Long group : Executor_jrjp.this.MEMBERS.keySet()) {
+						for (Long group : MEMBERS.keySet()) {
 
-							temp = Executor_jrjp.this.MEMBERS.get(group);
-							victim = temp.get(Executor_jrjp.this.random.nextInt(temp.size()));
-							avcode = Executor_jrjp.this.random.nextInt(60000000);
+							temp = MEMBERS.get(group);
+							victim = temp.get(random.nextInt(temp.size()));
+							avcode = random.nextInt(60000000);
 
-							Executor_jrjp.this.VICTIM.put(group, victim);
-							Executor_jrjp.this.AVCODE.put(group, avcode);
+							VICTIM.put(group, victim);
+							AVCODE.put(group, avcode);
 
 							builder.append(group + " - " + " AV" + avcode + "\r\n");
 
@@ -292,11 +296,12 @@ public class Executor_jrjp extends ModuleExecutor {
 					}
 
 				} catch (InterruptedException exception) {
-
 					if (entry.isEnable()) {
-						entry.getCQ().logWarning(Executor_jrjp.MODULE_PACKAGENAME, "异常");
+						long timeserial = System.currentTimeMillis();
+						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
+						logger.exception(timeserial, exception);
 					} else {
-						entry.getCQ().logInfo(Executor_jrjp.MODULE_PACKAGENAME, "关闭");
+						logger.full("关闭");
 					}
 				}
 

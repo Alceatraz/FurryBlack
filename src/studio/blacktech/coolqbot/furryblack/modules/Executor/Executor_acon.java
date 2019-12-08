@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.HashMap;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -25,7 +24,7 @@ public class Executor_acon extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "acon";
 	private static String MODULE_DISPLAYNAME = "空调";
 	private static String MODULE_DESCRIPTION = "本群冷气开放";
-	private static String MODULE_VERSION = "3.0";
+	private static String MODULE_VERSION = "3.1";
 	private static String[] MODULE_USAGE = new String[] {
 			"/acon cost - 耗电量",
 			"/acon off - 关机",
@@ -96,38 +95,40 @@ public class Executor_acon extends ModuleExecutor {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		this.CONSUMPTION = new HashMap<>();
-		this.LASTCHANGED = new HashMap<>();
-		this.WORKINGMODE = new HashMap<>();
+		CONSUMPTION = new HashMap<>();
+		LASTCHANGED = new HashMap<>();
+		WORKINGMODE = new HashMap<>();
 
-		this.ENABLE_USER = false;
-		this.ENABLE_DISZ = false;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = false;
+		ENABLE_DISZ = false;
+		ENABLE_GROP = true;
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
-		return logger;
+	public boolean boot() throws Exception {
+		return true;
 
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
-		return logger;
+	public boolean shut() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	@Override
@@ -154,17 +155,17 @@ public class Executor_acon extends ModuleExecutor {
 		long currentTime = System.currentTimeMillis() / 1000;
 		long elapseTime = 0L;
 
-		if (!this.CONSUMPTION.containsKey(gropid)) {
-			this.CONSUMPTION.put(gropid, BigInteger.ZERO);
-			this.LASTCHANGED.put(gropid, currentTime);
-			this.WORKINGMODE.put(gropid, 0L);
+		if (!CONSUMPTION.containsKey(gropid)) {
+			CONSUMPTION.put(gropid, BigInteger.ZERO);
+			LASTCHANGED.put(gropid, currentTime);
+			WORKINGMODE.put(gropid, 0L);
 		}
 
 		if (message.getSection() > 0) {
 
-			BigInteger powerConsumption = this.CONSUMPTION.get(gropid);
-			long lastChangModeTime = this.LASTCHANGED.get(gropid);
-			long workingmode = this.WORKINGMODE.get(gropid);
+			BigInteger powerConsumption = CONSUMPTION.get(gropid);
+			long lastChangModeTime = LASTCHANGED.get(gropid);
+			long workingmode = WORKINGMODE.get(gropid);
 
 			elapseTime = currentTime - lastChangModeTime;
 
@@ -174,112 +175,112 @@ public class Executor_acon extends ModuleExecutor {
 
 			case "off":
 				entry.gropInfo(gropid, "空调已关闭");
-				this.WORKINGMODE.put(gropid, 1L);
+				WORKINGMODE.put(gropid, 1L);
 				break;
 
 			case "dry":
 				entry.gropInfo(gropid, "切换至除湿模式");
-				this.WORKINGMODE.put(gropid, 5880L);
+				WORKINGMODE.put(gropid, 5880L);
 				break;
 
 			case "wet":
 				entry.gropInfo(gropid, "切换至加湿模式");
-				this.WORKINGMODE.put(gropid, 5880L);
+				WORKINGMODE.put(gropid, 5880L);
 				break;
 
 			case "cold":
 				entry.gropInfo(gropid, "切换至制冰模式 -20°");
-				this.WORKINGMODE.put(gropid, 14700L);
+				WORKINGMODE.put(gropid, 14700L);
 				break;
 
 			case "cool":
 				entry.gropInfo(gropid, "切换至制冷模式 26.5°");
-				this.WORKINGMODE.put(gropid, 7350L);
+				WORKINGMODE.put(gropid, 7350L);
 				break;
 
 			case "warm":
 				entry.gropInfo(gropid, "切换至制热模式 25.5°");
-				this.WORKINGMODE.put(gropid, 7350L);
+				WORKINGMODE.put(gropid, 7350L);
 				break;
 
 			case "bake":
 				entry.gropInfo(gropid, "切换至烘烤模式 285°");
-				this.WORKINGMODE.put(gropid, 14700L);
+				WORKINGMODE.put(gropid, 14700L);
 				break;
 
 			case "burn":
 				entry.gropInfo(gropid, "切换至烧烤模式 960°");
-				this.WORKINGMODE.put(gropid, 22050L);
+				WORKINGMODE.put(gropid, 22050L);
 				break;
 
 			case "fire":
 				entry.gropInfo(gropid, "切换至焚化模式 1,200°");
-				this.WORKINGMODE.put(gropid, 29400L);
+				WORKINGMODE.put(gropid, 29400L);
 				break;
 
 			case "c2h2":
 				entry.gropInfo(gropid, "切换至乙炔炬模式 3,300°");
-				this.WORKINGMODE.put(gropid, 33075L);
+				WORKINGMODE.put(gropid, 33075L);
 				break;
 
 			case "argon":
 				entry.gropInfo(gropid, "切换至氩气弧模式 7,550°");
-				this.WORKINGMODE.put(gropid, 36750L);
+				WORKINGMODE.put(gropid, 36750L);
 				break;
 
 			case "plasma":
 				entry.gropInfo(gropid, "切换至等离子模式 23,500°");
-				this.WORKINGMODE.put(gropid, 44100L);
+				WORKINGMODE.put(gropid, 44100L);
 				break;
 
 			case "nova":
 				entry.gropInfo(gropid, "切换至新星模式 1,000,000°");
-				this.WORKINGMODE.put(gropid, 7350000L);
+				WORKINGMODE.put(gropid, 7350000L);
 				break;
 
 			case "cfnuke":
 				entry.gropInfo(gropid, "切换至冷核模式 100,000,000°");
-				this.WORKINGMODE.put(gropid, 29400000L);
+				WORKINGMODE.put(gropid, 29400000L);
 				break;
 
 			case "trnuke":
 				entry.gropInfo(gropid, "切换至热核模式 120,000,000°");
-				this.WORKINGMODE.put(gropid, 33075000L);
+				WORKINGMODE.put(gropid, 33075000L);
 				break;
 
 			case "tfnuke":
 				entry.gropInfo(gropid, "切换至三相热核模式 150,000,000°");
-				this.WORKINGMODE.put(gropid, 44100000L);
+				WORKINGMODE.put(gropid, 44100000L);
 				break;
 
 			case "ianova":
 				entry.gropInfo(gropid, "切换至Ia星爆发模式 800,000,000°");
-				this.WORKINGMODE.put(gropid, 294000000L);
+				WORKINGMODE.put(gropid, 294000000L);
 				break;
 
 			case "ibnova":
 				entry.gropInfo(gropid, "切换至Ib新星爆发模式 2,600,000,000°");
-				this.WORKINGMODE.put(gropid, 330750000L);
+				WORKINGMODE.put(gropid, 330750000L);
 				break;
 
 			case "icnova":
 				entry.gropInfo(gropid, "切换至Ic新星爆发模式 2,800,000,000°");
-				this.WORKINGMODE.put(gropid, 441000000L);
+				WORKINGMODE.put(gropid, 441000000L);
 				break;
 
 			case "iinova":
 				entry.gropInfo(gropid, "切换至II新星爆发模式 3,000,000,000°");
-				this.WORKINGMODE.put(gropid, 514500000L);
+				WORKINGMODE.put(gropid, 514500000L);
 				break;
 
 			case "samrage":
 				entry.gropInfo(gropid, "父王之怒 10,000,000,000,000,000,000,000,000,000°");
-				this.WORKINGMODE.put(gropid, 73500000000L);
+				WORKINGMODE.put(gropid, 73500000000L);
 				break;
 
 			case "samrape":
 				entry.gropInfo(gropid, "父王之怒 -273.16°");
-				this.WORKINGMODE.put(gropid, 73500000000L);
+				WORKINGMODE.put(gropid, 73500000000L);
 				break;
 
 			case "cost":
@@ -306,8 +307,8 @@ public class Executor_acon extends ModuleExecutor {
 
 			if (isChangeMode) { powerConsumption = powerConsumption.add(BigInteger.valueOf(elapseTime * workingmode)); }
 
-			this.CONSUMPTION.put(gropid, powerConsumption);
-			this.LASTCHANGED.put(gropid, currentTime);
+			CONSUMPTION.put(gropid, powerConsumption);
+			LASTCHANGED.put(gropid, currentTime);
 
 		}
 

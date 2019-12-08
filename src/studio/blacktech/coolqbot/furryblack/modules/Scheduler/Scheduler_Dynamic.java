@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 
@@ -84,95 +83,113 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		this.initAppFolder(logger);
-		this.initPropertiesConfigurtion(logger);
+		initAppFolder();
+		initPropertiesConfigurtion();
 
-		if (this.NEW_CONFIG) {
-			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "配置文件不存在 - 生成默认配置");
-			this.CONFIG.setProperty("enable", "false");
-			this.CONFIG.setProperty("getaddress", "");
-			this.CONFIG.setProperty("setaddress", "");
-			this.CONFIG.setProperty("clientua", "BTSCoolQ/1.0");
-			this.CONFIG.setProperty("hostname", "");
-			this.CONFIG.setProperty("password", "");
-			this.saveConfig();
+		if (NEW_CONFIG) {
+			logger.seek("配置文件不存在 - 生成默认配置");
+			CONFIG.setProperty("enable", "false");
+			CONFIG.setProperty("getaddress", "");
+			CONFIG.setProperty("setaddress", "");
+			CONFIG.setProperty("clientua", "BTSCoolQ/1.0");
+			CONFIG.setProperty("hostname", "");
+			CONFIG.setProperty("password", "");
+			saveConfig();
 		} else {
-			this.loadConfig();
+			loadConfig();
 		}
 
-		this.ENABLE = Boolean.parseBoolean(this.CONFIG.getProperty("enable", "false"));
+		ENABLE = Boolean.parseBoolean(CONFIG.getProperty("enable", "false"));
 
-		logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "开关 ", this.ENABLE ? "启用" : "禁用");
+		logger.seek("开关", ENABLE ? "启用" : "禁用");
 
-		if (this.ENABLE) {
+		if (!ENABLE) { return false; }
 
-			this.API_GETADDRESS = this.CONFIG.getProperty("getaddress", "");
-			this.API_SETADDRESS = this.CONFIG.getProperty("setaddress", "");
-			this.CLIENTUA = this.CONFIG.getProperty("clientua", "BTSCoolQ/1.0");
-			this.HOSTNAME = this.CONFIG.getProperty("hostname", "");
-			this.PASSWORD = this.CONFIG.getProperty("password", "");
+		API_GETADDRESS = CONFIG.getProperty("getaddress", "");
+		API_SETADDRESS = CONFIG.getProperty("setaddress", "");
+		CLIENTUA = CONFIG.getProperty("clientua", "BTSCoolQ/1.0");
+		HOSTNAME = CONFIG.getProperty("hostname", "");
+		PASSWORD = CONFIG.getProperty("password", "");
 
-			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "获取", this.API_GETADDRESS);
-			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "刷新", this.API_SETADDRESS);
-			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "标识", this.CLIENTUA);
-			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "域名", this.HOSTNAME);
-			logger.seek(Scheduler_Dynamic.MODULE_PACKAGENAME, "密码", this.PASSWORD.substring(6, 12));
+		logger.seek("获取", API_GETADDRESS);
+		logger.seek("刷新", API_SETADDRESS);
+		logger.seek("标识", CLIENTUA);
+		logger.seek("域名", HOSTNAME);
+		logger.seek("密码", PASSWORD.substring(6, 12));
 
-		}
-
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
-		if (this.ENABLE) {
-			logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "启动工作线程");
-			this.thread = new Thread(new WorkerProcerss());
-			this.thread.start();
-		}
-		return logger;
+	public boolean boot() throws Exception {
+
+		if (!ENABLE) { return false; }
+
+		logger.info("启动工作线程");
+
+		thread = new Thread(new Worker());
+		thread.start();
+
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
-		if (this.ENABLE) {
-			logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "终止工作线程");
-			this.thread.interrupt();
-			this.thread.join();
-		}
-		return logger;
+	public boolean shut() throws Exception {
+
+		if (!ENABLE) { return false; }
+
+		logger.info("终止工作线程");
+
+		thread.interrupt();
+		thread.join();
+
+		logger.info("工作线程已终止");
+
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
+	public String[] exec(Message message) throws Exception {
 
 		if (message.getSection() < 2) {
-			logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, "参数不足");
-			return logger;
+			return new String[] {
+					"参数不足"
+			};
 		}
 
-		String command = message.getSegment()[1];
+		String command = message.getSegment(1);
 
 		switch (command) {
+
 		case "get":
-			logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, this.getAddress());
-			break;
+			return new String[] {
+					getAddress()
+			};
+
 		case "set":
+
 			if (message.getSection() == 2) {
-				logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, this.setAddress());
+				return new String[] {
+						this.setAddress()
+				};
 			} else {
-				logger.info(Scheduler_Dynamic.MODULE_PACKAGENAME, this.setAddress(message.getSegment(2)));
+				return new String[] {
+						this.setAddress(message.getSegment(2))
+				};
 			}
-			break;
+
+		default:
+			return new String[] {
+					"此模块无此命令 - " + message.getSegment(1)
+			};
 		}
-		return logger;
 	}
 
 	@Override
@@ -194,21 +211,21 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("获取地址：");
-		builder.append(this.COUNT_GETIP);
+		builder.append(COUNT_GETIP);
 		builder.append("/");
-		builder.append(this.COUNT_GETIP_FAILED);
+		builder.append(COUNT_GETIP_FAILED);
 		builder.append("\r\n设置地址：");
-		builder.append(this.COUNT_SETIP);
+		builder.append(COUNT_SETIP);
 		builder.append("/");
-		builder.append(this.COUNT_SETIP_FAILED);
+		builder.append(COUNT_SETIP_FAILED);
 		builder.append("\r\n更新地址：");
-		builder.append(this.COUNT_FRESH);
+		builder.append(COUNT_FRESH);
 		builder.append("/");
-		builder.append(this.COUNT_FRESH_FAILED);
+		builder.append(COUNT_FRESH_FAILED);
 		builder.append("\r\n地址变更：");
-		builder.append(this.COUNT_CHANGE);
+		builder.append(COUNT_CHANGE);
 		builder.append("\r\n访问失败：");
-		builder.append(this.COUNT_FAILED);
+		builder.append(COUNT_FAILED);
 		String[] res = new String[] {
 				builder.toString()
 		};
@@ -217,7 +234,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	}
 
 	@SuppressWarnings("deprecation")
-	class WorkerProcerss implements Runnable {
+	class Worker implements Runnable {
 
 		@Override
 		public void run() {
@@ -226,32 +243,45 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			String address;
 			String respons;
 			int failcount = 0;
+
 			do {
+
 				try {
-					// =======================================================
+
 					while (true) {
+
 						date = new Date();
+
 						time = 300L;
 						time = time - date.getSeconds();
 						time = time - ((date.getMinutes() % 10) * 60);
+
 						if (time < 60) { time = time + 300; }
+
 						time = time * 1000;
-						if (entry.DEBUG()) { entry.getCQ().logInfo(Scheduler_Dynamic.MODULE_PACKAGENAME, "休眠：" + time); }
+
+						if (entry.DEBUG()) { logger.full("工作线程休眠：" + time); }
+
 						Thread.sleep(time);
+
 						// =======================================================
+
 						Scheduler_Dynamic.this.COUNT++;
+
 						// =======================================================
-						if (entry.DEBUG()) { entry.getCQ().logInfo(Scheduler_Dynamic.MODULE_PACKAGENAME, "执行"); }
+
+						if (entry.DEBUG()) { logger.full("工作线程执行"); }
+
 						respons = Scheduler_Dynamic.this.setAddress();
 						// 直接更新地址
 						if (respons == null) {
 							// 失败的话 执行备用逻辑
-							address = Scheduler_Dynamic.this.getAddress();
+							address = getAddress();
 							// 获取IP地址
 							if (address == null) {
 								// 失败的话 增加失败计数
 								failcount++;
-								Scheduler_Dynamic.this.COUNT_FAILED++;
+								COUNT_FAILED++;
 							} else {
 								// 成功的话
 								// 利用正则判断是否是正常的ip地址
@@ -262,81 +292,87 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 									if (respons == null) {
 										// 失败的话 增加失败计数
 										failcount++;
-										Scheduler_Dynamic.this.COUNT_FAILED++;
+										COUNT_FAILED++;
 									} else {
 										// 成功的话 重置失败计数
 										failcount = 0;
-										if (respons.startsWith("good")) { Scheduler_Dynamic.this.COUNT_CHANGE++; }
+										if (respons.startsWith("good")) { COUNT_CHANGE++; }
 									}
 								} else {
 									// 不是正常地址 增加失败计数
 									failcount++;
-									Scheduler_Dynamic.this.COUNT_FAILED++;
+									COUNT_FAILED++;
 								}
 							}
 						} else {
 							// 成功的话 重置失败计数
 							failcount = 0;
 							// 如果发生改变API返回内容为 good 123.123.123.123
-							if (respons.startsWith("good")) { Scheduler_Dynamic.this.COUNT_CHANGE++; }
+							if (respons.startsWith("good")) { COUNT_CHANGE++; }
 						}
 						if (failcount > 6) {
 							failcount = 0;
 							entry.adminInfo("[DDNS] 警告 更新失败\r\n需要手动介入\r\n已连续失败六次");
 						}
-						if (entry.DEBUG()) { entry.getCQ().logInfo(Scheduler_Dynamic.MODULE_PACKAGENAME, "结果 " + respons); }
-						// =======================================================
+						if (entry.DEBUG()) {
+							logger.full("结果 " + respons);
+							// =======================================================
+						}
 					}
+
 				} catch (InterruptedException exception) {
 					if (entry.isEnable()) {
-						entry.getCQ().logWarning(Scheduler_Dynamic.MODULE_PACKAGENAME, "异常");
+						long timeserial = System.currentTimeMillis();
+						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
+						logger.exception(timeserial, exception);
 					} else {
-						entry.getCQ().logInfo(Scheduler_Dynamic.MODULE_PACKAGENAME, "关闭");
+						logger.full("关闭");
 					}
 				}
+
 			} while (entry.isEnable());
 		}
 	}
 
 	public String getAddress() {
 		try {
-			URL url = new URL(this.API_GETADDRESS);
+			URL url = new URL(API_GETADDRESS);
 			URLConnection connection = url.openConnection();
 			connection.setReadTimeout(5000);
 			connection.setConnectTimeout(5000);
-			connection.setRequestProperty("User-Agent", this.CLIENTUA);
+			connection.setRequestProperty("User-Agent", CLIENTUA);
 			connection.connect();
 			connection.getContent();
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
-			this.COUNT_GETIP++;
+			COUNT_GETIP++;
 			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {
 			exception.printStackTrace();
 			entry.adminInfo(Scheduler_Dynamic.MODULE_PACKAGENAME + " 获取异常 " + exception.getMessage());
-			this.COUNT_GETIP_FAILED++;
+			COUNT_GETIP_FAILED++;
 			return null;
 		}
 	}
 
 	public String setAddress() {
 		try {
-			URL url = new URL(this.API_SETADDRESS + "?hostname=" + this.HOSTNAME);
+			URL url = new URL(API_SETADDRESS + "?hostname=" + HOSTNAME);
 			URLConnection connection = url.openConnection();
 			connection.setReadTimeout(5000);
 			connection.setConnectTimeout(5000);
-			connection.setRequestProperty("User-Agent", this.CLIENTUA);
-			connection.setRequestProperty("Authorization", this.PASSWORD);
+			connection.setRequestProperty("User-Agent", CLIENTUA);
+			connection.setRequestProperty("Authorization", PASSWORD);
 			connection.connect();
 			connection.getContent();
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
-			this.COUNT_SETIP++;
+			COUNT_SETIP++;
 			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {
-			this.COUNT_SETIP_FAILED++;
+			COUNT_SETIP_FAILED++;
 			exception.printStackTrace();
 			entry.adminInfo(Scheduler_Dynamic.MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;
@@ -345,21 +381,21 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	public String setAddress(String address) {
 		try {
-			URL url = new URL(this.API_SETADDRESS + "?hostname=" + this.HOSTNAME + "&myip=" + address);
+			URL url = new URL(API_SETADDRESS + "?hostname=" + HOSTNAME + "&myip=" + address);
 			URLConnection connection = url.openConnection();
 			connection.setReadTimeout(5000);
 			connection.setConnectTimeout(5000);
-			connection.setRequestProperty("User-Agent", this.CLIENTUA);
-			connection.setRequestProperty("Authorization", this.PASSWORD);
+			connection.setRequestProperty("User-Agent", CLIENTUA);
+			connection.setRequestProperty("Authorization", PASSWORD);
 			connection.connect();
 			connection.getContent();
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
 			rx.read(buffer);
-			this.COUNT_FRESH++;
+			COUNT_FRESH++;
 			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {
-			this.COUNT_FRESH_FAILED++;
+			COUNT_FRESH_FAILED++;
 			exception.printStackTrace();
 			entry.adminInfo(Scheduler_Dynamic.MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;

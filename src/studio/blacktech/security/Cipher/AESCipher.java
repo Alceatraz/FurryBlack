@@ -1,34 +1,29 @@
-package studio.blacktech.coolqbot.furryblack.common.Security.Cipher;
+package studio.blacktech.security.Cipher;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
-/**
- * 使用标准JavaCipher包装的RSA工具类，
+/***
+ * 使用标准JavaCipher包装的AES-128 CBC分组模式工具类，
  *
  * 包含三种加密模式：标准加密、使用HA-384进行消息验证、使用签名后不初始化的SHA-384进行消息验证。
  *
@@ -42,19 +37,19 @@ import sun.misc.BASE64Encoder;
  *
  * 之后为原始数据getBytes(UTF-8)
  *
- * 数据帧经过RSA加密和Base64编码，成为密文。
+ * 数据帧经过AES加密和Base64编码，成为密文。
  *
  * @author Alceatraz Warprays
  *
  */
-public class RSACipher {
+public class AESCipher {
 
+	private SecretKeySpec sk;
+	private IvParameterSpec iv;
 	private Cipher encrypter;
 	private Cipher decrypter;
-	private BASE64Encoder encoder;
-	private BASE64Decoder decoder;
-	private RSAPublicKey publicKey;
-	private RSAPrivateKey privateKey;
+	private Base64.Encoder encoder;
+	private Base64.Decoder decoder;
 	private MessageDigest staticDigester;
 	private MessageDigest oneoffDigester;
 
@@ -68,150 +63,122 @@ public class RSACipher {
 	 * 构造方法
 	 *
 	 * @param secretKey 随机种子，作为密钥生成器的随机数生成器的种子
-	 * @param keyLength 密钥长度，至少为512
-	 * @throws InvalidKeyException 错误的密钥
 	 */
-	public RSACipher(String secretKey, int keyLength) throws InvalidKeyException {
-		this(generateKeyPair(secretKey, keyLength));
+	@Deprecated
+	public AESCipher(String secretKey) {
+		this(AESCipher.generateSecretKeySpec(secretKey), AESCipher.generateIvParameterSpec("0123456789ABCDEF"));
+		System.err.println("Warning! Using fix IV is RISK! Only test purpose!");
 	}
 
 	/**
 	 * 构造方法
 	 *
-	 * @param keyPair 密钥对
+	 * @param secretKeySpec 密钥
 	 */
-	public RSACipher(KeyPair keyPair) {
-		this((RSAPublicKey) keyPair.getPublic(), (RSAPrivateKey) keyPair.getPrivate());
+	@Deprecated
+	public AESCipher(SecretKeySpec secretKeySpec) {
+		this(secretKeySpec, AESCipher.generateIvParameterSpec("0123456789ABCDEF"));
+		System.err.println("Warning! Using fix IV is RISK! Only test purpose!");
 	}
 
 	/**
 	 * 构造方法
 	 *
-	 * @param publicKey Base64编码的X509格式公钥
-	 * @throws InvalidPublicKeyException 公钥格式错误
+	 * @param secretKey     随机种子，作为密钥生成器的随机数生成器的种子
+	 * @param initialVector 初始向量种子，MD5后用于生成初始向量
 	 */
-	public RSACipher(String publicKey) throws InvalidPublicKeyException {
-		this(getRSAPublicKeyFromString(publicKey));
+	public AESCipher(String secretKey, String initialVector) {
+		this(AESCipher.generateSecretKeySpec(secretKey), AESCipher.generateIvParameterSpec(initialVector));
 	}
 
 	/**
 	 * 构造方法
 	 *
-	 * @param publicKey  Base64编码的X509格式公钥
-	 * @param privateKey Base64编码的PKCS8格式私钥
-	 * @throws InvalidPublicKeyException  公钥格式错误
-	 * @throws InvalidPrivateKeyException 私钥格式错误
+	 * @param secretKeySpec 密钥
+	 * @param initialVector 初始向量种子，MD5后用于生成初始向量
 	 */
-	public RSACipher(String publicKey, String privateKey) throws InvalidPublicKeyException, InvalidPrivateKeyException {
-		this(getRSAPublicKeyFromString(publicKey), getRSAPrivateKeyFromString(privateKey));
+	public AESCipher(SecretKeySpec secretKeySpec, String initialVector) {
+		this(secretKeySpec, AESCipher.generateIvParameterSpec(initialVector));
 	}
 
 	/**
 	 * 构造方法
 	 *
-	 * @param publicKey RSA公钥
+	 * @param secretKey     随机种子，作为密钥生成器的随机数生成器的种子
+	 * @param initialVector 初始向量
 	 */
-	public RSACipher(RSAPublicKey publicKey) {
+	public AESCipher(String secretKey, IvParameterSpec initialVector) {
+		this(AESCipher.generateSecretKeySpec(secretKey), initialVector);
+	}
+
+	/**
+	 * 构造方法
+	 *
+	 * @param secretKeySpec 密钥
+	 * @param initialVector 初始向量
+	 */
+	public AESCipher(SecretKeySpec secretKeySpec, IvParameterSpec initialVector) {
 
 		try {
 
-			this.publicKey = publicKey;
+			sk = secretKeySpec;
+			iv = initialVector;
 
-			this.encrypter = Cipher.getInstance("RSA");
+			encrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			decrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
 
-			this.encrypter.init(Cipher.ENCRYPT_MODE, this.publicKey);
+			encrypter.init(Cipher.ENCRYPT_MODE, sk, iv);
+			decrypter.init(Cipher.DECRYPT_MODE, sk, iv);
 
-			this.encoder = new BASE64Encoder();
+			encoder = Base64.getEncoder();
+			decoder = Base64.getDecoder();
 
-			this.staticDigester = MessageDigest.getInstance("SHA-384");
-			this.oneoffDigester = MessageDigest.getInstance("SHA-384");
+			staticDigester = MessageDigest.getInstance("SHA-384");
+			oneoffDigester = MessageDigest.getInstance("SHA-384");
 
-		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException exception) {
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException exception) {
+			exception.printStackTrace();
 			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
-			// InvalidKeyException ---------------- 由密钥生成器生成，输入密钥错误已经在上一级构造方法抛出
+			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
 			// NoSuchPaddingException ------------- 不允许用户自定义算法
-			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
+			// InvalidKeyException ---------------- 密钥由生成器生成
+			// InvalidAlgorithmParameterException - 不允许用户自定义算法
 		}
 	}
 
 	/**
-	 * 构造方法
+	 * 生成密钥
 	 *
-	 * @param publicKey  RSA公钥
-	 * @param privateKey RSA私钥
+	 * @param secretKey 密钥种子，作为密钥生成器的随机数生成器的种子
+	 * @return 密钥
 	 */
-	public RSACipher(RSAPublicKey publicKey, RSAPrivateKey privateKey) {
-
+	private static SecretKeySpec generateSecretKeySpec(String secretKey) {
 		try {
-
-			this.publicKey = publicKey;
-			this.privateKey = privateKey;
-
-			this.encrypter = Cipher.getInstance("RSA");
-			this.decrypter = Cipher.getInstance("RSA");
-
-			this.encrypter.init(Cipher.ENCRYPT_MODE, this.publicKey);
-			this.decrypter.init(Cipher.DECRYPT_MODE, this.privateKey);
-
-			this.encoder = new BASE64Encoder();
-			this.decoder = new BASE64Decoder();
-
-			this.staticDigester = MessageDigest.getInstance("SHA-384");
-			this.oneoffDigester = MessageDigest.getInstance("SHA-384");
-
-		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException exception) {
-			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
-			// InvalidKeyException ---------------- 由密钥生成器生成，输入密钥错误已经在上一级构造方法抛出
-			// NoSuchPaddingException ------------- 不允许用户自定义算法
-			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
-		}
-	}
-
-	private static RSAPublicKey getRSAPublicKeyFromString(String publicKey) throws InvalidPublicKeyException {
-		try {
-			KeyFactory factory = KeyFactory.getInstance("RSA");
-			byte[] publicKeyString = new BASE64Decoder().decodeBuffer(publicKey);
-			return (RSAPublicKey) factory.generatePublic(new X509EncodedKeySpec(publicKeyString));
-		} catch (IOException | InvalidKeySpecException exception) {
-			throw new InvalidPublicKeyException("Invalidate publickey, make sure is formated as X509 and encode with BASE64.");
-		} catch (NoSuchAlgorithmException exception) {
-			return null;
-			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
-			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
-		}
-	}
-
-	private static RSAPrivateKey getRSAPrivateKeyFromString(String privateKey) throws InvalidPrivateKeyException {
-		try {
-			KeyFactory factory = KeyFactory.getInstance("RSA");
-			byte[] privateKeyString = new BASE64Decoder().decodeBuffer(privateKey);
-			return (RSAPrivateKey) factory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyString));
-		} catch (IOException | InvalidKeySpecException exception) {
-			throw new InvalidPrivateKeyException("Invalidate publickey, make sure is formated as X509 and encode with BASE64.");
-		} catch (NoSuchAlgorithmException exception) {
-			return null;
-			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
-			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
-		}
-
-	}
-
-	private static KeyPair generateKeyPair(String randomSeed, int keyLength) {
-		try {
-
 			Provider provider = Security.getProvider("SUN");
 			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", provider);
-			random.setSeed(randomSeed.getBytes(StandardCharsets.UTF_8));
-
-			KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-			generator.initialize(keyLength, random);
-
-			return generator.generateKeyPair();
-
+			random.setSeed(secretKey.getBytes(StandardCharsets.UTF_8));
+			KeyGenerator generator = KeyGenerator.getInstance("AES");
+			generator.init(128, random);
+			SecretKey skey = generator.generateKey();
+			return new SecretKeySpec(skey.getEncoded(), "AES");
 		} catch (NoSuchAlgorithmException exception) {
 			return null;
-			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
-			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
+		}
+	}
+
+	/**
+	 * 生成初始向量
+	 *
+	 * @param initialVector 初始向量种子，MD5后用于生成初始向量
+	 * @return 初始向量
+	 */
+	private static IvParameterSpec generateIvParameterSpec(String initialVector) {
+		try {
+			MessageDigest digest = MessageDigest.getInstance("MD5");
+			digest.update(initialVector.getBytes(StandardCharsets.UTF_8));
+			return new IvParameterSpec(digest.digest());
+		} catch (NoSuchAlgorithmException exception) {
+			return null;
 		}
 	}
 
@@ -232,8 +199,9 @@ public class RSACipher {
 		try {
 
 			byte[] tmp1 = content.getBytes(StandardCharsets.UTF_8);
-			byte[] tmp2 = this.encrypter.doFinal(tmp1);
-			return this.encoder.encode(tmp2);
+			byte[] tmp2 = encrypter.doFinal(tmp1);
+			byte[] tmp3 = encoder.encode(tmp2);
+			return new String(tmp3, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
 			exception.printStackTrace();
@@ -251,17 +219,13 @@ public class RSACipher {
 	 * @return 原文
 	 * @throws IOException 输入错误的内容
 	 */
-	public String decrypt(String content) throws IOException {
+	public String decrypt(String content) {
 
 		try {
 
-			byte[] tmp1 = this.decoder.decodeBuffer(content);
-			byte[] tmp2 = this.decrypter.doFinal(tmp1);
+			byte[] tmp1 = decoder.decode(content);
+			byte[] tmp2 = decrypter.doFinal(tmp1);
 			return new String(tmp2, StandardCharsets.UTF_8);
-
-		} catch (IOException exception) {
-			exception.printStackTrace();
-			throw exception;
 
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
 			exception.printStackTrace();
@@ -294,13 +258,15 @@ public class RSACipher {
 			int sizePartLength = sizePart.length;
 			System.arraycopy(sizePart, 0, result, 8 - sizePartLength, sizePartLength);
 
-			this.oneoffDigester.update(rawMessage);
-			hashPart = this.oneoffDigester.digest();
+			oneoffDigester.update(rawMessage);
+			hashPart = oneoffDigester.digest();
 			System.arraycopy(hashPart, 0, result, 8, 8);
 
 			System.arraycopy(rawMessage, 0, result, 16, rawMessageLength);
 
-			return this.encoder.encode(this.encrypter.doFinal(result));
+			byte[] tmp1 = encrypter.doFinal(result);
+			byte[] tmp2 = encoder.encode(tmp1);
+			return new String(tmp2, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
 			return null;
@@ -323,7 +289,7 @@ public class RSACipher {
 
 		try {
 
-			byte[] rawMessage = this.decrypter.doFinal(this.decoder.decodeBuffer(content));
+			byte[] rawMessage = decrypter.doFinal(decoder.decode(content));
 
 			byte[] sizePart = new byte[8];
 			byte[] hashPart = new byte[8];
@@ -338,10 +304,10 @@ public class RSACipher {
 
 			byte[] mesgPart = new byte[claminMessagelength];
 			System.arraycopy(rawMessage, 16, mesgPart, 0, claminMessagelength);
-			this.oneoffDigester.update(mesgPart);
-			byte[] digest = this.oneoffDigester.digest();
+			oneoffDigester.update(mesgPart);
+			byte[] digest = oneoffDigester.digest();
 
-			if (!isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
+			if (!AESCipher.isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
 
 			return new String(mesgPart, StandardCharsets.UTF_8);
 
@@ -369,13 +335,15 @@ public class RSACipher {
 			int sizePartLength = sizePart.length;
 			System.arraycopy(sizePart, 0, result, 8 - sizePartLength, sizePartLength);
 
-			this.staticDigester.update(rawMessage);
-			hashPart = ((MessageDigest) this.staticDigester.clone()).digest();
+			staticDigester.update(rawMessage);
+			hashPart = ((MessageDigest) staticDigester.clone()).digest();
 			System.arraycopy(hashPart, 0, result, 8, 8);
 
 			System.arraycopy(rawMessage, 0, result, 16, rawMessageLength);
 
-			return this.encoder.encode(this.encrypter.doFinal(result));
+			byte[] tmp1 = encrypter.doFinal(result);
+			byte[] tmp2 = encoder.encode(tmp1);
+			return new String(tmp2, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException | CloneNotSupportedException exception) {
 			return null;
@@ -389,7 +357,7 @@ public class RSACipher {
 	public String decryptPhaseHash(String content) throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
 		try {
 
-			byte[] rawMessage = this.decrypter.doFinal(this.decoder.decodeBuffer(content));
+			byte[] rawMessage = decrypter.doFinal(decoder.decode(content));
 
 			byte[] sizePart = new byte[8];
 			byte[] hashPart = new byte[8];
@@ -405,16 +373,12 @@ public class RSACipher {
 			byte[] mesgPart = new byte[claminMessagelength];
 			System.arraycopy(rawMessage, 16, mesgPart, 0, claminMessagelength);
 
-			this.staticDigester.update(mesgPart);
-			byte[] digest = ((MessageDigest) this.staticDigester.clone()).digest();
+			staticDigester.update(mesgPart);
+			byte[] digest = ((MessageDigest) staticDigester.clone()).digest();
 
-			if (!isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
+			if (!AESCipher.isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
 
 			return new String(mesgPart, StandardCharsets.UTF_8);
-
-		} catch (IOException exception) {
-			exception.printStackTrace();
-			throw exception;
 
 		} catch (IllegalBlockSizeException | BadPaddingException | CloneNotSupportedException exception) {
 			return null;
@@ -439,20 +403,6 @@ public class RSACipher {
 	//
 	// ==========================================================================================================================================================
 
-	public String getEncodedPublicKey() {
-		return this.encoder.encode(this.publicKey.getEncoded());
-	}
-
-	public String getEncodedPrivateKey() {
-		return this.encoder.encode(this.privateKey.getEncoded());
-	}
-
-	// ==========================================================================================================================================================
-	//
-	//
-	//
-	// ==========================================================================================================================================================
-
 	public static class MessageSizeCheckFailedException extends GeneralSecurityException {
 		private static final long serialVersionUID = 0;
 
@@ -466,22 +416,6 @@ public class RSACipher {
 
 		public MessageHashCheckFailedException(byte[] claimHash, byte[] actualHash) {
 			super("Message claim digest is " + Arrays.toString(claimHash) + ", But actual digest is " + Arrays.toString(Arrays.copyOfRange(actualHash, 0, 8)));
-		}
-	}
-
-	public static class InvalidPublicKeyException extends InvalidKeyException {
-		private static final long serialVersionUID = 0;
-
-		public InvalidPublicKeyException(String message) {
-			super(message);
-		}
-	}
-
-	public static class InvalidPrivateKeyException extends InvalidKeyException {
-		private static final long serialVersionUID = 0;
-
-		public InvalidPrivateKeyException(String message) {
-			super(message);
 		}
 	}
 }

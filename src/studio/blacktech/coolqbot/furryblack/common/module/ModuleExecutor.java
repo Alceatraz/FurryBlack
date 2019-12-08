@@ -1,6 +1,5 @@
 package studio.blacktech.coolqbot.furryblack.common.module;
 
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
@@ -43,39 +42,6 @@ public abstract class ModuleExecutor extends Module {
 	protected boolean ENABLE_DISZ = false;
 	protected boolean ENABLE_GROP = false;
 
-	public int COUNT_USER() {
-		return this.COUNT_USER;
-	}
-
-	public int COUNT_DISZ() {
-		return this.COUNT_DISZ;
-	}
-
-	public int COUNT_GROP() {
-		return this.COUNT_GROP;
-	}
-
-	public boolean ENABLE_USER() {
-		return this.ENABLE_USER;
-	}
-
-	public boolean ENABLE_DISZ() {
-		return this.ENABLE_DISZ;
-	}
-
-	public boolean ENABLE_GROP() {
-		return this.ENABLE_GROP;
-	}
-
-	@Override
-	public abstract LoggerX init(LoggerX logger) throws Exception;
-
-	@Override
-	public abstract LoggerX boot(LoggerX logger) throws Exception;
-
-	@Override
-	public abstract LoggerX shut(LoggerX logger) throws Exception;
-
 	public abstract boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception;
 
 	public abstract boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception;
@@ -83,18 +49,41 @@ public abstract class ModuleExecutor extends Module {
 	public abstract boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception;
 
 	public boolean executeUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		this.COUNT_USER++;
-		return this.doUserMessage(typeid, userid, message, messageid, messagefont);
+		COUNT_USER++;
+		return doUserMessage(typeid, userid, message, messageid, messagefont);
 	}
 
 	public boolean executeDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		this.COUNT_DISZ++;
-		return this.doDiszMessage(diszid, userid, message, messageid, messagefont);
+		COUNT_DISZ++;
+		return doDiszMessage(diszid, userid, message, messageid, messagefont);
 	}
 
 	public boolean executeGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		this.COUNT_GROP++;
-		return this.doGropMessage(gropid, userid, message, messageid, messagefont);
+		COUNT_GROP++;
+		return doGropMessage(gropid, userid, message, messageid, messagefont);
 	}
 
+	public int COUNT_USER() {
+		return COUNT_USER;
+	}
+
+	public int COUNT_DISZ() {
+		return COUNT_DISZ;
+	}
+
+	public int COUNT_GROP() {
+		return COUNT_GROP;
+	}
+
+	public boolean ENABLE_USER() {
+		return ENABLE_USER;
+	}
+
+	public boolean ENABLE_DISZ() {
+		return ENABLE_DISZ;
+	}
+
+	public boolean ENABLE_GROP() {
+		return ENABLE_GROP;
+	}
 }

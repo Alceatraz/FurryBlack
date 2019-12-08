@@ -11,10 +11,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.Test;
 
-import studio.blacktech.coolqbot.furryblack.common.Security.Cipher.AESCipher;
-import studio.blacktech.coolqbot.furryblack.common.Security.Cipher.RSACipher;
-import studio.blacktech.coolqbot.furryblack.common.Security.Utility.DiffieHellmanKeyGenerator;
-import studio.blacktech.coolqbot.furryblack.common.Security.Utility.TimeBaseVerification;
+import studio.blacktech.security.Cipher.AESCipher;
+import studio.blacktech.security.Cipher.DiffieHellmanKeyGenerator;
+import studio.blacktech.security.Cipher.RSACipher;
 
 // 这里范例
 

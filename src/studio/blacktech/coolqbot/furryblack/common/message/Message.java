@@ -49,105 +49,105 @@ public class Message implements Serializable {
 
 	public Message(String message, int messageid, int messageFont) {
 
-		this.sendTime = System.currentTimeMillis();
+		sendTime = System.currentTimeMillis();
 
-		this.messageId = messageid;
-		this.messageFt = messageFont;
-		this.rawMessage = message;
+		messageId = messageid;
+		messageFt = messageFont;
+		rawMessage = message;
 	}
 
 	// ===================================================================================
 
 	public Message parse() {
 
-		if (this.parsed) { return this; }
+		if (parsed) { return this; }
 
-		this.parsed = true;
+		parsed = true;
 
-		this.rawLength = this.rawMessage.length();
+		rawLength = rawMessage.length();
 
-		if (this.rawMessage.matches("/[a-z]+.*")) {
+		if (rawMessage.matches("/[a-z]+.*")) {
 
 			// 居然因为这么一条鬼消息出BUG了 -> /招手[CQ:at,qq=XXXXXXXX]
 
-			this.isCommand = true;
+			isCommand = true;
 
 			// 去掉 /
 			// 去掉首尾多余空格
 			// 合并所有连续空格
 
-			this.cmdMessage = this.rawMessage.substring(1);
-			this.cmdMessage = this.cmdMessage.trim();
-			this.cmdMessage = this.cmdMessage.replaceAll("\\s+", " ");
+			cmdMessage = rawMessage.substring(1);
+			cmdMessage = cmdMessage.trim();
+			cmdMessage = cmdMessage.replaceAll("\\s+", " ");
 
-			int indexOfSpace = this.cmdMessage.indexOf(' ');
+			int indexOfSpace = cmdMessage.indexOf(' ');
 
 			// 是否无参数命令
 			if (indexOfSpace < 0) {
-				this.command = this.cmdMessage;
+				command = cmdMessage;
 			} else {
 				// 切开
 				// 命令
 				// 参数
-				this.command = this.cmdMessage.substring(0, indexOfSpace);
-				this.options = this.cmdMessage.substring(indexOfSpace + 1);
+				command = cmdMessage.substring(0, indexOfSpace);
+				options = cmdMessage.substring(indexOfSpace + 1);
 
 				String[] flag;
-				this.switchs = new TreeMap<>();
-				this.segmentParts = new LinkedList<>();
+				switchs = new TreeMap<>();
+				segmentParts = new LinkedList<>();
 
 				// 提取所有 --XX=XXXX 形式的开关
 				// 提取所有其他内容为参数
-				for (String temp : this.options.split(" ")) {
+				for (String temp : options.split(" ")) {
 					if (temp.startsWith("--") && (temp.indexOf("=") > 0)) {
 						temp = temp.substring(2);
 						flag = temp.split("=");
-						this.switchs.put(flag[0], flag[1]);
+						switchs.put(flag[0], flag[1]);
 					} else {
-						this.segmentParts.add(temp);
+						segmentParts.add(temp);
 					}
 				}
 
-				this.segment = new String[this.segmentParts.size()];
-				this.segmentParts.toArray(this.segment);
-				this.section = this.segment.length;
+				segment = new String[segmentParts.size()];
+				segmentParts.toArray(segment);
+				section = segment.length;
 			}
 
-		} else if (this.rawMessage.startsWith("&#91;闪照&#93;")) {
-			this.isSnappic = true;
-		} else if (this.rawMessage.startsWith("&#91;视频&#93;")) {
-			this.isQQVideo = true;
-		} else if (this.rawMessage.startsWith("&#91;QQ红包&#93;")) {
-			this.isHongbao = true;
+		} else if (rawMessage.startsWith("&#91;闪照&#93;")) {
+			isSnappic = true;
+		} else if (rawMessage.startsWith("&#91;视频&#93;")) {
+			isQQVideo = true;
+		} else if (rawMessage.startsWith("&#91;QQ红包&#93;")) {
+			isHongbao = true;
 		} else {
 			// 如果是普通消息
 
 			// 提取所有图片
 			Pattern pattern = Pattern.compile(Message.REGEX_IMAGE);
-			Matcher matcher = pattern.matcher(this.rawMessage);
+			Matcher matcher = pattern.matcher(rawMessage);
 			ArrayList<String> temp = new ArrayList<>(1);
 			if (matcher.find()) {
-				this.hasPicture = true;
+				hasPicture = true;
 				do {
 					temp.add(matcher.group());
 				} while (matcher.find());
-				this.picture = new String[temp.size()];
-				temp.toArray(this.picture);
+				picture = new String[temp.size()];
+				temp.toArray(picture);
 			}
 
 			// 删除所有CQ码
 			// 删除所有空白字符
-			this.resMessage = this.rawMessage.replaceAll("\\[CQ:.+\\]", "").trim();
-			this.resMessage = this.resMessage.replaceAll("\\s+", "").trim();
+			resMessage = rawMessage.replaceAll("\\[CQ:.+\\]", "").trim();
+			resMessage = resMessage.replaceAll("\\s+", "").trim();
 
-			this.resLength = this.resMessage.length();
+			resLength = resMessage.length();
 
 			// 删除所有空白字符以后长度为0 则不视为正常消息
 			// 比如@时会在最后自动加一个空格
 			// [CQ:at=1234567890]□
 			// 多次连续at会产生多个空格，不应用 ==" " 判断
 
-			if (this.resLength == 0) { this.isPureCQC = true; }
+			if (resLength == 0) { isPureCQC = true; }
 		}
 
 		return this;
@@ -162,12 +162,12 @@ public class Message implements Serializable {
 	 * @return 拼接后的内容
 	 */
 	public String join(int i) {
-		if (this.section == 0) {
+		if (section == 0) {
 			return "";
 		} else {
 			StringBuilder builder = new StringBuilder();
-			for (; i < this.section; i++) {
-				builder.append(this.segment[i] + " ");
+			for (; i < section; i++) {
+				builder.append(segment[i] + " ");
 			}
 			return builder.substring(0, builder.length() - 1).toString();
 		}
@@ -181,75 +181,75 @@ public class Message implements Serializable {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append("============================================\n");
-		builder.append("时间戳：" + LoggerX.datetime(new Date(this.sendTime)) + "(" + this.sendTime + ")" + "\n");
-		builder.append("消息ID：" + this.messageId + "\n");
-		builder.append("字体ID：" + this.messageFt + "\n");
+		builder.append("时间戳：" + LoggerX.datetime(new Date(sendTime)) + "(" + sendTime + ")" + "\n");
+		builder.append("消息ID：" + messageId + "\n");
+		builder.append("字体ID：" + messageFt + "\n");
 
 		builder.append("============================================\n");
-		builder.append("原始内容：" + this.rawMessage + "\n");
-		builder.append("原始长度：" + this.rawLength + "\n");
+		builder.append("原始内容：" + rawMessage + "\n");
+		builder.append("原始长度：" + rawLength + "\n");
 		builder.append("原始编码：");
-		for (int i = 0; i < this.rawLength; i++) {
+		for (int i = 0; i < rawLength; i++) {
 			builder.append("\\u");
-			builder.append(Integer.toHexString(this.rawMessage.charAt(i) & 0xffff));
+			builder.append(Integer.toHexString(rawMessage.charAt(i) & 0xffff));
 		}
 		builder.append("\n");
 
 		builder.append("============================================\n");
-		builder.append("是否命令：" + (this.isCommand ? "True" : "False") + "\n");
+		builder.append("是否命令：" + (isCommand ? "True" : "False") + "\n");
 
-		if (this.isCommand) {
+		if (isCommand) {
 
 			builder.append("============================================\n");
-			builder.append("命令内容：" + this.cmdMessage + "\n");
-			builder.append("命令名字：" + this.command + "\n");
-			builder.append("命令参数：" + this.options + "\n");
-			builder.append("参数长度：" + this.section + "\n");
+			builder.append("命令内容：" + cmdMessage + "\n");
+			builder.append("命令名字：" + command + "\n");
+			builder.append("命令参数：" + options + "\n");
+			builder.append("参数长度：" + section + "\n");
 
-			if (this.section > 0) {
+			if (section > 0) {
 				builder.append("============================================\n");
 				builder.append("参数内容: \n");
-				for (String temp : this.segment) {
+				for (String temp : segment) {
 					builder.append(temp + "\n");
 				}
 			}
 
-			if (this.switchs != null) {
+			if (switchs != null) {
 				builder.append("============================================\n");
 				builder.append("参数开关：\n");
-				for (String name : this.switchs.keySet()) {
-					builder.append(name + " - " + this.switchs.get(name) + "\n");
+				for (String name : switchs.keySet()) {
+					builder.append(name + " - " + switchs.get(name) + "\n");
 				}
 			}
 
 		} else {
 
 			builder.append("============================================\n");
-			builder.append("是否闪照：" + (this.isSnappic ? "True" : "False") + "\n");
-			builder.append("是否视频：" + (this.isQQVideo ? "True" : "False") + "\n");
-			builder.append("是否红包：" + (this.isHongbao ? "True" : "False") + "\n");
-			builder.append("是否纯码：" + (this.isPureCQC ? "True" : "False") + "\n");
+			builder.append("是否闪照：" + (isSnappic ? "True" : "False") + "\n");
+			builder.append("是否视频：" + (isQQVideo ? "True" : "False") + "\n");
+			builder.append("是否红包：" + (isHongbao ? "True" : "False") + "\n");
+			builder.append("是否纯码：" + (isPureCQC ? "True" : "False") + "\n");
 
 			builder.append("============================================\n");
-			builder.append("包含图片：" + (this.hasPicture ? "True" : "False") + "\n");
-			if (this.hasPicture) {
+			builder.append("包含图片：" + (hasPicture ? "True" : "False") + "\n");
+			if (hasPicture) {
 				builder.append("图片ID：\n");
-				for (String temp : this.picture) {
+				for (String temp : picture) {
 					builder.append(temp + "\n");
 				}
 			}
 
 			builder.append("============================================\n");
-			builder.append("最终长度: " + this.resLength + "\n");
-			if (this.resLength == 0) {
+			builder.append("最终长度: " + resLength + "\n");
+			if (resLength == 0) {
 				builder.append("最终内容：" + "无" + "\n");
 				builder.append("最终编码：" + "无" + "\n");
 			} else {
-				builder.append("最终内容：" + this.resMessage + "\n");
+				builder.append("最终内容：" + resMessage + "\n");
 				builder.append("最终编码：");
-				for (int i = 0; i < this.resLength; i++) {
+				for (int i = 0; i < resLength; i++) {
 					builder.append("\\u");
-					builder.append(Integer.toHexString(this.resMessage.charAt(i) & 0xffff));
+					builder.append(Integer.toHexString(resMessage.charAt(i) & 0xffff));
 				}
 				builder.append("\n");
 			}
@@ -267,7 +267,7 @@ public class Message implements Serializable {
 	 * @return id
 	 */
 	public int getMessageId() {
-		return this.messageId;
+		return messageId;
 	}
 
 	/**
@@ -276,7 +276,7 @@ public class Message implements Serializable {
 	 * @return fontid
 	 */
 	public int getMessageFont() {
-		return this.messageFt;
+		return messageFt;
 	}
 
 	// ===================================================================================
@@ -287,7 +287,7 @@ public class Message implements Serializable {
 	 * @return currentTimeMillis
 	 */
 	public long getSendtime() {
-		return this.sendTime;
+		return sendTime;
 	}
 
 	/**
@@ -296,7 +296,7 @@ public class Message implements Serializable {
 	 * @return Date(currentTimeMillis)
 	 */
 	public Date getSendDate() {
-		return new Date(this.sendTime);
+		return new Date(sendTime);
 	}
 
 	// ===================================================================================
@@ -307,7 +307,7 @@ public class Message implements Serializable {
 	 * @return 原始消息
 	 */
 	public String getRawMessage() {
-		return this.rawMessage;
+		return rawMessage;
 	}
 
 	/**
@@ -316,7 +316,7 @@ public class Message implements Serializable {
 	 * @return 原始消息长度
 	 */
 	public int getRawLength() {
-		return this.rawLength;
+		return rawLength;
 	}
 
 	// ===================================================================================
@@ -327,7 +327,7 @@ public class Message implements Serializable {
 	 * @return 去掉/的内容
 	 */
 	public String getCmdMessage() {
-		return this.cmdMessage;
+		return cmdMessage;
 	}
 
 	/**
@@ -336,7 +336,7 @@ public class Message implements Serializable {
 	 * @return 获取命令头
 	 */
 	public String getCommand() {
-		return this.command;
+		return command;
 	}
 
 	/**
@@ -345,7 +345,7 @@ public class Message implements Serializable {
 	 * @return 获取所有参数
 	 */
 	public String getOptions() {
-		return this.options;
+		return options;
 	}
 
 	/**
@@ -354,7 +354,7 @@ public class Message implements Serializable {
 	 * @return 获取参数长度
 	 */
 	public int getSection() {
-		return this.section;
+		return section;
 	}
 
 	/**
@@ -363,7 +363,7 @@ public class Message implements Serializable {
 	 * @return 参数
 	 */
 	public String[] getSegment() {
-		return this.segment;
+		return segment;
 	}
 
 	/***
@@ -373,7 +373,7 @@ public class Message implements Serializable {
 	 * @return 获取指定顺序参数
 	 */
 	public String getSegment(int index) {
-		return this.segment[index];
+		return segment[index];
 	}
 
 	/**
@@ -383,7 +383,7 @@ public class Message implements Serializable {
 	 * @return 值
 	 */
 	public String getSwitch(String name) {
-		return this.switchs.get(name);
+		return switchs.get(name);
 	}
 
 	/**
@@ -393,7 +393,7 @@ public class Message implements Serializable {
 	 * @return 值
 	 */
 	public boolean hasSwitch(String name) {
-		return this.switchs.containsKey(name);
+		return switchs.containsKey(name);
 	}
 
 	// ===================================================================================
@@ -404,7 +404,7 @@ public class Message implements Serializable {
 	 * @return 是否
 	 */
 	public boolean isCommand() {
-		return this.isCommand;
+		return isCommand;
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class Message implements Serializable {
 	 * @return 是否
 	 */
 	public boolean isHongbao() {
-		return this.isHongbao;
+		return isHongbao;
 	}
 
 	/**
@@ -422,7 +422,7 @@ public class Message implements Serializable {
 	 * @return 是否
 	 */
 	public boolean isQQVideo() {
-		return this.isQQVideo;
+		return isQQVideo;
 	}
 
 	/**
@@ -431,7 +431,7 @@ public class Message implements Serializable {
 	 * @return 是否
 	 */
 	public boolean isSnappic() {
-		return this.isSnappic;
+		return isSnappic;
 	}
 
 	/**
@@ -440,7 +440,7 @@ public class Message implements Serializable {
 	 * @return 是否
 	 */
 	public boolean isPureCQC() {
-		return this.isPureCQC;
+		return isPureCQC;
 	}
 
 	/**
@@ -449,7 +449,7 @@ public class Message implements Serializable {
 	 * @return 是否
 	 */
 	public boolean hasPicture() {
-		return this.hasPicture;
+		return hasPicture;
 	}
 
 	/**
@@ -458,7 +458,7 @@ public class Message implements Serializable {
 	 * @return CQImage码
 	 */
 	public String[] getPicture() {
-		return this.picture;
+		return picture;
 	}
 
 	// ===================================================================================
@@ -469,7 +469,7 @@ public class Message implements Serializable {
 	 * @return 消息
 	 */
 	public String getResMessage() {
-		return this.resMessage;
+		return resMessage;
 
 	}
 
@@ -479,7 +479,7 @@ public class Message implements Serializable {
 	 * @return 长度
 	 */
 	public int getResLength() {
-		return this.resLength;
+		return resLength;
 	}
 
 }

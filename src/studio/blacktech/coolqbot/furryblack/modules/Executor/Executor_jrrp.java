@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -26,7 +25,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "jrrp";
 	private static String MODULE_DISPLAYNAME = "今日运气";
 	private static String MODULE_DESCRIPTION = "查看今天的运气值";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "1.3";
 	private static String[] MODULE_USAGE = new String[] {
 			"/jrrp - 查看今日运气"
 	};
@@ -75,47 +74,51 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public LoggerX init(LoggerX logger) throws Exception {
+	public boolean init() throws Exception {
 
-		this.JRRP = new HashMap<>();
+		JRRP = new HashMap<>();
 
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX boot(LoggerX logger) throws Exception {
+	public boolean boot() throws Exception {
 
-		logger.info(Executor_jrrp.MODULE_PACKAGENAME, "启动工作线程");
+		logger.info("启动工作线程");
 
-		this.thread = new Thread(new Worker());
-		this.thread.start();
+		thread = new Thread(new Worker());
+		thread.start();
 
-		return logger;
+		return true;
 	}
 
 	@Override
-	public LoggerX save(LoggerX logger) throws Exception {
-		return logger;
+	public boolean save() throws Exception {
+		return true;
 	}
 
 	@Override
-	public LoggerX shut(LoggerX logger) throws Exception {
+	public boolean shut() throws Exception {
 
-		logger.info(Executor_jrrp.MODULE_PACKAGENAME, "终止工作线程");
+		logger.info("终止工作线程");
 
-		this.thread.interrupt();
-		this.thread.join();
+		thread.interrupt();
+		thread.join();
 
-		return logger;
+		logger.info("工作线程已终止");
+
+		return true;
 	}
 
 	@Override
-	public LoggerX exec(LoggerX logger, Message message) throws Exception {
-		return logger;
+	public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
 	}
 
 	@Override
@@ -128,31 +131,31 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		if (!this.JRRP.containsKey(userid)) {
+		if (!JRRP.containsKey(userid)) {
 			SecureRandom random = new SecureRandom();
-			this.JRRP.put(userid, random.nextInt(100));
+			JRRP.put(userid, random.nextInt(100));
 		}
-		entry.userInfo(userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
+		entry.userInfo(userid, "今天的运气是" + JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		if (!this.JRRP.containsKey(userid)) {
+		if (!JRRP.containsKey(userid)) {
 			SecureRandom random = new SecureRandom();
-			this.JRRP.put(userid, random.nextInt(100));
+			JRRP.put(userid, random.nextInt(100));
 		}
-		entry.diszInfo(diszid, userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
+		entry.diszInfo(diszid, userid, "今天的运气是" + JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		if (!this.JRRP.containsKey(userid)) {
+		if (!JRRP.containsKey(userid)) {
 			SecureRandom random = new SecureRandom();
-			this.JRRP.put(userid, random.nextInt(100));
+			JRRP.put(userid, random.nextInt(100));
 		}
-		entry.gropInfo(gropid, userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
+		entry.gropInfo(gropid, userid, "今天的运气是" + JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
@@ -197,16 +200,17 @@ public class Executor_jrrp extends ModuleExecutor {
 						time = time * 1000;
 						Thread.sleep(time);
 
-						Executor_jrrp.this.JRRP.clear();
+						JRRP.clear();
 
 					}
 
 				} catch (Exception exception) {
-
 					if (entry.isEnable()) {
-						entry.getCQ().logWarning(Executor_jrrp.MODULE_PACKAGENAME, "异常");
+						long timeserial = System.currentTimeMillis();
+						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
+						logger.exception(timeserial, exception);
 					} else {
-						entry.getCQ().logInfo(Executor_jrrp.MODULE_PACKAGENAME, "关闭");
+						logger.full("关闭");
 					}
 				}
 
