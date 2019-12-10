@@ -111,15 +111,8 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-	public String raw(long timestamp, String catgory, String message) {
-		String temp = "[" + LoggerX.time() + "][" + name + "]" + catgory + "\r\n时间序列号: " + timestamp + message;
-		LoggerX.PRINT(temp);
-		LoggerX.WRITE(temp);
-		return message;
-	}
-
-	public String raw(String category, String catgory, String message) {
-		String temp = "[" + LoggerX.time() + "][" + name + "][" + category + "]" + catgory + message;
+	public String raw(String catgory, String message) {
+		String temp = "[" + LoggerX.time() + "][RAW][" + name + "] " + catgory + "\n" + message + "\n[RAW-EOF]";
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;

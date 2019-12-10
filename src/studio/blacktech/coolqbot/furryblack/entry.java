@@ -369,14 +369,13 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		StringBuilder builder = new StringBuilder();
 
+		builder.append("[成员增加] - 时间序列号" + time + "\r\n");
 		builder.append("类型ID：" + typeid + " " + (typeid == 1 ? "自主申请" : "邀请进群") + "\r\n");
 		builder.append("群聊ID：" + gropid + "\r\n");
 		builder.append("管理ID：" + SYSTEMD.getNickname(operid) + "(" + operid + ")" + "\r\n");
 		builder.append("用户ID：" + SYSTEMD.getNickname(userid) + "(" + userid + ")");
 
-		logger.raw(time, "成员增加", builder.toString());
-
-		builder.insert(0, "[成员增加] - 时间序列号" + time + "\r\n");
+		logger.raw("成员增加", builder.toString());
 
 		try {
 
@@ -410,14 +409,13 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		StringBuilder builder = new StringBuilder();
 
+		builder.append("[成员减少] - 时间序列号" + time + "\r\n");
 		builder.append("类型ID：" + typeid + " " + (typeid == 1 ? "自主退群" : "管理踢出") + "\r\n");
 		builder.append("群聊ID：" + gropid + "\r\n");
 		builder.append("管理ID：" + SYSTEMD.getNickname(operid) + "(" + operid + ")" + "\r\n");
 		builder.append("用户ID：" + SYSTEMD.getNickname(userid) + "(" + userid + ")");
 
-		logger.raw(time, "成员减少", builder.toString());
-
-		builder.insert(0, "[成员减少] - 时间序列号" + time + "\r\n");
+		logger.raw("成员减少", builder.toString());
 
 		try {
 
@@ -477,13 +475,12 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		StringBuilder builder = new StringBuilder();
 
+		builder.append("[好友请求] 事件序列号 - " + time + "\r\n");
 		builder.append("用户：" + SYSTEMD.getNickname(userid) + "(" + userid + ")\r\n");
 		builder.append("请求时间：" + sendtime + "\r\n");
 		builder.append("验证消息：" + message);
 
-		logger.raw(time, "好友请求", builder.toString());
-
-		builder.insert(0, "[好友请求] 事件序列号 - " + time + "\r\n");
+		logger.raw("好友请求", builder.toString());
 
 		SYSTEMD.adminInfo(builder.toString());
 
@@ -502,19 +499,18 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		StringBuilder builder = new StringBuilder();
 
+		builder.append((typeid == 1 ? "申请入群" : "邀请入群") + "时间序列号 - " + time + "\r\n");
 		builder.append("类型ID：" + typeid + " " + (typeid == 1 ? "申请入群" : "邀请入群") + "\r\n");
 		builder.append("群聊ID：" + gropid + "\r\n");
 		builder.append("用户ID：" + SYSTEMD.getNickname(userid) + "(" + userid + ")\r\n");
 		builder.append("请求时间：" + sendtime + "\r\n");
 		builder.append("验证消息：" + (message.length() == 0 ? "无" : message));
 
-		logger.raw(time, typeid == 1 ? "申请入群" : "邀请入群", builder.toString());
-
-		builder.insert(0, (typeid == 1 ? "申请入群" : "邀请入群") + "时间序列号 - " + time + "\r\n");
+		logger.raw("群邀请", builder.toString());
 
 		SYSTEMD.adminInfo(builder.toString());
 
-		if (typeid == 2) { CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null); }
+		if (typeid == 2) CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
 
 		return 0;
 	}
@@ -525,8 +521,6 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	@Override
 	public int groupBan(int typeid, int sendtime, long gropid, long operid, long userid, long duration) {
-
-		long time = System.currentTimeMillis();
 
 		String type = (userid == 0 ? "全体" : "") + (typeid == 1 ? "解禁" : "禁言");
 
@@ -555,7 +549,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		}
 
-		logger.raw(time, type, builder.toString());
+		logger.raw(type, builder.toString());
 
 		builder.insert(0, "[" + type + "]\r\n");
 
@@ -578,8 +572,6 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int groupAdmin(int typeid, int sendtime, long gropid, long userid) {
 
-		long time = System.currentTimeMillis();
-
 		String type = typeid == 1 ? "解除" : "任命";
 
 		StringBuilder builder = new StringBuilder();
@@ -587,7 +579,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		builder.append("群聊ID：" + gropid + "\r\n");
 		builder.append("用户ID：" + SYSTEMD.getNickname(userid) + "(" + userid + ")");
 
-		logger.raw(time, type, builder.toString());
+		logger.raw(type, builder.toString());
 
 		builder.insert(0, "[" + type + "] - " + LoggerX.time() + "\r\n");
 
