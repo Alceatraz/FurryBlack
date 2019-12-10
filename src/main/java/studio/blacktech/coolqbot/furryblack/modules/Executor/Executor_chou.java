@@ -67,7 +67,6 @@ public class Executor_chou extends ModuleExecutor {
 
     public Executor_chou() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -81,7 +80,6 @@ public class Executor_chou extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 
@@ -113,7 +111,8 @@ public class Executor_chou extends ModuleExecutor {
         String line;
         String[] temp;
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_IGNORE_USER), StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_IGNORE_USER),
+                StandardCharsets.UTF_8));
 
         while ((line = reader.readLine()) != null) {
 
@@ -251,9 +250,11 @@ public class Executor_chou extends ModuleExecutor {
             } while (chouid == userid);
             QQInfo member = entry.getCQ().getStrangerInfo(chouid);
             if (message.getSection() == 1) {
-                entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")");
+                entry.gropInfo(gropid, userid,
+                        "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")");
             } else {
-                entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getOptions());
+                entry.gropInfo(gropid, userid,
+                        "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getOptions());
             }
         }
         return true;

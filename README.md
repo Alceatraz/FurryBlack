@@ -48,9 +48,8 @@ GitEE的组织名字居然会过长不能写，蛋疼，请记住这个群组名
 
 ### 基本
 
-关于CoolQ：CQ的JSON解析器支持//注释  
-关于Jcq：JCQ的JSON解析器支持//注释  
-
+- CoolQ CQ的JSON解析器支持//注释  
+- Jcq JCQ的JSON解析器支持//注释  
 - 插件不应执行`entry`中的任何生命周期方法。  
 - 插件不应执行`Systemd`中的任何生命周期方法。  
 - 插件不应覆盖任何变量。  
@@ -63,16 +62,15 @@ JcqSDK会为jar（即插件）生成同名的文件夹
 比如插件名为`studio.blacktech.coolqbot.furryblack.entry.jar`  
 则文件夹字为`studio.blacktech.coolqbot.furryblack.entry`  
 
-此目录为FurryBlack Framework的所有数据主目录，现在请脑子里执行一下chroot  
+此目录为FurryBlack Framework的所有数据主目录  
 
-- `conf/`：所有模块的配置文件，其下按照模块名称生成目录  
-- `data/`：所有模块的数据文件，其下按照模块名称生成目录  
-
-模块名即每个模块的`PACKAGE_NAME`  
-
-只有执行了`initConfFolder()`才会生成`/conf/$PACKAGE_NAME`目录  
-只有执行了`initDataFolder()`才会生成`/data/$PACKAGE_NAME`目录  
-只有执行了`initConfigurtion()`才会生成`/conf/$PACKAGE_NAME/config.properties`文件  
+- `initAppFolder()` 此方法创建模块的数据目录，即`PACKAGE_NAME`  
+- `initConfFolder()` 此方法创建数据目录下的`conf`目录  
+- `initDataFolder()` 此方法创建数据目录下的`data`目录  
+- `initLogsFolder()` 此方法创建数据目录下的`logs`目录  
+- `initPropertiesConfigurtion` 此方法创建`config.properties`文件  
+- `loadConfig()` 使用`Properties`读取`config.properties`的内容到`CONFIG`对象  
+- `saveConfig()` 使用`Properties`保存`CONFIG`对象的内容到`config.properties`  
 
 ### 模块  
 

@@ -162,7 +162,8 @@ public class RSACipher {
             byte[] publicKeyString = new BASE64Decoder().decodeBuffer(publicKey);
             return (RSAPublicKey) factory.generatePublic(new X509EncodedKeySpec(publicKeyString));
         } catch (IOException | InvalidKeySpecException exception) {
-            throw new InvalidPublicKeyException("Invalidate publickey, make sure is formated as X509 and encode with BASE64.");
+            throw new InvalidPublicKeyException("Invalidate publickey, make sure is formated as X509 and encode with " +
+                    "BASE64.");
         } catch (NoSuchAlgorithmException exception) {
             return null;
             // 这些异常不可能发生 - 使用ADoptOpenJDK 8
@@ -176,7 +177,8 @@ public class RSACipher {
             byte[] privateKeyString = new BASE64Decoder().decodeBuffer(privateKey);
             return (RSAPrivateKey) factory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyString));
         } catch (IOException | InvalidKeySpecException exception) {
-            throw new InvalidPrivateKeyException("Invalidate publickey, make sure is formated as X509 and encode with BASE64.");
+            throw new InvalidPrivateKeyException("Invalidate publickey, make sure is formated as X509 and encode with" +
+                    " BASE64.");
         } catch (NoSuchAlgorithmException exception) {
             return null;
             // 这些异常不可能发生 - 使用ADoptOpenJDK 8
@@ -212,10 +214,10 @@ public class RSACipher {
 
     private static boolean isSame(byte[] A, byte[] B) {
         // 只发送前8位，所以只比较前8位，java没有数组截取 "python[0:7]" 所以只能写的这么蠢
-        // @formatter:off
+
         return (A[0] == B[0]) && (A[1] == B[1]) && (A[2] == B[2]) && (A[3] == B[3]) &&
                 (A[4] == B[4]) && (A[5] == B[5]) && (A[6] == B[6]) && (A[7] == B[7]);
-        // @formatter:on
+
     }
 
     /**
@@ -315,7 +317,8 @@ public class RSACipher {
      * @throws MessageSizeCheckFailedException 消息长度验证不通过
      * @throws MessageHashCheckFailedException 消息哈希验证不通过
      */
-    public String decryptHash(String content) throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
+    public String decryptHash(String content) throws IOException, MessageSizeCheckFailedException,
+            MessageHashCheckFailedException {
 
         try {
 
@@ -388,7 +391,8 @@ public class RSACipher {
         }
     }
 
-    public String decryptPhaseHash(String content) throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
+    public String decryptPhaseHash(String content) throws IOException, MessageSizeCheckFailedException,
+            MessageHashCheckFailedException {
         try {
 
             byte[] rawMessage = decrypter.doFinal(decoder.decode(content));

@@ -1,7 +1,5 @@
 package studio.blacktech.coolqbot.furryblack.common.message;
 
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -177,92 +175,6 @@ public class Message implements Serializable {
         }
     }
 
-    // ===================================================================================
-
-    @Override
-    public String toString() {
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("============================================\n");
-        builder.append("时间戳：" + LoggerX.datetime(new Date(sendTime)) + "(" + sendTime + ")" + "\n");
-        builder.append("消息ID：" + messageId + "\n");
-        builder.append("字体ID：" + messageFt + "\n");
-
-        builder.append("============================================\n");
-        builder.append("原始内容：" + rawMessage + "\n");
-        builder.append("原始长度：" + rawLength + "\n");
-        builder.append("原始编码：");
-        for (int i = 0; i < rawLength; i++) {
-            builder.append("\\u");
-            builder.append(Integer.toHexString(rawMessage.charAt(i) & 0xffff));
-        }
-        builder.append("\n");
-
-        builder.append("============================================\n");
-        builder.append("是否命令：" + (isCommand ? "True" : "False") + "\n");
-
-        if (isCommand) {
-
-            builder.append("============================================\n");
-            builder.append("命令内容：" + cmdMessage + "\n");
-            builder.append("命令名字：" + command + "\n");
-            builder.append("命令参数：" + options + "\n");
-            builder.append("参数长度：" + section + "\n");
-
-            if (section > 0) {
-                builder.append("============================================\n");
-                builder.append("参数内容: \n");
-                for (String temp : segment) {
-                    builder.append(temp + "\n");
-                }
-            }
-
-            if (switchs != null) {
-                builder.append("============================================\n");
-                builder.append("参数开关：\n");
-                for (String name : switchs.keySet()) {
-                    builder.append(name + " - " + switchs.get(name) + "\n");
-                }
-            }
-
-        } else {
-
-            builder.append("============================================\n");
-            builder.append("是否闪照：" + (isSnappic ? "True" : "False") + "\n");
-            builder.append("是否视频：" + (isQQVideo ? "True" : "False") + "\n");
-            builder.append("是否红包：" + (isHongbao ? "True" : "False") + "\n");
-            builder.append("是否纯码：" + (isPureCQC ? "True" : "False") + "\n");
-
-            builder.append("============================================\n");
-            builder.append("包含图片：" + (hasPicture ? "True" : "False") + "\n");
-            if (hasPicture) {
-                builder.append("图片ID：\n");
-                for (String temp : picture) {
-                    builder.append(temp + "\n");
-                }
-            }
-
-            builder.append("============================================\n");
-            builder.append("最终长度: " + resLength + "\n");
-            if (resLength == 0) {
-                builder.append("最终内容：" + "无" + "\n");
-                builder.append("最终编码：" + "无" + "\n");
-            } else {
-                builder.append("最终内容：" + resMessage + "\n");
-                builder.append("最终编码：");
-                for (int i = 0; i < resLength; i++) {
-                    builder.append("\\u");
-                    builder.append(Integer.toHexString(resMessage.charAt(i) & 0xffff));
-                }
-                builder.append("\n");
-            }
-        }
-
-        builder.append("============================================");
-
-        return builder.toString();
-    }
     // ===================================================================================
 
     /**
@@ -486,4 +398,90 @@ public class Message implements Serializable {
         return resLength;
     }
 
+    // ===================================================================================
+
+    @Override
+    public String toString() {
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("============================================\n");
+        builder.append("时间戳：" + studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX.datetime(new Date(sendTime)) + "(" + sendTime + ")" + "\n");
+        builder.append("消息ID：" + messageId + "\n");
+        builder.append("字体ID：" + messageFt + "\n");
+
+        builder.append("============================================\n");
+        builder.append("原始内容：" + rawMessage + "\n");
+        builder.append("原始长度：" + rawLength + "\n");
+        builder.append("原始编码：");
+        for (int i = 0; i < rawLength; i++) {
+            builder.append("\\u");
+            builder.append(Integer.toHexString(rawMessage.charAt(i) & 0xffff));
+        }
+        builder.append("\n");
+
+        builder.append("============================================\n");
+        builder.append("是否命令：" + (isCommand ? "True" : "False") + "\n");
+
+        if (isCommand) {
+
+            builder.append("============================================\n");
+            builder.append("命令内容：" + cmdMessage + "\n");
+            builder.append("命令名字：" + command + "\n");
+            builder.append("命令参数：" + options + "\n");
+            builder.append("参数长度：" + section + "\n");
+
+            if (section > 0) {
+                builder.append("============================================\n");
+                builder.append("参数内容: \n");
+                for (String temp : segment) {
+                    builder.append(temp + "\n");
+                }
+            }
+
+            if (switchs != null) {
+                builder.append("============================================\n");
+                builder.append("参数开关：\n");
+                for (String name : switchs.keySet()) {
+                    builder.append(name + " - " + switchs.get(name) + "\n");
+                }
+            }
+
+        } else {
+
+            builder.append("============================================\n");
+            builder.append("是否闪照：" + (isSnappic ? "True" : "False") + "\n");
+            builder.append("是否视频：" + (isQQVideo ? "True" : "False") + "\n");
+            builder.append("是否红包：" + (isHongbao ? "True" : "False") + "\n");
+            builder.append("是否纯码：" + (isPureCQC ? "True" : "False") + "\n");
+
+            builder.append("============================================\n");
+            builder.append("包含图片：" + (hasPicture ? "True" : "False") + "\n");
+            if (hasPicture) {
+                builder.append("图片ID：\n");
+                for (String temp : picture) {
+                    builder.append(temp + "\n");
+                }
+            }
+
+            builder.append("============================================\n");
+            builder.append("最终长度: " + resLength + "\n");
+            if (resLength == 0) {
+                builder.append("最终内容：" + "无" + "\n");
+                builder.append("最终编码：" + "无" + "\n");
+            } else {
+                builder.append("最终内容：" + resMessage + "\n");
+                builder.append("最终编码：");
+                for (int i = 0; i < resLength; i++) {
+                    builder.append("\\u");
+                    builder.append(Integer.toHexString(resMessage.charAt(i) & 0xffff));
+                }
+                builder.append("\n");
+            }
+        }
+
+        builder.append("============================================");
+
+        return builder.toString();
+    }
 }

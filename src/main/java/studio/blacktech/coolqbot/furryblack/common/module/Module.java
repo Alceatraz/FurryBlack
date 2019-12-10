@@ -34,7 +34,6 @@ public abstract class Module implements Serializable {
     private String[] MODULE_PRIVACY_CACHED;
     private String[] MODULE_PRIVACY_OBTAIN;
 
-    // @formatter:off
 
     public Module(
             String MODULE_PACKAGENAME,
@@ -70,7 +69,6 @@ public abstract class Module implements Serializable {
 
     }
 
-    // @formatter:on
 
     public abstract boolean init() throws Exception;
 

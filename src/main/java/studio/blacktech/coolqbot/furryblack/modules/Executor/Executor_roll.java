@@ -56,7 +56,6 @@ public class Executor_roll extends ModuleExecutor {
 
     public Executor_roll() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -70,7 +69,6 @@ public class Executor_roll extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 

@@ -54,7 +54,6 @@ public class Executor_time extends ModuleExecutor {
 
     public Executor_time() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -68,7 +67,6 @@ public class Executor_time extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 
@@ -132,21 +130,22 @@ public class Executor_time extends ModuleExecutor {
 
     private String getTime() {
         return
-                // @formatter:off
+
                 //
                 "世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", Executor_time.zone_00) + "\r\n" +
                         "美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + format(Executor_time.zone_W8) + "\r\n" +
                         "美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + format(Executor_time.zone_W4) + "\r\n" +
                         "欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + format(Executor_time.zone_E0) + "\r\n" +
-                        //        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
+                        //        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) +
+                        //        "\r\n" +
                         "亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
-                // @formatter:on
+
                 ;
     }
 
     @SuppressWarnings("deprecation")
     private String format(TimeZone timezone) {
-        // @formatter:off
+
         boolean isEnableDST = false;
         boolean isDisableDST = false;
         StringBuilder builder = new StringBuilder();
@@ -179,7 +178,7 @@ public class Executor_time extends ModuleExecutor {
         } else if ((E8_DATE - TZ_DATE) < 0) {
             builder.append(" 明天," + TZ_DATE + "日");
         }
-        // @formatter:on
+
         return builder.toString();
     }
 

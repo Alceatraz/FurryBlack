@@ -62,7 +62,6 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
     public Scheduler_Dynamic() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -76,7 +75,6 @@ public class Scheduler_Dynamic extends ModuleScheduler {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 

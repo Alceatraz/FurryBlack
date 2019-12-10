@@ -53,7 +53,6 @@ public class Executor_zhan extends ModuleExecutor {
 
     public Executor_zhan() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -67,7 +66,6 @@ public class Executor_zhan extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 
@@ -129,7 +127,7 @@ public class Executor_zhan extends ModuleExecutor {
         CARD.put(43, "XXI. THE WORLD 世界正位\r\n成功 道路 航程 换位");
         CARD.put(44, "XXI. THE WORLD 世界逆位\r\n惯性 固执 停滞 持久");
 
-        // @formatter:off
+
         FREQ.add(0);
         FREQ.add(0);
         FREQ.add(0);
@@ -173,7 +171,7 @@ public class Executor_zhan extends ModuleExecutor {
         FREQ.add(0);
         FREQ.add(0);
         FREQ.add(0);
-        FREQ.add(0);        // @formatter:on
+        FREQ.add(0);
 
         ENABLE_USER = true;
         ENABLE_DISZ = true;

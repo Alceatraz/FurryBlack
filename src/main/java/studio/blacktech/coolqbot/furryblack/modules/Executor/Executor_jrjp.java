@@ -74,7 +74,6 @@ public class Executor_jrjp extends ModuleExecutor {
 
     public Executor_jrjp() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -88,7 +87,6 @@ public class Executor_jrjp extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 
@@ -119,7 +117,8 @@ public class Executor_jrjp extends ModuleExecutor {
         long gropid;
         long userid;
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE),
+                StandardCharsets.UTF_8));
 
         String line;
         String[] temp;
@@ -244,7 +243,8 @@ public class Executor_jrjp extends ModuleExecutor {
     public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
         long victim = VICTIM.get(gropid);
-        entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + AVCODE.get(gropid));
+        entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www" +
+                ".bilibili.com/video/av" + AVCODE.get(gropid));
         return true;
 
     }

@@ -58,7 +58,6 @@ public class Executor_roulette extends ModuleExecutor {
 
     public Executor_roulette() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -72,7 +71,6 @@ public class Executor_roulette extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 
@@ -177,13 +175,18 @@ public class Executor_roulette extends ModuleExecutor {
                 member = entry.getCQ().getGroupMemberInfo(gropid, round.player.get(i));
                 if (i == bullet) {
                     ROULETTE_FREQ.set(i, ROULETTE_FREQ.get(i) + 1);
-                    entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=10060]");
+                    entry.gropInfo(gropid,
+                            entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," +
+                                    "id=169][CQ:emoji,id=10060]");
                 } else {
-                    entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face,id=169][CQ:emoji,id=11093]");
+                    entry.gropInfo(gropid,
+                            entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," +
+                                    "id=169][CQ:emoji,id=11093]");
                 }
 
             }
-            entry.gropInfo(gropid, "@平安中国 目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
+            entry.gropInfo(gropid,
+                    "@平安中国 目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
             ROULETTE_ROUNDS.remove(gropid);
             ROUND_SUCCESS++;
         }

@@ -67,7 +67,6 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
     public Trigger_UserDeny() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -81,7 +80,6 @@ public class Trigger_UserDeny extends ModuleTrigger {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 
@@ -142,9 +140,12 @@ public class Trigger_UserDeny extends ModuleTrigger {
         ENABLE_DISZ = Boolean.parseBoolean(CONFIG.getProperty("enable_disz", "false"));
         ENABLE_GROP = Boolean.parseBoolean(CONFIG.getProperty("enable_grop", "false"));
 
-        BufferedReader readerUser = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_USERIGNORE), StandardCharsets.UTF_8));
-        BufferedReader readerDisz = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_DISZIGNORE), StandardCharsets.UTF_8));
-        BufferedReader readerGrop = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_GROPIGNORE), StandardCharsets.UTF_8));
+        BufferedReader readerUser = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_USERIGNORE),
+                StandardCharsets.UTF_8));
+        BufferedReader readerDisz = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_DISZIGNORE),
+                StandardCharsets.UTF_8));
+        BufferedReader readerGrop = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_GROPIGNORE),
+                StandardCharsets.UTF_8));
 
         long userid;
         long diszid;
@@ -285,7 +286,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
             DENY_USER_COUNT.put(userid, DENY_USER_COUNT.get(userid) + 1);
 
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_USER, true), StandardCharsets.UTF_8));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_USER,
+                    true), StandardCharsets.UTF_8));
             writer.write(message.toString());
             writer.write("\r\n\r\n\r\n\r\n");
             writer.flush();
@@ -318,7 +320,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
         }
 
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_DISZ, true), StandardCharsets.UTF_8));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_DISZ, true),
+                StandardCharsets.UTF_8));
         writer.write(message.toString());
         writer.write("\r\n\r\n\r\n\r\n");
         writer.flush();
@@ -345,7 +348,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
         }
 
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_GROP, true), StandardCharsets.UTF_8));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_GROP, true),
+                StandardCharsets.UTF_8));
         writer.write(message.toString());
         writer.write("\r\n\r\n\r\n\r\n");
         writer.flush();

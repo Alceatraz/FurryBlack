@@ -105,7 +105,6 @@ public class Executor_DEMO extends ModuleExecutor {
      */
     public Executor_DEMO() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -119,7 +118,6 @@ public class Executor_DEMO extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 

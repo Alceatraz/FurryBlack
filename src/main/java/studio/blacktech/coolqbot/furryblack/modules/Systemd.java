@@ -160,21 +160,10 @@ public class Systemd extends Module {
 
     public Systemd() throws Exception {
 
-        // @formatter:off
 
-        super(
-                MODULE_PACKAGENAME,
-                MODULE_COMMANDNAME,
-                MODULE_DISPLAYNAME,
-                MODULE_DESCRIPTION,
-                MODULE_VERSION,
-                MODULE_USAGE,
-                MODULE_PRIVACY_STORED,
-                MODULE_PRIVACY_CACHED,
-                MODULE_PRIVACY_OBTAIN
-        );
+        super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
+                MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
-        // @formatter:on
 
     }
 
@@ -340,11 +329,16 @@ public class Systemd extends Module {
         String line;
         String[] temp;
 
-        BufferedReader readerHelp = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_MESSAGE_HELP), StandardCharsets.UTF_8));
-        BufferedReader readerInfo = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_MESSAGE_INFO), StandardCharsets.UTF_8));
-        BufferedReader readerEula = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_MESSAGE_EULA), StandardCharsets.UTF_8));
-        BufferedReader readerMute = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_SILENCE_GROP), StandardCharsets.UTF_8));
-        BufferedReader readerNick = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_NICKNAME_MAP), StandardCharsets.UTF_8));
+        BufferedReader readerHelp = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_MESSAGE_HELP),
+                StandardCharsets.UTF_8));
+        BufferedReader readerInfo = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_MESSAGE_INFO),
+                StandardCharsets.UTF_8));
+        BufferedReader readerEula = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_MESSAGE_EULA),
+                StandardCharsets.UTF_8));
+        BufferedReader readerMute = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_SILENCE_GROP),
+                StandardCharsets.UTF_8));
+        BufferedReader readerNick = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_NICKNAME_MAP),
+                StandardCharsets.UTF_8));
 
         // =======================================================================================
         // 读取 help info eula 文本
@@ -928,9 +922,7 @@ public class Systemd extends Module {
         String module = message.getSwitch("module");
 
         if (module == null) {
-            return new String[]{
-                    "参数错误 --module 为空"
-            };
+            return new String[]{"参数错误 --module 为空"};
         }
 
         builder.info("指定模块", module);
@@ -941,9 +933,7 @@ public class Systemd extends Module {
             builder.info("指定命令", message.getSegment(2));
 
             if (message.getSection() < 2) {
-                return new String[]{
-                        "参数错误 缺少行为参数 /admin exec --module=$NAME $ACTION"
-                };
+                return new String[]{"参数错误 缺少行为参数 /admin exec --module=$NAME $ACTION"};
             }
 
             switch (message.getSegment(1)) {
@@ -956,7 +946,8 @@ public class Systemd extends Module {
 
                             int i = 0;
 
-                            File allUserDump = Paths.get(FOLDER_LOGS.getAbsolutePath(), "nickdump_" + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
+                            File allUserDump = Paths.get(FOLDER_LOGS.getAbsolutePath(),
+                                    "nickdump_" + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
                             allUserDump.createNewFile();
                             FileWriter dumper = new FileWriter(allUserDump, true);
 
@@ -974,9 +965,7 @@ public class Systemd extends Module {
                             dumper.flush();
                             dumper.close();
 
-                            return new String[]{
-                                    "[" + MODULE_PACKAGENAME + "] " + "昵称转储" + i + "个"
-                            };
+                            return new String[]{"[" + MODULE_PACKAGENAME + "] " + "昵称转储" + i + "个"};
 
                         case "save":
 
@@ -1000,9 +989,7 @@ public class Systemd extends Module {
                             saver.flush();
                             saver.close();
 
-                            return new String[]{
-                                    "[" + MODULE_PACKAGENAME + "] " + "昵称保存"
-                            };
+                            return new String[]{"[" + MODULE_PACKAGENAME + "] " + "昵称保存"};
 
                         case "load":
 
@@ -1013,19 +1000,17 @@ public class Systemd extends Module {
                             String line;
                             String[] temp;
 
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_NICKNAME_MAP), StandardCharsets.UTF_8));
+                            BufferedReader reader =
+                                    new BufferedReader(new InputStreamReader(new FileInputStream(FILE_NICKNAME_MAP),
+                                            StandardCharsets.UTF_8));
 
                             while ((line = reader.readLine()) != null) {
 
-                                if (line.startsWith("#")) {
-                                    continue;
-                                }
-                                if (!line.contains(":")) {
-                                    continue;
-                                }
-                                if (line.contains("#")) {
-                                    line = line.substring(0, line.indexOf("#")).trim();
-                                }
+                                if (line.startsWith("#")) continue;
+
+                                if (!line.contains(":")) continue;
+
+                                if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
 
                                 temp = line.split(":");
 
@@ -1054,9 +1039,7 @@ public class Systemd extends Module {
 
                 default:
 
-                    return new String[]{
-                            "参数错误 无此子功能"
-                    };
+                    return new String[]{"参数错误 无此子功能"};
 
             }
 
@@ -1086,9 +1069,7 @@ public class Systemd extends Module {
 
         } else {
 
-            return new String[]{
-                    "无此名称的模块"
-            };
+            return new String[]{"无此名称的模块"};
 
         }
 
@@ -1223,7 +1204,8 @@ public class Systemd extends Module {
 
                 default:
                     if (ENABLE_EXECUTOR_USER && EXECUTOR_USER.containsKey(message.getCommand())) {
-                        EXECUTOR_USER.get(message.getCommand()).executeUserMessage(typeid, userid, message, messageid, messagefont);
+                        EXECUTOR_USER.get(message.getCommand()).executeUserMessage(typeid, userid, message, messageid
+                                , messagefont);
                     } else {
                         this.userInfo(userid, "没有此插件，可用插件如下");
                         sendListUser(userid);
@@ -1300,7 +1282,8 @@ public class Systemd extends Module {
 
                 default:
                     if (ENABLE_EXECUTOR_DISZ && EXECUTOR_DISZ.containsKey(message.getCommand())) {
-                        EXECUTOR_DISZ.get(message.getCommand()).executeDiszMessage(diszid, userid, message, messageid, messagefont);
+                        EXECUTOR_DISZ.get(message.getCommand()).executeDiszMessage(diszid, userid, message, messageid
+                                , messagefont);
                     } else {
                         this.diszInfo(diszid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
                         sendListDisz(userid);
@@ -1381,7 +1364,8 @@ public class Systemd extends Module {
 
                 default:
                     if (ENABLE_EXECUTOR_GROP && EXECUTOR_GROP.containsKey(message.getCommand())) {
-                        EXECUTOR_GROP.get(message.getCommand()).executeGropMessage(gropid, userid, message, messageid, messagefont);
+                        EXECUTOR_GROP.get(message.getCommand()).executeGropMessage(gropid, userid, message, messageid
+                                , messagefont);
                     } else {
                         this.gropInfo(gropid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
                         sendListGrop(userid);
@@ -1455,7 +1439,8 @@ public class Systemd extends Module {
             }
         }
 
-        builder.append("触发器：" + TRIGGER_USER.size() + "/" + TRIGGER_DISZ.size() + "/" + TRIGGER_GROP.size() + "个" + "\r\n");
+        builder.append("触发器：" + TRIGGER_USER.size() + "/" + TRIGGER_DISZ.size() + "/" + TRIGGER_GROP.size() + "个" +
+                "\r\n");
 
         for (String temp : TRIGGER_INSTANCE.keySet()) {
 
@@ -1515,9 +1500,7 @@ public class Systemd extends Module {
             builder.append("\r\n");
         }
 
-        return new String[]{
-                builder.substring(0, builder.length() - 2)
-        };
+        return new String[]{builder.substring(0, builder.length() - 2)};
     }
 
     public String[] reportAllModules(int mode, Message message, Object... parameters) {
@@ -1577,7 +1560,8 @@ public class Systemd extends Module {
 
         // part 3 监听器
 
-        builder03.append("监听器：" + LISTENER_USER.size() + "/" + LISTENER_DISZ.size() + "/" + LISTENER_GROP.size() + "个" + "\r\n");
+        builder03.append("监听器：" + LISTENER_USER.size() + "/" + LISTENER_DISZ.size() + "/" + LISTENER_GROP.size() +
+                "个" + "\r\n");
 
         for (String temp : LISTENER_INSTANCE.keySet()) {
 
@@ -1611,7 +1595,8 @@ public class Systemd extends Module {
 
         // part 4 执行器
 
-        builder04.append("执行器：" + EXECUTOR_USER.size() + "/" + EXECUTOR_DISZ.size() + "/" + EXECUTOR_GROP.size() + "个" + "\r\n");
+        builder04.append("执行器：" + EXECUTOR_USER.size() + "/" + EXECUTOR_DISZ.size() + "/" + EXECUTOR_GROP.size() +
+                "个" + "\r\n");
 
         for (String temp : EXECUTOR_INSTANCE.keySet()) {
 
@@ -1643,12 +1628,9 @@ public class Systemd extends Module {
             builder04.append("\r\n");
         }
 
-        return new String[]{
-                builder01.substring(0, builder01.length() - 2),
-                builder02.substring(0, builder02.length() - 2),
-                builder03.substring(0, builder03.length() - 2),
-                builder04.substring(0, builder04.length() - 2),
-        };
+        return new String[]{builder01.substring(0, builder01.length() - 2), builder02.substring(0,
+                builder02.length() - 2), builder03.substring(0, builder03.length() - 2), builder04.substring(0,
+                builder04.length() - 2),};
     }
 
     public String[] reportSpecifiedModule(int mode, Message message, Object... parameters) {
@@ -1669,15 +1651,18 @@ public class Systemd extends Module {
 
             } else if (TRIGGER_INSTANCE.containsKey(name)) {
 
-                report = TRIGGER_INSTANCE.get(name).generateReport(submode, message, null, null); // /admin report --module=userdeny:0
+                report = TRIGGER_INSTANCE.get(name).generateReport(submode, message, null, null); // /admin report
+                // --module=userdeny:0
 
             } else if (LISTENER_INSTANCE.containsKey(name)) {
 
-                report = LISTENER_INSTANCE.get(name).generateReport(submode, message, null, null); // /admin report --module=shui:20 --group=1234567890
+                report = LISTENER_INSTANCE.get(name).generateReport(submode, message, null, null); // /admin report
+                // --module=shui:20 --group=1234567890
 
             } else if (EXECUTOR_INSTANCE.containsKey(name)) {
 
-                report = EXECUTOR_INSTANCE.get(name).generateReport(submode, message, null, null); // /admin report --module=acon --group=1234567890
+                report = EXECUTOR_INSTANCE.get(name).generateReport(submode, message, null, null); // /admin report
+                // --module=acon --group=1234567890
 
             } else {
 
@@ -1767,7 +1752,8 @@ public class Systemd extends Module {
      * @param executors 执行器列表
      * @return 生成好的/list
      */
-    private String generateListMessage(String flagname, ArrayList<ModuleTrigger> triggers, ArrayList<ModuleListener> listeners, TreeMap<String, ModuleExecutor> executors) {
+    private String generateListMessage(String flagname, ArrayList<ModuleTrigger> triggers,
+                                       ArrayList<ModuleListener> listeners, TreeMap<String, ModuleExecutor> executors) {
 
         StringBuilder builder = new StringBuilder();
 

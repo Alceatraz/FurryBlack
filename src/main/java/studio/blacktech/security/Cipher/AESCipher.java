@@ -177,10 +177,10 @@ public class AESCipher {
 
     private static boolean isSame(byte[] A, byte[] B) {
         // 只发送前8位，所以只比较前8位，java没有数组截取 "python[0:7]" 所以只能写的这么蠢
-        // @formatter:off
+
         return (A[0] == B[0]) && (A[1] == B[1]) && (A[2] == B[2]) && (A[3] == B[3]) &&
                 (A[4] == B[4]) && (A[5] == B[5]) && (A[6] == B[6]) && (A[7] == B[7]);
-        // @formatter:on
+
     }
 
     /**
@@ -280,7 +280,8 @@ public class AESCipher {
      * @throws MessageSizeCheckFailedException 消息长度验证不通过
      * @throws MessageHashCheckFailedException 消息哈希验证不通过
      */
-    public String decryptHash(String content) throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
+    public String decryptHash(String content) throws IOException, MessageSizeCheckFailedException,
+            MessageHashCheckFailedException {
 
         try {
 
@@ -353,7 +354,8 @@ public class AESCipher {
         }
     }
 
-    public String decryptPhaseHash(String content) throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
+    public String decryptPhaseHash(String content) throws IOException, MessageSizeCheckFailedException,
+            MessageHashCheckFailedException {
         try {
 
             byte[] rawMessage = decrypter.doFinal(decoder.decode(content));

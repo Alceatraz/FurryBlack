@@ -55,7 +55,6 @@ public class Executor_jrrp extends ModuleExecutor {
 
     public Executor_jrrp() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -69,7 +68,6 @@ public class Executor_jrrp extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 

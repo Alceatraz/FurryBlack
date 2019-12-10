@@ -9,7 +9,8 @@ import studio.blacktech.coolqbot.furryblack.entry;
 
 public class Executor_admin extends ModuleExecutor {
 
-    public final static String MESSAGE_initlvl = "init 0 - 切换起停\r\ninit 1 - 初始化\r\ninit 2 - 启动\r\ninit 3 - 保存\r\ninit 4 - 丢弃关闭\r\ninit 5 - 保存关闭\r\ninit 6 - 保存重启";
+    public final static String MESSAGE_initlvl = "init 0 - 切换起停\r\ninit 1 - 初始化\r\ninit 2 - 启动\r\ninit 3 - 保存\r\ninit" +
+            " 4 - 丢弃关闭\r\ninit 5 - 保存关闭\r\ninit 6 - 保存重启";
 
     // ==========================================================================================================================================================
     //
@@ -41,7 +42,6 @@ public class Executor_admin extends ModuleExecutor {
 
     public Executor_admin() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -55,7 +55,6 @@ public class Executor_admin extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 

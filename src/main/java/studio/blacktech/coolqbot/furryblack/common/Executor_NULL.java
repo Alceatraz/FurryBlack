@@ -37,12 +37,8 @@ public class Executor_NULL extends ModuleExecutor {
     //
     // ==========================================================================================================================================================
 
-    // @formatter:off
 
     public Executor_NULL() throws Exception {
-
-        // @formatter:off
-
         super(
                 MODULE_PACKAGENAME,
                 MODULE_COMMANDNAME,
@@ -54,9 +50,6 @@ public class Executor_NULL extends ModuleExecutor {
                 MODULE_PRIVACY_CACHED,
                 MODULE_PRIVACY_OBTAIN
         );
-
-        // @formatter:on
-
     }
 
     @Override

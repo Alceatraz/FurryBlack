@@ -37,26 +37,53 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
     //
     // ==========================================================================================================================================================
 
+
+    // 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    // 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     // 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 
-    public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
-    // 版本ID
-    public final static String VerID = "14.0 2019-12-08 (20:00)";
 
-    //
+    public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
+
+
+    @Override
+    public String appInfo() {
+        return ICQVer.CQAPIVER + "," + AppID;
+    }
+
+
     // 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-    //
-    // 启动时间戳
-    public final static long BOOTTIME = System.currentTimeMillis();
+    // 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    // 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+    /**
+     * Java通常的入口方法，JCQ并不使用这个方法，JCQ使用以下生命周期函数
+     * <p>
+     * startup, enable, disable, exit
+     *
+     * @param parameters 命令行参数
+     */
+
+    public static void main(String[] parameters) {
+        System.out.println("This is a JCQ plugin, Not a executable jar file!");
+    }
 
     // ==========================================================================================================================================================
     //
     // 公共恒量
     //
     // ==========================================================================================================================================================
+
+    // 版本ID
+    public final static String VerID = "14.0 2019-12-08 (20:00)";
+
+    // 启动时间戳
+    public final static long BOOTTIME = System.currentTimeMillis();
+
     // 是否启用DEBUG的开关 启动过程为true 启动完成时改为false 此设计有助于debug和启动时异常排查
     private static boolean DEBUG = true;
-    // 启动日志
+
+    // 日志
     private static LoggerX logger;
 
     // ==========================================================================================================================================================
@@ -64,25 +91,30 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
     // 成员变量
     //
     // ==========================================================================================================================================================
+
     // Systemd 对象的持有
     private static Systemd SYSTEMD;
+
     // CQ对象的持有
     private static CoolQ CQ;
+
     // 继承自JCQ, JcqAbstract包含这个对象
     private static boolean enable = false;
+
     // 继承自JCQ, JcqAbstract包含这个对象
     private static String appDirectory;
+
     private File FOLDER_ROOT;
     //	private File FOLDER_CONF;
-//	private File FOLDER_DATA;
+    //	private File FOLDER_DATA;
     private File FOLDER_LOGS;
+    private File FILE_LOGGER;
 
     // ==========================================================================================================================================================
     //
     // 生命周期函数
     //
     // ==========================================================================================================================================================
-    private File FILE_LOGGER;
 
     /**
      * JCQ 1.3.0 更改了使用方式 南荒喵原话：
@@ -101,362 +133,6 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
     public entry(CoolQ CQ) {
         super(CQ);
         entry.CQ = CQ;
-    }
-
-    /**
-     * Java通常的入口方法，JCQ并不使用这个方法，JCQ使用以下生命周期函数
-     * <p>
-     * startup, enable, disable, exit
-     *
-     * @param parameters 命令行参数
-     */
-
-    public static void main(String[] parameters) {
-        System.out.println("This is a JCQ plugin, Not a executable jar file!");
-    }
-
-    /**
-     * 获取Systemd对象
-     *
-     * @return Systemd对象
-     */
-    public static Systemd getSystemd() {
-        return SYSTEMD;
-    }
-
-    /**
-     * 切换DEBUG模式
-     *
-     * @return 是否开启DEBUG模式
-     */
-    public static boolean switchDEBUG() {
-        DEBUG = !DEBUG;
-        return DEBUG;
-    }
-
-    /**
-     * 获取是否开启DEBUG模式
-     *
-     * @return 是否开启DEBUG模式
-     */
-    public static boolean DEBUG() {
-        return DEBUG;
-    }
-
-    /**
-     * 获取开关状态
-     *
-     * @return 开 / 关
-     */
-    public static boolean isEnable() {
-        return enable;
-    }
-
-    /**
-     * 设置开关
-     *
-     * @param mode 开 / 关
-     */
-    public static void setEnable(boolean mode) {
-        enable = mode;
-    }
-
-    // ==========================================================================================================================================================
-    //
-    // 消息处理函数
-    //
-    // ==========================================================================================================================================================
-
-    /**
-     * 获取CQ对象 1.3.0开始CQ不再是静态调用
-     *
-     * @return CQ对象
-     */
-    public static CoolQ getCQ() {
-        return CQ;
-    }
-
-    /**
-     * 获取存储目录的路径
-     *
-     * @return 存储路径
-     */
-    public static String getAppDirectory() {
-        return appDirectory;
-    }
-
-    /**
-     * 判断一个ID是否为BOT自身
-     *
-     * @param userid 用户ID
-     * @return 是 / 否
-     */
-    public static boolean isMyself(long userid) {
-        return SYSTEMD.isMyself(userid);
-    }
-
-    // ==========================================================================================================================================================
-    //
-    // 群成员变动函数
-    //
-    // ==========================================================================================================================================================
-
-    /**
-     * 判断一个ID是否为管理员（JCQ设置的管理，并非qq群管理）
-     *
-     * @param userid 用户ID
-     * @return 是 / 否
-     */
-    public static boolean isAdmin(long userid) {
-        return SYSTEMD.isAdmin(userid);
-    }
-
-    /**
-     * 给管理员发消息
-     *
-     * @param message 消息
-     */
-    public static void adminInfo(String message) {
-        SYSTEMD.adminInfo(message);
-    }
-
-    // ==========================================================================================================================================================
-    //
-    // 事件函数
-    //
-    // ==========================================================================================================================================================
-
-    /**
-     * 给管理员发消息
-     *
-     * @param message 消息
-     */
-    public static void adminInfo(String[] message) {
-        SYSTEMD.adminInfo(message);
-    }
-
-    /**
-     * 给用户发私聊
-     *
-     * @param userid  用户ID
-     * @param message 消息
-     */
-    public static void userInfo(long userid, String message) {
-        SYSTEMD.userInfo(userid, message);
-    }
-
-    /**
-     * 给用户发私聊
-     *
-     * @param userid  用户ID
-     * @param message 消息
-     */
-    public static void userInfo(long userid, String[] message) {
-        SYSTEMD.userInfo(userid, message);
-    }
-
-    /**
-     * 在讨论组发消息
-     *
-     * @param diszid  讨论组ID
-     * @param message 消息
-     */
-    public static void diszInfo(long diszid, String message) {
-        SYSTEMD.diszInfo(diszid, message);
-    }
-
-    /**
-     * 在讨论组发消息
-     *
-     * @param diszid  讨论组ID
-     * @param message 消息
-     */
-    public static void diszInfo(long diszid, String[] message) {
-        SYSTEMD.diszInfo(diszid, message);
-    }
-
-    /**
-     * 在讨论组发消息 并at某人
-     *
-     * @param diszid  讨论组ID
-     * @param userid  用户ID
-     * @param message 消息
-     */
-    public static void diszInfo(long diszid, long userid, String message) {
-        SYSTEMD.diszInfo(diszid, userid, message);
-    }
-
-    /**
-     * 在群聊发消息
-     *
-     * @param gropid  群组ID
-     * @param message 消息
-     */
-    public static void gropInfo(long gropid, String message) {
-        SYSTEMD.gropInfo(gropid, message);
-    }
-
-    // ==========================================================================================================================================================
-    //
-    // 工具函数
-    //
-    // ==========================================================================================================================================================
-
-    /**
-     * 在群聊发消息
-     *
-     * @param gropid  群组ID
-     * @param message 消息
-     */
-    public static void gropInfo(long gropid, String[] message) {
-        SYSTEMD.gropInfo(gropid, message);
-    }
-
-    /**
-     * 在群聊发消息 并at某人
-     *
-     * @param gropid  群组ID
-     * @param userid  用户ID
-     * @param message 消息
-     */
-    public static void gropInfo(long gropid, long userid, String message) {
-        SYSTEMD.gropInfo(gropid, userid, message);
-    }
-
-    /**
-     * 私聊某人 /info
-     *
-     * @param userid 用户ID
-     */
-    public static void sendInfo(long userid) {
-        SYSTEMD.sendInfo(userid);
-    }
-
-    /**
-     * 私聊某人 /eula
-     *
-     * @param userid 用户ID
-     */
-    public static void sendEula(long userid) {
-        SYSTEMD.sendEula(userid);
-    }
-
-    /**
-     * 私聊某人 /help
-     *
-     * @param userid 用户ID
-     */
-    public static void sendHelp(long userid) {
-        SYSTEMD.sendHelp(userid);
-    }
-
-    /**
-     * 私聊某人 /help $name
-     *
-     * @param userid 用户ID
-     * @param name   模块名
-     */
-    public static void sendHelp(long userid, String name) {
-        SYSTEMD.sendHelp(userid, name);
-    }
-
-    /**
-     * 私聊某人 私聊模式/list
-     *
-     * @param userid 用户ID
-     */
-    public static void sendListUser(long userid) {
-        SYSTEMD.sendListUser(userid);
-    }
-
-    // ==========================================================================================================================================================
-    //
-    // 方法传递
-    //
-    // ==========================================================================================================================================================
-
-    /**
-     * 私聊某人 讨论组模式/list
-     *
-     * @param userid 用户ID
-     */
-    public static void sendListDisz(long userid) {
-        SYSTEMD.sendListDisz(userid);
-    }
-
-    /**
-     * 私聊某人 群组模式/list
-     *
-     * @param userid 用户ID
-     */
-    public static void sendListGrop(long userid) {
-        SYSTEMD.sendListGrop(userid);
-    }
-
-    /**
-     * 从昵称对应表查找昵称
-     *
-     * @param userid 用户ID
-     * @return 昵称
-     */
-    public static String getNickname(long userid) {
-        return SYSTEMD.getNickname(userid);
-    }
-
-    /**
-     * 从昵称对应表查找昵称
-     *
-     * @param gropid 群组ID
-     * @param userid 用户ID
-     * @return 昵称
-     */
-    public static String getGropnick(long gropid, long userid) {
-        return SYSTEMD.getGropNick(gropid, userid);
-    }
-
-    /**
-     * 获取定时器
-     *
-     * @param name 名称
-     * @return 实例
-     */
-    public static ModuleScheduler getScheduler(String name) {
-        return SYSTEMD.getScheduler(name);
-    }
-
-    /**
-     * 获取触发器
-     *
-     * @param name 名称
-     * @return 实例
-     */
-    public static ModuleTrigger getTrigger(String name) {
-        return SYSTEMD.getTrigger(name);
-    }
-
-    /**
-     * 获取监听器
-     *
-     * @param name 名称
-     * @return 实例
-     */
-    public static ModuleListener getListener(String name) {
-        return SYSTEMD.getListener(name);
-    }
-
-    /**
-     * 获取执行器
-     *
-     * @param name 名称
-     * @return 实例
-     */
-    public static ModuleExecutor getExecutor(String name) {
-        return SYSTEMD.getExecutor(name);
-    }
-
-    @Override
-    public String appInfo() {
-        return ICQVer.CQAPIVER + "," + AppID;
     }
 
     /**
@@ -485,14 +161,15 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
             // 实例化 data/ logs/ 对象
 
             FOLDER_ROOT = Paths.get(appDirectory, "Core_Entry").toFile();
-//			this.FOLDER_CONF = Paths.get(appDirectory, "Core_Entry", "conf").toFile();
-//			this.FOLDER_DATA = Paths.get(appDirectory, "Core_Entry", "data").toFile();
+            //			this.FOLDER_CONF = Paths.get(appDirectory, "Core_Entry", "conf").toFile();
+            //			this.FOLDER_DATA = Paths.get(appDirectory, "Core_Entry", "data").toFile();
             FOLDER_LOGS = Paths.get(appDirectory, "Core_Entry", "logs").toFile();
-            FILE_LOGGER = Paths.get(appDirectory, "Core_Entry", "logs", LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
+            FILE_LOGGER = Paths.get(appDirectory, "Core_Entry", "logs", LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") +
+                    ".txt").toFile();
 
             FOLDER_ROOT = Paths.get(getAppDirectory(), "Core_Entry").toFile();
-//			this.FOLDER_CONF = Paths.get(getAppDirectory(), "Core_Entry", "conf").toFile();
-//			this.FOLDER_DATA = Paths.get(getAppDirectory(), "Core_Entry", "data").toFile();
+            //			this.FOLDER_CONF = Paths.get(getAppDirectory(), "Core_Entry", "conf").toFile();
+            //			this.FOLDER_DATA = Paths.get(getAppDirectory(), "Core_Entry", "data").toFile();
             FOLDER_LOGS = Paths.get(getAppDirectory(), "Core_Entry", "logs").toFile();
 
             // ==========================================================================================================================
@@ -501,8 +178,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
             if (!FOLDER_ROOT.exists()) {
                 FOLDER_ROOT.mkdirs();
             }
-//			if (!this.FOLDER_CONF.exists()) this.FOLDER_CONF.mkdirs();
-//			if (!this.FOLDER_DATA.exists()) this.FOLDER_DATA.mkdirs();
+            //			if (!this.FOLDER_CONF.exists()) this.FOLDER_CONF.mkdirs();
+            //			if (!this.FOLDER_DATA.exists()) this.FOLDER_DATA.mkdirs();
             if (!FOLDER_LOGS.exists()) {
                 FOLDER_LOGS.mkdirs();
             }
@@ -510,8 +187,10 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
             if (!FOLDER_ROOT.isDirectory()) {
                 throw new NotAFolderException("文件夹被文件占位：" + FOLDER_ROOT.getAbsolutePath());
             }
-//			if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_CONF.getAbsolutePath()); }
-//			if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_DATA.getAbsolutePath()); }
+            //			if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this
+            //			.FOLDER_CONF.getAbsolutePath()); }
+            //			if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this
+            //			.FOLDER_DATA.getAbsolutePath()); }
             if (!FOLDER_LOGS.isDirectory()) {
                 throw new NotAFolderException("文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath());
             }
@@ -554,11 +233,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
             SYSTEMD.adminInfo("启动完成 " + LoggerX.datetime());
 
         } catch (Exception exception) {
+
             enable = false;
+
             exception.printStackTrace();
+
             logger.exception(exception);
             SYSTEMD.adminInfo("启动异常 " + exception.getMessage());
+
         }
+
         return 0;
     }
 
@@ -592,6 +276,12 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
         return 0;
     }
 
+    // ==========================================================================================================================================================
+    //
+    // 消息处理函数
+    //
+    // ==========================================================================================================================================================
+
     /**
      * 私聊消息处理方法 不应该在此处修改任何内容
      */
@@ -600,7 +290,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
         try {
 
-            SYSTEMD.doUserMessage(typeid, userid, new MessageUser(typeid, userid, message, messageid, messagefont), messageid, messagefont);
+            SYSTEMD.doUserMessage(typeid, userid, new MessageUser(typeid, userid, message, messageid, messagefont),
+                    messageid, messagefont);
 
         } catch (Exception exception) {
 
@@ -630,7 +321,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
         try {
 
-            SYSTEMD.doDiszMessage(diszid, userid, new MessageDisz(diszid, userid, message, messageid, messagefont), messageid, messagefont);
+            SYSTEMD.doDiszMessage(diszid, userid, new MessageDisz(diszid, userid, message, messageid, messagefont),
+                    messageid, messagefont);
 
         } catch (Exception exception) {
 
@@ -657,11 +349,13 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
      * 群聊消息处理方法 不应该在此处修改任何内容
      */
     @Override
-    public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
+    public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message,
+                        int messagefont) {
 
         try {
 
-            SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
+            SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont),
+                    messageid, messagefont);
 
         } catch (Exception exception) {
 
@@ -683,6 +377,13 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
         return IMsg.MSG_IGNORE;
     }
+
+
+    // ==========================================================================================================================================================
+    //
+    // 群成员变动函数
+    //
+    // ==========================================================================================================================================================
 
     /**
      * 成员加群处理方法 不应该在此处修改任何内容
@@ -762,6 +463,12 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
         return IMsg.MSG_IGNORE;
     }
 
+    // ==========================================================================================================================================================
+    //
+    // 事件函数
+    //
+    // ==========================================================================================================================================================
+
     /**
      * 好友添加成功的处理函数 不应该在此处修改任何内容
      */
@@ -779,7 +486,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
             e.printStackTrace();
         }
 
-        SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
+        SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r"
+                + "\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
         SYSTEMD.sendEula(userid);
         SYSTEMD.sendHelp(userid);
     }
@@ -855,18 +563,14 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
         if (typeid != 1) {
 
             long ss = duration;
-
             long dd = ss / 86400;
             ss = ss % 86400;
-
             long hh = ss / 3600;
             ss = ss % 3600;
-
             long mm = ss / 60;
             ss = ss % 60;
 
             builder.append("时间：" + duration + " (" + dd + " - " + hh + ":" + mm + ":" + ss + ")");
-
         }
 
         logger.raw(type, builder.toString());
@@ -906,6 +610,360 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
         SYSTEMD.adminInfo(builder.toString());
 
         return 0;
+    }
+
+    // ==========================================================================================================================================================
+    //
+    // 工具函数
+    //
+    // ==========================================================================================================================================================
+
+
+    /**
+     * 获取CQ对象 1.3.0开始CQ不再是静态调用
+     *
+     * @return CQ对象
+     */
+    public static CoolQ getCQ() {
+        return CQ;
+    }
+
+
+    /**
+     * 获取存储目录的路径
+     *
+     * @return 存储路径
+     */
+    public static String getAppDirectory() {
+        return appDirectory;
+    }
+
+
+    /**
+     * 切换DEBUG模式
+     *
+     * @return 是否开启DEBUG模式
+     */
+    public static boolean switchDEBUG() {
+        DEBUG = !DEBUG;
+        return DEBUG;
+    }
+
+
+    /**
+     * 获取是否开启DEBUG模式
+     *
+     * @return 是否开启DEBUG模式
+     */
+    public static boolean DEBUG() {
+        return DEBUG;
+    }
+
+
+    /**
+     * 获取开关状态
+     *
+     * @return 开 / 关
+     */
+    public static boolean isEnable() {
+        return enable;
+    }
+
+
+    /**
+     * 设置开关
+     *
+     * @param mode 开 / 关
+     */
+    public static void setEnable(boolean mode) {
+        enable = mode;
+    }
+
+
+    // ==========================================================================================================================================================
+    //
+    // 方法传递 消息
+    //
+    // ==========================================================================================================================================================
+
+
+    /**
+     * 获取Systemd对象
+     *
+     * @return Systemd对象
+     */
+    public static Systemd getSystemd() {
+        return SYSTEMD;
+    }
+
+
+    /**
+     * 判断一个ID是否为BOT自身
+     *
+     * @param userid 用户ID
+     * @return 是 / 否
+     */
+    public static boolean isMyself(long userid) {
+        return SYSTEMD.isMyself(userid);
+    }
+
+
+    /**
+     * 判断一个ID是否为管理员（JCQ设置的管理，并非qq群管理）
+     *
+     * @param userid 用户ID
+     * @return 是 / 否
+     */
+    public static boolean isAdmin(long userid) {
+        return SYSTEMD.isAdmin(userid);
+    }
+
+    /**
+     * 给管理员发消息
+     *
+     * @param message 消息
+     */
+    public static void adminInfo(String message) {
+        SYSTEMD.adminInfo(message);
+    }
+
+    /**
+     * 给管理员发消息
+     *
+     * @param message 消息
+     */
+    public static void adminInfo(String[] message) {
+        SYSTEMD.adminInfo(message);
+    }
+
+    /**
+     * 给用户发私聊
+     *
+     * @param userid  用户ID
+     * @param message 消息
+     */
+    public static void userInfo(long userid, String message) {
+        SYSTEMD.userInfo(userid, message);
+    }
+
+    /**
+     * 给用户发私聊
+     *
+     * @param userid  用户ID
+     * @param message 消息
+     */
+    public static void userInfo(long userid, String[] message) {
+        SYSTEMD.userInfo(userid, message);
+    }
+
+    /**
+     * 在讨论组发消息
+     *
+     * @param diszid  讨论组ID
+     * @param message 消息
+     */
+    public static void diszInfo(long diszid, String message) {
+        SYSTEMD.diszInfo(diszid, message);
+    }
+
+    /**
+     * 在讨论组发消息
+     *
+     * @param diszid  讨论组ID
+     * @param message 消息
+     */
+    public static void diszInfo(long diszid, String[] message) {
+        SYSTEMD.diszInfo(diszid, message);
+    }
+
+    /**
+     * 在讨论组发消息 并at某人
+     *
+     * @param diszid  讨论组ID
+     * @param userid  用户ID
+     * @param message 消息
+     */
+    public static void diszInfo(long diszid, long userid, String message) {
+        SYSTEMD.diszInfo(diszid, userid, message);
+    }
+
+    /**
+     * 在群聊发消息
+     *
+     * @param gropid  群组ID
+     * @param message 消息
+     */
+    public static void gropInfo(long gropid, String message) {
+        SYSTEMD.gropInfo(gropid, message);
+    }
+
+    /**
+     * 在群聊发消息
+     *
+     * @param gropid  群组ID
+     * @param message 消息
+     */
+    public static void gropInfo(long gropid, String[] message) {
+        SYSTEMD.gropInfo(gropid, message);
+    }
+
+    /**
+     * 在群聊发消息 并at某人
+     *
+     * @param gropid  群组ID
+     * @param userid  用户ID
+     * @param message 消息
+     */
+    public static void gropInfo(long gropid, long userid, String message) {
+        SYSTEMD.gropInfo(gropid, userid, message);
+    }
+
+
+    // ==========================================================================================================================================================
+    //
+    // 方法传递
+    //
+    // ==========================================================================================================================================================
+
+
+    /**
+     * 私聊某人 /info
+     *
+     * @param userid 用户ID
+     */
+    public static void sendInfo(long userid) {
+        SYSTEMD.sendInfo(userid);
+    }
+
+    /**
+     * 私聊某人 /eula
+     *
+     * @param userid 用户ID
+     */
+    public static void sendEula(long userid) {
+        SYSTEMD.sendEula(userid);
+    }
+
+    /**
+     * 私聊某人 /help
+     *
+     * @param userid 用户ID
+     */
+    public static void sendHelp(long userid) {
+        SYSTEMD.sendHelp(userid);
+    }
+
+    /**
+     * 私聊某人 /help $name
+     *
+     * @param userid 用户ID
+     * @param name   模块名
+     */
+    public static void sendHelp(long userid, String name) {
+        SYSTEMD.sendHelp(userid, name);
+    }
+
+    /**
+     * 私聊某人 私聊模式/list
+     *
+     * @param userid 用户ID
+     */
+    public static void sendListUser(long userid) {
+        SYSTEMD.sendListUser(userid);
+    }
+
+    /**
+     * 私聊某人 讨论组模式/list
+     *
+     * @param userid 用户ID
+     */
+    public static void sendListDisz(long userid) {
+        SYSTEMD.sendListDisz(userid);
+    }
+
+    /**
+     * 私聊某人 群组模式/list
+     *
+     * @param userid 用户ID
+     */
+    public static void sendListGrop(long userid) {
+        SYSTEMD.sendListGrop(userid);
+    }
+
+    // ==========================================================================================================================================================
+    //
+    // 方法传递
+    //
+    // ==========================================================================================================================================================
+
+
+    /**
+     * 从昵称对应表查找昵称
+     *
+     * @param userid 用户ID
+     * @return 昵称
+     */
+    public static String getNickname(long userid) {
+        return SYSTEMD.getNickname(userid);
+    }
+
+    /**
+     * 从昵称对应表查找昵称
+     *
+     * @param gropid 群组ID
+     * @param userid 用户ID
+     * @return 昵称
+     */
+    public static String getGropnick(long gropid, long userid) {
+        return SYSTEMD.getGropNick(gropid, userid);
+    }
+
+
+    // ==========================================================================================================================================================
+    //
+    // 方法传递
+    //
+    // ==========================================================================================================================================================
+
+
+    /**
+     * 获取定时器
+     *
+     * @param name 名称
+     * @return 实例
+     */
+    public static ModuleScheduler getScheduler(String name) {
+        return SYSTEMD.getScheduler(name);
+    }
+
+    /**
+     * 获取触发器
+     *
+     * @param name 名称
+     * @return 实例
+     */
+    public static ModuleTrigger getTrigger(String name) {
+        return SYSTEMD.getTrigger(name);
+    }
+
+    /**
+     * 获取监听器
+     *
+     * @param name 名称
+     * @return 实例
+     */
+    public static ModuleListener getListener(String name) {
+        return SYSTEMD.getListener(name);
+    }
+
+    /**
+     * 获取执行器
+     *
+     * @param name 名称
+     * @return 实例
+     */
+    public static ModuleExecutor getExecutor(String name) {
+        return SYSTEMD.getExecutor(name);
     }
 
 }

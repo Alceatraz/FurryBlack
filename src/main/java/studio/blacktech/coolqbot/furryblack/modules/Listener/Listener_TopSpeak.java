@@ -64,7 +64,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
     public Listener_TopSpeak() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -78,7 +77,6 @@ public class Listener_TopSpeak extends ModuleListener {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 
@@ -105,7 +103,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
         String line;
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_REPORT),
+                StandardCharsets.UTF_8));
 
         while ((line = reader.readLine()) != null) {
 
@@ -140,7 +139,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
             }
 
-            File GROUP_STATUS_LEGACY = Paths.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
+            File GROUP_STATUS_LEGACY = Paths.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime(
+                    "yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
             GROUP_STATUS_STORAGE.renameTo(GROUP_STATUS_LEGACY);
             GROUP_STATUS_STORAGE.delete();
 
@@ -162,7 +162,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
                     if (!groupStatus.USER_STATUS.containsKey(member.getQQId())) {
                         groupStatus.USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
-                        logger.seek("新建成员", group.getId() + " > " + entry.getNickname(member.getQQId()) + "(" + member.getQQId() + ")");
+                        logger.seek("新建成员",
+                                group.getId() + " > " + entry.getNickname(member.getQQId()) + "(" + member.getQQId() + ")");
                     }
                 }
 
@@ -228,7 +229,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
             case "save":
 
-                File DAILY_BACKUP = Paths.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
+                File DAILY_BACKUP = Paths.get(FOLDER_DATA.getAbsolutePath(),
+                        LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
                 saveData(DAILY_BACKUP);
 
                 return new String[]{
@@ -287,7 +289,6 @@ public class Listener_TopSpeak extends ModuleListener {
     @Override
     public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
-        // @formatter:off
 
         // 用以确定是不存在组还是不存在人
 
@@ -295,7 +296,6 @@ public class Listener_TopSpeak extends ModuleListener {
                 .get(gropid)
                 .say(userid, message);
 
-        // @formatter:on
 
         return true;
     }
@@ -346,18 +346,18 @@ public class Listener_TopSpeak extends ModuleListener {
 
                 if (message.hasSwitch("match")) {
 
-                    String match = message.getSwitch("match"); // @formatter:off
+                    String match = message.getSwitch("match");
                     if (match.length() == 0) {
                         return new String[]{"参数错误 --match 为空"};
-                    } // @formatter:on
+                    }
                     return generateMemberCountGrep(gropid, match, limitRank);
 
                 } else if (message.hasSwitch("regex")) {
 
-                    String regex = message.getSwitch("regex"); // @formatter:off
+                    String regex = message.getSwitch("regex");
                     if (regex.length() == 0) {
                         return new String[]{"参数错误 --regex 为空"};
-                    } // @formatter:on
+                    }
                     return generateMemberRegexGrep(gropid, regex, limitRank);
 
                 } else {
@@ -448,7 +448,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
                         userStatus = groupStatus.USER_STATUS.get(userid);
 
-                        builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "句/" + userStatus.USER_CHARACTER + "字");
+                        builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") "
+                                + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "句/" + userStatus.USER_CHARACTER + "字");
 
                         if (userStatus.USER_PICTURES.size() > 0) {
                             builder.append("/" + userStatus.USER_PICTURES.size() + "图");
@@ -913,7 +914,8 @@ public class Listener_TopSpeak extends ModuleListener {
                             logger.full("工作线程执行");
                         }
 
-                        File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
+                        File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(),
+                                LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
 
                         saveData(DAILY_BACKUP);
 

@@ -65,7 +65,6 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
     public Trigger_WordDeny() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -79,7 +78,6 @@ public class Trigger_WordDeny extends ModuleTrigger {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 
@@ -127,7 +125,8 @@ public class Trigger_WordDeny extends ModuleTrigger {
             FILE_DENY_GROP.createNewFile();
         }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_BLACKLIST), StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_BLACKLIST),
+                StandardCharsets.UTF_8));
 
         String line;
         while ((line = reader.readLine()) != null) {

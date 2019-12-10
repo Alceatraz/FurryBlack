@@ -1,3 +1,7 @@
+### Eclipse ###
+.project
+.classpath
+bin/
 ### Idea ###
 *.iml
 .idea/

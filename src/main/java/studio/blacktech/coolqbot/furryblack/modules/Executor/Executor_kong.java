@@ -45,7 +45,6 @@ public class Executor_kong extends ModuleExecutor {
 
     public Executor_kong() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -59,7 +58,6 @@ public class Executor_kong extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 

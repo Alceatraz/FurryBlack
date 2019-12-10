@@ -8,14 +8,14 @@ public abstract class ModuleExecutor extends Module {
 
     private static final long serialVersionUID = 1L;
     protected int COUNT_USER = 0;
-    // @formatter:on
+
     protected int COUNT_DISZ = 0;
     protected int COUNT_GROP = 0;
     protected boolean ENABLE_USER = false;
     protected boolean ENABLE_DISZ = false;
     protected boolean ENABLE_GROP = false;
 
-    // @formatter:off
+
     public ModuleExecutor(
             String MODULE_PACKAGENAME,
             String MODULE_COMMANDNAME,
@@ -40,11 +40,14 @@ public abstract class ModuleExecutor extends Module {
         );
     }
 
-    public abstract boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception;
+    public abstract boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid,
+                                          int messagefont) throws Exception;
 
-    public abstract boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception;
+    public abstract boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid,
+                                          int messagefont) throws Exception;
 
-    public abstract boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception;
+    public abstract boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid,
+                                          int messagefont) throws Exception;
 
     public boolean executeUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
         COUNT_USER++;

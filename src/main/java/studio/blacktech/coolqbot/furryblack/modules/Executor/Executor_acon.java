@@ -74,7 +74,6 @@ public class Executor_acon extends ModuleExecutor {
 
     public Executor_acon() throws Exception {
 
-        // @formatter:off
 
         super(
                 MODULE_PACKAGENAME,
@@ -88,7 +87,6 @@ public class Executor_acon extends ModuleExecutor {
                 MODULE_PRIVACY_OBTAIN
         );
 
-        // @formatter:on
 
     }
 
@@ -287,14 +285,13 @@ public class Executor_acon extends ModuleExecutor {
 
                     isChangeMode = false;
 
-                    // @formatter:off
+
                     entry.gropInfo(gropid, String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元",
                             powerConsumption.divide(BigInteger.valueOf(1000)).toString(),
                             powerConsumption.divide(BigInteger.valueOf(3600000L)).toString(),
                             powerConsumption.divide(BigInteger.valueOf(1936800L)).toString()
                     ));
 
-                    // @formatter:on
 
                     break;
 

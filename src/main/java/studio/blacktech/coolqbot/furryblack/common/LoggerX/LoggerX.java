@@ -21,8 +21,11 @@ public class LoggerX {
     private final static SimpleDateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
     private final static SimpleDateFormat formater_time = new SimpleDateFormat("HH:mm:ss");
     private final static SimpleDateFormat formater_full = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     private static boolean INIT_LOCK = false;
+
     private static File FILE_LOGGER;
+
     private String name;
 
     // ==================================================================================================
@@ -35,16 +38,16 @@ public class LoggerX {
     }
 
     public LoggerX(Object thisInstance) {
-        name = thisInstance.getClass().getSimpleName();
+        this.name = thisInstance.getClass().getSimpleName();
     }
 
     /**
      * 必须传入绝对路径
      */
     public static void init(File file) throws InitializationException {
-        if (INIT_LOCK) {
-            throw new CantReinitializationException();
-        }
+
+        if (INIT_LOCK) { throw new CantReinitializationException(); }
+
         INIT_LOCK = true;
         FILE_LOGGER = file;
     }
@@ -53,27 +56,6 @@ public class LoggerX {
     //
     //
     // ==================================================================================================
-
-    private static void PRINT(String message) {
-        System.out.println(message);
-    }
-
-    // ==================================================================================================
-    //
-    //
-    // ==================================================================================================
-
-    private static void WRITE(String message) {
-        try {
-            FileWriter writer = new FileWriter(FILE_LOGGER, true);
-            writer.append(message);
-            writer.append("\r\n");
-            writer.flush();
-            writer.close();
-        } catch (IOException exception) {
-            System.err.println(exception.getMessage());
-        }
-    }
 
     public static String unicode(String raw) {
         StringBuilder builder = new StringBuilder();
@@ -94,16 +76,18 @@ public class LoggerX {
         return res;
     }
 
+    // ==================================================================================================
+    //
+    //
+    // ==================================================================================================
+
     public static String date() {
+
         return formater_date.format(new Date());
     }
 
-    // ==================================================================================================
-    //
-    //
-    // ==================================================================================================
-
     public static String date(Date date) {
+
         return formater_date.format(date);
     }
 
@@ -146,29 +130,29 @@ public class LoggerX {
     // ==================================================================================================
 
     public static String formatTime(String format) {
+
         return new SimpleDateFormat(format).format(new Date());
     }
 
     public static String formatTime(String format, Date date) {
+
         return new SimpleDateFormat(format).format(date);
     }
 
     public static String formatTime(String format, long timestamp) {
+
         return new SimpleDateFormat(format).format(new Date(timestamp));
     }
 
     public static String formatTime(String format, TimeZone timezone) {
+
         SimpleDateFormat formater = new SimpleDateFormat(format);
         formater.setTimeZone(timezone);
         return formater.format(new Date());
     }
 
-    // ==================================================================================================
-    //
-    //
-    // ==================================================================================================
-
     public static String formatTime(String format, TimeZone timezone, Date date) {
+
         SimpleDateFormat formater = new SimpleDateFormat(format);
         formater.setTimeZone(timezone);
         return formater.format(date);
@@ -219,16 +203,12 @@ public class LoggerX {
 
         builder.setLength(builder.length() - 1);
 
-        String temp = "[" + LoggerX.time() + "][EXCEPTION][" + name + "] 发生异常\r\n时间序列号: " + timestamp + builder.toString();
+        String temp =
+                "[" + LoggerX.time() + "][EXCEPTION][" + name + "] 发生异常\r\n时间序列号: " + timestamp + builder.toString();
 
         LoggerX.PRINT(temp);
         LoggerX.WRITE(temp);
     }
-
-    // ==================================================================================================
-    //
-    //
-    // ==================================================================================================
 
     public void exception(long timestamp, String catgory, Exception exception) {
 
@@ -244,7 +224,8 @@ public class LoggerX {
 
         builder.setLength(builder.length() - 1);
 
-        String temp = "[" + LoggerX.time() + "][EXCEPTION][" + name + "] " + catgory + "\r\n时间序列号: " + timestamp + builder.toString();
+        String temp =
+                "[" + LoggerX.time() + "][EXCEPTION][" + name + "] " + catgory + "\r\n时间序列号: " + timestamp + builder.toString();
 
         LoggerX.PRINT(temp);
         LoggerX.WRITE(temp);
@@ -263,8 +244,6 @@ public class LoggerX {
         LoggerX.WRITE(temp);
         return message;
     }
-
-    // ================================================================
 
     public String info(String message) {
         String temp = "[" + LoggerX.time() + "][INFO][" + name + "]" + message;
@@ -329,8 +308,6 @@ public class LoggerX {
         return message;
     }
 
-    // ================================================================
-
     public long seek(String catgory, long message) {
         String temp = "[" + LoggerX.time() + "][SEEK][" + name + "]" + catgory + ": " + message;
         LoggerX.PRINT(temp);
@@ -381,6 +358,25 @@ public class LoggerX {
         return message;
     }
 
-    // ================================================================
+    // ==================================================================================================
+    //
+    //
+    // ==================================================================================================
 
+    private static void PRINT(String message) {
+
+        System.out.println(message);
+    }
+
+    private static void WRITE(String message) {
+        try {
+            FileWriter writer = new FileWriter(FILE_LOGGER, true);
+            writer.append(message);
+            writer.append("\r\n");
+            writer.flush();
+            writer.close();
+        } catch (IOException exception) {
+            System.err.println(exception.getMessage());
+        }
+    }
 }

@@ -194,7 +194,8 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
      * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
      */
     @Override
-    public int groupMsg(int subType, int msgId, long fromGroup, long fromQQ, String fromAnonymous, String msg, int font) {
+    public int groupMsg(int subType, int msgId, long fromGroup, long fromQQ, String fromAnonymous, String msg,
+                        int font) {
         // 如果消息来自匿名者
         if ((fromQQ == 80000000L) && !fromAnonymous.equals("")) {
             // 将匿名用户信息放到 anonymous 变量中
@@ -381,7 +382,8 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
      * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
      */
     @Override
-    public int requestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
+    public int requestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg,
+                               String responseFlag) {
         // 这里处理消息
 
         /**

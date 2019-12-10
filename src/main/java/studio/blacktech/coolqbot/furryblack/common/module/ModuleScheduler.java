@@ -4,10 +4,8 @@ public abstract class ModuleScheduler extends Module {
 
     private static final long serialVersionUID = 1L;
     protected int COUNT = 0;
-    // @formatter:on
     protected boolean ENABLE = false;
 
-    // @formatter:off
     public ModuleScheduler(
             String MODULE_PACKAGENAME,
             String MODULE_COMMANDNAME,
