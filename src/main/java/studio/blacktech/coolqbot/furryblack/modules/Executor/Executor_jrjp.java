@@ -23,300 +23,273 @@ import java.util.List;
 
 public class Executor_jrjp extends ModuleExecutor {
 
-    private static final long serialVersionUID = 1L;
-
-    // ==========================================================================================================================================================
-    //
-    // 模块基本配置
-    //
-    // ==========================================================================================================================================================
-
-    private static String MODULE_PACKAGENAME = "Executor_JRJP";
-    private static String MODULE_COMMANDNAME = "jrjp";
-    private static String MODULE_DISPLAYNAME = "祭祀";
-    private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
-    private static String MODULE_VERSION = "1.3";
-    private static String[] MODULE_USAGE = new String[]{
-            "/jrjp - 查看今日祭品"
-    };
-    private static String[] MODULE_PRIVACY_STORED = new String[]{};
-    private static String[] MODULE_PRIVACY_CACHED = new String[]{
-            "群号-QQ号对应表 - 每日UTC+8 00:00 清空",
-            "群号-AV号对应表 - 每日UTC+8 00:00 清空"
-    };
-    private static String[] MODULE_PRIVACY_OBTAIN = new String[]{
-            "获取命令发送人",
-            "被抽到成员的昵称和群昵称"
-    };
-
-    // ==========================================================================================================================================================
-    //
-    // 成员变量
-    //
-    // ==========================================================================================================================================================
-
-    private HashMap<Long, Long> AVCODE;
-    private HashMap<Long, Long> VICTIM;
-
-    private HashMap<Long, ArrayList<Long>> MEMBERS;
-    private HashMap<Long, ArrayList<Long>> IGNORES;
-
-    private File USER_IGNORE;
-
-    private Thread thread;
-
-    private SecureRandom random = new SecureRandom();
-    // ==========================================================================================================================================================
-    //
-    // 生命周期函数
-    //
-    // ==========================================================================================================================================================
-
-    public Executor_jrjp() throws Exception {
-
-
-        super(
-                MODULE_PACKAGENAME,
-                MODULE_COMMANDNAME,
-                MODULE_DISPLAYNAME,
-                MODULE_DESCRIPTION,
-                MODULE_VERSION,
-                MODULE_USAGE,
-                MODULE_PRIVACY_STORED,
-                MODULE_PRIVACY_CACHED,
-                MODULE_PRIVACY_OBTAIN
-        );
+	private static final long serialVersionUID = 1L;
+
+	// ==========================================================================================================================================================
+	//
+	// 模块基本配置
+	//
+	// ==========================================================================================================================================================
 
+	private static String MODULE_PACKAGENAME = "Executor_JRJP";
+	private static String MODULE_COMMANDNAME = "jrjp";
+	private static String MODULE_DISPLAYNAME = "祭祀";
+	private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
+	private static String MODULE_VERSION = "1.3";
+	private static String[] MODULE_USAGE = new String[] {
+			"/jrjp - 查看今日祭品"
+	};
+	private static String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static String[] MODULE_PRIVACY_CACHED = new String[] {
+			"群号-QQ号对应表 - 每日UTC+8 00:00 清空", "群号-AV号对应表 - 每日UTC+8 00:00 清空"
+	};
+	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+			"获取命令发送人", "被抽到成员的昵称和群昵称"
+	};
 
-    }
+	// ==========================================================================================================================================================
+	//
+	// 成员变量
+	//
+	// ==========================================================================================================================================================
 
-    @Override
-    public boolean init() throws Exception {
+	private HashMap<Long, Long> AVCODE;
+	private HashMap<Long, Long> VICTIM;
 
-        initAppFolder();
-        initConfFolder();
+	private HashMap<Long, ArrayList<Long>> MEMBERS;
+	private HashMap<Long, ArrayList<Long>> IGNORES;
 
-        AVCODE = new HashMap<>();
-        VICTIM = new HashMap<>();
-        MEMBERS = new HashMap<>();
-        IGNORES = new HashMap<>();
+	private File USER_IGNORE;
 
-        USER_IGNORE = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
+	private Thread thread;
 
-        if (!USER_IGNORE.exists()) {
-            USER_IGNORE.createNewFile();
-        }
+	private SecureRandom random = new SecureRandom();
+	// ==========================================================================================================================================================
+	//
+	// 生命周期函数
+	//
+	// ==========================================================================================================================================================
 
-        List<Group> groups = entry.getCQ().getGroupList();
+	public Executor_jrjp() throws Exception {
 
-        for (Group group : groups) {
-            MEMBERS.put(group.getId(), new ArrayList<Long>());
-            IGNORES.put(group.getId(), new ArrayList<Long>());
-        }
+		// @formatter:off
 
-        long gropid;
-        long userid;
+		super(
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE),
-                StandardCharsets.UTF_8));
+		// @formatter:on
 
-        String line;
-        String[] temp;
+	}
 
-        while ((line = reader.readLine()) != null) {
+	@Override public boolean init() throws Exception {
 
-            if (line.startsWith("#")) {
-                continue;
-            }
-            if (!line.contains(":")) {
-                continue;
-            }
-            if (line.contains("#")) {
-                line = line.substring(0, line.indexOf("#")).trim();
-            }
+		initAppFolder();
+		initConfFolder();
 
-            temp = line.split(":");
+		AVCODE = new HashMap<>();
+		VICTIM = new HashMap<>();
+		MEMBERS = new HashMap<>();
+		IGNORES = new HashMap<>();
 
-            if (temp.length != 2) {
-                logger.warn("配置错误", line);
-                continue;
-            }
+		USER_IGNORE = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
-            gropid = Long.parseLong(temp[0]);
-            userid = Long.parseLong(temp[1]);
+		if (!USER_IGNORE.exists()) { USER_IGNORE.createNewFile(); }
 
-            if (IGNORES.containsKey(gropid)) {
-                IGNORES.get(gropid).add(userid);
-                logger.seek("排除用户", gropid + " > " + userid);
-            } else {
-                logger.seek("排除用户", "群不存在 " + gropid);
-            }
+		List<Group> groups = entry.getCQ().getGroupList();
 
-        }
+		for (Group group : groups) {
+			MEMBERS.put(group.getId(), new ArrayList<Long>());
+			IGNORES.put(group.getId(), new ArrayList<Long>());
+		}
 
-        reader.close();
+		long gropid;
+		long userid;
 
-        for (Group group : groups) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
 
-            ArrayList<Long> tempMembers = MEMBERS.get(group.getId());
-            ArrayList<Long> tempIgnores = IGNORES.get(group.getId());
+		String line;
+		String[] temp;
 
-            for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
+		while ((line = reader.readLine()) != null) {
 
-                if (entry.isMyself(member.getQQId())) {
-                    continue;
-                }
-                if (tempIgnores.contains(member.getQQId())) {
-                    continue;
-                }
+			if (line.startsWith("#")) { continue; }
+			if (!line.contains(":")) { continue; }
+			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
 
-                tempMembers.add(member.getQQId());
-            }
+			temp = line.split(":");
 
-            Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(random.nextInt(tempMembers.size())));
-            Executor_jrjp.this.AVCODE.put(group.getId(), (long) random.nextInt(70000000));
+			if (temp.length != 2) {
+				logger.warn("配置错误", line);
+				continue;
+			}
 
-        }
+			gropid = Long.parseLong(temp[0]);
+			userid = Long.parseLong(temp[1]);
 
-        ENABLE_USER = false;
-        ENABLE_DISZ = false;
-        ENABLE_GROP = true;
+			if (IGNORES.containsKey(gropid)) {
+				IGNORES.get(gropid).add(userid);
+				logger.seek("排除用户", gropid + " > " + userid);
+			} else {
+				logger.seek("排除用户", "群不存在 " + gropid);
+			}
 
-        return true;
-    }
+		}
 
-    @Override
-    public boolean boot() throws Exception {
+		reader.close();
 
-        logger.info("启动工作线程");
+		for (Group group : groups) {
 
-        thread = new Thread(new Worker());
-        thread.start();
+			ArrayList<Long> tempMembers = MEMBERS.get(group.getId());
+			ArrayList<Long> tempIgnores = IGNORES.get(group.getId());
 
-        return true;
-    }
+			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
 
-    @Override
-    public boolean save() throws Exception {
-        return true;
-    }
+				if (entry.isMyself(member.getQQId())) { continue; }
+				if (tempIgnores.contains(member.getQQId())) { continue; }
 
-    @Override
-    public boolean shut() throws Exception {
+				tempMembers.add(member.getQQId());
+			}
 
-        logger.info("终止工作线程");
+			Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(random.nextInt(tempMembers.size())));
+			Executor_jrjp.this.AVCODE.put(group.getId(), (long) random.nextInt(70000000));
 
-        thread.interrupt();
-        thread.join();
+		}
 
-        logger.info("工作线程已终止");
+		ENABLE_USER = false;
+		ENABLE_DISZ = false;
+		ENABLE_GROP = true;
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public String[] exec(Message message) throws Exception {
-        return new String[]{
-                "此模块无可用命令"
-        };
-    }
+	@Override public boolean boot() throws Exception {
 
-    @Override
-    public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-    }
+		logger.info("启动工作线程");
 
-    @Override
-    public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-    }
+		thread = new Thread(new Worker());
+		thread.start();
 
-    @Override
-    public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-        return true;
-    }
+	@Override public boolean save() throws Exception {
+		return true;
+	}
 
-    @Override
-    public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	@Override public boolean shut() throws Exception {
 
-        long victim = VICTIM.get(gropid);
-        entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www" +
-                ".bilibili.com/video/av" + AVCODE.get(gropid));
-        return true;
+		logger.info("终止工作线程");
 
-    }
-    // ==========================================================================================================================================================
-    //
-    // 工具函数
-    //
-    // ==========================================================================================================================================================
+		thread.interrupt();
+		thread.join();
 
-    @Override
-    public String[] generateReport(int mode, Message message, Object... parameters) {
-        return new String[0];
-    }
+		logger.info("工作线程已终止");
 
-    @SuppressWarnings("deprecation")
-    class Worker implements Runnable {
+		return true;
+	}
 
-        @Override
-        public void run() {
+	@Override public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
+	}
 
-            long time;
-            Date date;
+	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
 
-            do {
+	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
 
-                try {
+	@Override public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+		return true;
+	}
 
-                    while (true) {
+	@Override public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+		return true;
+	}
 
-                        date = new Date();
-                        time = 86400L;
-                        time = time - date.getSeconds();
-                        time = time - (date.getMinutes() * 60);
-                        time = time - (date.getHours() * 3600);
-                        time = time * 1000;
-                        Thread.sleep(time);
+	@Override public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
-                        AVCODE.clear();
-                        VICTIM.clear();
+		long victim = VICTIM.get(gropid);
+		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www" + ".bilibili.com/video/av" + AVCODE.get(gropid));
+		return true;
 
-                        ArrayList<Long> temp;
+	}
+	// ==========================================================================================================================================================
+	//
+	// 工具函数
+	//
+	// ==========================================================================================================================================================
 
-                        long victim;
-                        long avcode;
+	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+		return new String[0];
+	}
 
-                        StringBuilder builder = new StringBuilder();
+	@SuppressWarnings("deprecation") class Worker implements Runnable {
 
-                        for (Long group : MEMBERS.keySet()) {
+		@Override public void run() {
 
-                            temp = MEMBERS.get(group);
-                            victim = temp.get(random.nextInt(temp.size()));
-                            avcode = random.nextInt(60000000);
+			long time;
+			Date date;
 
-                            VICTIM.put(group, victim);
-                            AVCODE.put(group, avcode);
+			do {
 
-                            builder.append(group + " - " + " AV" + avcode + "\r\n");
+				try {
 
-                        }
-                    }
+					while (true) {
 
-                } catch (InterruptedException exception) {
-                    if (entry.isEnable()) {
-                        long timeserial = System.currentTimeMillis();
-                        entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
-                        logger.exception(timeserial, exception);
-                    } else {
-                        logger.full("关闭");
-                    }
-                }
+						date = new Date();
+						time = 86400L;
+						time = time - date.getSeconds();
+						time = time - (date.getMinutes() * 60);
+						time = time - (date.getHours() * 3600);
+						time = time * 1000;
+						Thread.sleep(time);
 
-            } while (entry.isEnable());
-        }
-    }
+						AVCODE.clear();
+						VICTIM.clear();
+
+						ArrayList<Long> temp;
+
+						long victim;
+						long avcode;
+
+						StringBuilder builder = new StringBuilder();
+
+						for (Long group : MEMBERS.keySet()) {
+
+							temp = MEMBERS.get(group);
+							victim = temp.get(random.nextInt(temp.size()));
+							avcode = random.nextInt(60000000);
+
+							VICTIM.put(group, victim);
+							AVCODE.put(group, avcode);
+
+							builder.append(group + " - " + " AV" + avcode + "\r\n");
+
+						}
+					}
+
+				} catch (InterruptedException exception) {
+					if (entry.isEnable()) {
+						long timeserial = System.currentTimeMillis();
+						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
+						logger.exception(timeserial, exception);
+					} else {
+						logger.full("关闭");
+					}
+				}
+
+			} while (entry.isEnable());
+		}
+	}
 }

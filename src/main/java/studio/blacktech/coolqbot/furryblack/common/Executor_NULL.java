@@ -8,124 +8,121 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_NULL extends ModuleExecutor {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    // ==========================================================================================================================================================
-    //
-    // 模块基本配置
-    //
-    // ==========================================================================================================================================================
-    public static String[] MODULE_PRIVACY_STORED = new String[]{};
-    public static String[] MODULE_PRIVACY_CACHED = new String[]{};
-    public static String[] MODULE_PRIVACY_OBTAIN = new String[]{};
-    private static String MODULE_PACKAGENAME = "Executor_NULL";
-    private static String MODULE_COMMANDNAME = "null";
-    private static String MODULE_DISPLAYNAME = "模板模块";
-    private static String MODULE_DESCRIPTION = "模板模块";
-    private static String MODULE_VERSION = "1.0";
-    private static String[] MODULE_USAGE = new String[]{};
+	// ==========================================================================================================================================================
+	//
+	// 模块基本配置
+	//
+	// ==========================================================================================================================================================
 
-    // ==========================================================================================================================================================
-    //
-    // 成员变量
-    //
-    // ==========================================================================================================================================================
+	private static String MODULE_PACKAGENAME = "Executor_NULL";
+	private static String MODULE_COMMANDNAME = "null";
+	private static String MODULE_DISPLAYNAME = "模板模块";
+	private static String MODULE_DESCRIPTION = "模板模块";
+	private static String MODULE_VERSION = "1.0";
+	private static String[] MODULE_USAGE = new String[] {};
+	public static String[] MODULE_PRIVACY_STORED = new String[] {};
+	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
+	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
-    // ==========================================================================================================================================================
-    //
-    // 生命周期函数
-    //
-    // ==========================================================================================================================================================
+	// ==========================================================================================================================================================
+	//
+	// 成员变量
+	//
+	// ==========================================================================================================================================================
 
+	// ==========================================================================================================================================================
+	//
+	// 生命周期函数
+	//
+	// ==========================================================================================================================================================
 
-    public Executor_NULL() throws Exception {
-        super(
-                MODULE_PACKAGENAME,
-                MODULE_COMMANDNAME,
-                MODULE_DISPLAYNAME,
-                MODULE_DESCRIPTION,
-                MODULE_VERSION,
-                MODULE_USAGE,
-                MODULE_PRIVACY_STORED,
-                MODULE_PRIVACY_CACHED,
-                MODULE_PRIVACY_OBTAIN
-        );
-    }
+	// @formatter:off
 
-    @Override
-    public boolean init() throws Exception {
+	public Executor_NULL() throws Exception {
 
-        if (NEW_CONFIG) {
-            CONFIG.setProperty("", "");
-            saveConfig();
-        } else {
-            loadConfig();
-        }
+		// @formatter:off
 
-        ENABLE_USER = false;
-        ENABLE_DISZ = false;
-        ENABLE_GROP = false;
+		super(
+				MODULE_PACKAGENAME,
+				MODULE_COMMANDNAME,
+				MODULE_DISPLAYNAME,
+				MODULE_DESCRIPTION,
+				MODULE_VERSION,
+				MODULE_USAGE,
+				MODULE_PRIVACY_STORED,
+				MODULE_PRIVACY_CACHED,
+				MODULE_PRIVACY_OBTAIN
+				);
 
-        return false;
-    }
+		// @formatter:on
 
-    @Override
-    public boolean boot() throws Exception {
+	}
 
-        return false;
-    }
+	@Override public boolean init() throws Exception {
 
-    @Override
-    public boolean save() throws Exception {
+		if (NEW_CONFIG) {
+			CONFIG.setProperty("", "");
+			saveConfig();
+		} else {
+			loadConfig();
+		}
 
-        return false;
-    }
+		ENABLE_USER = false;
+		ENABLE_DISZ = false;
+		ENABLE_GROP = false;
 
-    @Override
-    public boolean shut() throws Exception {
+		return false;
+	}
 
-        return false;
-    }
+	@Override public boolean boot() throws Exception {
 
-    @Override
-    public String[] exec(Message message) throws Exception {
-        return new String[]{
-                "此模块无可用命令"
-        };
-    }
+		return false;
+	}
 
-    @Override
-    public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-    }
+	@Override public boolean save() throws Exception {
 
-    @Override
-    public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-    }
+		return false;
+	}
 
-    @Override
-    public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-        return true;
-    }
+	@Override public boolean shut() throws Exception {
 
-    @Override
-    public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-        return true;
-    }
+		return false;
+	}
 
-    @Override
-    public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-        return true;
-    }
+	@Override public String[] exec(Message message) throws Exception {
+		return new String[] {
+				"此模块无可用命令"
+		};
+	}
 
-    // ==========================================================================================================================================================
-    //
-    // 工具函数
-    //
-    // ==========================================================================================================================================================
+	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
 
-    @Override
-    public String[] generateReport(int mode, Message message, Object... parameters) {
-        return null;
-    }
+	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	}
+
+	@Override public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+		return true;
+	}
+
+	@Override public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+		return true;
+	}
+
+	@Override public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+		return true;
+	}
+
+	// ==========================================================================================================================================================
+	//
+	// 工具函数
+	//
+	// ==========================================================================================================================================================
+
+	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+		return null;
+	}
 
 }

@@ -1,3 +1,5 @@
+// @formatter:off
+
 // CoolQ的JSON解析器支持双斜线注释JcqSDK也支持
 {
   "ret": 1,
@@ -9,151 +11,44 @@
   "version_id": 1,
   "class": "studio.blacktech.coolqbot.furryblack.entry",
   "event": [
-    {
-      "id": 1001,
-      "type": 1001,
-      "priority": 30000,
-      "name": "CoolQ启动",
-      "function": "startup"
-    },
-    {
-      "id": 1002,
-      "type": 1002,
-      "priority": 30000,
-      "name": "CoolQ关闭",
-      "function": "exit"
-    },
-    {
-      "id": 1003,
-      "type": 1003,
-      "priority": 30000,
-      "name": "JcqCQ启动",
-      "function": "enable"
-    },
-    {
-      "id": 1004,
-      "type": 1004,
-      "priority": 30000,
-      "name": "JcqCQ关闭",
-      "function": "disable"
-    },
-    {
-      "id": 1,
-      "type": 21,
-      "priority": 30000,
-      "name": "私聊消息",
-      "function": "privateMsg"
-    },
-    {
-      "id": 2,
-      "type": 2,
-      "priority": 30000,
-      "name": "群聊消息",
-      "function": "groupMsg"
-    },
-    {
-      "id": 3,
-      "type": 4,
-      "priority": 30000,
-      "name": "组聊消息",
-      "function": "discussMsg"
-    },
-    {
-      "id": 7,
-      "type": 103,
-      "priority": 30000,
-      "name": "群成员增加",
-      "function": "groupMemberIncrease"
-    },
-    {
-      "id": 6,
-      "type": 102,
-      "priority": 30000,
-      "name": "群成员减少",
-      "function": "groupMemberDecrease"
-    },
-    {
-      "id": 10,
-      "type": 201,
-      "priority": 30000,
-      "name": "好友已添加",
-      "function": "friendAdd"
-    },
-    {
-      "id": 8,
-      "type": 301,
-      "priority": 30000,
-      "name": "好友添加",
-      "function": "requestAddFriend"
-    },
-    {
-      "id": 9,
-      "type": 302,
-      "priority": 30000,
-      "name": "群组添加",
-      "function": "requestAddGroup"
-    },
-    {
-      "id": 5,
-      "type": 101,
-      "priority": 30000,
-      "name": "群管理变动",
-      "function": "groupAdmin"
-    },
-    {
-      "id": 4,
-      "type": 11,
-      "priority": 30000,
-      "name": "上传群文件",
-      "function": "groupUpload"
-    }
+    {"id": 1001, "type": 1001, "priority": 30000, "name": "CoolQ启动",  "function": "startup"},
+    {"id": 1002, "type": 1002, "priority": 30000, "name": "CoolQ关闭",  "function": "exit"},
+    {"id": 1003, "type": 1003, "priority": 30000, "name": "JcqCQ启动",  "function": "enable"},
+    {"id": 1004, "type": 1004, "priority": 30000, "name": "JcqCQ关闭",  "function": "disable"},
+    {"id": 1,    "type": 21,   "priority": 30000, "name": "私聊消息",   "function": "privateMsg"},
+    {"id": 2,    "type": 2,    "priority": 30000, "name": "群聊消息",   "function": "groupMsg"},
+    {"id": 3,    "type": 4,    "priority": 30000, "name": "组聊消息",   "function": "discussMsg"},
+    {"id": 7,    "type": 103,  "priority": 30000, "name": "群成员增加", "function": "groupMemberIncrease"},
+    {"id": 6,    "type": 102,  "priority": 30000, "name": "群成员减少", "function": "groupMemberDecrease"},
+    {"id": 10,   "type": 201,  "priority": 30000, "name": "好友已添加", "function": "friendAdd"},
+    {"id": 8,    "type": 301,  "priority": 30000, "name": "好友添加",   "function": "requestAddFriend"},
+    {"id": 9,    "type": 302,  "priority": 30000, "name": "群组添加",   "function": "requestAddGroup"},
+    {"id": 5,    "type": 101,  "priority": 30000, "name": "群管理变动", "function": "groupAdmin"},
+    {"id": 4,    "type": 11,   "priority": 30000, "name": "上传群文件", "function": "groupUpload"}
   ],
   "auth": [
-    20,
-    //获取Cookies 		getCookies / getCsrfToken
-    30,
-    //接收语音 		getRecord
-    101,
-    //发送群聊 		sendGroupMsg
-    103,
-    //发送组聊 		sendDiscussMsg
-    106,
-    //发送私聊 		sendPrivateMsg
-    110,
-    //发送赞 			sendLike
-    120,
-    //置群员移除 		setGroupKick
-    121,
-    //置群员禁言 		setGroupBan
-    122,
-    //置群管理员 		setGroupAdmin
-    123,
-    //置全群禁言 		setGroupWholeBan
-    124,
-    //置匿名群员禁言 	setGroupAnonymousBan
-    125,
-    //置群匿名设置 	setGroupAnonymous
-    126,
-    //置群成员名片		setGroupCard
-    127,
-    //置群退出 		setGroupLeave
-    128,
-    //置群成员专属头衔 setGroupSpecialTitle
-    130,
-    //取群成员信息		getGroupMemberInfoV2 / getGroupMemberInfo
-    131,
-    //取陌生人信息 	getStrangerInfo
-    140,
-    //置讨论组退出 	setDiscussLeave
-    150,
-    //置好友添加请求 	setFriendAddRequest
-    151,
-    //置群添加请求		setGroupAddRequest
-    160,
-    //取群成员列表		getGroupMemberList
-    161,
-    //取群列表			getGroupList
-    180
-    //撤回消息			deleteMsg
+    20,  //获取Cookies 		getCookies / getCsrfToken
+    30,  //接收语音 		getRecord
+    101, //发送群聊 		sendGroupMsg
+    103, //发送组聊 		sendDiscussMsg
+    106, //发送私聊 		sendPrivateMsg
+    110, //发送赞 			sendLike
+    120, //置群员移除 		setGroupKick
+    121, //置群员禁言 		setGroupBan
+    122, //置群管理员 		setGroupAdmin
+    123, //置全群禁言 		setGroupWholeBan
+    124, //置匿名群员禁言 	setGroupAnonymousBan
+    125, //置群匿名设置 	setGroupAnonymous
+    126, //置群成员名片		setGroupCard
+    127, //置群退出 		setGroupLeave
+    128, //置群成员专属头衔 setGroupSpecialTitle
+    130, //取群成员信息		getGroupMemberInfoV2 / getGroupMemberInfo
+    131, //取陌生人信息 	getStrangerInfo
+    140, //置讨论组退出 	setDiscussLeave
+    150, //置好友添加请求 	setFriendAddRequest
+    151, //置群添加请求		setGroupAddRequest
+    160, //取群成员列表		getGroupMemberList
+    161, //取群列表			getGroupList
+    180  //撤回消息			deleteMsg
   ]
 }
