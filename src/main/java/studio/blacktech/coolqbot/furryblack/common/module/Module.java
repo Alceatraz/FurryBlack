@@ -1,16 +1,16 @@
 package studio.blacktech.coolqbot.furryblack.common.module;
 
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.entry;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.Properties;
+
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
 
 public abstract class Module implements Serializable {
 
@@ -99,9 +99,7 @@ public abstract class Module implements Serializable {
 	public void initAppFolder() throws Exception {
 
 		if (FOLDER_ROOT.exists()) {
-			if (!FOLDER_ROOT.isDirectory()) {
-				throw new NotAFolderException("文件夹被文件占位：" + FOLDER_ROOT.getAbsolutePath());
-			}
+			if (!FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_ROOT.getAbsolutePath()); }
 		} else {
 			logger.seek("创建目录", FOLDER_ROOT.getAbsolutePath());
 			FOLDER_ROOT.mkdirs();
@@ -112,9 +110,7 @@ public abstract class Module implements Serializable {
 	public void initConfFolder() throws Exception {
 
 		if (FOLDER_CONF.exists()) {
-			if (!FOLDER_CONF.isDirectory()) {
-				throw new NotAFolderException("文件夹被文件占位：" + FOLDER_CONF.getAbsolutePath());
-			}
+			if (!FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_CONF.getAbsolutePath()); }
 		} else {
 			logger.seek("创建目录", FOLDER_CONF.getAbsolutePath());
 			FOLDER_CONF.mkdirs();
@@ -125,9 +121,7 @@ public abstract class Module implements Serializable {
 	public void initDataFolder() throws Exception {
 
 		if (FOLDER_DATA.exists()) {
-			if (!FOLDER_DATA.isDirectory()) {
-				throw new NotAFolderException("文件夹被文件占位：" + FOLDER_DATA.getAbsolutePath());
-			}
+			if (!FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_DATA.getAbsolutePath()); }
 		} else {
 			logger.seek("创建目录", FOLDER_DATA.getAbsolutePath());
 			FOLDER_DATA.mkdirs();
@@ -138,9 +132,7 @@ public abstract class Module implements Serializable {
 	public void initLogsFolder() throws Exception {
 
 		if (FOLDER_LOGS.exists()) {
-			if (!FOLDER_LOGS.isDirectory()) {
-				throw new NotAFolderException("文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath());
-			}
+			if (!FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath()); }
 		} else {
 			logger.seek("创建目录", FOLDER_LOGS.getName());
 			FOLDER_LOGS.mkdirs();

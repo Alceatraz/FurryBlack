@@ -1,8 +1,30 @@
 package studio.blacktech.coolqbot.furryblack.modules.Listener;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
 import org.meowy.cqp.jcq.message.CQCode;
+
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -10,14 +32,6 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
-import studio.blacktech.coolqbot.furryblack.entry;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Listener_TopSpeak extends ModuleListener {
 
@@ -82,7 +96,9 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	}
 
-	@SuppressWarnings("unchecked") @Override public boolean init() throws Exception {
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean init() throws Exception {
 
 		initAppFolder();
 		initConfFolder();
@@ -93,11 +109,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		GROUP_STATUS_STORAGE = Paths.get(FOLDER_DATA.getAbsolutePath(), "shui").toFile();
 		CONFIG_ENABLE_REPORT = Paths.get(FOLDER_CONF.getAbsolutePath(), "daily_report.txt").toFile();
 
-		if (!CONFIG_ENABLE_REPORT.exists()) {
-			if (!CONFIG_ENABLE_REPORT.createNewFile()) {
-				throw new InitializationException("无法创建文件" + CONFIG_ENABLE_REPORT.getName());
-			}
-		}
+		if (!CONFIG_ENABLE_REPORT.exists()) { if (!CONFIG_ENABLE_REPORT.createNewFile()) { throw new InitializationException("无法创建文件" + CONFIG_ENABLE_REPORT.getName()); } }
 
 		// 读取每日自动汇报配置文件
 
@@ -173,7 +185,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		return true;
 	}
 
-	@Override public boolean boot() throws Exception {
+	@Override
+	public boolean boot() throws Exception {
 
 		logger.info("启动工作线程");
 
@@ -183,7 +196,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		return true;
 	}
 
-	@Override public boolean save() throws Exception {
+	@Override
+	public boolean save() throws Exception {
 
 		logger.info("数据序列化");
 
@@ -192,7 +206,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		return true;
 	}
 
-	@Override public boolean shut() throws Exception {
+	@Override
+	public boolean shut() throws Exception {
 
 		logger.info("终止工作线程");
 
@@ -204,7 +219,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		return true;
 	}
 
-	@Override public String[] exec(Message message) throws Exception {
+	@Override
+	public String[] exec(Message message) throws Exception {
 
 		if (message.getSection() < 1) {
 			return new String[] {
@@ -239,7 +255,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		}
 	}
 
-	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		if (entry.isMyself(userid)) {
 			GROUP_STATUS.put(gropid, new GroupStatus(gropid));
@@ -248,7 +265,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		}
 	}
 
-	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		if (entry.isMyself(userid)) {
 			GROUP_STATUS.remove(gropid);
@@ -262,15 +280,18 @@ public class Listener_TopSpeak extends ModuleListener {
 	//
 	//
 	// ==========================================================================================================================================================
-	@Override public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		return false;
 	}
 
-	@Override public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		return false;
 	}
 
-	@Override public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		// @formatter:off
 
@@ -291,7 +312,8 @@ public class Listener_TopSpeak extends ModuleListener {
 	//
 	// ==========================================================================================================================================================
 
-	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 
 		if (!message.hasSwitch("gropid")) {
 			return new String[] {
@@ -430,9 +452,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 						builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "句/" + userStatus.USER_CHARACTER + "字");
 
-						if (userStatus.USER_PICTURES.size() > 0) {
-							builder.append("/" + userStatus.USER_PICTURES.size() + "图");
-						}
+						if (userStatus.USER_PICTURES.size() > 0) { builder.append("/" + userStatus.USER_PICTURES.size() + "图"); }
 						if (userStatus.USER_SNAPSHOT > 0) { builder.append("/" + userStatus.USER_SNAPSHOT + "闪"); }
 						if (userStatus.USER_TAPVIDEO > 0) { builder.append("/" + userStatus.USER_TAPVIDEO + "片"); }
 						if (userStatus.USER_HONGBAOS > 0) { builder.append("/" + userStatus.USER_HONGBAOS + "包"); }
@@ -824,9 +844,11 @@ public class Listener_TopSpeak extends ModuleListener {
 		}
 	}
 
-	@SuppressWarnings("deprecation") class Worker implements Runnable {
+	@SuppressWarnings("deprecation")
+	class Worker implements Runnable {
 
-		@Override public void run() {
+		@Override
+		public void run() {
 
 			long time;
 			Date date;

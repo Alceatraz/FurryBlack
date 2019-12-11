@@ -1,13 +1,13 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
+import java.security.SecureRandom;
+
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.entry;
-
-import java.security.SecureRandom;
 
 public class Executor_roll extends ModuleExecutor {
 
@@ -25,7 +25,9 @@ public class Executor_roll extends ModuleExecutor {
 	private static String MODULE_DESCRIPTION = "生成随机数";
 	private static String MODULE_VERSION = "1.1";
 	private static String[] MODULE_USAGE = new String[] {
-			"/roll - 抽取真假", "/roll 数字 - 从零到给定数字任选一个数字", "/roll 数字 数字 - 从给定两个数字中间抽取一个"
+			"/roll - 抽取真假",
+			"/roll 数字 - 从零到给定数字任选一个数字",
+			"/roll 数字 数字 - 从给定两个数字中间抽取一个"
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -72,48 +74,58 @@ public class Executor_roll extends ModuleExecutor {
 
 	}
 
-	@Override public boolean init() throws Exception {
+	@Override
+	public boolean init() throws Exception {
 		ENABLE_USER = true;
 		ENABLE_DISZ = true;
 		ENABLE_GROP = true;
 		return true;
 	}
 
-	@Override public boolean boot() throws Exception {
+	@Override
+	public boolean boot() throws Exception {
 		return true;
 	}
 
-	@Override public boolean save() throws Exception {
+	@Override
+	public boolean save() throws Exception {
 		return true;
 	}
 
-	@Override public boolean shut() throws Exception {
+	@Override
+	public boolean shut() throws Exception {
 		return true;
 	}
 
-	@Override public String[] exec(Message message) throws Exception {
+	@Override
+	public String[] exec(Message message) throws Exception {
 		return new String[] {
 				"此模块无可用命令"
 		};
 	}
 
-	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		entry.userInfo(userid, roll(message));
 		return true;
 	}
 
-	@Override public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		entry.diszInfo(diszid, userid, roll(message));
 		return true;
 	}
 
-	@Override public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		entry.gropInfo(gropid, userid, roll(message));
 		return true;
 	}
@@ -182,7 +194,8 @@ public class Executor_roll extends ModuleExecutor {
 		return res;
 	}
 
-	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		if ((COUNT_USER + COUNT_DISZ + COUNT_GROP) == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		builder.append("模式1 - 真假: ");

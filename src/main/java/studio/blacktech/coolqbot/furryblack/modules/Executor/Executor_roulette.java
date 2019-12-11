@@ -1,17 +1,18 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+
 import org.meowy.cqp.jcq.entity.Member;
+
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.entry;
-
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 
 public class Executor_roulette extends ModuleExecutor {
 
@@ -76,7 +77,8 @@ public class Executor_roulette extends ModuleExecutor {
 
 	}
 
-	@Override public boolean init() throws Exception {
+	@Override
+	public boolean init() throws Exception {
 
 		ROULETTE_ROUNDS = new HashMap<>();
 		ROULETTE_FREQ = new ArrayList<>();
@@ -95,39 +97,48 @@ public class Executor_roulette extends ModuleExecutor {
 		return true;
 	}
 
-	@Override public boolean boot() throws Exception {
+	@Override
+	public boolean boot() throws Exception {
 		return true;
 	}
 
-	@Override public boolean save() throws Exception {
+	@Override
+	public boolean save() throws Exception {
 		return true;
 	}
 
-	@Override public boolean shut() throws Exception {
+	@Override
+	public boolean shut() throws Exception {
 		return true;
 	}
 
-	@Override public String[] exec(Message message) throws Exception {
+	@Override
+	public String[] exec(Message message) throws Exception {
 		return new String[] {
 				"此模块无可用命令"
 		};
 	}
 
-	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
-	@Override public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
-	@Override public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		// 只有命令 没下注
 		if (message.getSection() == 0) {
@@ -226,7 +237,8 @@ public class Executor_roulette extends ModuleExecutor {
 		}
 	}
 
-	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		if ((COUNT_USER + COUNT_DISZ + COUNT_GROP) == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		builder.append("成功回合 : ");

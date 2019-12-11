@@ -1,16 +1,16 @@
 package studio.blacktech.coolqbot.furryblack.common;
 
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.HashMap;
+
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.entry;
-
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashMap;
 
 public class Executor_DEMO extends ModuleExecutor {
 
@@ -53,7 +53,10 @@ public class Executor_DEMO extends ModuleExecutor {
 	// 命令用法，数组的每个元素应为一个参数组合用法及其说明
 	// 减号左右各一个空格
 	private static String[] MODULE_USAGE = new String[] {
-			"命令1 - 命令用法1", "命令2 - 命令用法2", "命令3 - 命令用法3", "命令4 - 命令用法4",
+			"命令1 - 命令用法1",
+			"命令2 - 命令用法2",
+			"命令3 - 命令用法3",
+			"命令4 - 命令用法4",
 	};
 
 	// 如果需要将数据存储为文件 则应写明存储的内容及其用途 有效时限
@@ -126,7 +129,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * <p>
 	 * 1：初始化配置及数据文件 2：生成所有内存结构 3：读取配置并应用 4：分析 ENABLE_MODE
 	 */
-	@Override public boolean init() throws Exception {
+	@Override
+	public boolean init() throws Exception {
 
 		// ==================================================================================
 		// 1：初始化配置及数据文件
@@ -193,7 +197,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	/**
 	 * 如果有 应在此处初始化工作线程并运行 如果ENABLE_MODE=false则不会注册 则不会执行boot的内容
 	 */
-	@Override public boolean boot() throws Exception {
+	@Override
+	public boolean boot() throws Exception {
 		thread = new Thread(new Worker());
 		thread.start();
 		return true;
@@ -202,7 +207,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	/**
 	 * 如果需要保存数据 则应该在此处保存数据 注意 这个函数不意味着结束
 	 */
-	@Override public boolean save() throws Exception {
+	@Override
+	public boolean save() throws Exception {
 		return true;
 	}
 
@@ -213,7 +219,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * <p>
 	 * 有可能会使用 /admin init X 强制执行生命周期函数 但是此命令不属于正常使用范畴 可以不考虑此情况
 	 */
-	@Override public boolean shut() throws Exception {
+	@Override
+	public boolean shut() throws Exception {
 
 		// 如果包含子线程 应在此时中断
 		thread.interrupt();
@@ -225,7 +232,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	/**
 	 * 用于管理和debug /admin exec --module=demo xxx xxxx xxx xxxx xxxxx xxxxxxx
 	 */
-	@Override public String[] exec(Message message) throws Exception {
+	@Override
+	public String[] exec(Message message) throws Exception {
 		return new String[] {
 				"此模块无可用命令"
 		};
@@ -234,7 +242,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	/**
 	 * 群成员增加时执行
 	 */
-	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		// QQ系统通知为
 		if (userid == 1000000) { entry.adminInfo("系统消息 - （" + gropid + "）"); }
 	}
@@ -242,27 +251,31 @@ public class Executor_DEMO extends ModuleExecutor {
 	/**
 	 * 群成员减少时执行
 	 */
-	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
 	/**
 	 * 用户发送私聊时执行
 	 */
-	@Override public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
 	/**
 	 * 讨论组消息时执行
 	 */
-	@Override public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
 	/***
 	 * 群聊消息时执行
 	 */
-	@Override public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		// 不要使用JcpApp.CQ发送消息
 		entry.gropInfo(gropid, userid, "MESSAGE");
 		return true;
@@ -277,7 +290,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	/***
 	 * 生成模块报告 数组每个元素就会产生一条消息 避免消息过长
 	 */
-	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return null;
 	}
 
@@ -287,7 +301,9 @@ public class Executor_DEMO extends ModuleExecutor {
 		 * 模块应当自己负责计划任务 框架不提供统一的计划任务 必须按照此格式写Worker
 		 */
 
-		@SuppressWarnings("deprecation") @Override public void run() {
+		@SuppressWarnings("deprecation")
+		@Override
+		public void run() {
 
 			// 成员变量
 

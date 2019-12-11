@@ -1,16 +1,16 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.entry;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class Executor_time extends ModuleExecutor {
 
@@ -75,7 +75,8 @@ public class Executor_time extends ModuleExecutor {
 
 	}
 
-	@Override public boolean init() throws Exception {
+	@Override
+	public boolean init() throws Exception {
 
 		ENABLE_USER = true;
 		ENABLE_DISZ = true;
@@ -84,48 +85,57 @@ public class Executor_time extends ModuleExecutor {
 		return true;
 	}
 
-	@Override public boolean boot() throws Exception {
+	@Override
+	public boolean boot() throws Exception {
 		return true;
 	}
 
-	@Override public boolean save() throws Exception {
+	@Override
+	public boolean save() throws Exception {
 		return true;
 	}
 
-	@Override public boolean shut() throws Exception {
+	@Override
+	public boolean shut() throws Exception {
 		return true;
 	}
 
-	@Override public String[] exec(Message message) throws Exception {
+	@Override
+	public String[] exec(Message message) throws Exception {
 		return new String[] {
 				"此模块无可用命令"
 		};
 	}
 
-	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		entry.userInfo(userid, getTime());
 		return true;
 	}
 
-	@Override public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		entry.diszInfo(diszid, getTime());
 		return true;
 	}
 
-	@Override public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		entry.gropInfo(gropid, getTime());
 		return true;
 	}
 
 	private String getTime() {
 		return
-				// @formatter:off
+		// @formatter:off
 				//
 				"世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", Executor_time.zone_00) + "\r\n" +
 				"美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + format(Executor_time.zone_W8) + "\r\n" +
@@ -134,10 +144,11 @@ public class Executor_time extends ModuleExecutor {
 				//        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
 				"亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
 				// @formatter:on
-				;
+		;
 	}
 
-	@SuppressWarnings("deprecation") private String format(TimeZone timezone) {
+	@SuppressWarnings("deprecation")
+	private String format(TimeZone timezone) {
 		// @formatter:off
 		boolean isEnableDST = false;
 		boolean isDisableDST = false;
@@ -179,7 +190,8 @@ public class Executor_time extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return new String[0];
 	}
 

@@ -1,14 +1,5 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
-import org.meowy.cqp.jcq.entity.Group;
-import org.meowy.cqp.jcq.entity.Member;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.entry;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +11,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
+
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_jrjp extends ModuleExecutor {
 
@@ -41,10 +42,12 @@ public class Executor_jrjp extends ModuleExecutor {
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"群号-QQ号对应表 - 每日UTC+8 00:00 清空", "群号-AV号对应表 - 每日UTC+8 00:00 清空"
+			"群号-QQ号对应表 - 每日UTC+8 00:00 清空",
+			"群号-AV号对应表 - 每日UTC+8 00:00 清空"
 	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"获取命令发送人", "被抽到成员的昵称和群昵称"
+			"获取命令发送人",
+			"被抽到成员的昵称和群昵称"
 	};
 
 	// ==========================================================================================================================================================
@@ -90,7 +93,8 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	}
 
-	@Override public boolean init() throws Exception {
+	@Override
+	public boolean init() throws Exception {
 
 		initAppFolder();
 		initConfFolder();
@@ -171,7 +175,8 @@ public class Executor_jrjp extends ModuleExecutor {
 		return true;
 	}
 
-	@Override public boolean boot() throws Exception {
+	@Override
+	public boolean boot() throws Exception {
 
 		logger.info("启动工作线程");
 
@@ -181,11 +186,13 @@ public class Executor_jrjp extends ModuleExecutor {
 		return true;
 	}
 
-	@Override public boolean save() throws Exception {
+	@Override
+	public boolean save() throws Exception {
 		return true;
 	}
 
-	@Override public boolean shut() throws Exception {
+	@Override
+	public boolean shut() throws Exception {
 
 		logger.info("终止工作线程");
 
@@ -197,27 +204,33 @@ public class Executor_jrjp extends ModuleExecutor {
 		return true;
 	}
 
-	@Override public String[] exec(Message message) throws Exception {
+	@Override
+	public String[] exec(Message message) throws Exception {
 		return new String[] {
 				"此模块无可用命令"
 		};
 	}
 
-	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
-	@Override public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		return true;
 	}
 
-	@Override public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		long victim = VICTIM.get(gropid);
 		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www" + ".bilibili.com/video/av" + AVCODE.get(gropid));
@@ -230,13 +243,16 @@ public class Executor_jrjp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 		return new String[0];
 	}
 
-	@SuppressWarnings("deprecation") class Worker implements Runnable {
+	@SuppressWarnings("deprecation")
+	class Worker implements Runnable {
 
-		@Override public void run() {
+		@Override
+		public void run() {
 
 			long time;
 			Date date;

@@ -1,11 +1,15 @@
 package studio.blacktech.coolqbot.furryblack;
 
+import java.io.File;
+import java.nio.file.Paths;
+
 import org.meowy.cqp.jcq.entity.CoolQ;
 import org.meowy.cqp.jcq.entity.ICQVer;
 import org.meowy.cqp.jcq.entity.IMsg;
 import org.meowy.cqp.jcq.entity.IRequest;
 import org.meowy.cqp.jcq.event.JcqApp;
 import org.meowy.cqp.jcq.event.JcqListener;
+
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
@@ -16,9 +20,6 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 import studio.blacktech.coolqbot.furryblack.modules.Systemd;
-
-import java.io.File;
-import java.nio.file.Paths;
 
 /**
  * 整个BOT的核心，JcqApp的入口类文件 JCQ将会调用约定的生命周期函数
@@ -43,7 +44,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 
-	@Override public String appInfo() {
+	@Override
+	public String appInfo() {
 		return ICQVer.CQAPIVER + "," + AppID;
 	}
 
@@ -100,8 +102,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	private static String appDirectory;
 
 	private File FOLDER_ROOT;
-	//	private File FOLDER_CONF;
-	//	private File FOLDER_DATA;
+	// private File FOLDER_CONF;
+	// private File FOLDER_DATA;
 	private File FOLDER_LOGS;
 	private File FILE_LOGGER;
 
@@ -133,14 +135,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 生命周期函数：CoolQ启动
 	 */
-	@Override public int startup() {
+	@Override
+	public int startup() {
 		return 0;
 	}
 
 	/**
 	 * 生命周期函数：JcqApp启动
 	 */
-	@Override public int enable() {
+	@Override
+	public int enable() {
 
 		try {
 
@@ -154,41 +158,32 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			// 实例化 data/ logs/ 对象
 
 			FOLDER_ROOT = Paths.get(appDirectory, "Core_Entry").toFile();
-			//			this.FOLDER_CONF = Paths.get(appDirectory, "Core_Entry", "conf").toFile();
-			//			this.FOLDER_DATA = Paths.get(appDirectory, "Core_Entry", "data").toFile();
+			// this.FOLDER_CONF = Paths.get(appDirectory, "Core_Entry", "conf").toFile();
+			// this.FOLDER_DATA = Paths.get(appDirectory, "Core_Entry", "data").toFile();
 			FOLDER_LOGS = Paths.get(appDirectory, "Core_Entry", "logs").toFile();
 			FILE_LOGGER = Paths.get(appDirectory, "Core_Entry", "logs", LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
-
-			FOLDER_ROOT = Paths.get(getAppDirectory(), "Core_Entry").toFile();
-			//			this.FOLDER_CONF = Paths.get(getAppDirectory(), "Core_Entry", "conf").toFile();
-			//			this.FOLDER_DATA = Paths.get(getAppDirectory(), "Core_Entry", "data").toFile();
-			FOLDER_LOGS = Paths.get(getAppDirectory(), "Core_Entry", "logs").toFile();
 
 			// ==========================================================================================================================
 			// 初始化文件夹
 
-			if (!FOLDER_ROOT.exists()) {
-				FOLDER_ROOT.mkdirs();
-			}
-			//			if (!this.FOLDER_CONF.exists()) this.FOLDER_CONF.mkdirs();
-			//			if (!this.FOLDER_DATA.exists()) this.FOLDER_DATA.mkdirs();
-			if (!FOLDER_LOGS.exists()) {
-				FOLDER_LOGS.mkdirs();
-			}
+			if (!FOLDER_ROOT.exists()) { FOLDER_ROOT.mkdirs(); }
+			// if (!this.FOLDER_CONF.exists()) this.FOLDER_CONF.mkdirs();
+			// if (!this.FOLDER_DATA.exists()) this.FOLDER_DATA.mkdirs();
+			if (!FOLDER_LOGS.exists()) { FOLDER_LOGS.mkdirs(); }
 
-			if (!FOLDER_ROOT.isDirectory()) {
-				throw new NotAFolderException("文件夹被文件占位：" + FOLDER_ROOT.getAbsolutePath());
-			}
-			//			if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this
-			//			.FOLDER_CONF.getAbsolutePath()); }
-			//			if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this
-			//			.FOLDER_DATA.getAbsolutePath()); }
-			if (!FOLDER_LOGS.isDirectory()) {
-				throw new NotAFolderException("文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath());
-			}
+			if (!FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_ROOT.getAbsolutePath()); }
+			// if (!this.FOLDER_CONF.isDirectory()) { throw new
+			// NotAFolderException("文件夹被文件占位：" + this
+			// .FOLDER_CONF.getAbsolutePath()); }
+			// if (!this.FOLDER_DATA.isDirectory()) { throw new
+			// NotAFolderException("文件夹被文件占位：" + this
+			// .FOLDER_DATA.getAbsolutePath()); }
+			if (!FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath()); }
 
 			// ==========================================================================================================================
 			// 初始化 日志 系统
+
+			LoggerX.init(FILE_LOGGER);
 
 			// 初始化日志系统
 			// 旧的LoggerX拥有一个先行系统，能够将文件创建前的日志写入缓存，等待写入，这里为了避免每次都判断，提升性能，去掉了这个功能
@@ -239,14 +234,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 生命周期函数：JcqApp卸载
 	 */
-	@Override public int disable() {
+	@Override
+	public int disable() {
 		return 0;
 	}
 
 	/**
 	 * 生命周期函数：CoolQ关闭
 	 */
-	@Override public int exit() {
+	@Override
+	public int exit() {
 
 		logger.info("系统关闭");
 
@@ -273,7 +270,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 私聊消息处理方法 不应该在此处修改任何内容
 	 */
-	@Override public int privateMsg(int typeid, int messageid, long userid, String message, int messagefont) {
+	@Override
+	public int privateMsg(int typeid, int messageid, long userid, String message, int messagefont) {
 
 		try {
 
@@ -302,7 +300,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 组聊消息处理方法 不应该在此处修改任何内容
 	 */
-	@Override public int discussMsg(int typeid, int messageid, long diszid, long userid, String message, int messagefont) {
+	@Override
+	public int discussMsg(int typeid, int messageid, long diszid, long userid, String message, int messagefont) {
 
 		try {
 
@@ -332,7 +331,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 群聊消息处理方法 不应该在此处修改任何内容
 	 */
-	@Override public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
+	@Override
+	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
 
 		try {
 
@@ -368,7 +368,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 成员加群处理方法 不应该在此处修改任何内容
 	 */
-	@Override public int groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public int groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		long time = System.currentTimeMillis();
 
@@ -407,7 +408,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 成员退群处理方法 不应该在此处修改任何内容
 	 */
-	@Override public int groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public int groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		long time = System.currentTimeMillis();
 
@@ -450,7 +452,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 好友添加成功的处理函数 不应该在此处修改任何内容
 	 */
-	@Override public int friendAdd(int typeid, int sendtime, long userid) {
+	@Override
+	public int friendAdd(int typeid, int sendtime, long userid) {
 		new Thread(() -> sendFriendAddMessage(userid)).start();
 		return 0;
 	}
@@ -471,7 +474,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 好友添加请求 不应该在此处修改任何内容
 	 */
-	@Override public int requestAddFriend(int typeid, int sendtime, long userid, String message, String flag) {
+	@Override
+	public int requestAddFriend(int typeid, int sendtime, long userid, String message, String flag) {
 
 		long time = System.currentTimeMillis();
 
@@ -494,7 +498,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 群组添加请求 不应该在此处修改任何内容
 	 */
-	@Override public int requestAddGroup(int typeid, int sendtime, long gropid, long userid, String message, String flag) {
+	@Override
+	public int requestAddGroup(int typeid, int sendtime, long gropid, long userid, String message, String flag) {
 
 		long time = System.currentTimeMillis();
 
@@ -511,7 +516,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		SYSTEMD.adminInfo(builder.toString());
 
-		if (typeid == 2) CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null);
+		if (typeid == 2) { CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null); }
 
 		return 0;
 	}
@@ -519,7 +524,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 禁言事件 不应该在此处修改任何内容
 	 */
-	@Override public int groupBan(int typeid, int sendtime, long gropid, long operid, long userid, long duration) {
+	@Override
+	public int groupBan(int typeid, int sendtime, long gropid, long operid, long userid, long duration) {
 
 		String type = (userid == 0 ? "全体" : "") + (typeid == 1 ? "解禁" : "禁言");
 
@@ -530,9 +536,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		builder.append("群聊ID：" + gropid + "\r\n");
 		builder.append("管理ID：" + operid + "(" + SYSTEMD.getNickname(operid) + ")\r\n");
 
-		if (userid != 0) {
-			builder.append("用户ID：" + SYSTEMD.getNickname(userid) + "(" + userid + ")\r\n");
-		}
+		if (userid != 0) { builder.append("用户ID：" + SYSTEMD.getNickname(userid) + "(" + userid + ")\r\n"); }
 		if (typeid != 1) {
 
 			long ss = duration;
@@ -558,14 +562,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	/**
 	 * 文件上传事件 不应该在此处修改任何内容
 	 */
-	@Override public int groupUpload(int typeid, int sendtime, long gropid, long userid, String file) {
+	@Override
+	public int groupUpload(int typeid, int sendtime, long gropid, long userid, String file) {
 		return 0;
 	}
 
 	/**
 	 * 管理员变动事件 不应该在此处修改任何内容
 	 */
-	@Override public int groupAdmin(int typeid, int sendtime, long gropid, long userid) {
+	@Override
+	public int groupAdmin(int typeid, int sendtime, long gropid, long userid) {
 
 		String type = typeid == 1 ? "解除" : "任命";
 

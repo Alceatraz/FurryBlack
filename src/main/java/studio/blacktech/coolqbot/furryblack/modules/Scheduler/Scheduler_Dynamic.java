@@ -1,9 +1,5 @@
 package studio.blacktech.coolqbot.furryblack.modules.Scheduler;
 
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
-import studio.blacktech.coolqbot.furryblack.entry;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -11,6 +7,10 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.regex.Pattern;
+
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 
 public class Scheduler_Dynamic extends ModuleScheduler {
 
@@ -82,7 +82,8 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	}
 
-	@Override public boolean init() throws Exception {
+	@Override
+	public boolean init() throws Exception {
 
 		initAppFolder();
 		initPropertiesConfigurtion();
@@ -121,7 +122,8 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		return true;
 	}
 
-	@Override public boolean boot() throws Exception {
+	@Override
+	public boolean boot() throws Exception {
 
 		if (!ENABLE) { return false; }
 
@@ -133,11 +135,13 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		return true;
 	}
 
-	@Override public boolean save() throws Exception {
+	@Override
+	public boolean save() throws Exception {
 		return true;
 	}
 
-	@Override public boolean shut() throws Exception {
+	@Override
+	public boolean shut() throws Exception {
 
 		if (!ENABLE) { return false; }
 
@@ -151,7 +155,8 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		return true;
 	}
 
-	@Override public String[] exec(Message message) throws Exception {
+	@Override
+	public String[] exec(Message message) throws Exception {
 
 		if (message.getSection() < 2) {
 			return new String[] {
@@ -187,10 +192,12 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		}
 	}
 
-	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 	}
 
-	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 	}
 
 	// ==========================================================================================================================================================
@@ -199,7 +206,8 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	//
 	// ==========================================================================================================================================================
 
-	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("获取地址：");
@@ -225,9 +233,11 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	}
 
-	@SuppressWarnings("deprecation") class Worker implements Runnable {
+	@SuppressWarnings("deprecation")
+	class Worker implements Runnable {
 
-		@Override public void run() {
+		@Override
+		public void run() {
 			long time;
 			Date date;
 			String address;

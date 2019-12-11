@@ -1,17 +1,23 @@
 package studio.blacktech.coolqbot.furryblack.modules.Trigger;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.TreeMap;
+
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
-import studio.blacktech.coolqbot.furryblack.entry;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.TreeMap;
 
 public class Trigger_UserDeny extends ModuleTrigger {
 
@@ -85,7 +91,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	}
 
-	@Override public boolean init() throws Exception {
+	@Override
+	public boolean init() throws Exception {
 
 		initAppFolder();
 		initConfFolder();
@@ -219,31 +226,38 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	}
 
-	@Override public boolean boot() throws Exception {
+	@Override
+	public boolean boot() throws Exception {
 		return true;
 	}
 
-	@Override public boolean save() throws Exception {
+	@Override
+	public boolean save() throws Exception {
 		return true;
 	}
 
-	@Override public boolean shut() throws Exception {
+	@Override
+	public boolean shut() throws Exception {
 		return true;
 	}
 
-	@Override public String[] exec(Message message) throws Exception {
+	@Override
+	public String[] exec(Message message) throws Exception {
 		return new String[] {
 				"此模块无可用命令"
 		};
 	}
 
-	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		if (USER_IGNORE.contains(userid)) {
 
@@ -264,7 +278,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		}
 	}
 
-	@Override public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		if (USER_IGNORE.contains(userid)) {
 
@@ -290,7 +305,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		return true;
 	}
 
-	@Override public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		if (USER_IGNORE.contains(userid)) {
 
@@ -316,7 +332,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		return true;
 	}
 
-	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 
 		COUNT_USER = 0;
 		COUNT_DISZ = 0;

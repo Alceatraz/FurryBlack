@@ -1,7 +1,22 @@
 package studio.blacktech.coolqbot.furryblack.modules;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.TreeMap;
+
 import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
+
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.BufferX;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.exception.CantReinitializationException;
@@ -10,22 +25,28 @@ import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.*;
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.*;
+import studio.blacktech.coolqbot.furryblack.common.module.Module;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_acon;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_admin;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_chou;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_dice;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_echo;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_food;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_jrjp;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_jrrp;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_kong;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_roll;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_roulette;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_time;
+import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_zhan;
 import studio.blacktech.coolqbot.furryblack.modules.Listener.Listener_TopSpeak;
 import studio.blacktech.coolqbot.furryblack.modules.Scheduler.Scheduler_Dynamic;
 import studio.blacktech.coolqbot.furryblack.modules.Trigger.Trigger_UserDeny;
 import studio.blacktech.coolqbot.furryblack.modules.Trigger.Trigger_WordDeny;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.TreeMap;
 
 /**
  * FurryBlack的核心路由
@@ -189,7 +210,8 @@ public class Systemd extends Module {
 	 *
 	 * @return
 	 */
-	@Override public boolean init() throws Exception {
+	@Override
+	public boolean init() throws Exception {
 
 		if (LOCK_INIT) { throw new CantReinitializationException(); }
 		LOCK_INIT = true;
@@ -274,36 +296,12 @@ public class Systemd extends Module {
 		FILE_NICKNAME_MAP = Paths.get(FOLDER_CONF.getAbsolutePath(), "nickmap_grop.txt").toFile();
 		FILE_MEMBERCHANGE = Paths.get(FOLDER_LOGS.getAbsolutePath(), "member_change.txt").toFile();
 
-		if (!FILE_MESSAGE_HELP.exists()) {
-			if (!FILE_MESSAGE_HELP.createNewFile()) {
-				throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName());
-			}
-		}
-		if (!FILE_MESSAGE_INFO.exists()) {
-			if (!FILE_MESSAGE_INFO.createNewFile()) {
-				throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName());
-			}
-		}
-		if (!FILE_MESSAGE_EULA.exists()) {
-			if (!FILE_MESSAGE_EULA.createNewFile()) {
-				throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName());
-			}
-		}
-		if (!FILE_SILENCE_GROP.exists()) {
-			if (!FILE_SILENCE_GROP.createNewFile()) {
-				throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName());
-			}
-		}
-		if (!FILE_NICKNAME_MAP.exists()) {
-			if (!FILE_NICKNAME_MAP.createNewFile()) {
-				throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName());
-			}
-		}
-		if (!FILE_MEMBERCHANGE.exists()) {
-			if (!FILE_MEMBERCHANGE.createNewFile()) {
-				throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName());
-			}
-		}
+		if (!FILE_MESSAGE_HELP.exists()) { if (!FILE_MESSAGE_HELP.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+		if (!FILE_MESSAGE_INFO.exists()) { if (!FILE_MESSAGE_INFO.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+		if (!FILE_MESSAGE_EULA.exists()) { if (!FILE_MESSAGE_EULA.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+		if (!FILE_SILENCE_GROP.exists()) { if (!FILE_SILENCE_GROP.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+		if (!FILE_NICKNAME_MAP.exists()) { if (!FILE_NICKNAME_MAP.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+		if (!FILE_MEMBERCHANGE.exists()) { if (!FILE_MEMBERCHANGE.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
 
 		long gropid;
 		long userid;
@@ -738,7 +736,8 @@ public class Systemd extends Module {
 	/**
 	 * 你永远不应该执行这个方法
 	 */
-	@Override public boolean boot() throws Exception {
+	@Override
+	public boolean boot() throws Exception {
 
 		// =======================================================================================================================
 		// 启动定时器
@@ -781,7 +780,8 @@ public class Systemd extends Module {
 	/**
 	 * 你永远不应该执行这个方法
 	 */
-	@Override public boolean save() throws Exception {
+	@Override
+	public boolean save() throws Exception {
 
 		// =======================================================================================================================
 		// 保存定时器
@@ -821,7 +821,8 @@ public class Systemd extends Module {
 	/**
 	 * 你永远不应该执行这个方法
 	 */
-	@Override public boolean shut() throws Exception {
+	@Override
+	public boolean shut() throws Exception {
 
 		// =======================================================================================================================
 		// 关闭定时器
@@ -861,7 +862,8 @@ public class Systemd extends Module {
 	/**
 	 * 你永远不应该执行这个方法
 	 */
-	@Override public String[] exec(Message message) throws Exception {
+	@Override
+	public String[] exec(Message message) throws Exception {
 
 		String[] report = null;
 
@@ -969,9 +971,7 @@ public class Systemd extends Module {
 						gropid = Long.parseLong(temp[0]);
 						userid = Long.parseLong(temp[1]);
 
-						if (!NICKNAME_MAP.containsKey(gropid)) {
-							NICKNAME_MAP.put(gropid, new TreeMap<Long, String>());
-						}
+						if (!NICKNAME_MAP.containsKey(gropid)) { NICKNAME_MAP.put(gropid, new TreeMap<Long, String>()); }
 
 						NICKNAME_MAP.get(gropid).put(userid, temp[2]);
 
@@ -1042,7 +1042,8 @@ public class Systemd extends Module {
 	/**
 	 * 你永远不应该执行这个方法
 	 */
-	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 
 		FileWriter writer = new FileWriter(FILE_MEMBERCHANGE, true);
 
@@ -1077,7 +1078,8 @@ public class Systemd extends Module {
 	/**
 	 * 你永远不应该执行这个方法
 	 */
-	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 
 		for (String name : TRIGGER_INSTANCE.keySet()) {
 			TRIGGER_INSTANCE.get(name).groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
@@ -1341,7 +1343,8 @@ public class Systemd extends Module {
 	/**
 	 * 生成报告的方法 你永远不应该执行这个方法
 	 */
-	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 
 		StringBuilder builder = new StringBuilder();
 
@@ -1545,7 +1548,10 @@ public class Systemd extends Module {
 		}
 
 		return new String[] {
-				builder01.substring(0, builder01.length() - 2), builder02.substring(0, builder02.length() - 2), builder03.substring(0, builder03.length() - 2), builder04.substring(0, builder04.length() - 2),
+				builder01.substring(0, builder01.length() - 2),
+				builder02.substring(0, builder02.length() - 2),
+				builder03.substring(0, builder03.length() - 2),
+				builder04.substring(0, builder04.length() - 2),
 		};
 	}
 

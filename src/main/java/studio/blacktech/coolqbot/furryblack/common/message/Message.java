@@ -1,7 +1,5 @@
 package studio.blacktech.coolqbot.furryblack.common.message;
 
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +7,8 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 
 public class Message implements Serializable {
 
@@ -175,7 +175,8 @@ public class Message implements Serializable {
 
 	// ===================================================================================
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
 

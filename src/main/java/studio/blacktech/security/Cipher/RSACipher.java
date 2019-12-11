@@ -1,14 +1,17 @@
 package studio.blacktech.security.Cipher;
 
-import sun.misc.BASE64Decoder;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.SecureRandom;
+import java.security.Security;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -16,6 +19,13 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 /**
  * 使用标准JavaCipher包装的RSA工具类，
@@ -38,14 +48,14 @@ import java.util.Base64;
  */
 public class RSACipher {
 
-	private Cipher encrypter;
-	private Cipher decrypter;
-	private Base64.Encoder encoder;
-	private Base64.Decoder decoder;
 	private RSAPublicKey publicKey;
 	private RSAPrivateKey privateKey;
+	private Cipher encrypter;
+	private Cipher decrypter;
 	private MessageDigest staticDigester;
 	private MessageDigest oneoffDigester;
+	private static Encoder encoder = Base64.getEncoder();
+	private static Decoder decoder = Base64.getDecoder();
 
 	// ==========================================================================================================================================================
 	//
@@ -142,9 +152,6 @@ public class RSACipher {
 			encrypter.init(Cipher.ENCRYPT_MODE, this.publicKey);
 			decrypter.init(Cipher.DECRYPT_MODE, this.privateKey);
 
-			encoder = Base64.getEncoder();
-			decoder = Base64.getDecoder();
-
 			staticDigester = MessageDigest.getInstance("SHA-384");
 			oneoffDigester = MessageDigest.getInstance("SHA-384");
 
@@ -159,9 +166,9 @@ public class RSACipher {
 	private static RSAPublicKey getRSAPublicKeyFromString(String publicKey) throws InvalidPublicKeyException {
 		try {
 			KeyFactory factory = KeyFactory.getInstance("RSA");
-			byte[] publicKeyString = new BASE64Decoder().decodeBuffer(publicKey);
+			byte[] publicKeyString = decoder.decode(publicKey);
 			return (RSAPublicKey) factory.generatePublic(new X509EncodedKeySpec(publicKeyString));
-		} catch (IOException | InvalidKeySpecException exception) {
+		} catch (InvalidKeySpecException exception) {
 			throw new InvalidPublicKeyException("Invalidate publickey, make sure is formated as X509 and encode with " + "BASE64.");
 		} catch (NoSuchAlgorithmException exception) {
 			return null;
@@ -173,9 +180,9 @@ public class RSACipher {
 	private static RSAPrivateKey getRSAPrivateKeyFromString(String privateKey) throws InvalidPrivateKeyException {
 		try {
 			KeyFactory factory = KeyFactory.getInstance("RSA");
-			byte[] privateKeyString = new BASE64Decoder().decodeBuffer(privateKey);
+			byte[] privateKeyString = decoder.decode(privateKey);
 			return (RSAPrivateKey) factory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyString));
-		} catch (IOException | InvalidKeySpecException exception) {
+		} catch (InvalidKeySpecException exception) {
 			throw new InvalidPrivateKeyException("Invalidate publickey, make sure is formated as X509 and encode with" + " BASE64.");
 		} catch (NoSuchAlgorithmException exception) {
 			return null;
@@ -320,9 +327,7 @@ public class RSACipher {
 
 			System.arraycopy(rawMessage, 0, sizePart, 0, 8);
 			int claminMessagelength = Integer.valueOf(new String(sizePart).trim(), 16);
-			if (claminMessagelength != actualMessageLength) {
-				throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength);
-			}
+			if (claminMessagelength != actualMessageLength) { throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength); }
 
 			System.arraycopy(rawMessage, 8, hashPart, 0, 8);
 
@@ -331,7 +336,7 @@ public class RSACipher {
 			oneoffDigester.update(mesgPart);
 			byte[] digest = oneoffDigester.digest();
 
-			if (!RSACipher.isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
+			if (!isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
 
 			return new String(mesgPart, StandardCharsets.UTF_8);
 
@@ -390,9 +395,7 @@ public class RSACipher {
 
 			System.arraycopy(rawMessage, 0, sizePart, 0, 8);
 			int claminMessagelength = Integer.valueOf(new String(sizePart).trim(), 16);
-			if (claminMessagelength != actualMessageLength) {
-				throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength);
-			}
+			if (claminMessagelength != actualMessageLength) { throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength); }
 
 			System.arraycopy(rawMessage, 8, hashPart, 0, 8);
 
@@ -402,7 +405,7 @@ public class RSACipher {
 			staticDigester.update(mesgPart);
 			byte[] digest = ((MessageDigest) staticDigester.clone()).digest();
 
-			if (!RSACipher.isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
+			if (!isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
 
 			return new String(mesgPart, StandardCharsets.UTF_8);
 
@@ -418,9 +421,9 @@ public class RSACipher {
 	private static boolean isSame(byte[] A, byte[] B) {
 		// 只发送前8位，所以只比较前8位，java没有数组截取 "python[0:7]" 所以只能写的这么蠢
 		// @formatter:off
-		return	(A[0] == B[0]) && (A[1] == B[1]) && (A[2] == B[2]) && (A[3] == B[3]) &&
-				(A[4] == B[4]) && (A[5] == B[5]) && (A[6] == B[6]) && (A[7] == B[7]) ;
-		// @formatter:on
+			return	(A[0] == B[0]) && (A[1] == B[1]) && (A[2] == B[2]) && (A[3] == B[3]) &&
+					(A[4] == B[4]) && (A[5] == B[5]) && (A[6] == B[6]) && (A[7] == B[7]) ;
+			// @formatter:on
 	}
 
 	// ==========================================================================================================================================================

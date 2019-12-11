@@ -1,16 +1,23 @@
 package studio.blacktech.security.Cipher;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.interfaces.DHPublicKey;
 import javax.crypto.spec.DHParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
 
 /***
  * 使用标准JavaCipher包装的Diffie Hellman密钥交换算法，生成标准SecretKeySpec密钥。 *
@@ -20,21 +27,18 @@ import java.security.spec.X509EncodedKeySpec;
  */
 public class DiffieHellmanKeyGenerator {
 
-	private BASE64Encoder encoder;
-	private BASE64Decoder decoder;
-
 	private KeyFactory factory;
 	private KeyAgreement agreement;
 
 	private KeyPair keyPair;
 
+	private static Base64.Encoder encoder;
+	private static Base64.Decoder decoder;
+
 	/**
 	 * 双方都使用此构造函数
 	 */
 	public DiffieHellmanKeyGenerator() {
-
-		encoder = new BASE64Encoder();
-		decoder = new BASE64Decoder();
 
 		try {
 
@@ -65,7 +69,8 @@ public class DiffieHellmanKeyGenerator {
 			keyPair = generator.generateKeyPair();
 			agreement.init(keyPair.getPrivate());
 
-			return encoder.encode(keyPair.getPublic().getEncoded());
+			byte[] base64 = encoder.encode(keyPair.getPublic().getEncoded());
+			return new String(base64, StandardCharsets.UTF_8);
 
 		} catch (NoSuchAlgorithmException | InvalidKeyException exception) {
 			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
@@ -87,7 +92,7 @@ public class DiffieHellmanKeyGenerator {
 
 		try {
 
-			byte[] publicKeyByte = decoder.decodeBuffer(publicKeyString);
+			byte[] publicKeyByte = decoder.decode(publicKeyString);
 
 			X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(publicKeyByte);
 			DHPublicKey publicKey = (DHPublicKey) factory.generatePublic(x509KeySpec);
@@ -99,9 +104,10 @@ public class DiffieHellmanKeyGenerator {
 			agreement.init(keyPair.getPrivate());
 			agreement.doPhase(publicKey, true);
 
-			return encoder.encode(keyPair.getPublic().getEncoded());
+			byte[] base64 = encoder.encode(keyPair.getPublic().getEncoded());
+			return new String(base64, StandardCharsets.UTF_8);
 
-		} catch (IOException | InvalidKeyException exception) {
+		} catch (InvalidKeyException exception) {
 
 			throw new InvalidKeyException("传入了不合法的密钥");
 
@@ -139,7 +145,7 @@ public class DiffieHellmanKeyGenerator {
 
 		try {
 
-			byte[] publicKeyByte = decoder.decodeBuffer(publicKeyString);
+			byte[] publicKeyByte = decoder.decode(publicKeyString);
 			X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(publicKeyByte);
 			DHPublicKey publicKey = (DHPublicKey) factory.generatePublic(x509KeySpec);
 
@@ -148,7 +154,7 @@ public class DiffieHellmanKeyGenerator {
 
 			return new SecretKeySpec(secret, 0, 16, "AES");
 
-		} catch (IOException | InvalidKeyException exception) {
+		} catch (InvalidKeyException exception) {
 
 			throw new InvalidKeyException("传入了不合法的密钥");
 

@@ -21,7 +21,8 @@ public class MessageDisz extends Message {
 		return userid;
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("============================================\n");

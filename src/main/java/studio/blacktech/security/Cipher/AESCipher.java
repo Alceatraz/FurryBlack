@@ -1,13 +1,28 @@
 package studio.blacktech.security.Cipher;
 
-import javax.crypto.*;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.SecureRandom;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /***
  * 使用标准JavaCipher包装的AES-128 CBC分组模式工具类，
@@ -35,10 +50,10 @@ public class AESCipher {
 	private IvParameterSpec iv;
 	private Cipher encrypter;
 	private Cipher decrypter;
-	private Base64.Encoder encoder;
-	private Base64.Decoder decoder;
 	private MessageDigest staticDigester;
 	private MessageDigest oneoffDigester;
+	private static Encoder encoder = Base64.getEncoder();
+	private static Decoder decoder = Base64.getDecoder();
 
 	// ==========================================================================================================================================================
 	//
@@ -51,7 +66,8 @@ public class AESCipher {
 	 *
 	 * @param secretKey 随机种子，作为密钥生成器的随机数生成器的种子
 	 */
-	@Deprecated public AESCipher(String secretKey) {
+	@Deprecated
+	public AESCipher(String secretKey) {
 		this(AESCipher.generateSecretKeySpec(secretKey), AESCipher.generateIvParameterSpec("0123456789ABCDEF"));
 		System.err.println("Warning! Using fix IV is RISK! Only test purpose!");
 	}
@@ -61,7 +77,8 @@ public class AESCipher {
 	 *
 	 * @param secretKeySpec 密钥
 	 */
-	@Deprecated public AESCipher(SecretKeySpec secretKeySpec) {
+	@Deprecated
+	public AESCipher(SecretKeySpec secretKeySpec) {
 		this(secretKeySpec, AESCipher.generateIvParameterSpec("0123456789ABCDEF"));
 		System.err.println("Warning! Using fix IV is RISK! Only test purpose!");
 	}
@@ -114,9 +131,6 @@ public class AESCipher {
 
 			encrypter.init(Cipher.ENCRYPT_MODE, sk, iv);
 			decrypter.init(Cipher.DECRYPT_MODE, sk, iv);
-
-			encoder = Base64.getEncoder();
-			decoder = Base64.getDecoder();
 
 			staticDigester = MessageDigest.getInstance("SHA-384");
 			oneoffDigester = MessageDigest.getInstance("SHA-384");
@@ -283,9 +297,7 @@ public class AESCipher {
 
 			System.arraycopy(rawMessage, 0, sizePart, 0, 8);
 			int claminMessagelength = Integer.valueOf(new String(sizePart).trim(), 16);
-			if (claminMessagelength != actualMessageLength) {
-				throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength);
-			}
+			if (claminMessagelength != actualMessageLength) { throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength); }
 
 			System.arraycopy(rawMessage, 8, hashPart, 0, 8);
 
@@ -353,9 +365,7 @@ public class AESCipher {
 
 			System.arraycopy(rawMessage, 0, sizePart, 0, 8);
 			int claminMessagelength = Integer.valueOf(new String(sizePart).trim(), 16);
-			if (claminMessagelength != actualMessageLength) {
-				throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength);
-			}
+			if (claminMessagelength != actualMessageLength) { throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength); }
 
 			System.arraycopy(rawMessage, 8, hashPart, 0, 8);
 

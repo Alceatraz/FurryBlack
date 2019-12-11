@@ -1,14 +1,10 @@
 package studio.blacktech.coolqbot.furryblack.modules.Trigger;
 
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
-import studio.blacktech.coolqbot.furryblack.entry;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,6 +12,14 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 
 public class Trigger_WordDeny extends ModuleTrigger {
 
@@ -83,7 +87,8 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	}
 
-	@Override public boolean init() throws Exception {
+	@Override
+	public boolean init() throws Exception {
 
 		initAppFolder();
 		initConfFolder();
@@ -145,31 +150,38 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	}
 
-	@Override public boolean boot() throws Exception {
+	@Override
+	public boolean boot() throws Exception {
 		return true;
 	}
 
-	@Override public boolean save() throws Exception {
+	@Override
+	public boolean save() throws Exception {
 		return true;
 	}
 
-	@Override public boolean shut() throws Exception {
+	@Override
+	public boolean shut() throws Exception {
 		return true;
 	}
 
-	@Override public String[] exec(Message message) throws Exception {
+	@Override
+	public String[] exec(Message message) throws Exception {
 		return new String[] {
 				"此模块无可用命令"
 		};
 	}
 
-	@Override public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+	@Override
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 	}
 
-	@Override public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 		for (String temp : BLACKLIST) {
 			if (Pattern.matches(temp, message.getRawMessage())) {
 				entry.adminInfo("私聊过滤：" + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
@@ -185,7 +197,8 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		return false;
 	}
 
-	@Override public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 		for (String temp : BLACKLIST) {
 			if (Pattern.matches(temp, message.getRawMessage())) {
 				entry.adminInfo("组聊过滤：" + diszid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
@@ -201,7 +214,8 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		return false;
 	}
 
-	@Override public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	@Override
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		for (String temp : BLACKLIST) {
 			if (Pattern.matches(temp, message.getRawMessage())) {
 				entry.adminInfo("群聊过滤：" + gropid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
@@ -217,7 +231,8 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		return false;
 	}
 
-	@Override public String[] generateReport(int mode, Message message, Object... parameters) {
+	@Override
+	public String[] generateReport(int mode, Message message, Object... parameters) {
 
 		BLOCK_USER = 0;
 		BLOCK_DISZ = 0;
