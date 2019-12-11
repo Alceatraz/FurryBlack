@@ -1,21 +1,26 @@
-import org.junit.jupiter.api.Test;
-import studio.blacktech.security.Cipher.AESCipher;
-import studio.blacktech.security.Cipher.DiffieHellmanKeyGenerator;
-import studio.blacktech.security.Cipher.RSACipher;
-
-import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Arrays;
+package studio.blacktech.coolqbot.furryblack;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
+
+import javax.crypto.spec.SecretKeySpec;
+
+import org.junit.jupiter.api.Test;
+
+import studio.blacktech.security.Cipher.AESCipher;
+import studio.blacktech.security.Cipher.DiffieHellmanKeyGenerator;
+import studio.blacktech.security.Cipher.RSACipher;
+
 // 这里范例
 
-@SuppressWarnings("all") public class CipherTest {
+public class CipherTest {
 
-	@Test void doAESCipherTest() throws GeneralSecurityException, IOException {
+	@Test
+	void doAESCipherTest() throws GeneralSecurityException, IOException {
 
 		String tmp;
 		String res;
@@ -69,7 +74,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 	}
 
-	@Test void doRSACipherTest() throws GeneralSecurityException, IOException {
+	@Test
+	void doRSACipherTest() throws GeneralSecurityException, IOException {
 
 		String tmp;
 		String res;
@@ -149,7 +155,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 		assertEquals(raw, res);
 	}
 
-	@Test void doDiffieHellmanTest() throws IOException, GeneralSecurityException {
+	@Test
+	void doDiffieHellmanTest() throws IOException, GeneralSecurityException {
 
 		// 预约的内容作为了初始向量
 		String key = "THIS IS THE MESSAGE APPOINTMENT BY ALICE AND BOB";
@@ -186,25 +193,4 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 		assertEquals(raw, res);
 
 	}
-
-	/*
-	 * @Test void doTimeBaseVerificationTest() throws Exception {
-	 *
-	 * // 时基认证在某些时候会产生随机性BUG，将会重写 请勿使用
-	 *
-	 * String key = "Hello, World!";
-	 *
-	 * // 双方实例化对象 TimeBaseVerification dongle01 = new TimeBaseVerification(key);
-	 * TimeBaseVerification dongle02 = new TimeBaseVerification(key);
-	 *
-	 * // A生成挑战 发送给B String challenge = dongle01.generateChallenge();
-	 *
-	 * // B根据挑战生成应答 发送给A String response = dongle02.generateResponse(challenge);
-	 *
-	 * // A对应答进行检验 boolean result = dongle01.verifyResponse(response);
-	 *
-	 * // assertTrue(result);
-	 *
-	 * }
-	 */
 }

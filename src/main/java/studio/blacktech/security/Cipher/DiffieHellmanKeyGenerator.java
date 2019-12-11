@@ -13,6 +13,8 @@ import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.interfaces.DHPublicKey;
@@ -29,11 +31,9 @@ public class DiffieHellmanKeyGenerator {
 
 	private KeyFactory factory;
 	private KeyAgreement agreement;
-
 	private KeyPair keyPair;
-
-	private static Base64.Encoder encoder;
-	private static Base64.Decoder decoder;
+	private static Encoder encoder = Base64.getEncoder();
+	private static Decoder decoder = Base64.getDecoder();
 
 	/**
 	 * 双方都使用此构造函数
