@@ -35,11 +35,11 @@ public abstract class ModuleScheduler extends Module {
 	protected boolean ENABLE = false;
 
 	public boolean ENABLE() {
-		return ENABLE;
+		return this.ENABLE;
 	}
 
 	public int COUNT() {
-		return COUNT;
+		return this.COUNT;
 	}
 
 }

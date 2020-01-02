@@ -63,16 +63,16 @@ public class Executor_NULL extends ModuleExecutor {
 	@Override
 	public boolean init() throws Exception {
 
-		if (NEW_CONFIG) {
-			CONFIG.setProperty("", "");
-			saveConfig();
+		if (this.NEW_CONFIG) {
+			this.CONFIG.setProperty("", "");
+			this.saveConfig();
 		} else {
-			loadConfig();
+			this.loadConfig();
 		}
 
-		ENABLE_USER = false;
-		ENABLE_DISZ = false;
-		ENABLE_GROP = false;
+		this.ENABLE_USER = false;
+		this.ENABLE_DISZ = false;
+		this.ENABLE_GROP = false;
 
 		return false;
 	}

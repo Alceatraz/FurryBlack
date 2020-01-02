@@ -8,12 +8,14 @@ import java.util.HashMap;
 import org.meowy.cqp.jcq.entity.Member;
 
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorCompment;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
+@ModuleExecutorCompment(name = "Executor_roulette")
 public class Executor_roulette extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
@@ -80,19 +82,19 @@ public class Executor_roulette extends ModuleExecutor {
 	@Override
 	public boolean init() throws Exception {
 
-		ROULETTE_ROUNDS = new HashMap<>();
-		ROULETTE_FREQ = new ArrayList<>();
+		this.ROULETTE_ROUNDS = new HashMap<>();
+		this.ROULETTE_FREQ = new ArrayList<>();
 
-		ROULETTE_FREQ.add(0);
-		ROULETTE_FREQ.add(0);
-		ROULETTE_FREQ.add(0);
-		ROULETTE_FREQ.add(0);
-		ROULETTE_FREQ.add(0);
-		ROULETTE_FREQ.add(0);
+		this.ROULETTE_FREQ.add(0);
+		this.ROULETTE_FREQ.add(0);
+		this.ROULETTE_FREQ.add(0);
+		this.ROULETTE_FREQ.add(0);
+		this.ROULETTE_FREQ.add(0);
+		this.ROULETTE_FREQ.add(0);
 
-		ENABLE_USER = false;
-		ENABLE_DISZ = false;
-		ENABLE_GROP = true;
+		this.ENABLE_USER = false;
+		this.ENABLE_DISZ = false;
+		this.ENABLE_GROP = true;
 
 		return true;
 	}
@@ -147,10 +149,10 @@ public class Executor_roulette extends ModuleExecutor {
 		}
 
 		// 对局不存在 创建一个
-		if (!ROULETTE_ROUNDS.containsKey(gropid)) { ROULETTE_ROUNDS.put(gropid, new RouletteRound()); }
+		if (!this.ROULETTE_ROUNDS.containsKey(gropid)) { this.ROULETTE_ROUNDS.put(gropid, new RouletteRound()); }
 
 		// 获取本群对局
-		RouletteRound round = ROULETTE_ROUNDS.get(gropid);
+		RouletteRound round = this.ROULETTE_ROUNDS.get(gropid);
 
 		if (round.lock) {
 			// 本来是有锁的，但是我觉得没人能正好在100ms内再加入所以删了
@@ -161,10 +163,10 @@ public class Executor_roulette extends ModuleExecutor {
 
 		// 对局超时就新建一个
 		if ((round.time.getTime() + 600000) < new Date().getTime()) {
-			ROUND_EXPIRED++;
+			this.ROUND_EXPIRED++;
 			round = new RouletteRound();
-			ROULETTE_ROUNDS.remove(gropid);
-			ROULETTE_ROUNDS.put(gropid, round);
+			this.ROULETTE_ROUNDS.remove(gropid);
+			this.ROULETTE_ROUNDS.put(gropid, round);
 		}
 
 		if (round.join(gropid, userid, message)) {
@@ -175,7 +177,7 @@ public class Executor_roulette extends ModuleExecutor {
 			for (int i = 0; i < 6; i++) {
 				member = entry.getCQ().getGroupMemberInfo(gropid, round.player.get(i));
 				if (i == bullet) {
-					ROULETTE_FREQ.set(i, ROULETTE_FREQ.get(i) + 1);
+					this.ROULETTE_FREQ.set(i, this.ROULETTE_FREQ.get(i) + 1);
 					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=10060]");
 				} else {
 					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=11093]");
@@ -183,8 +185,8 @@ public class Executor_roulette extends ModuleExecutor {
 
 			}
 			entry.gropInfo(gropid, "@平安中国 目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
-			ROULETTE_ROUNDS.remove(gropid);
-			ROUND_SUCCESS++;
+			this.ROULETTE_ROUNDS.remove(gropid);
+			this.ROUND_SUCCESS++;
 		}
 
 		return true;
@@ -201,29 +203,29 @@ public class Executor_roulette extends ModuleExecutor {
 		boolean lock = false;
 
 		RouletteRound() {
-			time = new Date();
+			this.time = new Date();
 		}
 
 		public boolean join(long gropid, long userid, Message message) {
-			if (player.contains(userid)) {
+			if (this.player.contains(userid)) {
 				entry.gropInfo(gropid, "你8koi离开，不准放过");
 			} else {
-				time = new Date();
-				players++;
-				player.add(userid);
-				chip.add(message.getOptions());
+				this.time = new Date();
+				this.players++;
+				this.player.add(userid);
+				this.chip.add(message.getOptions());
 				StringBuilder buffer = new StringBuilder();
 				buffer.append("俄罗斯轮盘 - 当前人数 (");
-				buffer.append(players);
+				buffer.append(this.players);
 				buffer.append("/6)");
 				int i = 0;
-				for (; i < players; i++) {
+				for (; i < this.players; i++) {
 					buffer.append("\r\n");
 					buffer.append(i + 1);
 					buffer.append(" - ");
-					buffer.append(player.get(i));
+					buffer.append(this.player.get(i));
 					buffer.append(" : ");
-					buffer.append(chip.get(i));
+					buffer.append(this.chip.get(i));
 				}
 				for (; i < 6; i++) {
 					buffer.append("\r\n");
@@ -232,44 +234,44 @@ public class Executor_roulette extends ModuleExecutor {
 				}
 				entry.gropInfo(gropid, buffer.toString());
 			}
-			lock = players > 5;
-			return lock;
+			this.lock = this.players > 5;
+			return this.lock;
 		}
 	}
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		if ((COUNT_USER + COUNT_DISZ + COUNT_GROP) == 0) { return null; }
+		if ((this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP) == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		builder.append("成功回合 : ");
-		builder.append(ROUND_SUCCESS);
+		builder.append(this.ROUND_SUCCESS);
 		builder.append("\r\n失败回合 : ");
-		builder.append(ROUND_EXPIRED);
-		if (ROUND_SUCCESS > 0) {
+		builder.append(this.ROUND_EXPIRED);
+		if (this.ROUND_SUCCESS > 0) {
 			builder.append("\r\n第一发 : ");
-			builder.append(ROULETTE_FREQ.get(0));
+			builder.append(this.ROULETTE_FREQ.get(0));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(0) * 100) / ROUND_SUCCESS);
+			builder.append((this.ROULETTE_FREQ.get(0) * 100) / this.ROUND_SUCCESS);
 			builder.append("%\r\n第二发 : ");
-			builder.append(ROULETTE_FREQ.get(1));
+			builder.append(this.ROULETTE_FREQ.get(1));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(1) * 100) / ROUND_SUCCESS);
+			builder.append((this.ROULETTE_FREQ.get(1) * 100) / this.ROUND_SUCCESS);
 			builder.append("%\r\n第三发 : ");
-			builder.append(ROULETTE_FREQ.get(2));
+			builder.append(this.ROULETTE_FREQ.get(2));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(2) * 100) / ROUND_SUCCESS);
+			builder.append((this.ROULETTE_FREQ.get(2) * 100) / this.ROUND_SUCCESS);
 			builder.append("%\r\n第四发 : ");
-			builder.append(ROULETTE_FREQ.get(3));
+			builder.append(this.ROULETTE_FREQ.get(3));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(3) * 100) / ROUND_SUCCESS);
+			builder.append((this.ROULETTE_FREQ.get(3) * 100) / this.ROUND_SUCCESS);
 			builder.append("%\r\n第五发 : ");
-			builder.append(ROULETTE_FREQ.get(4));
+			builder.append(this.ROULETTE_FREQ.get(4));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(4) * 100) / ROUND_SUCCESS);
+			builder.append((this.ROULETTE_FREQ.get(4) * 100) / this.ROUND_SUCCESS);
 			builder.append("%\r\n第六发 : ");
-			builder.append(ROULETTE_FREQ.get(5));
+			builder.append(this.ROULETTE_FREQ.get(5));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(5) * 100) / ROUND_SUCCESS);
+			builder.append((this.ROULETTE_FREQ.get(5) * 100) / this.ROUND_SUCCESS);
 			builder.append("%");
 		}
 		String[] res = new String[] {

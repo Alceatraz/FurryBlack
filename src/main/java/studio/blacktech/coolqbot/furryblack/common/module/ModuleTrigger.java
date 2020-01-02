@@ -54,53 +54,53 @@ public abstract class ModuleTrigger extends Module {
 	public abstract boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception;
 
 	public boolean executeUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		COUNT_USER++;
-		return doUserMessage(typeid, userid, message, messageid, messagefont);
+		this.COUNT_USER++;
+		return this.doUserMessage(typeid, userid, message, messageid, messagefont);
 	}
 
 	public boolean executeDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		COUNT_DISZ++;
-		return doDiszMessage(diszid, userid, message, messageid, messagefont);
+		this.COUNT_DISZ++;
+		return this.doDiszMessage(diszid, userid, message, messageid, messagefont);
 	}
 
 	public boolean executeGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		COUNT_GROP++;
-		return doGropMessage(gropid, userid, message, messageid, messagefont);
+		this.COUNT_GROP++;
+		return this.doGropMessage(gropid, userid, message, messageid, messagefont);
 	}
 
 	public int COUNT_USER() {
-		return COUNT_USER;
+		return this.COUNT_USER;
 	}
 
 	public int COUNT_DISZ() {
-		return COUNT_DISZ;
+		return this.COUNT_DISZ;
 	}
 
 	public int COUNT_GROP() {
-		return COUNT_GROP;
+		return this.COUNT_GROP;
 	}
 
 	public int BLOCK_USER() {
-		return BLOCK_USER;
+		return this.BLOCK_USER;
 	}
 
 	public int BLOCK_DISZ() {
-		return BLOCK_DISZ;
+		return this.BLOCK_DISZ;
 	}
 
 	public int BLOCK_GROP() {
-		return BLOCK_GROP;
+		return this.BLOCK_GROP;
 	}
 
 	public boolean ENABLE_USER() {
-		return ENABLE_USER;
+		return this.ENABLE_USER;
 	}
 
 	public boolean ENABLE_DISZ() {
-		return ENABLE_DISZ;
+		return this.ENABLE_DISZ;
 	}
 
 	public boolean ENABLE_GROP() {
-		return ENABLE_GROP;
+		return this.ENABLE_GROP;
 	}
 }

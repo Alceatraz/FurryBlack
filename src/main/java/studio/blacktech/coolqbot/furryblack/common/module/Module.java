@@ -66,15 +66,15 @@ public abstract class Module implements Serializable {
 		this.MODULE_PRIVACY_CACHED = MODULE_PRIVACY_CACHED;
 		this.MODULE_PRIVACY_OBTAIN = MODULE_PRIVACY_OBTAIN;
 
-		MODULE_FULLHELP = genFullHelp();
+		this.MODULE_FULLHELP = this.genFullHelp();
 
-		FOLDER_ROOT = Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME).toFile();
-		FOLDER_CONF =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "conf").toFile();
-		FOLDER_DATA =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "data").toFile();
-		FOLDER_LOGS =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "logs").toFile();
-		FILE_CONFIG =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "config.properties").toFile();
+		this.FOLDER_ROOT = Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME).toFile();
+		this.FOLDER_CONF =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "conf").toFile();
+		this.FOLDER_DATA =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "data").toFile();
+		this.FOLDER_LOGS =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "logs").toFile();
+		this.FILE_CONFIG =  Paths.get(entry.getAppDirectory(), this.MODULE_PACKAGENAME , "config.properties").toFile();
 
-		logger = new LoggerX(this);
+		this.logger = new LoggerX(this);
 
 	}
 
@@ -98,97 +98,97 @@ public abstract class Module implements Serializable {
 
 	public void initAppFolder() throws Exception {
 
-		if (FOLDER_ROOT.exists()) {
-			if (!FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_ROOT.getAbsolutePath()); }
+		if (this.FOLDER_ROOT.exists()) {
+			if (!this.FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_ROOT.getAbsolutePath()); }
 		} else {
-			logger.seek("创建目录", FOLDER_ROOT.getAbsolutePath());
-			FOLDER_ROOT.mkdirs();
+			this.logger.seek("创建目录", this.FOLDER_ROOT.getAbsolutePath());
+			this.FOLDER_ROOT.mkdirs();
 		}
 
 	}
 
 	public void initConfFolder() throws Exception {
 
-		if (FOLDER_CONF.exists()) {
-			if (!FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_CONF.getAbsolutePath()); }
+		if (this.FOLDER_CONF.exists()) {
+			if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_CONF.getAbsolutePath()); }
 		} else {
-			logger.seek("创建目录", FOLDER_CONF.getAbsolutePath());
-			FOLDER_CONF.mkdirs();
+			this.logger.seek("创建目录", this.FOLDER_CONF.getAbsolutePath());
+			this.FOLDER_CONF.mkdirs();
 		}
 
 	}
 
 	public void initDataFolder() throws Exception {
 
-		if (FOLDER_DATA.exists()) {
-			if (!FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_DATA.getAbsolutePath()); }
+		if (this.FOLDER_DATA.exists()) {
+			if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_DATA.getAbsolutePath()); }
 		} else {
-			logger.seek("创建目录", FOLDER_DATA.getAbsolutePath());
-			FOLDER_DATA.mkdirs();
+			this.logger.seek("创建目录", this.FOLDER_DATA.getAbsolutePath());
+			this.FOLDER_DATA.mkdirs();
 		}
 
 	}
 
 	public void initLogsFolder() throws Exception {
 
-		if (FOLDER_LOGS.exists()) {
-			if (!FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath()); }
+		if (this.FOLDER_LOGS.exists()) {
+			if (!this.FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_LOGS.getAbsolutePath()); }
 		} else {
-			logger.seek("创建目录", FOLDER_LOGS.getName());
-			FOLDER_LOGS.mkdirs();
+			this.logger.seek("创建目录", this.FOLDER_LOGS.getName());
+			this.FOLDER_LOGS.mkdirs();
 		}
 
 	}
 
 	public void initPropertiesConfigurtion() throws Exception {
 
-		if (!FILE_CONFIG.exists()) {
-			logger.seek("创建文件", FILE_CONFIG.getAbsolutePath());
-			FILE_CONFIG.createNewFile();
-			NEW_CONFIG = true;
+		if (!this.FILE_CONFIG.exists()) {
+			this.logger.seek("创建文件", this.FILE_CONFIG.getAbsolutePath());
+			this.FILE_CONFIG.createNewFile();
+			this.NEW_CONFIG = true;
 		}
 
 	}
 
 	protected void loadConfig() throws Exception {
-		CONFIG.load(new FileInputStream(FILE_CONFIG));
+		this.CONFIG.load(new FileInputStream(this.FILE_CONFIG));
 	}
 
 	protected void saveConfig() throws Exception {
-		CONFIG.store(new FileOutputStream(FILE_CONFIG), null);
+		this.CONFIG.store(new FileOutputStream(this.FILE_CONFIG), null);
 	}
 
 	public String MODULE_PACKAGENAME() {
-		return MODULE_PACKAGENAME;
+		return this.MODULE_PACKAGENAME;
 	}
 
 	public String MODULE_COMMANDNAME() {
-		return MODULE_COMMANDNAME;
+		return this.MODULE_COMMANDNAME;
 	}
 
 	public String MODULE_DISPLAYNAME() {
-		return MODULE_DISPLAYNAME;
+		return this.MODULE_DISPLAYNAME;
 	}
 
 	public String MODULE_DESCRIPTION() {
-		return MODULE_DESCRIPTION;
+		return this.MODULE_DESCRIPTION;
 	}
 
 	public String MODULE_FULLHELP() {
-		return MODULE_FULLHELP;
+		return this.MODULE_FULLHELP;
 	}
 
 	public String genFullHelp() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("模块：" + MODULE_PACKAGENAME + "v" + MODULE_VERSION + "\r\n");
-		builder.append("名称：" + MODULE_DISPLAYNAME + "\r\n");
-		builder.append("用途：" + MODULE_DESCRIPTION + "\r\n");
-		builder.append("命令：" + MODULE_COMMANDNAME + "\r\n");
+		builder.append("模块：" + this.MODULE_PACKAGENAME + "v" + this.MODULE_VERSION + "\r\n");
+		builder.append("名称：" + this.MODULE_DISPLAYNAME + "\r\n");
+		builder.append("用途：" + this.MODULE_DESCRIPTION + "\r\n");
+		builder.append("命令：" + this.MODULE_COMMANDNAME + "\r\n");
 		builder.append("用法：");
-		if (MODULE_USAGE.length == 0) {
+		if (this.MODULE_USAGE.length == 0) {
 			builder.append("无");
 		} else {
-			for (String temp : MODULE_USAGE) {
+			for (String temp : this.MODULE_USAGE) {
 				builder.append(temp + "\r\n");
 			}
 		}
@@ -196,29 +196,29 @@ public abstract class Module implements Serializable {
 		builder.append("隐私声明：" + "\r\n");
 
 		builder.append("存储：" + "\r\n");
-		if (MODULE_PRIVACY_STORED.length == 0) {
+		if (this.MODULE_PRIVACY_STORED.length == 0) {
 			builder.append("无" + "\r\n");
 		} else {
-			builder.append(MODULE_PRIVACY_STORED.length);
-			for (String temp : MODULE_PRIVACY_STORED) {
+			builder.append(this.MODULE_PRIVACY_STORED.length);
+			for (String temp : this.MODULE_PRIVACY_STORED) {
 				builder.append(" " + temp + "\r\n");
 			}
 		}
 		builder.append("缓存：" + "\r\n");
-		if (MODULE_PRIVACY_CACHED.length == 0) {
+		if (this.MODULE_PRIVACY_CACHED.length == 0) {
 			builder.append("无" + "\r\n");
 		} else {
-			builder.append(MODULE_PRIVACY_CACHED.length);
-			for (String temp : MODULE_PRIVACY_CACHED) {
+			builder.append(this.MODULE_PRIVACY_CACHED.length);
+			for (String temp : this.MODULE_PRIVACY_CACHED) {
 				builder.append(" " + temp + "\r\n");
 			}
 		}
 		builder.append("获取：" + "\r\n");
-		if (MODULE_PRIVACY_OBTAIN.length == 0) {
+		if (this.MODULE_PRIVACY_OBTAIN.length == 0) {
 			builder.append("无" + "\r\n");
 		} else {
-			builder.append(MODULE_PRIVACY_OBTAIN.length);
-			for (String temp : MODULE_PRIVACY_OBTAIN) {
+			builder.append(this.MODULE_PRIVACY_OBTAIN.length);
+			for (String temp : this.MODULE_PRIVACY_OBTAIN) {
 				builder.append(" " + temp + "\r\n");
 			}
 		}

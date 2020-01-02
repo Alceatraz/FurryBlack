@@ -12,4 +12,11 @@ public class CantReinitializationException extends InitializationException {
 		super(message);
 	}
 
+	public CantReinitializationException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public CantReinitializationException(Throwable cause) {
+		super(cause);
+	}
 }

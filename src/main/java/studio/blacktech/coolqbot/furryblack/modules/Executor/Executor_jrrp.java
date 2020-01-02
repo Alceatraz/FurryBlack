@@ -1,16 +1,19 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import java.security.SecureRandom;
+
 import java.util.Date;
 import java.util.HashMap;
 
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorCompment;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
+@ModuleExecutorCompment(name = "Executor_jrrp")
 public class Executor_jrrp extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
@@ -76,11 +79,11 @@ public class Executor_jrrp extends ModuleExecutor {
 	@Override
 	public boolean init() throws Exception {
 
-		JRRP = new HashMap<>();
+		this.JRRP = new HashMap<>();
 
-		ENABLE_USER = true;
-		ENABLE_DISZ = true;
-		ENABLE_GROP = true;
+		this.ENABLE_USER = true;
+		this.ENABLE_DISZ = true;
+		this.ENABLE_GROP = true;
 
 		return true;
 	}
@@ -88,10 +91,10 @@ public class Executor_jrrp extends ModuleExecutor {
 	@Override
 	public boolean boot() throws Exception {
 
-		logger.info("启动工作线程");
+		this.logger.info("启动工作线程");
 
-		thread = new Thread(new Worker());
-		thread.start();
+		this.thread = new Thread(new Worker());
+		this.thread.start();
 
 		return true;
 	}
@@ -104,12 +107,12 @@ public class Executor_jrrp extends ModuleExecutor {
 	@Override
 	public boolean shut() throws Exception {
 
-		logger.info("终止工作线程");
+		this.logger.info("终止工作线程");
 
-		thread.interrupt();
-		thread.join();
+		this.thread.interrupt();
+		this.thread.join();
 
-		logger.info("工作线程已终止");
+		this.logger.info("工作线程已终止");
 
 		return true;
 	}
@@ -131,31 +134,31 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		if (!JRRP.containsKey(userid)) {
+		if (!this.JRRP.containsKey(userid)) {
 			SecureRandom random = new SecureRandom();
-			JRRP.put(userid, random.nextInt(100));
+			this.JRRP.put(userid, random.nextInt(100));
 		}
-		entry.userInfo(userid, "今天的运气是" + JRRP.get(userid) + "%!!!");
+		entry.userInfo(userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		if (!JRRP.containsKey(userid)) {
+		if (!this.JRRP.containsKey(userid)) {
 			SecureRandom random = new SecureRandom();
-			JRRP.put(userid, random.nextInt(100));
+			this.JRRP.put(userid, random.nextInt(100));
 		}
-		entry.diszInfo(diszid, userid, "今天的运气是" + JRRP.get(userid) + "%!!!");
+		entry.diszInfo(diszid, userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		if (!JRRP.containsKey(userid)) {
+		if (!this.JRRP.containsKey(userid)) {
 			SecureRandom random = new SecureRandom();
-			JRRP.put(userid, random.nextInt(100));
+			this.JRRP.put(userid, random.nextInt(100));
 		}
-		entry.gropInfo(gropid, userid, "今天的运气是" + JRRP.get(userid) + "%!!!");
+		entry.gropInfo(gropid, userid, "今天的运气是" + this.JRRP.get(userid) + "%!!!");
 		return true;
 	}
 
@@ -200,7 +203,7 @@ public class Executor_jrrp extends ModuleExecutor {
 						time = time * 1000;
 						Thread.sleep(time);
 
-						JRRP.clear();
+						Executor_jrrp.this.JRRP.clear();
 
 					}
 
@@ -208,9 +211,9 @@ public class Executor_jrrp extends ModuleExecutor {
 					if (entry.isEnable()) {
 						long timeserial = System.currentTimeMillis();
 						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
-						logger.exception(timeserial, exception);
+						Executor_jrrp.this.logger.exception(timeserial, exception);
 					} else {
-						logger.full("关闭");
+						Executor_jrrp.this.logger.full("关闭");
 					}
 				}
 

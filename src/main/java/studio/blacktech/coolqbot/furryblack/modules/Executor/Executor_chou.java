@@ -16,12 +16,14 @@ import org.meowy.cqp.jcq.entity.Member;
 import org.meowy.cqp.jcq.entity.QQInfo;
 
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorCompment;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
+@ModuleExecutorCompment(name = "Executor_chou")
 public class Executor_chou extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
@@ -89,21 +91,21 @@ public class Executor_chou extends ModuleExecutor {
 	@Override
 	public boolean init() throws Exception {
 
-		initAppFolder();
-		initConfFolder();
+		this.initAppFolder();
+		this.initConfFolder();
 
-		MEMBERS = new HashMap<>();
-		IGNORES = new HashMap<>();
+		this.MEMBERS = new HashMap<>();
+		this.IGNORES = new HashMap<>();
 
-		FILE_IGNORE_USER = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
+		this.FILE_IGNORE_USER = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
-		if (!FILE_IGNORE_USER.exists()) { FILE_IGNORE_USER.createNewFile(); }
+		if (!this.FILE_IGNORE_USER.exists()) { this.FILE_IGNORE_USER.createNewFile(); }
 
 		List<Group> groups = entry.getCQ().getGroupList();
 
 		for (Group group : groups) {
-			MEMBERS.put(group.getId(), new ArrayList<Long>());
-			IGNORES.put(group.getId(), new ArrayList<Long>());
+			this.MEMBERS.put(group.getId(), new ArrayList<Long>());
+			this.IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
 
 		long gropid;
@@ -112,7 +114,7 @@ public class Executor_chou extends ModuleExecutor {
 		String line;
 		String[] temp;
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_IGNORE_USER), StandardCharsets.UTF_8));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_IGNORE_USER), StandardCharsets.UTF_8));
 
 		while ((line = reader.readLine()) != null) {
 
@@ -123,18 +125,18 @@ public class Executor_chou extends ModuleExecutor {
 			temp = line.split(":");
 
 			if (temp.length != 2) {
-				logger.warn("配置无效", line);
+				this.logger.warn("配置无效", line);
 				continue;
 			}
 
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
 
-			if (IGNORES.containsKey(gropid)) {
-				IGNORES.get(gropid).add(userid);
-				logger.seek("排除用户", gropid + " > " + userid);
+			if (this.IGNORES.containsKey(gropid)) {
+				this.IGNORES.get(gropid).add(userid);
+				this.logger.seek("排除用户", gropid + " > " + userid);
 			} else {
-				logger.seek("排除用户", "群不存在 " + gropid);
+				this.logger.seek("排除用户", "群不存在 " + gropid);
 			}
 
 		}
@@ -146,8 +148,8 @@ public class Executor_chou extends ModuleExecutor {
 
 		for (Group group : groups) {
 
-			tempMembers = MEMBERS.get(group.getId());
-			tempIgnores = IGNORES.get(group.getId());
+			tempMembers = this.MEMBERS.get(group.getId());
+			tempIgnores = this.IGNORES.get(group.getId());
 
 			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
 				if (entry.isMyself(member.getQQId())) { continue; }
@@ -156,9 +158,9 @@ public class Executor_chou extends ModuleExecutor {
 			}
 		}
 
-		ENABLE_USER = false;
-		ENABLE_DISZ = false;
-		ENABLE_GROP = true;
+		this.ENABLE_USER = false;
+		this.ENABLE_DISZ = false;
+		this.ENABLE_GROP = true;
 
 		return true;
 
@@ -189,8 +191,8 @@ public class Executor_chou extends ModuleExecutor {
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		ArrayList<Long> tempMembers = new ArrayList<>();
-		if (IGNORES.containsKey(gropid)) {
-			ArrayList<Long> tempIgnores = IGNORES.get(gropid);
+		if (this.IGNORES.containsKey(gropid)) {
+			ArrayList<Long> tempIgnores = this.IGNORES.get(gropid);
 			for (Member tempUserid : entry.getCQ().getGroupMemberList(gropid)) {
 				if (!tempIgnores.contains(tempUserid.getQQId())) { tempMembers.add(tempUserid.getQQId()); }
 			}
@@ -199,12 +201,12 @@ public class Executor_chou extends ModuleExecutor {
 				tempMembers.add(tempUserid.getQQId());
 			}
 		}
-		MEMBERS.put(gropid, tempMembers);
+		this.MEMBERS.put(gropid, tempMembers);
 	}
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-		ArrayList<Long> tempMembers = MEMBERS.get(gropid);
+		ArrayList<Long> tempMembers = this.MEMBERS.get(gropid);
 		tempMembers.remove(userid);
 	}
 
@@ -227,7 +229,7 @@ public class Executor_chou extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 		SecureRandom random = new SecureRandom();
-		ArrayList<Long> members = MEMBERS.get(gropid);
+		ArrayList<Long> members = this.MEMBERS.get(gropid);
 		int size = members.size();
 		if (size < 3) {
 			entry.gropInfo(gropid, userid, "至少需要三个成员");

@@ -11,20 +11,20 @@ public class BufferX {
 	private LinkedList<StringBuilder> builders = new LinkedList<>();
 
 	public BufferX() {
-		warp();
+		this.warp();
 	}
 
 	public void warp() {
 		StringBuilder temp = new StringBuilder();
-		builders.add(temp);
-		builder = temp;
+		this.builders.add(temp);
+		this.builder = temp;
 	}
 
 	public String[] make() {
-		String[] message = new String[builders.size()];
-		int length = builders.size();
+		String[] message = new String[this.builders.size()];
+		int length = this.builders.size();
 		for (int i = 0; i < length; i++) {
-			message[i] = builders.get(i).toString();
+			message[i] = this.builders.get(i).toString();
 		}
 		return message;
 	}
@@ -37,10 +37,10 @@ public class BufferX {
 
 	public void merge(String... message) {
 
-		warp();
+		this.warp();
 
 		for (String temp : message) {
-			builders.add(new StringBuilder(temp));
+			this.builders.add(new StringBuilder(temp));
 		}
 
 	}
@@ -49,14 +49,14 @@ public class BufferX {
 
 		for (BufferX buffer : buffers) {
 			for (StringBuilder temp : buffer.dump()) {
-				builders.add(temp);
+				this.builders.add(temp);
 			}
 		}
 
 	}
 
 	public LinkedList<StringBuilder> dump() {
-		return builders;
+		return this.builders;
 	}
 
 	// ==================================================================================================
@@ -66,17 +66,17 @@ public class BufferX {
 
 	public void exception(Exception exception) {
 
-		builder.append("[" + LoggerX.time() + "][EXCEPTION] 发生异常" + "\r\n");
+		this.builder.append("[" + LoggerX.time() + "][EXCEPTION] 发生异常" + "\r\n");
 
-		builder.append("异常原因：" + exception.getCause() + "\r\n");
-		builder.append("异常消息：" + exception.getMessage() + "\r\n");
-		builder.append("异常调用：" + exception.getClass().getName() + "\r\n");
+		this.builder.append("异常原因：" + exception.getCause() + "\r\n");
+		this.builder.append("异常消息：" + exception.getMessage() + "\r\n");
+		this.builder.append("异常调用：" + exception.getClass().getName() + "\r\n");
 
 		for (StackTraceElement temp : exception.getStackTrace()) {
-			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
+			this.builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 		}
 
-		builder.setLength(builder.length() - 1);
+		this.builder.setLength(this.builder.length() - 1);
 
 	}
 
@@ -87,25 +87,25 @@ public class BufferX {
 
 	public String warn(String message) {
 		String temp = "[" + LoggerX.time() + "][WARN]" + message + "\r\n";
-		builder.append(temp);
+		this.builder.append(temp);
 		return this.info(message);
 	}
 
 	public String info(String message) {
 		String temp = "[" + LoggerX.time() + "][INFO]" + message + "\r\n";
-		builder.append(temp);
+		this.builder.append(temp);
 		return this.seek(message);
 	}
 
 	public String seek(String message) {
 		String temp = "[" + LoggerX.time() + "][SEEK]" + message + "\r\n";
-		builder.append(temp);
+		this.builder.append(temp);
 		return this.full(message);
 	}
 
 	public String full(String message) {
 		String temp = "[" + LoggerX.time() + "][FULL]" + message + "\r\n";
-		builder.append(temp);
+		this.builder.append(temp);
 		return message;
 	}
 
@@ -116,25 +116,25 @@ public class BufferX {
 
 	public String warn(String category, String message) {
 		String temp = "[" + LoggerX.time() + "][WARN][" + category + "]" + message + "\r\n";
-		builder.append(temp);
+		this.builder.append(temp);
 		return this.info(category, message);
 	}
 
 	public String info(String category, String message) {
 		String temp = "[" + LoggerX.time() + "][INFO][" + category + "]" + message + "\r\n";
-		builder.append(temp);
+		this.builder.append(temp);
 		return this.seek(category, message);
 	}
 
 	public String seek(String category, String message) {
 		String temp = "[" + LoggerX.time() + "][SEEK][" + category + "]" + message + "\r\n";
-		builder.append(temp);
+		this.builder.append(temp);
 		return this.full(category, message);
 	}
 
 	public String full(String category, String message) {
 		String temp = "[" + LoggerX.time() + "][FULL][" + category + "]" + message + "\r\n";
-		builder.append(temp);
+		this.builder.append(temp);
 		return message;
 	}
 
@@ -146,7 +146,7 @@ public class BufferX {
 	public String[] warn(String catgory, String... message) {
 		for (String line : message) {
 			String temp = "[" + LoggerX.time() + "][WARN]" + catgory + ": " + line + "\r\n";
-			builder.append(temp);
+			this.builder.append(temp);
 		}
 		return message;
 	}
@@ -154,7 +154,7 @@ public class BufferX {
 	public String[] info(String catgory, String... message) {
 		for (String line : message) {
 			String temp = "[" + LoggerX.time() + "][INFO]" + catgory + ": " + line + "\r\n";
-			builder.append(temp);
+			this.builder.append(temp);
 		}
 		return message;
 	}
@@ -162,7 +162,7 @@ public class BufferX {
 	public String[] seek(String catgory, String... message) {
 		for (String line : message) {
 			String temp = "[" + LoggerX.time() + "][SEEK]" + catgory + ": " + line + "\r\n";
-			builder.append(temp);
+			this.builder.append(temp);
 		}
 		return message;
 	}
@@ -170,7 +170,7 @@ public class BufferX {
 	public String[] full(String catgory, String... message) {
 		for (String line : message) {
 			String temp = "[" + LoggerX.time() + "][FULL]" + catgory + ": " + line + "\r\n";
-			builder.append(temp);
+			this.builder.append(temp);
 		}
 		return message;
 	}

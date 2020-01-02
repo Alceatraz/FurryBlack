@@ -14,11 +14,11 @@ public class MessageUser extends Message {
 	}
 
 	public long typeid() {
-		return typeid;
+		return this.typeid;
 	}
 
 	public long userid() {
-		return userid;
+		return this.userid;
 	}
 
 	@Override
@@ -26,8 +26,8 @@ public class MessageUser extends Message {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("============================================\n");
-		builder.append("类型ID: " + typeid + "\n");
-		builder.append("用户ID: " + userid + "\n");
+		builder.append("类型ID: " + this.typeid + "\n");
+		builder.append("用户ID: " + this.userid + "\n");
 		builder.append(super.toString());
 		return builder.toString();
 	}

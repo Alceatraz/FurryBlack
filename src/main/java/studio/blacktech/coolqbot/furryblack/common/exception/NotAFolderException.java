@@ -12,4 +12,12 @@ public class NotAFolderException extends InitializationException {
 		super(message);
 	}
 
+	public NotAFolderException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public NotAFolderException(Throwable cause) {
+		super(cause);
+	}
+
 }

@@ -6,12 +6,14 @@ import java.util.TimeZone;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorCompment;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
+@ModuleExecutorCompment(name = "Executor_time")
 public class Executor_time extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
@@ -78,9 +80,9 @@ public class Executor_time extends ModuleExecutor {
 	@Override
 	public boolean init() throws Exception {
 
-		ENABLE_USER = true;
-		ENABLE_DISZ = true;
-		ENABLE_GROP = true;
+		this.ENABLE_USER = true;
+		this.ENABLE_DISZ = true;
+		this.ENABLE_GROP = true;
 
 		return true;
 	}
@@ -117,19 +119,19 @@ public class Executor_time extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.userInfo(userid, getTime());
+		entry.userInfo(userid, this.getTime());
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.diszInfo(diszid, getTime());
+		entry.diszInfo(diszid, this.getTime());
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.gropInfo(gropid, getTime());
+		entry.gropInfo(gropid, this.getTime());
 		return true;
 	}
 
@@ -138,9 +140,9 @@ public class Executor_time extends ModuleExecutor {
 		// @formatter:off
 				//
 				"世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", Executor_time.zone_00) + "\r\n" +
-				"美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + format(Executor_time.zone_W8) + "\r\n" +
-				"美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + format(Executor_time.zone_W4) + "\r\n" +
-				"欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + format(Executor_time.zone_E0) + "\r\n" +
+				"美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + this.format(Executor_time.zone_W8) + "\r\n" +
+				"美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + this.format(Executor_time.zone_W4) + "\r\n" +
+				"欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + this.format(Executor_time.zone_E0) + "\r\n" +
 				//        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
 				"亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
 				// @formatter:on

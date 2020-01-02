@@ -123,17 +123,17 @@ public class AESCipher {
 
 		try {
 
-			sk = secretKeySpec;
-			iv = initialVector;
+			this.sk = secretKeySpec;
+			this.iv = initialVector;
 
-			encrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			decrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			this.encrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			this.decrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
 
-			encrypter.init(Cipher.ENCRYPT_MODE, sk, iv);
-			decrypter.init(Cipher.DECRYPT_MODE, sk, iv);
+			this.encrypter.init(Cipher.ENCRYPT_MODE, this.sk, this.iv);
+			this.decrypter.init(Cipher.DECRYPT_MODE, this.sk, this.iv);
 
-			staticDigester = MessageDigest.getInstance("SHA-384");
-			oneoffDigester = MessageDigest.getInstance("SHA-384");
+			this.staticDigester = MessageDigest.getInstance("SHA-384");
+			this.oneoffDigester = MessageDigest.getInstance("SHA-384");
 
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException exception) {
 			exception.printStackTrace();
@@ -198,7 +198,7 @@ public class AESCipher {
 		try {
 
 			byte[] tmp1 = content.getBytes(StandardCharsets.UTF_8);
-			byte[] tmp2 = encrypter.doFinal(tmp1);
+			byte[] tmp2 = this.encrypter.doFinal(tmp1);
 			byte[] tmp3 = encoder.encode(tmp2);
 			return new String(tmp3, StandardCharsets.UTF_8);
 
@@ -223,7 +223,7 @@ public class AESCipher {
 		try {
 
 			byte[] tmp1 = decoder.decode(content);
-			byte[] tmp2 = decrypter.doFinal(tmp1);
+			byte[] tmp2 = this.decrypter.doFinal(tmp1);
 			return new String(tmp2, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
@@ -257,13 +257,13 @@ public class AESCipher {
 			int sizePartLength = sizePart.length;
 			System.arraycopy(sizePart, 0, result, 8 - sizePartLength, sizePartLength);
 
-			oneoffDigester.update(rawMessage);
-			hashPart = oneoffDigester.digest();
+			this.oneoffDigester.update(rawMessage);
+			hashPart = this.oneoffDigester.digest();
 			System.arraycopy(hashPart, 0, result, 8, 8);
 
 			System.arraycopy(rawMessage, 0, result, 16, rawMessageLength);
 
-			byte[] tmp1 = encrypter.doFinal(result);
+			byte[] tmp1 = this.encrypter.doFinal(result);
 			byte[] tmp2 = encoder.encode(tmp1);
 			return new String(tmp2, StandardCharsets.UTF_8);
 
@@ -288,7 +288,7 @@ public class AESCipher {
 
 		try {
 
-			byte[] rawMessage = decrypter.doFinal(decoder.decode(content));
+			byte[] rawMessage = this.decrypter.doFinal(decoder.decode(content));
 
 			byte[] sizePart = new byte[8];
 			byte[] hashPart = new byte[8];
@@ -303,8 +303,8 @@ public class AESCipher {
 
 			byte[] mesgPart = new byte[claminMessagelength];
 			System.arraycopy(rawMessage, 16, mesgPart, 0, claminMessagelength);
-			oneoffDigester.update(mesgPart);
-			byte[] digest = oneoffDigester.digest();
+			this.oneoffDigester.update(mesgPart);
+			byte[] digest = this.oneoffDigester.digest();
 
 			if (!AESCipher.isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
 
@@ -334,13 +334,13 @@ public class AESCipher {
 			int sizePartLength = sizePart.length;
 			System.arraycopy(sizePart, 0, result, 8 - sizePartLength, sizePartLength);
 
-			staticDigester.update(rawMessage);
-			hashPart = ((MessageDigest) staticDigester.clone()).digest();
+			this.staticDigester.update(rawMessage);
+			hashPart = ((MessageDigest) this.staticDigester.clone()).digest();
 			System.arraycopy(hashPart, 0, result, 8, 8);
 
 			System.arraycopy(rawMessage, 0, result, 16, rawMessageLength);
 
-			byte[] tmp1 = encrypter.doFinal(result);
+			byte[] tmp1 = this.encrypter.doFinal(result);
 			byte[] tmp2 = encoder.encode(tmp1);
 			return new String(tmp2, StandardCharsets.UTF_8);
 
@@ -356,7 +356,7 @@ public class AESCipher {
 	public String decryptPhaseHash(String content) throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
 		try {
 
-			byte[] rawMessage = decrypter.doFinal(decoder.decode(content));
+			byte[] rawMessage = this.decrypter.doFinal(decoder.decode(content));
 
 			byte[] sizePart = new byte[8];
 			byte[] hashPart = new byte[8];
@@ -372,8 +372,8 @@ public class AESCipher {
 			byte[] mesgPart = new byte[claminMessagelength];
 			System.arraycopy(rawMessage, 16, mesgPart, 0, claminMessagelength);
 
-			staticDigester.update(mesgPart);
-			byte[] digest = ((MessageDigest) staticDigester.clone()).digest();
+			this.staticDigester.update(mesgPart);
+			byte[] digest = ((MessageDigest) this.staticDigester.clone()).digest();
 
 			if (!AESCipher.isSame(hashPart, digest)) { throw new MessageHashCheckFailedException(hashPart, digest); }
 

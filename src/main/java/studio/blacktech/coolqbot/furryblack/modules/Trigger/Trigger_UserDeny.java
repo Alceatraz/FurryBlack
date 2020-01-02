@@ -13,12 +13,15 @@ import java.util.HashSet;
 import java.util.TreeMap;
 
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerCompment;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 
+@ModuleTriggerCompment(name = "Trigger_UserDeny")
 public class Trigger_UserDeny extends ModuleTrigger {
 
 	private static final long serialVersionUID = 1L;
@@ -61,9 +64,9 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	private File FILE_DISZIGNORE;
 	private File FILE_GROPIGNORE;
 
-	private File FILE_DENY_USER;
-	private File FILE_DENY_DISZ;
-	private File FILE_DENY_GROP;
+	private File FILE_DENY_USER_LOGGER;
+	private File FILE_DENY_DISZ_LOGGER;
+	private File FILE_DENY_GROP_LOGGER;
 
 	// ==========================================================================================================================================================
 	//
@@ -94,51 +97,51 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	@Override
 	public boolean init() throws Exception {
 
-		initAppFolder();
-		initConfFolder();
-		initLogsFolder();
+		this.initAppFolder();
+		this.initConfFolder();
+		this.initLogsFolder();
 
-		USER_IGNORE = new HashSet<>(100);
-		DISZ_IGNORE = new HashSet<>();
-		GROP_IGNORE = new HashSet<>();
-		DISZ_IGNORE_ONE = new TreeMap<>();
-		GROP_IGNORE_ONE = new TreeMap<>();
-		DENY_USER_COUNT = new TreeMap<>();
-		DENY_DISZ_COUNT = new TreeMap<>();
-		DENY_GROP_COUNT = new TreeMap<>();
+		this.USER_IGNORE = new HashSet<>(100);
+		this.DISZ_IGNORE = new HashSet<>();
+		this.GROP_IGNORE = new HashSet<>();
+		this.DISZ_IGNORE_ONE = new TreeMap<>();
+		this.GROP_IGNORE_ONE = new TreeMap<>();
+		this.DENY_USER_COUNT = new TreeMap<>();
+		this.DENY_DISZ_COUNT = new TreeMap<>();
+		this.DENY_GROP_COUNT = new TreeMap<>();
 
-		if (NEW_CONFIG) {
-			CONFIG.setProperty("enable_user", "false");
-			CONFIG.setProperty("enable_disz", "false");
-			CONFIG.setProperty("enable_grop", "false");
-			saveConfig();
+		if (this.NEW_CONFIG) {
+			this.CONFIG.setProperty("enable_user", "false");
+			this.CONFIG.setProperty("enable_disz", "false");
+			this.CONFIG.setProperty("enable_grop", "false");
+			this.saveConfig();
 		} else {
-			loadConfig();
+			this.loadConfig();
 		}
 
-		FILE_USERIGNORE = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
-		FILE_DISZIGNORE = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_disz.txt").toFile();
-		FILE_GROPIGNORE = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_grop.txt").toFile();
+		this.FILE_USERIGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
+		this.FILE_DISZIGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_disz.txt").toFile();
+		this.FILE_GROPIGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_grop.txt").toFile();
 
-		FILE_DENY_USER = Paths.get(FOLDER_LOGS.getAbsolutePath(), "ignore_user_log.txt").toFile();
-		FILE_DENY_DISZ = Paths.get(FOLDER_LOGS.getAbsolutePath(), "ignore_disz_log.txt").toFile();
-		FILE_DENY_GROP = Paths.get(FOLDER_LOGS.getAbsolutePath(), "ignore_grop_log.txt").toFile();
+		this.FILE_DENY_USER_LOGGER = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "ignore_user_log.txt").toFile();
+		this.FILE_DENY_DISZ_LOGGER = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "ignore_disz_log.txt").toFile();
+		this.FILE_DENY_GROP_LOGGER = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "ignore_grop_log.txt").toFile();
 
-		if (!FILE_USERIGNORE.exists()) { FILE_USERIGNORE.createNewFile(); }
-		if (!FILE_DISZIGNORE.exists()) { FILE_DISZIGNORE.createNewFile(); }
-		if (!FILE_GROPIGNORE.exists()) { FILE_GROPIGNORE.createNewFile(); }
+		if (!this.FILE_USERIGNORE.exists()) { this.FILE_USERIGNORE.createNewFile(); }
+		if (!this.FILE_DISZIGNORE.exists()) { this.FILE_DISZIGNORE.createNewFile(); }
+		if (!this.FILE_GROPIGNORE.exists()) { this.FILE_GROPIGNORE.createNewFile(); }
 
-		if (!FILE_DENY_USER.exists()) { FILE_DENY_USER.createNewFile(); }
-		if (!FILE_DENY_DISZ.exists()) { FILE_DENY_DISZ.createNewFile(); }
-		if (!FILE_DENY_GROP.exists()) { FILE_DENY_GROP.createNewFile(); }
+		if (!this.FILE_DENY_USER_LOGGER.exists()) { this.FILE_DENY_USER_LOGGER.createNewFile(); }
+		if (!this.FILE_DENY_DISZ_LOGGER.exists()) { this.FILE_DENY_DISZ_LOGGER.createNewFile(); }
+		if (!this.FILE_DENY_GROP_LOGGER.exists()) { this.FILE_DENY_GROP_LOGGER.createNewFile(); }
 
-		ENABLE_USER = Boolean.parseBoolean(CONFIG.getProperty("enable_user", "false"));
-		ENABLE_DISZ = Boolean.parseBoolean(CONFIG.getProperty("enable_disz", "false"));
-		ENABLE_GROP = Boolean.parseBoolean(CONFIG.getProperty("enable_grop", "false"));
+		this.ENABLE_USER = Boolean.parseBoolean(this.CONFIG.getProperty("enable_user", "false"));
+		this.ENABLE_DISZ = Boolean.parseBoolean(this.CONFIG.getProperty("enable_disz", "false"));
+		this.ENABLE_GROP = Boolean.parseBoolean(this.CONFIG.getProperty("enable_grop", "false"));
 
-		BufferedReader readerUser = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_USERIGNORE), StandardCharsets.UTF_8));
-		BufferedReader readerDisz = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_DISZIGNORE), StandardCharsets.UTF_8));
-		BufferedReader readerGrop = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_GROPIGNORE), StandardCharsets.UTF_8));
+		BufferedReader readerUser = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_USERIGNORE), StandardCharsets.UTF_8));
+		BufferedReader readerDisz = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_DISZIGNORE), StandardCharsets.UTF_8));
+		BufferedReader readerGrop = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_GROPIGNORE), StandardCharsets.UTF_8));
 
 		long userid;
 		long diszid;
@@ -149,8 +152,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		while ((line = readerUser.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
-			USER_IGNORE.add(Long.parseLong(line));
-			logger.seek("禁止私聊用户", line);
+			this.USER_IGNORE.add(Long.parseLong(line));
+			this.logger.seek("全局屏蔽", line);
 		}
 
 		while ((line = readerDisz.readLine()) != null) {
@@ -161,15 +164,15 @@ public class Trigger_UserDeny extends ModuleTrigger {
 			diszid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
 			if (userid == 0) {
-				DISZ_IGNORE.add(diszid);
+				this.DISZ_IGNORE.add(diszid);
 			} else {
-				if (!DISZ_IGNORE_ONE.containsKey(diszid)) {
+				if (!this.DISZ_IGNORE_ONE.containsKey(diszid)) {
 					HashSet<Long> tempSet = new HashSet<>();
-					DISZ_IGNORE_ONE.put(diszid, tempSet);
+					this.DISZ_IGNORE_ONE.put(diszid, tempSet);
 				}
-				DISZ_IGNORE_ONE.get(diszid).add(userid);
+				this.DISZ_IGNORE_ONE.get(diszid).add(userid);
 			}
-			logger.seek("禁止组聊用户", line);
+			this.logger.seek("指定组聊", line);
 		}
 
 		while ((line = readerGrop.readLine()) != null) {
@@ -181,45 +184,45 @@ public class Trigger_UserDeny extends ModuleTrigger {
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
 			if (userid == 0) {
-				GROP_IGNORE.add(gropid);
+				this.GROP_IGNORE.add(gropid);
 			} else {
-				if (!GROP_IGNORE_ONE.containsKey(gropid)) {
+				if (!this.GROP_IGNORE_ONE.containsKey(gropid)) {
 					HashSet<Long> tempSet = new HashSet<>();
-					GROP_IGNORE_ONE.put(gropid, tempSet);
+					this.GROP_IGNORE_ONE.put(gropid, tempSet);
 				}
-				GROP_IGNORE_ONE.get(gropid).add(userid);
+				this.GROP_IGNORE_ONE.get(gropid).add(userid);
 			}
-			logger.seek("禁止群聊用户", line);
+			this.logger.seek("指定群聊", line);
 		}
 
 		readerUser.close();
 		readerDisz.close();
 		readerGrop.close();
 
-		ENABLE_USER = ENABLE_USER && (USER_IGNORE.size() > 0);
-		ENABLE_DISZ = ENABLE_DISZ && ((DISZ_IGNORE.size() + DISZ_IGNORE_ONE.size()) > 0);
-		ENABLE_GROP = ENABLE_GROP && ((GROP_IGNORE.size() + GROP_IGNORE_ONE.size()) > 0);
+		this.ENABLE_USER = this.ENABLE_USER && (this.USER_IGNORE.size() > 0);
+		this.ENABLE_DISZ = this.ENABLE_USER || (this.ENABLE_DISZ && ((this.DISZ_IGNORE.size() + this.DISZ_IGNORE_ONE.size()) > 0));
+		this.ENABLE_GROP = this.ENABLE_USER || (this.ENABLE_GROP && ((this.GROP_IGNORE.size() + this.GROP_IGNORE_ONE.size()) > 0));
 
-		for (Long tempuserid : USER_IGNORE) {
-			DENY_USER_COUNT.put(tempuserid, 0);
+		for (Long tempuserid : this.USER_IGNORE) {
+			this.DENY_USER_COUNT.put(tempuserid, 0);
 		}
 
-		for (Long tempdiszid : DISZ_IGNORE_ONE.keySet()) {
+		for (Long tempdiszid : this.DISZ_IGNORE_ONE.keySet()) {
 			TreeMap<Long, Integer> tempcount = new TreeMap<>();
-			HashSet<Long> tempdisz = DISZ_IGNORE_ONE.get(tempdiszid);
+			HashSet<Long> tempdisz = this.DISZ_IGNORE_ONE.get(tempdiszid);
 			for (Long tempuserid : tempdisz) {
 				tempcount.put(tempuserid, 0);
 			}
-			DENY_DISZ_COUNT.put(tempdiszid, tempcount);
+			this.DENY_DISZ_COUNT.put(tempdiszid, tempcount);
 		}
 
-		for (Long tempgropid : GROP_IGNORE_ONE.keySet()) {
+		for (Long tempgropid : this.GROP_IGNORE_ONE.keySet()) {
 			TreeMap<Long, Integer> tempcount = new TreeMap<>();
-			HashSet<Long> tempgrop = GROP_IGNORE_ONE.get(tempgropid);
+			HashSet<Long> tempgrop = this.GROP_IGNORE_ONE.get(tempgropid);
 			for (Long tempuserid : tempgrop) {
 				tempcount.put(tempuserid, 0);
 			}
-			DENY_GROP_COUNT.put(tempgropid, tempcount);
+			this.DENY_GROP_COUNT.put(tempgropid, tempcount);
 		}
 
 		return true;
@@ -250,22 +253,26 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
 	}
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
 	}
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
-		if (USER_IGNORE.contains(userid)) {
+		if (this.USER_IGNORE.contains(userid)) {
 
-			DENY_USER_COUNT.put(userid, DENY_USER_COUNT.get(userid) + 1);
+			this.DENY_USER_COUNT.put(userid, this.DENY_USER_COUNT.get(userid) + 1);
 
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_USER, true), StandardCharsets.UTF_8));
-			writer.write(message.toString());
-			writer.write("\r\n\r\n\r\n\r\n");
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENY_USER_LOGGER, true), StandardCharsets.UTF_8));
+
+			String temp = "[" + LoggerX.datetime() + "] " + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n";
+
+			writer.write(temp);
 			writer.flush();
 			writer.close();
 
@@ -281,13 +288,13 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
-		if (USER_IGNORE.contains(userid)) {
+		if (this.USER_IGNORE.contains(userid)) {
 
-			DENY_USER_COUNT.put(userid, DENY_USER_COUNT.get(userid) + 1);
+			this.DENY_USER_COUNT.put(userid, this.DENY_USER_COUNT.get(userid) + 1);
 
-		} else if (DISZ_IGNORE.contains(diszid) && DISZ_IGNORE_ONE.get(diszid).contains(userid)) {
+		} else if (this.DISZ_IGNORE.contains(diszid) && this.DISZ_IGNORE_ONE.get(diszid).contains(userid)) {
 
-			TreeMap<Long, Integer> temp = DENY_DISZ_COUNT.get(diszid);
+			TreeMap<Long, Integer> temp = this.DENY_DISZ_COUNT.get(diszid);
 			temp.put(userid, temp.get(userid) + 1);
 
 		} else {
@@ -296,9 +303,11 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 		}
 
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_DISZ, true), StandardCharsets.UTF_8));
-		writer.write(message.toString());
-		writer.write("\r\n\r\n\r\n\r\n");
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENY_DISZ_LOGGER, true), StandardCharsets.UTF_8));
+
+		String temp = "[" + LoggerX.datetime() + "] " + diszid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n";
+
+		writer.write(temp);
 		writer.flush();
 		writer.close();
 
@@ -308,13 +317,13 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
-		if (USER_IGNORE.contains(userid)) {
+		if (this.USER_IGNORE.contains(userid)) {
 
-			DENY_USER_COUNT.put(userid, DENY_USER_COUNT.get(userid) + 1);
+			this.DENY_USER_COUNT.put(userid, this.DENY_USER_COUNT.get(userid) + 1);
 
-		} else if (GROP_IGNORE.contains(gropid) && GROP_IGNORE_ONE.get(gropid).contains(userid)) {
+		} else if (this.GROP_IGNORE.contains(gropid) && this.GROP_IGNORE_ONE.get(gropid).contains(userid)) {
 
-			TreeMap<Long, Integer> temp = DENY_GROP_COUNT.get(gropid);
+			TreeMap<Long, Integer> temp = this.DENY_GROP_COUNT.get(gropid);
 			temp.put(userid, temp.get(userid) + 1);
 
 		} else {
@@ -323,9 +332,11 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 		}
 
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_GROP, true), StandardCharsets.UTF_8));
-		writer.write(message.toString());
-		writer.write("\r\n\r\n\r\n\r\n");
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.FILE_DENY_GROP_LOGGER, true), StandardCharsets.UTF_8));
+
+		String temp = "[" + LoggerX.datetime() + "] " + gropid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n";
+
+		writer.write(temp);
 		writer.flush();
 		writer.close();
 
@@ -335,89 +346,93 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
-		COUNT_USER = 0;
-		COUNT_DISZ = 0;
-		COUNT_GROP = 0;
+		this.COUNT_USER = 0;
+		this.COUNT_DISZ = 0;
+		this.COUNT_GROP = 0;
 
-		for (long userid : DENY_USER_COUNT.keySet()) {
-			COUNT_USER = COUNT_USER + DENY_USER_COUNT.get(userid);
+		for (long userid : this.DENY_USER_COUNT.keySet()) {
+			this.COUNT_USER = this.COUNT_USER + this.DENY_USER_COUNT.get(userid);
 		}
-		for (long diszid : DENY_DISZ_COUNT.keySet()) {
-			TreeMap<Long, Integer> disz = DENY_DISZ_COUNT.get(diszid);
+
+		for (long diszid : this.DENY_DISZ_COUNT.keySet()) {
+			TreeMap<Long, Integer> disz = this.DENY_DISZ_COUNT.get(diszid);
 			for (long userid : disz.keySet()) {
-				COUNT_DISZ = COUNT_DISZ + disz.get(userid);
-			}
-		}
-		for (long gropid : DENY_GROP_COUNT.keySet()) {
-			TreeMap<Long, Integer> grop = DENY_GROP_COUNT.get(gropid);
-			for (long userid : grop.keySet()) {
-				COUNT_GROP = COUNT_GROP + grop.get(userid);
+				this.COUNT_DISZ = this.COUNT_DISZ + disz.get(userid);
 			}
 		}
 
-		if ((COUNT_USER == 0) && (COUNT_DISZ == 0) && (COUNT_GROP == 0)) { return null; }
+		for (long gropid : this.DENY_GROP_COUNT.keySet()) {
+			TreeMap<Long, Integer> grop = this.DENY_GROP_COUNT.get(gropid);
+			for (long userid : grop.keySet()) {
+				this.COUNT_GROP = this.COUNT_GROP + grop.get(userid);
+			}
+		}
+
+		if ((this.COUNT_USER == 0) && (this.COUNT_DISZ == 0) && (this.COUNT_GROP == 0)) { return null; }
 
 		StringBuilder builder = new StringBuilder();
 
-		if (COUNT_USER == 0) {
-			builder.append("拦截私聊：0");
+		if (this.COUNT_USER == 0) {
+			builder.append("拦截私聊：0\r\n");
 		} else {
 			builder.append("拦截私聊：");
-			builder.append(COUNT_USER);
-			for (long userid : DENY_USER_COUNT.keySet()) {
-				builder.append("\r\n");
+			builder.append(this.COUNT_USER);
+			builder.append("\r\n");
+			for (long userid : this.DENY_USER_COUNT.keySet()) {
 				builder.append(entry.getNickname(userid));
 				builder.append(" (");
 				builder.append(userid);
-				builder.append(") ");
-				builder.append(DENY_USER_COUNT.get(userid));
+				builder.append(") \r\n");
+				builder.append(this.DENY_USER_COUNT.get(userid));
 			}
 		}
 
-		if (COUNT_DISZ == 0) {
-			builder.append("\r\n拦截组聊：0");
+		if (this.COUNT_DISZ == 0) {
+			builder.append("拦截组聊：0\r\n");
 		} else {
-			builder.append("\r\n拦截组聊：");
-			builder.append(COUNT_DISZ);
+			builder.append("拦截组聊：");
+			builder.append(this.COUNT_DISZ);
 			builder.append("\r\n");
-			for (long diszid : DENY_DISZ_COUNT.keySet()) {
-				TreeMap<Long, Integer> disz = DENY_DISZ_COUNT.get(diszid);
+			for (long diszid : this.DENY_DISZ_COUNT.keySet()) {
+				TreeMap<Long, Integer> disz = this.DENY_DISZ_COUNT.get(diszid);
 				builder.append("组号：");
 				builder.append(diszid);
 				for (long userid : disz.keySet()) {
-					builder.append("\r\n");
 					builder.append(entry.getNickname(userid));
 					builder.append(" (");
 					builder.append(userid);
-					builder.append(") ");
+					builder.append(") \r\n");
 					builder.append(disz.get(userid));
 				}
 			}
 		}
 
-		if (COUNT_GROP == 0) {
-			builder.append("\r\n拦截群聊：0");
+		if (this.COUNT_GROP == 0) {
+			builder.append("拦截群聊：0\r\n");
 		} else {
-			builder.append("\r\n拦截群聊：");
-			builder.append(COUNT_GROP);
+			builder.append("拦截群聊：");
+			builder.append(this.COUNT_GROP);
 			builder.append("\r\n");
-			for (long gropid : DENY_GROP_COUNT.keySet()) {
-				TreeMap<Long, Integer> grop = DENY_GROP_COUNT.get(gropid);
+			for (long gropid : this.DENY_GROP_COUNT.keySet()) {
+				TreeMap<Long, Integer> grop = this.DENY_GROP_COUNT.get(gropid);
 				builder.append(" 群号：");
 				builder.append(gropid);
 				for (long userid : grop.keySet()) {
-					builder.append("\r\n");
 					builder.append(entry.getNickname(userid));
 					builder.append(" (");
 					builder.append(userid);
-					builder.append(") ");
+					builder.append(") \r\n");
 					builder.append(grop.get(userid));
 				}
 			}
 		}
+
+		builder.setLength(builder.length() - 1);
+
 		String[] res = new String[] {
 				builder.toString()
 		};
+
 		return res;
 	}
 

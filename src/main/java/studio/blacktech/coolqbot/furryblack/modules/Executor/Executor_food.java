@@ -4,6 +4,7 @@ import java.security.SecureRandom;
 import java.util.TreeMap;
 
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorCompment;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -19,6 +20,8 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
  *
  * @author netuser
  */
+
+@ModuleExecutorCompment(name = "Executor_food")
 public class Executor_food extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
@@ -76,7 +79,7 @@ public class Executor_food extends ModuleExecutor {
 	@Override
 	public boolean init() throws Exception {
 
-		MENU = new TreeMap<>();
+		this.MENU = new TreeMap<>();
 
 		// @formatter:off
 
@@ -99,12 +102,12 @@ public class Executor_food extends ModuleExecutor {
 			for (int j = 0; j < tempmenu.length; j++) {
 				tempmap.put(j, tempmenu[j]);
 			}
-			MENU.put(i, tempmap);
+			this.MENU.put(i, tempmap);
 		}
 
-		ENABLE_USER = true;
-		ENABLE_DISZ = true;
-		ENABLE_GROP = true;
+		this.ENABLE_USER = true;
+		this.ENABLE_DISZ = true;
+		this.ENABLE_GROP = true;
 
 		return true;
 	}
@@ -141,19 +144,19 @@ public class Executor_food extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.userInfo(userid, chooseFood(message));
+		entry.userInfo(userid, this.chooseFood(message));
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.diszInfo(diszid, userid, chooseFood(message));
+		entry.diszInfo(diszid, userid, this.chooseFood(message));
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.gropInfo(gropid, userid, chooseFood(message));
+		entry.gropInfo(gropid, userid, this.chooseFood(message));
 		return true;
 	}
 
@@ -173,15 +176,15 @@ public class Executor_food extends ModuleExecutor {
 		StringBuilder builder = new StringBuilder();
 
 		if (message.getSection() == 0) {
-			for (int mode : MENU.keySet()) {
-				TreeMap<Integer, String> temp = MENU.get(mode);
+			for (int mode : this.MENU.keySet()) {
+				TreeMap<Integer, String> temp = this.MENU.get(mode);
 				builder.append("类别 " + mode + "：" + temp.get(0) + " " + (temp.size() - 1) + "种" + "\r\n");
 			}
 			builder.setLength(builder.length() - 2);
 		} else {
 			int mode = Integer.parseInt(message.getSegment(0));
-			if (MENU.containsKey(mode)) {
-				TreeMap<Integer, String> temp = MENU.get(mode);
+			if (this.MENU.containsKey(mode)) {
+				TreeMap<Integer, String> temp = this.MENU.get(mode);
 				SecureRandom random = new SecureRandom();
 				int res = random.nextInt(temp.size() - 1) + 1;
 				builder.append("从 " + temp.get(0) + " 抽到了：" + temp.get(res));

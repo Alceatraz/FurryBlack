@@ -135,45 +135,45 @@ public class Executor_DEMO extends ModuleExecutor {
 		// ==================================================================================
 		// 1：初始化配置及数据文件
 
-		initAppFolder();
-		initConfFolder();
-		initDataFolder();
-		initLogsFolder();
-		initPropertiesConfigurtion();
+		this.initAppFolder();
+		this.initConfFolder();
+		this.initDataFolder();
+		this.initLogsFolder();
+		this.initPropertiesConfigurtion();
 
 		// ==================================================================================
 		// 2：生成所有内存结构
 		// 应在此处实例化成员变量
 
-		MAP = new HashMap<>();
+		this.MAP = new HashMap<>();
 
 		// 关于文件路径：应使用Paths工具类以及内置的 FOLDER_CONF FOLDER_DATA FOLDER_LOGS来表示文件
-		FILE_CUSTOM = Paths.get(FOLDER_CONF.getAbsolutePath(), "custom.txt").toFile();
+		this.FILE_CUSTOM = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "custom.txt").toFile();
 
-		if (!FILE_CUSTOM.exists()) { FILE_CUSTOM.createNewFile(); }
+		if (!this.FILE_CUSTOM.exists()) { this.FILE_CUSTOM.createNewFile(); }
 
 		// ==================================================================================
 		// 3：读取配置
 		// NEW_CONFIG=true 为初始化过程中发现配置不存在 创建了新的配置
 
-		if (NEW_CONFIG) {
+		if (this.NEW_CONFIG) {
 			// CONFIG对象为Java property对象
-			CONFIG.setProperty("enable", "true");
-			CONFIG.setProperty("config1", "none");
-			CONFIG.setProperty("config2", "none");
-			CONFIG.setProperty("config3", "none");
-			CONFIG.setProperty("config4", "none");
+			this.CONFIG.setProperty("enable", "true");
+			this.CONFIG.setProperty("config1", "none");
+			this.CONFIG.setProperty("config2", "none");
+			this.CONFIG.setProperty("config3", "none");
+			this.CONFIG.setProperty("config4", "none");
 			// 不要忘记保存
-			saveConfig();
+			this.saveConfig();
 		} else {
-			loadConfig();
+			this.loadConfig();
 		}
 
 		// 按需分析配置文件
-		ENABLE_DEMO = Boolean.parseBoolean(CONFIG.getProperty("enable"));
+		this.ENABLE_DEMO = Boolean.parseBoolean(this.CONFIG.getProperty("enable"));
 
 		// 按需初始化内存结构
-		MAP.put("1", "1");
+		this.MAP.put("1", "1");
 
 		// 如果需要包含需要获取所有群成员的功能，不应该在doMessage的时候获取 应通过初始化和增减成员函数来维护一个容器
 
@@ -184,10 +184,10 @@ public class Executor_DEMO extends ModuleExecutor {
 		// 则直接跳注册阶段
 		// 模块不需要每次doMessage时都判断 if ( enable )
 
-		if (ENABLE_DEMO) {
-			ENABLE_USER = true;
-			ENABLE_DISZ = true;
-			ENABLE_GROP = true;
+		if (this.ENABLE_DEMO) {
+			this.ENABLE_USER = true;
+			this.ENABLE_DISZ = true;
+			this.ENABLE_GROP = true;
 		}
 
 		return true;
@@ -199,8 +199,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public boolean boot() throws Exception {
-		thread = new Thread(new Worker());
-		thread.start();
+		this.thread = new Thread(new Worker());
+		this.thread.start();
 		return true;
 	}
 
@@ -223,8 +223,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	public boolean shut() throws Exception {
 
 		// 如果包含子线程 应在此时中断
-		thread.interrupt();
-		thread.join();
+		this.thread.interrupt();
+		this.thread.join();
 
 		return true;
 	}

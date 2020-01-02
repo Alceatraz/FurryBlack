@@ -30,6 +30,7 @@ import studio.blacktech.coolqbot.furryblack.modules.Systemd;
  *
  * @author Alceatraz Warprays
  */
+
 public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener {
 
 	// ==========================================================================================================================================================
@@ -157,33 +158,33 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			// ==========================================================================================================================
 			// 实例化 data/ logs/ 对象
 
-			FOLDER_ROOT = Paths.get(appDirectory, "Core_Entry").toFile();
+			this.FOLDER_ROOT = Paths.get(appDirectory, "Core_Entry").toFile();
 			// this.FOLDER_CONF = Paths.get(appDirectory, "Core_Entry", "conf").toFile();
 			// this.FOLDER_DATA = Paths.get(appDirectory, "Core_Entry", "data").toFile();
-			FOLDER_LOGS = Paths.get(appDirectory, "Core_Entry", "logs").toFile();
-			FILE_LOGGER = Paths.get(appDirectory, "Core_Entry", "logs", LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
+			this.FOLDER_LOGS = Paths.get(appDirectory, "Core_Entry", "logs").toFile();
+			this.FILE_LOGGER = Paths.get(appDirectory, "Core_Entry", "logs", LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
 
 			// ==========================================================================================================================
 			// 初始化文件夹
 
-			if (!FOLDER_ROOT.exists()) { FOLDER_ROOT.mkdirs(); }
+			if (!this.FOLDER_ROOT.exists()) { this.FOLDER_ROOT.mkdirs(); }
 			// if (!this.FOLDER_CONF.exists()) this.FOLDER_CONF.mkdirs();
 			// if (!this.FOLDER_DATA.exists()) this.FOLDER_DATA.mkdirs();
-			if (!FOLDER_LOGS.exists()) { FOLDER_LOGS.mkdirs(); }
+			if (!this.FOLDER_LOGS.exists()) { this.FOLDER_LOGS.mkdirs(); }
 
-			if (!FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_ROOT.getAbsolutePath()); }
+			if (!this.FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_ROOT.getAbsolutePath()); }
 			// if (!this.FOLDER_CONF.isDirectory()) { throw new
 			// NotAFolderException("文件夹被文件占位：" + this
 			// .FOLDER_CONF.getAbsolutePath()); }
 			// if (!this.FOLDER_DATA.isDirectory()) { throw new
 			// NotAFolderException("文件夹被文件占位：" + this
 			// .FOLDER_DATA.getAbsolutePath()); }
-			if (!FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath()); }
+			if (!this.FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_LOGS.getAbsolutePath()); }
 
 			// ==========================================================================================================================
 			// 初始化 日志 系统
 
-			LoggerX.init(FILE_LOGGER);
+			LoggerX.init(this.FILE_LOGGER);
 
 			// 初始化日志系统
 			// 旧的LoggerX拥有一个先行系统，能够将文件创建前的日志写入缓存，等待写入，这里为了避免每次都判断，提升性能，去掉了这个功能
@@ -454,7 +455,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	@Override
 	public int friendAdd(int typeid, int sendtime, long userid) {
-		new Thread(() -> sendFriendAddMessage(userid)).start();
+		new Thread(() -> this.sendFriendAddMessage(userid)).start();
 		return 0;
 	}
 

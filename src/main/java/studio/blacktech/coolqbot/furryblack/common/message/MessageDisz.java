@@ -14,11 +14,11 @@ public class MessageDisz extends Message {
 	}
 
 	public long diszid() {
-		return diszid;
+		return this.diszid;
 	}
 
 	public long userid() {
-		return userid;
+		return this.userid;
 	}
 
 	@Override
@@ -26,8 +26,8 @@ public class MessageDisz extends Message {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("============================================\n");
-		builder.append("组聊ID: " + diszid + "\n");
-		builder.append("用户ID: " + userid + "\n");
+		builder.append("组聊ID: " + this.diszid + "\n");
+		builder.append("用户ID: " + this.userid + "\n");
 		builder.append(super.toString());
 		return builder.toString();
 	}

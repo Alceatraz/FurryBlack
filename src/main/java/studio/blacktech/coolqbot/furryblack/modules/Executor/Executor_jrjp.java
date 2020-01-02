@@ -1,6 +1,7 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -16,12 +17,14 @@ import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
 
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorCompment;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
+@ModuleExecutorCompment(name = "Executor_jrjp")
 public class Executor_jrjp extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
@@ -96,29 +99,29 @@ public class Executor_jrjp extends ModuleExecutor {
 	@Override
 	public boolean init() throws Exception {
 
-		initAppFolder();
-		initConfFolder();
+		this.initAppFolder();
+		this.initConfFolder();
 
-		AVCODE = new HashMap<>();
-		VICTIM = new HashMap<>();
-		MEMBERS = new HashMap<>();
-		IGNORES = new HashMap<>();
+		this.AVCODE = new HashMap<>();
+		this.VICTIM = new HashMap<>();
+		this.MEMBERS = new HashMap<>();
+		this.IGNORES = new HashMap<>();
 
-		USER_IGNORE = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
+		this.USER_IGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
-		if (!USER_IGNORE.exists()) { USER_IGNORE.createNewFile(); }
+		if (!this.USER_IGNORE.exists()) { this.USER_IGNORE.createNewFile(); }
 
 		List<Group> groups = entry.getCQ().getGroupList();
 
 		for (Group group : groups) {
-			MEMBERS.put(group.getId(), new ArrayList<Long>());
-			IGNORES.put(group.getId(), new ArrayList<Long>());
+			this.MEMBERS.put(group.getId(), new ArrayList<Long>());
+			this.IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
 
 		long gropid;
 		long userid;
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.USER_IGNORE), StandardCharsets.UTF_8));
 
 		String line;
 		String[] temp;
@@ -132,18 +135,18 @@ public class Executor_jrjp extends ModuleExecutor {
 			temp = line.split(":");
 
 			if (temp.length != 2) {
-				logger.warn("配置错误", line);
+				this.logger.warn("配置错误", line);
 				continue;
 			}
 
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
 
-			if (IGNORES.containsKey(gropid)) {
-				IGNORES.get(gropid).add(userid);
-				logger.seek("排除用户", gropid + " > " + userid);
+			if (this.IGNORES.containsKey(gropid)) {
+				this.IGNORES.get(gropid).add(userid);
+				this.logger.seek("排除用户", gropid + " > " + userid);
 			} else {
-				logger.seek("排除用户", "群不存在 " + gropid);
+				this.logger.seek("排除用户", "群不存在 " + gropid);
 			}
 
 		}
@@ -152,8 +155,8 @@ public class Executor_jrjp extends ModuleExecutor {
 
 		for (Group group : groups) {
 
-			ArrayList<Long> tempMembers = MEMBERS.get(group.getId());
-			ArrayList<Long> tempIgnores = IGNORES.get(group.getId());
+			ArrayList<Long> tempMembers = this.MEMBERS.get(group.getId());
+			ArrayList<Long> tempIgnores = this.IGNORES.get(group.getId());
 
 			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
 
@@ -163,14 +166,14 @@ public class Executor_jrjp extends ModuleExecutor {
 				tempMembers.add(member.getQQId());
 			}
 
-			Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(random.nextInt(tempMembers.size())));
-			Executor_jrjp.this.AVCODE.put(group.getId(), (long) random.nextInt(70000000));
+			Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(this.random.nextInt(tempMembers.size())));
+			Executor_jrjp.this.AVCODE.put(group.getId(), (long) this.random.nextInt(70000000));
 
 		}
 
-		ENABLE_USER = false;
-		ENABLE_DISZ = false;
-		ENABLE_GROP = true;
+		this.ENABLE_USER = false;
+		this.ENABLE_DISZ = false;
+		this.ENABLE_GROP = true;
 
 		return true;
 	}
@@ -178,10 +181,10 @@ public class Executor_jrjp extends ModuleExecutor {
 	@Override
 	public boolean boot() throws Exception {
 
-		logger.info("启动工作线程");
+		this.logger.info("启动工作线程");
 
-		thread = new Thread(new Worker());
-		thread.start();
+		this.thread = new Thread(new Worker());
+		this.thread.start();
 
 		return true;
 	}
@@ -194,12 +197,12 @@ public class Executor_jrjp extends ModuleExecutor {
 	@Override
 	public boolean shut() throws Exception {
 
-		logger.info("终止工作线程");
+		this.logger.info("终止工作线程");
 
-		thread.interrupt();
-		thread.join();
+		this.thread.interrupt();
+		this.thread.join();
 
-		logger.info("工作线程已终止");
+		this.logger.info("工作线程已终止");
 
 		return true;
 	}
@@ -232,8 +235,8 @@ public class Executor_jrjp extends ModuleExecutor {
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
-		long victim = VICTIM.get(gropid);
-		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www" + ".bilibili.com/video/av" + AVCODE.get(gropid));
+		long victim = this.VICTIM.get(gropid);
+		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www" + ".bilibili.com/video/av" + this.AVCODE.get(gropid));
 		return true;
 
 	}
@@ -271,8 +274,8 @@ public class Executor_jrjp extends ModuleExecutor {
 						time = time * 1000;
 						Thread.sleep(time);
 
-						AVCODE.clear();
-						VICTIM.clear();
+						Executor_jrjp.this.AVCODE.clear();
+						Executor_jrjp.this.VICTIM.clear();
 
 						ArrayList<Long> temp;
 
@@ -281,14 +284,14 @@ public class Executor_jrjp extends ModuleExecutor {
 
 						StringBuilder builder = new StringBuilder();
 
-						for (Long group : MEMBERS.keySet()) {
+						for (Long group : Executor_jrjp.this.MEMBERS.keySet()) {
 
-							temp = MEMBERS.get(group);
-							victim = temp.get(random.nextInt(temp.size()));
-							avcode = random.nextInt(60000000);
+							temp = Executor_jrjp.this.MEMBERS.get(group);
+							victim = temp.get(Executor_jrjp.this.random.nextInt(temp.size()));
+							avcode = Executor_jrjp.this.random.nextInt(60000000);
 
-							VICTIM.put(group, victim);
-							AVCODE.put(group, avcode);
+							Executor_jrjp.this.VICTIM.put(group, victim);
+							Executor_jrjp.this.AVCODE.put(group, avcode);
 
 							builder.append(group + " - " + " AV" + avcode + "\r\n");
 
@@ -299,9 +302,9 @@ public class Executor_jrjp extends ModuleExecutor {
 					if (entry.isEnable()) {
 						long timeserial = System.currentTimeMillis();
 						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
-						logger.exception(timeserial, exception);
+						Executor_jrjp.this.logger.exception(timeserial, exception);
 					} else {
-						logger.full("关闭");
+						Executor_jrjp.this.logger.full("关闭");
 					}
 				}
 

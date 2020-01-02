@@ -3,12 +3,14 @@ package studio.blacktech.coolqbot.furryblack.modules.Executor;
 import java.security.SecureRandom;
 
 import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorCompment;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
+@ModuleExecutorCompment(name = "Executor_roll")
 public class Executor_roll extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
@@ -76,9 +78,9 @@ public class Executor_roll extends ModuleExecutor {
 
 	@Override
 	public boolean init() throws Exception {
-		ENABLE_USER = true;
-		ENABLE_DISZ = true;
-		ENABLE_GROP = true;
+		this.ENABLE_USER = true;
+		this.ENABLE_DISZ = true;
+		this.ENABLE_GROP = true;
 		return true;
 	}
 
@@ -114,19 +116,19 @@ public class Executor_roll extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-		entry.userInfo(userid, roll(message));
+		entry.userInfo(userid, this.roll(message));
 		return true;
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-		entry.diszInfo(diszid, userid, roll(message));
+		entry.diszInfo(diszid, userid, this.roll(message));
 		return true;
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-		entry.gropInfo(gropid, userid, roll(message));
+		entry.gropInfo(gropid, userid, this.roll(message));
 		return true;
 	}
 
@@ -141,13 +143,13 @@ public class Executor_roll extends ModuleExecutor {
 
 		case 0:
 			if (random.nextBoolean()) {
-				mode_fucker++;
+				this.mode_fucker++;
 				res = " [CQ:emoji,id=10000049]";
 			} else {
-				mode_fucked++;
+				this.mode_fucked++;
 				res = " [CQ:emoji,id=10000048]";
 			}
-			mode_1++;
+			this.mode_1++;
 			break;
 
 		// ============================================================
@@ -157,17 +159,17 @@ public class Executor_roll extends ModuleExecutor {
 			try {
 				range = Integer.parseInt(message.getSegment()[0]);
 				res = Integer.toString(random.nextInt(range));
-				mode_2++;
+				this.mode_2++;
 			} catch (Exception exce) {
 				res = message.getOptions() + " 是 ";
 				if (random.nextBoolean()) {
-					mode_fucker++;
+					this.mode_fucker++;
 					res = res + "[CQ:emoji,id=10000049]";
 				} else {
-					mode_fucked++;
+					this.mode_fucked++;
 					res = res + "[CQ:emoji,id=10000048]";
 				}
-				mode_1++;
+				this.mode_1++;
 			}
 			break;
 
@@ -185,7 +187,7 @@ public class Executor_roll extends ModuleExecutor {
 			int temp = random.nextInt(max);
 			if (temp < min) { temp = ((temp / max) * (max - min)) + min; }
 			res = Integer.toString(temp);
-			mode_3++;
+			this.mode_3++;
 			break;
 		}
 
@@ -196,18 +198,18 @@ public class Executor_roll extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
-		if ((COUNT_USER + COUNT_DISZ + COUNT_GROP) == 0) { return null; }
+		if ((this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP) == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		builder.append("模式1 - 真假: ");
-		builder.append(mode_1);
+		builder.append(this.mode_1);
 		builder.append(" (");
-		builder.append(mode_fucker);
+		builder.append(this.mode_fucker);
 		builder.append("/");
-		builder.append(mode_fucked);
+		builder.append(this.mode_fucked);
 		builder.append(")\r\n模式2 - 单限: ");
-		builder.append(mode_2);
+		builder.append(this.mode_2);
 		builder.append("\r\n模式3 - 双限: ");
-		builder.append(mode_3);
+		builder.append(this.mode_3);
 		String[] res = new String[] {
 				builder.toString()
 		};
