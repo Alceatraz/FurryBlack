@@ -2,6 +2,7 @@ package studio.blacktech.coolqbot.furryblack;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.jar.JarFile;
 
 import org.meowy.cqp.jcq.entity.CoolQ;
 import org.meowy.cqp.jcq.entity.ICQVer;
@@ -73,10 +74,13 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// ==========================================================================================================================================================
 
 	// 版本ID
-	public final static String VerID = "14.0 2019-12-08 (20:00)";
+	public final static String VerID = "15.0 2020-01-04 (12:00)";
 
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();
+
+	// 自身Jar文件
+	private static JarFile JAR_INSTANCE;
 
 	// 是否启用DEBUG的开关 启动过程为true 启动完成时改为false 此设计有助于debug和启动时异常排查
 	private static boolean DEBUG = true;
@@ -192,6 +196,17 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			logger = new LoggerX("Core_Entry");
 
 			logger.info("启动", LoggerX.datetime());
+
+			// ==========================================================================================================================
+			// 获取APP本身的Jar
+
+			String workingDir = System.getProperty("user.dir");
+			String workingJar = AppID + ".jar";
+			File jarFile = Paths.get(workingDir, "data", "app", "org.meowy.cqp.jcq", "app", workingJar).toFile();
+
+			logger.full("加载", jarFile.getAbsolutePath());
+
+			JAR_INSTANCE = new JarFile(jarFile);
 
 			// ==========================================================================================================================
 			// 实例化 系统
@@ -603,6 +618,15 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	public static CoolQ getCQ() {
 		return CQ;
+	}
+
+	/**
+	 * 获取自身JarFile
+	 *
+	 * @return JarFile对象
+	 */
+	public static JarFile getJar() {
+		return JAR_INSTANCE;
 	}
 
 	/**

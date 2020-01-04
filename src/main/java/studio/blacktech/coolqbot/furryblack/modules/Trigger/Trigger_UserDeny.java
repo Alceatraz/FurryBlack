@@ -14,14 +14,14 @@ import java.util.TreeMap;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerCompment;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 
-@ModuleTriggerCompment(name = "Trigger_UserDeny")
+@ModuleTriggerComponent
 public class Trigger_UserDeny extends ModuleTrigger {
 
 	private static final long serialVersionUID = 1L;

@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 import java.util.TreeMap;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorCompment;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
@@ -21,7 +21,7 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
  * @author netuser
  */
 
-@ModuleExecutorCompment(name = "Executor_food")
+@ModuleExecutorComponent
 public class Executor_food extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;

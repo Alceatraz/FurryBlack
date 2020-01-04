@@ -10,8 +10,10 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.TreeMap;
+import java.util.jar.JarEntry;
 
 import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
@@ -19,6 +21,11 @@ import org.meowy.cqp.jcq.entity.Member;
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.BufferX;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleComponent;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerComponent;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
 import studio.blacktech.coolqbot.furryblack.common.exception.CantReinitializationException;
 import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -30,23 +37,6 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_acon;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_admin;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_chou;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_dice;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_echo;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_food;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_jrjp;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_jrrp;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_kong;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_roll;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_roulette;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_time;
-import studio.blacktech.coolqbot.furryblack.modules.Executor.Executor_zhan;
-import studio.blacktech.coolqbot.furryblack.modules.Listener.Listener_TopSpeak;
-import studio.blacktech.coolqbot.furryblack.modules.Scheduler.Scheduler_Dynamic;
-import studio.blacktech.coolqbot.furryblack.modules.Trigger.Trigger_UserDeny;
-import studio.blacktech.coolqbot.furryblack.modules.Trigger.Trigger_WordDeny;
 
 /**
  * FurryBlack的核心路由
@@ -418,40 +408,43 @@ public class Systemd extends Module {
 		// 实例化模块
 		// =======================================================================================================================
 
-		this.logger.full("实例化模块");
+		this.logger.full("搜索模块");
 
-		// =======================================================================================================================
-		// 实例化辅助模块
+		Enumeration<JarEntry> entries = entry.getJar().entries();
 
-		this.instantiationScheduler(new Scheduler_Dynamic());
+		while (entries.hasMoreElements()) {
 
-		// =======================================================================================================================
-		// 实例化触发器
+			JarEntry jarEntry = entries.nextElement();
 
-		this.instantiationTrigger(new Trigger_UserDeny());
-		this.instantiationTrigger(new Trigger_WordDeny());
+			String entryName = jarEntry.getName();
 
-		// =======================================================================================================================
-		// 实例化监听器
+			if (!entryName.endsWith(".class")) { continue; }
 
-		this.instantiationListener(new Listener_TopSpeak());
+			if (entryName.charAt(0) == '/') { entryName = entryName.substring(1); }
+			entryName = entryName.substring(0, entryName.length() - 6);
+			entryName = entryName.replace("/", ".");
 
-		// =======================================================================================================================
-		// 实例化执行器
+			Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(entryName);
 
-		this.instantiationExecutor(new Executor_admin());
-		this.instantiationExecutor(new Executor_acon());
-		this.instantiationExecutor(new Executor_chou());
-		this.instantiationExecutor(new Executor_dice());
-		this.instantiationExecutor(new Executor_echo());
-		this.instantiationExecutor(new Executor_food());
-		this.instantiationExecutor(new Executor_jrjp());
-		this.instantiationExecutor(new Executor_jrrp());
-		this.instantiationExecutor(new Executor_kong());
-		this.instantiationExecutor(new Executor_roll());
-		this.instantiationExecutor(new Executor_roulette());
-		this.instantiationExecutor(new Executor_time());
-		this.instantiationExecutor(new Executor_zhan());
+			if (clazz.isAnnotationPresent(ModuleComponent.class)) {
+				this.logger.full("注册核心模块", entryName);
+			} else if (clazz.isAnnotationPresent(ModuleTriggerComponent.class)) {
+				this.logger.full("注册触发器", clazz.getName());
+				this.instantiationTrigger((ModuleTrigger) clazz.newInstance());
+			} else if (clazz.isAnnotationPresent(ModuleListenerComponent.class)) {
+				this.logger.full("注册监听器", clazz.getName());
+				this.instantiationListener((ModuleListener) clazz.newInstance());
+			} else if (clazz.isAnnotationPresent(ModuleExecutorComponent.class)) {
+				this.logger.full("注册执行器", clazz.getName());
+				this.instantiationExecutor((ModuleExecutor) clazz.newInstance());
+			} else if (clazz.isAnnotationPresent(ModuleSchedulerComponent.class)) {
+				this.logger.full("注册定时器", clazz.getName());
+				this.instantiationScheduler((ModuleScheduler) clazz.newInstance());
+			} else {
+
+			}
+
+		}
 
 		// =======================================================================================================================
 		// 初始化模块

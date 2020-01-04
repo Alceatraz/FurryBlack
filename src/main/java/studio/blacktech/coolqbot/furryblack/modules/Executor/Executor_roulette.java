@@ -8,14 +8,14 @@ import java.util.HashMap;
 import org.meowy.cqp.jcq.entity.Member;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorCompment;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
-@ModuleExecutorCompment(name = "Executor_roulette")
+@ModuleExecutorComponent
 public class Executor_roulette extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;

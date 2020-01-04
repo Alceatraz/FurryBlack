@@ -9,11 +9,11 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerCompment;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 
-@ModuleSchedulerCompment(name="Scheduler_Dynamic")
+@ModuleSchedulerComponent
 public class Scheduler_Dynamic extends ModuleScheduler {
 
 	private static final long serialVersionUID = 1L;

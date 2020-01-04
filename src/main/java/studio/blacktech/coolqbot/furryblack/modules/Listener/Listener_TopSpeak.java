@@ -26,7 +26,7 @@ import org.meowy.cqp.jcq.message.CQCode;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerCompment;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerComponent;
 import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
@@ -34,7 +34,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
 
-@ModuleListenerCompment(name = "Listener_TopSpeak")
+@ModuleListenerComponent
 public class Listener_TopSpeak extends ModuleListener {
 
 	private static final long serialVersionUID = 1L;
