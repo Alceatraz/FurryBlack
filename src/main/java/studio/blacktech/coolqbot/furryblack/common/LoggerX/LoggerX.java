@@ -267,7 +267,6 @@ public class LoggerX {
 	// ==================================================================================================
 
 	private static void PRINT(String message) {
-
 		System.out.println(message);
 	}
 

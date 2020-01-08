@@ -887,11 +887,11 @@ public class Systemd extends Module {
 
 			case "nickmap":
 
+				int i = 0;
+
 				switch (message.getSegment(2)) {
 
 				case "dump":
-
-					int i = 0;
 
 					File allUserDump = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "nickdump_" + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
 					allUserDump.createNewFile();
@@ -910,7 +910,7 @@ public class Systemd extends Module {
 					dumper.close();
 
 					return new String[] {
-							"[" + MODULE_PACKAGENAME + "] " + "昵称转储" + i + "个"
+							"[" + MODULE_PACKAGENAME + "] " + "昵称转储" + i + "个，至" + allUserDump.getAbsolutePath()
 					};
 
 				case "save":
@@ -967,12 +967,14 @@ public class Systemd extends Module {
 						if (!this.NICKNAME_MAP.containsKey(gropid)) { this.NICKNAME_MAP.put(gropid, new TreeMap<Long, String>()); }
 
 						this.NICKNAME_MAP.get(gropid).put(userid, temp[2]);
-
-						reader.close();
-
+						i++;
 					}
 
-					break;
+					reader.close();
+
+					return new String[] {
+							"[" + MODULE_PACKAGENAME + "] " + "昵称加载" + i + "个"
+					};
 				}
 
 				break;

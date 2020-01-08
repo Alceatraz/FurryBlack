@@ -74,7 +74,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// ==========================================================================================================================================================
 
 	// 版本ID
-	public final static String VerID = "15.0 2020-01-04 (12:00)";
+	public final static String VerID = "15.1 2020-01-08 (22:00)";
 
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();
@@ -485,6 +485,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r" + "\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
 		SYSTEMD.sendEula(userid);
 		SYSTEMD.sendHelp(userid);
+		SYSTEMD.sendListUser(userid);
+		SYSTEMD.sendListDisz(userid);
+		SYSTEMD.sendListGrop(userid);
 	}
 
 	/**
@@ -493,22 +496,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int requestAddFriend(int typeid, int sendtime, long userid, String message, String flag) {
 
-		long time = System.currentTimeMillis();
+		String nick = SYSTEMD.getNickname(userid);
 
-		StringBuilder builder = new StringBuilder();
+		logger.full("添加好友", "时间" + sendtime + " 用户：" + nick + "(" + userid + ")" + " 信息：" + message + " 标志：" + flag);
+		SYSTEMD.adminInfo("[收到好友请求] - " + sendtime + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message + "\r\n标志：" + flag);
+		SYSTEMD.adminInfo("/admin friend accept " + flag);
+		SYSTEMD.adminInfo("/admin friend refuse " + flag);
 
-		builder.append("[好友请求] 事件序列号 - " + time + "\r\n");
-		builder.append("用户：" + SYSTEMD.getNickname(userid) + "(" + userid + ")\r\n");
-		builder.append("请求时间：" + sendtime + "\r\n");
-		builder.append("验证消息：" + message);
-
-		logger.raw("好友请求", builder.toString());
-
-		SYSTEMD.adminInfo(builder.toString());
-
-		CQ.setFriendAddRequest(flag, IRequest.REQUEST_ADOPT, String.valueOf(userid));
 
 		return 0;
+
 	}
 
 	/**
@@ -517,69 +514,85 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int requestAddGroup(int typeid, int sendtime, long gropid, long userid, String message, String flag) {
 
-		long time = System.currentTimeMillis();
+		String nick = SYSTEMD.getNickname(userid);
 
-		StringBuilder builder = new StringBuilder();
+		if (typeid == 1) {
 
-		builder.append((typeid == 1 ? "申请入群" : "邀请入群") + "时间序列号 - " + time + "\r\n");
-		builder.append("类型ID：" + typeid + " " + (typeid == 1 ? "申请入群" : "邀请入群") + "\r\n");
-		builder.append("群聊ID：" + gropid + "\r\n");
-		builder.append("用户ID：" + SYSTEMD.getNickname(userid) + "(" + userid + ")\r\n");
-		builder.append("请求时间：" + sendtime + "\r\n");
-		builder.append("验证消息：" + (message.length() == 0 ? "无" : message));
+			logger.full("收到加群申请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息" + message + " 标志" + flag);
+			SYSTEMD.adminInfo("[收到加群申请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息" + message + "\r\n标志" + flag);
 
-		logger.raw("群邀请", builder.toString());
+		} else {
 
-		SYSTEMD.adminInfo(builder.toString());
+			logger.full("收到入群邀请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息" + message + " 标志" + flag);
+			SYSTEMD.adminInfo("[收到入群邀请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息" + message + "\r\n标志" + flag);
+			SYSTEMD.adminInfo("/admin group accept " + flag);
+			SYSTEMD.adminInfo("/admin group refuse " + flag);
 
-		if (typeid == 2) { CQ.setGroupAddRequest(flag, IRequest.REQUEST_GROUP_INVITE, IRequest.REQUEST_ADOPT, null); }
+		}
 
 		return 0;
 	}
 
 	/**
-	 * 禁言事件 不应该在此处修改任何内容
+	 * 禁言事件 不应该在此处修改任何内容 交叉逻辑我改了四次 都没有好的办法
 	 */
 	@Override
 	public int groupBan(int typeid, int sendtime, long gropid, long operid, long userid, long duration) {
 
-		String type = (userid == 0 ? "全体" : "") + (typeid == 1 ? "解禁" : "禁言");
+		String operNick = "管理：" + SYSTEMD.getNickname(operid) + "(" + operid + ")";
 
-		StringBuilder builder = new StringBuilder();
+		if (userid == 0) {
 
-		builder.append(LoggerX.time() + "\r\n");
+			if (typeid == 2) {
 
-		builder.append("群聊ID：" + gropid + "\r\n");
-		builder.append("管理ID：" + operid + "(" + SYSTEMD.getNickname(operid) + ")\r\n");
+				long ss = duration;
+				long dd = ss / 86400;
+				ss = ss % 86400;
+				long hh = ss / 3600;
+				ss = ss % 3600;
+				long mm = ss / 60;
+				ss = ss % 60;
 
-		if (userid != 0) { builder.append("用户ID：" + SYSTEMD.getNickname(userid) + "(" + userid + ")\r\n"); }
-		if (typeid != 1) {
+				String time = "时间：" + duration + " (" + dd + " - " + hh + ":" + mm + ":" + ss + ")";
 
-			long ss = duration;
-			long dd = ss / 86400;
-			ss = ss % 86400;
-			long hh = ss / 3600;
-			ss = ss % 3600;
-			long mm = ss / 60;
-			ss = ss % 60;
+				logger.full("全体禁言", sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n时常：" + time);
+				SYSTEMD.adminInfo("[全体禁言] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n时常：" + time);
 
-			builder.append("时间：" + duration + " (" + dd + " - " + hh + ":" + mm + ":" + ss + ")");
+			} else {
+
+				logger.full("全体解禁", sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick);
+				SYSTEMD.adminInfo("[全体解禁] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick);
+
+			}
+
+		} else {
+
+			String userNick = "用户：" + SYSTEMD.getNickname(userid) + "(" + userid + ")";
+
+			if (typeid == 2) {
+
+				long ss = duration;
+				long dd = ss / 86400;
+				ss = ss % 86400;
+				long hh = ss / 3600;
+				ss = ss % 3600;
+				long mm = ss / 60;
+				ss = ss % 60;
+
+				String time = "时间：" + duration + " (" + dd + " - " + hh + ":" + mm + ":" + ss + ")";
+
+				logger.full("成员禁言", sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户：" + userNick + "\r\n时常：" + time);
+				SYSTEMD.adminInfo("[成员禁言] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户：" + userNick + "\r\n时常：" + time);
+
+			} else {
+
+				logger.full("成员解禁", sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户：" + userNick);
+				SYSTEMD.adminInfo("[成员解禁] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户：" + userNick);
+
+			}
+
 		}
 
-		logger.raw(type, builder.toString());
-
-		builder.insert(0, "[" + type + "]\r\n");
-
-		SYSTEMD.adminInfo(builder.toString());
-
-		return 0;
-	}
-
-	/**
-	 * 文件上传事件 不应该在此处修改任何内容
-	 */
-	@Override
-	public int groupUpload(int typeid, int sendtime, long gropid, long userid, String file) {
 		return 0;
 	}
 
@@ -590,18 +603,19 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public int groupAdmin(int typeid, int sendtime, long gropid, long userid) {
 
 		String type = typeid == 1 ? "解除" : "任命";
+		String nick = SYSTEMD.getNickname(userid);
 
-		StringBuilder builder = new StringBuilder();
+		logger.full("管理员变动", "群" + gropid + " " + type + " " + nick + "(" + userid + ")");
+		SYSTEMD.adminInfo("[管理员变动] - " + sendtime + "\r\n群聊：" + gropid + "\r\n类型：" + type + "\r\n用户：" + nick + "(" + userid + ")");
 
-		builder.append("群聊ID：" + gropid + "\r\n");
-		builder.append("用户ID：" + SYSTEMD.getNickname(userid) + "(" + userid + ")");
+		return 0;
+	}
 
-		logger.raw(type, builder.toString());
-
-		builder.insert(0, "[" + type + "] - " + LoggerX.time() + "\r\n");
-
-		SYSTEMD.adminInfo(builder.toString());
-
+	/**
+	 * 文件上传事件 不应该在此处修改任何内容
+	 */
+	@Override
+	public int groupUpload(int typeid, int sendtime, long gropid, long userid, String file) {
 		return 0;
 	}
 
