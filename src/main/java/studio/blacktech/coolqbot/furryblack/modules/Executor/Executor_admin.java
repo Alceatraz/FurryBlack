@@ -95,10 +95,12 @@ public class Executor_admin extends ModuleExecutor {
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+		
 	}
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+		
 	}
 
 	@Override
@@ -117,10 +119,6 @@ public class Executor_admin extends ModuleExecutor {
 		switch (message.getSegment(0)) {
 
 		case "report":
-			if (message.getSection() < 2) {
-				entry.adminInfo("Exit code → 1 缺少参数");
-				return false;
-			}
 			entry.adminInfo(entry.getSystemd().reportSpecifiedModule(0, message, null, null));
 
 			break;
@@ -205,10 +203,6 @@ public class Executor_admin extends ModuleExecutor {
 		switch (message.getSegment(0)) {
 
 		case "report":
-			if (message.getSection() < 2) {
-				entry.adminInfo("Exit code → 1 缺少参数");
-				return false;
-			}
 			entry.gropInfo(gropid, entry.getSystemd().reportSpecifiedModule(0, message, null, null));
 
 			break;
