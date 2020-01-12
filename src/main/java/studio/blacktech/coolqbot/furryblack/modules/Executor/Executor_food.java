@@ -1,7 +1,9 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
+
 import java.security.SecureRandom;
 import java.util.TreeMap;
+
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
@@ -10,6 +12,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+
 
 /**
  * 这个模块是应邀添加的
@@ -96,13 +99,18 @@ public class Executor_food extends ModuleExecutor {
 
 		// @formatter:on
 
-		for (int i = 1; i < (menu.length + 1); i++) {
+		for (int i = 1; i < menu.length + 1; i++) {
+
 			String[] tempmenu = menu[i - 1];
 			TreeMap<Integer, String> tempmap = new TreeMap<>();
+
 			for (int j = 0; j < tempmenu.length; j++) {
+
 				tempmap.put(j, tempmenu[j]);
+
 			}
 			this.MENU.put(i, tempmap);
+
 		}
 
 		this.ENABLE_USER = true;
@@ -110,54 +118,70 @@ public class Executor_food extends ModuleExecutor {
 		this.ENABLE_GROP = true;
 
 		return true;
+
 	}
 
 	@Override
 	public boolean boot() throws Exception {
+
 		return true;
+
 	}
 
 	@Override
 	public boolean save() throws Exception {
+
 		return true;
+
 	}
 
 	@Override
 	public boolean shut() throws Exception {
+
 		return true;
+
 	}
 
 	@Override
 	public String[] exec(Message message) throws Exception {
+
 		return new String[] {
 				"此模块无可用命令"
 		};
+
 	}
 
 	@Override
-	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-	}
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-	}
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
+
 		entry.userInfo(userid, this.chooseFood(message));
 		return true;
+
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
+
 		entry.diszInfo(diszid, userid, this.chooseFood(message));
 		return true;
+
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
+
 		entry.gropInfo(gropid, userid, this.chooseFood(message));
 		return true;
+
 	}
 
 	// ==========================================================================================================================================================
@@ -168,31 +192,46 @@ public class Executor_food extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
+
 		return new String[0];
+
 	}
 
 	public String chooseFood(Message message) {
+
 		// food 1
 		StringBuilder builder = new StringBuilder();
 
 		if (message.getSection() == 0) {
+
 			for (int mode : this.MENU.keySet()) {
+
 				TreeMap<Integer, String> temp = this.MENU.get(mode);
 				builder.append("类别 " + mode + "：" + temp.get(0) + " " + (temp.size() - 1) + "种" + "\r\n");
+
 			}
 			builder.setLength(builder.length() - 2);
+
 		} else {
+
 			int mode = Integer.parseInt(message.getSegment(0));
+
 			if (this.MENU.containsKey(mode)) {
+
 				TreeMap<Integer, String> temp = this.MENU.get(mode);
 				SecureRandom random = new SecureRandom();
 				int res = random.nextInt(temp.size() - 1) + 1;
 				builder.append("从 " + temp.get(0) + " 抽到了：" + temp.get(res));
+
 			} else {
+
 				builder.append("没有这个种类，你在想Peach。");
+
 			}
+
 		}
 		return builder.toString();
+
 	}
 
 }

@@ -1,5 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Scheduler;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -8,10 +9,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
+
 
 @ModuleSchedulerComponent
 public class Scheduler_Dynamic extends ModuleScheduler {
@@ -91,6 +94,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		this.initPropertiesConfigurtion();
 
 		if (this.NEW_CONFIG) {
+
 			this.logger.seek("配置文件不存在 - 生成默认配置");
 			this.CONFIG.setProperty("enable", "false");
 			this.CONFIG.setProperty("getaddress", "");
@@ -99,8 +103,11 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			this.CONFIG.setProperty("hostname", "");
 			this.CONFIG.setProperty("password", "");
 			this.saveConfig();
+
 		} else {
+
 			this.loadConfig();
+
 		}
 
 		this.ENABLE = Boolean.parseBoolean(this.CONFIG.getProperty("enable", "false"));
@@ -122,6 +129,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		this.logger.seek("密码", this.PASSWORD.substring(6, 12));
 
 		return true;
+
 	}
 
 	@Override
@@ -135,11 +143,14 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		this.thread.start();
 
 		return true;
+
 	}
 
 	@Override
 	public boolean save() throws Exception {
+
 		return true;
+
 	}
 
 	@Override
@@ -155,52 +166,59 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		this.logger.info("工作线程已终止");
 
 		return true;
+
 	}
 
 	@Override
 	public String[] exec(Message message) throws Exception {
 
 		if (message.getSection() < 2) {
+
 			return new String[] {
 					"参数不足"
 			};
+
 		}
 
 		String command = message.getSegment(1);
 
 		switch (command) {
 
-		case "get":
-			return new String[] {
-					this.getAddress()
-			};
-
-		case "set":
-
-			if (message.getSection() == 2) {
+			case "get":
 				return new String[] {
-						this.setAddress()
+						this.getAddress()
 				};
-			} else {
-				return new String[] {
-						this.setAddress(message.getSegment(2))
-				};
-			}
 
-		default:
-			return new String[] {
-					"此模块无此命令 - " + message.getSegment(1)
-			};
+			case "set":
+
+				if (message.getSection() == 2) {
+
+					return new String[] {
+							this.setAddress()
+					};
+
+				} else {
+
+					return new String[] {
+							this.setAddress(message.getSegment(2))
+					};
+
+				}
+
+			default:
+				return new String[] {
+						"此模块无此命令 - " + message.getSegment(1)
+				};
+
 		}
+
 	}
 
 	@Override
-	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
-	}
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {}
 
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
-	}
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {}
 
 	// ==========================================================================================================================================================
 	//
@@ -240,6 +258,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 		@Override
 		public void run() {
+
 			long time;
 			Date date;
 			String address;
@@ -256,13 +275,21 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 						time = 300L;
 						time = time - date.getSeconds();
-						time = time - ((date.getMinutes() % 10) * 60);
+						time = time - date.getMinutes() % 10 * 60;
 
-						if (time < 60) { time = time + 300; }
+						if (time < 60) {
+
+							time = time + 300;
+
+						}
 
 						time = time * 1000;
 
-						if (entry.DEBUG()) { Scheduler_Dynamic.this.logger.full("工作线程休眠：" + time); }
+						if (entry.DEBUG()) {
+
+							Scheduler_Dynamic.this.logger.full("工作线程休眠：" + time);
+
+						}
 
 						Thread.sleep(time);
 
@@ -272,72 +299,121 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 						// =======================================================
 
-						if (entry.DEBUG()) { Scheduler_Dynamic.this.logger.full("工作线程执行"); }
+						if (entry.DEBUG()) {
+
+							Scheduler_Dynamic.this.logger.full("工作线程执行");
+
+						}
 
 						respons = Scheduler_Dynamic.this.setAddress();
+
 						// 直接更新地址
 						if (respons == null) {
+
 							// 失败的话 执行备用逻辑
 							address = Scheduler_Dynamic.this.getAddress();
+
 							// 获取IP地址
 							if (address == null) {
+
 								// 失败的话 增加失败计数
 								failcount++;
 								Scheduler_Dynamic.this.COUNT_FAILED++;
+
 							} else {
+
 								// 成功的话
 								// 利用正则判断是否是正常的ip地址
 								if (Pattern.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}", address)) {
+
 									// 成功的话 设置地址
 									respons = Scheduler_Dynamic.this.setAddress(address);
+
 									// 是否设置成功
 									if (respons == null) {
+
 										// 失败的话 增加失败计数
 										failcount++;
 										Scheduler_Dynamic.this.COUNT_FAILED++;
+
 									} else {
+
 										// 成功的话 重置失败计数
 										failcount = 0;
-										if (respons.startsWith("good")) { Scheduler_Dynamic.this.COUNT_CHANGE++; }
+
+										if (respons.startsWith("good")) {
+
+											Scheduler_Dynamic.this.COUNT_CHANGE++;
+
+										}
+
 									}
+
 								} else {
+
 									// 不是正常地址 增加失败计数
 									failcount++;
 									Scheduler_Dynamic.this.COUNT_FAILED++;
+
 								}
+
 							}
+
 						} else {
+
 							// 成功的话 重置失败计数
 							failcount = 0;
+
 							// 如果发生改变API返回内容为 good 123.123.123.123
-							if (respons.startsWith("good")) { Scheduler_Dynamic.this.COUNT_CHANGE++; }
+							if (respons.startsWith("good")) {
+
+								Scheduler_Dynamic.this.COUNT_CHANGE++;
+
+							}
+
 						}
+
 						if (failcount > 6) {
+
 							failcount = 0;
 							entry.adminInfo("[DDNS] 警告 更新失败\r\n需要手动介入\r\n已连续失败六次");
+
 						}
+
 						if (entry.DEBUG()) {
+
 							Scheduler_Dynamic.this.logger.full("结果 " + respons);
+
 							// =======================================================
 						}
+
 					}
 
 				} catch (InterruptedException exception) {
+
 					if (entry.isEnable()) {
+
 						long timeserial = System.currentTimeMillis();
 						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
 						Scheduler_Dynamic.this.logger.exception(timeserial, exception);
+
 					} else {
+
 						Scheduler_Dynamic.this.logger.full("关闭");
+
 					}
+
 				}
 
 			} while (entry.isEnable());
+
 		}
 	}
 
 	public String getAddress() {
+
 		try {
+
 			URL url = new URL(this.API_GETADDRESS);
 			URLConnection connection = url.openConnection();
 			connection.setReadTimeout(5000);
@@ -350,16 +426,22 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			rx.read(buffer);
 			this.COUNT_GETIP++;
 			return new String(buffer, StandardCharsets.UTF_8).trim();
+
 		} catch (IOException exception) {
+
 			exception.printStackTrace();
 			entry.adminInfo(Scheduler_Dynamic.MODULE_PACKAGENAME + " 获取异常 " + exception.getMessage());
 			this.COUNT_GETIP_FAILED++;
 			return null;
+
 		}
+
 	}
 
 	public String setAddress() {
+
 		try {
+
 			URL url = new URL(this.API_SETADDRESS + "?hostname=" + this.HOSTNAME);
 			URLConnection connection = url.openConnection();
 			connection.setReadTimeout(5000);
@@ -373,16 +455,22 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			rx.read(buffer);
 			this.COUNT_SETIP++;
 			return new String(buffer, StandardCharsets.UTF_8).trim();
+
 		} catch (IOException exception) {
+
 			this.COUNT_SETIP_FAILED++;
 			exception.printStackTrace();
 			entry.adminInfo(Scheduler_Dynamic.MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;
+
 		}
+
 	}
 
 	public String setAddress(String address) {
+
 		try {
+
 			URL url = new URL(this.API_SETADDRESS + "?hostname=" + this.HOSTNAME + "&myip=" + address);
 			URLConnection connection = url.openConnection();
 			connection.setReadTimeout(5000);
@@ -396,12 +484,16 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			rx.read(buffer);
 			this.COUNT_FRESH++;
 			return new String(buffer, StandardCharsets.UTF_8).trim();
+
 		} catch (IOException exception) {
+
 			this.COUNT_FRESH_FAILED++;
 			exception.printStackTrace();
 			entry.adminInfo(Scheduler_Dynamic.MODULE_PACKAGENAME + " 获取异常" + exception.getMessage());
 			return null;
+
 		}
+
 	}
 
 }

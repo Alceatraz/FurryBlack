@@ -1,5 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.common.module;
 
+
 public abstract class ModuleScheduler extends Module {
 
 	private static final long serialVersionUID = 1L;
@@ -35,11 +36,15 @@ public abstract class ModuleScheduler extends Module {
 	protected boolean ENABLE = false;
 
 	public boolean ENABLE() {
+
 		return this.ENABLE;
+
 	}
 
 	public int COUNT() {
+
 		return this.COUNT;
+
 	}
 
 }

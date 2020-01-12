@@ -1,5 +1,6 @@
 package studio.blacktech.security.Cipher;
 
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -15,6 +16,7 @@ import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -23,6 +25,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
 
 /***
  * 使用标准JavaCipher包装的AES-128 CBC分组模式工具类，
@@ -68,8 +71,10 @@ public class AESCipher {
 	 */
 	@Deprecated
 	public AESCipher(String secretKey) {
+
 		this(AESCipher.generateSecretKeySpec(secretKey), AESCipher.generateIvParameterSpec("0123456789ABCDEF"));
 		System.err.println("Warning! Using fix IV is RISK! Only test purpose!");
+
 	}
 
 	/**
@@ -79,8 +84,10 @@ public class AESCipher {
 	 */
 	@Deprecated
 	public AESCipher(SecretKeySpec secretKeySpec) {
+
 		this(secretKeySpec, AESCipher.generateIvParameterSpec("0123456789ABCDEF"));
 		System.err.println("Warning! Using fix IV is RISK! Only test purpose!");
+
 	}
 
 	/**
@@ -90,7 +97,9 @@ public class AESCipher {
 	 * @param initialVector 初始向量种子，MD5后用于生成初始向量
 	 */
 	public AESCipher(String secretKey, String initialVector) {
+
 		this(AESCipher.generateSecretKeySpec(secretKey), AESCipher.generateIvParameterSpec(initialVector));
+
 	}
 
 	/**
@@ -100,7 +109,9 @@ public class AESCipher {
 	 * @param initialVector 初始向量种子，MD5后用于生成初始向量
 	 */
 	public AESCipher(SecretKeySpec secretKeySpec, String initialVector) {
+
 		this(secretKeySpec, AESCipher.generateIvParameterSpec(initialVector));
+
 	}
 
 	/**
@@ -110,7 +121,9 @@ public class AESCipher {
 	 * @param initialVector 初始向量
 	 */
 	public AESCipher(String secretKey, IvParameterSpec initialVector) {
+
 		this(AESCipher.generateSecretKeySpec(secretKey), initialVector);
+
 	}
 
 	/**
@@ -135,14 +148,18 @@ public class AESCipher {
 			this.staticDigester = MessageDigest.getInstance("SHA-384");
 			this.oneoffDigester = MessageDigest.getInstance("SHA-384");
 
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException exception) {
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
+				| InvalidAlgorithmParameterException exception) {
+
 			exception.printStackTrace();
+
 			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
 			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
 			// NoSuchPaddingException ------------- 不允许用户自定义算法
 			// InvalidKeyException ---------------- 密钥由生成器生成
 			// InvalidAlgorithmParameterException - 不允许用户自定义算法
 		}
+
 	}
 
 	/**
@@ -152,7 +169,9 @@ public class AESCipher {
 	 * @return 密钥
 	 */
 	private static SecretKeySpec generateSecretKeySpec(String secretKey) {
+
 		try {
+
 			Provider provider = Security.getProvider("SUN");
 			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", provider);
 			random.setSeed(secretKey.getBytes(StandardCharsets.UTF_8));
@@ -160,9 +179,13 @@ public class AESCipher {
 			generator.init(128, random);
 			SecretKey skey = generator.generateKey();
 			return new SecretKeySpec(skey.getEncoded(), "AES");
+
 		} catch (NoSuchAlgorithmException exception) {
+
 			return null;
+
 		}
+
 	}
 
 	/**
@@ -172,13 +195,19 @@ public class AESCipher {
 	 * @return 初始向量
 	 */
 	private static IvParameterSpec generateIvParameterSpec(String initialVector) {
+
 		try {
+
 			MessageDigest digest = MessageDigest.getInstance("MD5");
 			digest.update(initialVector.getBytes(StandardCharsets.UTF_8));
 			return new IvParameterSpec(digest.digest());
+
 		} catch (NoSuchAlgorithmException exception) {
+
 			return null;
+
 		}
+
 	}
 
 	// ==========================================================================================================================================================
@@ -203,12 +232,15 @@ public class AESCipher {
 			return new String(tmp3, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
+
 			exception.printStackTrace();
 			return null;
+
 			// 这些异常不可能发生
 			// BadPaddingException ------- 不允许用户自定义算法
 			// IllegalBlockSizeException - 不允许用户传入byte[]
 		}
+
 	}
 
 	/**
@@ -227,12 +259,15 @@ public class AESCipher {
 			return new String(tmp2, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
+
 			exception.printStackTrace();
 			return null;
+
 			// 这些异常不可能发生
 			// BadPaddingException ------- 不允许用户自定义算法
 			// IllegalBlockSizeException - 不允许用户传入byte[]
 		}
+
 	}
 
 	/**
@@ -268,11 +303,14 @@ public class AESCipher {
 			return new String(tmp2, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
+
 			return null;
+
 			// 这些异常不可能发生
 			// BadPaddingException ------- 不允许用户自定义算法
 			// IllegalBlockSizeException - 不允许用户传入byte[]
 		}
+
 	}
 
 	/**
@@ -284,7 +322,8 @@ public class AESCipher {
 	 * @throws MessageSizeCheckFailedException 消息长度验证不通过
 	 * @throws MessageHashCheckFailedException 消息哈希验证不通过
 	 */
-	public String decryptHash(String content) throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
+	public String decryptHash(String content)
+			throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
 
 		try {
 
@@ -297,7 +336,12 @@ public class AESCipher {
 
 			System.arraycopy(rawMessage, 0, sizePart, 0, 8);
 			int claminMessagelength = Integer.valueOf(new String(sizePart).trim(), 16);
-			if (claminMessagelength != actualMessageLength) { throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength); }
+
+			if (claminMessagelength != actualMessageLength) {
+
+				throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength);
+
+			}
 
 			System.arraycopy(rawMessage, 8, hashPart, 0, 8);
 
@@ -311,11 +355,14 @@ public class AESCipher {
 			return new String(mesgPart, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
+
 			return null;
+
 			// 这些异常不可能发生
 			// BadPaddingException ------- 不允许用户自定义算法
 			// IllegalBlockSizeException - 不允许用户传入byte[]
 		}
+
 	}
 
 	public String encraptPhaseHash(String content) {
@@ -345,15 +392,20 @@ public class AESCipher {
 			return new String(tmp2, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException | CloneNotSupportedException exception) {
+
 			return null;
+
 			// 这些异常不可能发生
 			// BadPaddingException -------- 不允许用户自定义算法
 			// IllegalBlockSizeException -- 不允许用户传入byte[]
 			// CloneNotSupportedException - MessageDigest是能够克隆的
 		}
+
 	}
 
-	public String decryptPhaseHash(String content) throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
+	public String decryptPhaseHash(String content)
+			throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
+
 		try {
 
 			byte[] rawMessage = this.decrypter.doFinal(decoder.decode(content));
@@ -365,7 +417,12 @@ public class AESCipher {
 
 			System.arraycopy(rawMessage, 0, sizePart, 0, 8);
 			int claminMessagelength = Integer.valueOf(new String(sizePart).trim(), 16);
-			if (claminMessagelength != actualMessageLength) { throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength); }
+
+			if (claminMessagelength != actualMessageLength) {
+
+				throw new MessageSizeCheckFailedException(claminMessagelength, actualMessageLength);
+
+			}
 
 			System.arraycopy(rawMessage, 8, hashPart, 0, 8);
 
@@ -380,19 +437,23 @@ public class AESCipher {
 			return new String(mesgPart, StandardCharsets.UTF_8);
 
 		} catch (IllegalBlockSizeException | BadPaddingException | CloneNotSupportedException exception) {
+
 			return null;
+
 			// 这些异常不可能发生
 			// BadPaddingException ------- 不允许用户自定义算法
 			// NoSuchAlgorithmException -- 不允许用户自定义算法
 			// IllegalBlockSizeException - 不允许用户传入byte[]
 		}
+
 	}
 
 	private static boolean isSame(byte[] A, byte[] B) {
+
 		// 只发送前8位，所以只比较前8位，java没有数组截取 "python[0:7]" 所以只能写的这么蠢
 		// @formatter:off
-		return	(A[0] == B[0]) && (A[1] == B[1]) && (A[2] == B[2]) && (A[3] == B[3]) &&
-				(A[4] == B[4]) && (A[5] == B[5]) && (A[6] == B[6]) && (A[7] == B[7]) ;
+		return	A[0] == B[0] && A[1] == B[1] && A[2] == B[2] && A[3] == B[3] &&
+				A[4] == B[4] && A[5] == B[5] && A[6] == B[6] && A[7] == B[7] ;
 		// @formatter:on
 	}
 
@@ -403,18 +464,25 @@ public class AESCipher {
 	// ==========================================================================================================================================================
 
 	public static class MessageSizeCheckFailedException extends GeneralSecurityException {
+
 		private static final long serialVersionUID = 0;
 
 		public MessageSizeCheckFailedException(int claimSize, int actualSize) {
+
 			super("Message claim length is " + claimSize + ", But actual length is " + actualSize);
+
 		}
 	}
 
 	public static class MessageHashCheckFailedException extends GeneralSecurityException {
+
 		private static final long serialVersionUID = 0;
 
 		public MessageHashCheckFailedException(byte[] claimHash, byte[] actualHash) {
-			super("Message claim digest is " + Arrays.toString(claimHash) + ", But actual digest is " + Arrays.toString(Arrays.copyOfRange(actualHash, 0, 8)));
+
+			super("Message claim digest is " + Arrays.toString(claimHash) + ", But actual digest is "
+					+ Arrays.toString(Arrays.copyOfRange(actualHash, 0, 8)));
+
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Trigger;
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +14,7 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
@@ -21,6 +23,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
+
 
 @ModuleTriggerComponent
 public class Trigger_WordDeny extends ModuleTrigger {
@@ -103,12 +106,16 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		this.BLOCK_GROP_STORE = new TreeMap<>();
 
 		if (this.NEW_CONFIG) {
+
 			this.CONFIG.setProperty("enable_user", "false");
 			this.CONFIG.setProperty("enable_disz", "false");
 			this.CONFIG.setProperty("enable_grop", "false");
 			this.saveConfig();
+
 		} else {
+
 			this.loadConfig();
+
 		}
 
 		this.ENABLE_USER = Boolean.parseBoolean(this.CONFIG.getProperty("enable_user", "false"));
@@ -120,19 +127,51 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		this.FILE_DENY_DISZ = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "denied_disz_log.txt").toFile();
 		this.FILE_DENY_GROP = Paths.get(this.FOLDER_LOGS.getAbsolutePath(), "denied_grop_log.txt").toFile();
 
-		if (!this.FILE_BLACKLIST.exists()) { this.FILE_BLACKLIST.createNewFile(); }
-		if (!this.FILE_DENY_USER.exists()) { this.FILE_DENY_USER.createNewFile(); }
-		if (!this.FILE_DENY_DISZ.exists()) { this.FILE_DENY_DISZ.createNewFile(); }
-		if (!this.FILE_DENY_GROP.exists()) { this.FILE_DENY_GROP.createNewFile(); }
+		if (!this.FILE_BLACKLIST.exists()) {
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.FILE_BLACKLIST), StandardCharsets.UTF_8));
+			this.FILE_BLACKLIST.createNewFile();
+
+		}
+
+		if (!this.FILE_DENY_USER.exists()) {
+
+			this.FILE_DENY_USER.createNewFile();
+
+		}
+
+		if (!this.FILE_DENY_DISZ.exists()) {
+
+			this.FILE_DENY_DISZ.createNewFile();
+
+		}
+
+		if (!this.FILE_DENY_GROP.exists()) {
+
+			this.FILE_DENY_GROP.createNewFile();
+
+		}
+
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(this.FILE_BLACKLIST), StandardCharsets.UTF_8));
 
 		String line;
+
 		while ((line = reader.readLine()) != null) {
-			if (line.startsWith("#")) { continue; }
-			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")); }
+
+			if (line.startsWith("#")) {
+
+				continue;
+
+			}
+
+			if (line.contains("#")) {
+
+				line = line.substring(0, line.indexOf("#"));
+
+			}
 			this.BLACKLIST.add(line.trim());
 			this.logger.seek("过滤规则", line);
+
 		}
 		reader.close();
 
@@ -143,9 +182,11 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		this.ENABLE_GROP = this.ENABLE_GROP && temp;
 
 		for (String templine : this.BLACKLIST) {
+
 			this.BLOCK_USER_STORE.put(templine, new LinkedList<>());
 			this.BLOCK_DISZ_STORE.put(templine, new LinkedList<>());
 			this.BLOCK_GROP_STORE.put(templine, new LinkedList<>());
+
 		}
 
 		return true;
@@ -154,38 +195,48 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 	@Override
 	public boolean boot() throws Exception {
+
 		return true;
+
 	}
 
 	@Override
 	public boolean save() throws Exception {
+
 		return true;
+
 	}
 
 	@Override
 	public boolean shut() throws Exception {
+
 		return true;
+
 	}
 
 	@Override
 	public String[] exec(Message message) throws Exception {
+
 		return new String[] {
 				"此模块无可用命令"
 		};
+
 	}
 
 	@Override
-	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-	}
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-	}
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
+
 		for (String temp : this.BLACKLIST) {
+
 			if (Pattern.matches(temp, message.getRawMessage())) {
+
 				entry.adminInfo("私聊过滤：" + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
 				this.BLOCK_USER_STORE.get(temp).add(message);
 				FileWriter writer = new FileWriter(this.FILE_DENY_USER, true);
@@ -194,16 +245,24 @@ public class Trigger_WordDeny extends ModuleTrigger {
 				writer.flush();
 				writer.close();
 				return true;
+
 			}
+
 		}
 		return false;
+
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
+
 		for (String temp : this.BLACKLIST) {
+
 			if (Pattern.matches(temp, message.getRawMessage())) {
-				entry.adminInfo("组聊过滤：" + diszid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
+
+				entry.adminInfo("组聊过滤：" + diszid + " - " + entry.getNickname(userid) + "(" + userid + ")"
+						+ message.getRawMessage());
 				this.BLOCK_DISZ_STORE.get(temp).add(message);
 				FileWriter writer = new FileWriter(this.FILE_DENY_DISZ, true);
 				writer.write(message.toString());
@@ -211,16 +270,24 @@ public class Trigger_WordDeny extends ModuleTrigger {
 				writer.flush();
 				writer.close();
 				return true;
+
 			}
+
 		}
 		return false;
+
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
+
 		for (String temp : this.BLACKLIST) {
+
 			if (Pattern.matches(temp, message.getRawMessage())) {
-				entry.adminInfo("群聊过滤：" + gropid + " - " + entry.getNickname(userid) + "(" + userid + ")" + message.getRawMessage());
+
+				entry.adminInfo("群聊过滤：" + gropid + " - " + entry.getNickname(userid) + "(" + userid + ")"
+						+ message.getRawMessage());
 				this.BLOCK_GROP_STORE.get(temp).add(message);
 				FileWriter writer = new FileWriter(this.FILE_DENY_GROP, true);
 				writer.write(message.toString());
@@ -228,9 +295,12 @@ public class Trigger_WordDeny extends ModuleTrigger {
 				writer.flush();
 				writer.close();
 				return true;
+
 			}
+
 		}
 		return false;
+
 	}
 
 	@Override
@@ -241,23 +311,30 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		this.BLOCK_GROP = 0;
 
 		for (String temp : this.BLOCK_USER_STORE.keySet()) {
+
 			this.BLOCK_USER = this.BLOCK_USER + this.BLOCK_USER_STORE.get(temp).size();
+
 		}
 
 		for (String temp : this.BLOCK_DISZ_STORE.keySet()) {
+
 			this.BLOCK_DISZ = this.BLOCK_DISZ + this.BLOCK_DISZ_STORE.get(temp).size();
+
 		}
 
 		for (String temp : this.BLOCK_GROP_STORE.keySet()) {
+
 			this.BLOCK_GROP = this.BLOCK_GROP + this.BLOCK_GROP_STORE.get(temp).size();
+
 		}
 
-		if ((this.BLOCK_USER == 0) && (this.BLOCK_DISZ == 0) && (this.BLOCK_GROP == 0)) { return null; }
+		if (this.BLOCK_USER == 0 && this.BLOCK_DISZ == 0 && this.BLOCK_GROP == 0) { return null; }
 
 		String[] res;
 		StringBuilder builder;
 
 		if (mode == 0) {
+
 			builder = new StringBuilder();
 			builder.append("拦截私聊：");
 			builder.append(this.BLOCK_USER);
@@ -267,22 +344,35 @@ public class Trigger_WordDeny extends ModuleTrigger {
 			builder.append(this.BLOCK_GROP);
 			res = new String[1];
 			res[0] = builder.toString();
+
 		} else {
+
 			res = new String[3];
 			builder = new StringBuilder();
 			builder.append("拦截私聊：");
 			builder.append(this.BLOCK_USER);
+
 			if (this.COUNT_USER > 0) {
+
 				LinkedList<MessageUser> blocks;
+
 				for (String temp : this.BLOCK_USER_STORE.keySet()) {
+
 					blocks = this.BLOCK_USER_STORE.get(temp);
-					if (blocks.size() == 0) { continue; }
+
+					if (blocks.size() == 0) {
+
+						continue;
+
+					}
 					builder.append("\r\n规则：\"");
 					builder.append(temp);
 					builder.append("\" - ");
 					builder.append(blocks.size());
 					builder.append("次");
+
 					for (MessageUser block : blocks) {
+
 						builder.append("\r\n");
 						builder.append(LoggerX.datetime(new Date(block.getSendtime())));
 						builder.append(" > ");
@@ -291,25 +381,39 @@ public class Trigger_WordDeny extends ModuleTrigger {
 						builder.append(block.userid());
 						builder.append(") ");
 						builder.append(block.getRawMessage());
+
 					}
+
 				}
 				res[0] = builder.toString();
+
 			}
 
 			builder = new StringBuilder();
 			builder.append("\r\n拦截组聊：");
 			builder.append(this.BLOCK_DISZ);
+
 			if (this.COUNT_DISZ > 0) {
+
 				LinkedList<MessageDisz> blocks;
+
 				for (String temp : this.BLOCK_DISZ_STORE.keySet()) {
+
 					blocks = this.BLOCK_DISZ_STORE.get(temp);
-					if (blocks.size() == 0) { continue; }
+
+					if (blocks.size() == 0) {
+
+						continue;
+
+					}
 					builder.append("\r\n规则：\"");
 					builder.append(temp);
 					builder.append("\" - ");
 					builder.append(blocks.size());
 					builder.append("次");
+
 					for (MessageDisz block : blocks) {
+
 						builder.append("\r\n");
 						builder.append(LoggerX.datetime(new Date(block.getSendtime())));
 						builder.append(" > ");
@@ -320,25 +424,39 @@ public class Trigger_WordDeny extends ModuleTrigger {
 						builder.append(block.diszid());
 						builder.append("]) ");
 						builder.append(block.getRawMessage());
+
 					}
+
 				}
 				res[1] = builder.toString();
+
 			}
 
 			builder = new StringBuilder();
 			builder.append("\r\n拦截群聊：");
 			builder.append(this.BLOCK_GROP);
+
 			if (this.COUNT_GROP > 0) {
+
 				LinkedList<MessageGrop> blocks;
+
 				for (String temp : this.BLOCK_GROP_STORE.keySet()) {
+
 					blocks = this.BLOCK_GROP_STORE.get(temp);
-					if (blocks.size() == 0) { continue; }
+
+					if (blocks.size() == 0) {
+
+						continue;
+
+					}
 					builder.append("\r\n规则：\"");
 					builder.append(temp);
 					builder.append("\" - ");
 					builder.append(blocks.size());
 					builder.append("次");
+
 					for (MessageGrop block : blocks) {
+
 						builder.append("\r\n");
 						builder.append(LoggerX.datetime(new Date(block.getSendtime())));
 						builder.append(" > ");
@@ -349,11 +467,16 @@ public class Trigger_WordDeny extends ModuleTrigger {
 						builder.append(block.gropid());
 						builder.append("])：");
 						builder.append(block.getRawMessage());
+
 					}
+
 				}
 				res[2] = builder.toString();
+
 			}
+
 		}
 		return res;
+
 	}
 }

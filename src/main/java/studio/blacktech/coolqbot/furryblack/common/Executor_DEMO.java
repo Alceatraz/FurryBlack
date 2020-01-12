@@ -1,9 +1,11 @@
 package studio.blacktech.coolqbot.furryblack.common;
 
+
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
+
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -11,6 +13,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+
 
 public class Executor_DEMO extends ModuleExecutor {
 
@@ -150,13 +153,18 @@ public class Executor_DEMO extends ModuleExecutor {
 		// 关于文件路径：应使用Paths工具类以及内置的 FOLDER_CONF FOLDER_DATA FOLDER_LOGS来表示文件
 		this.FILE_CUSTOM = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "custom.txt").toFile();
 
-		if (!this.FILE_CUSTOM.exists()) { this.FILE_CUSTOM.createNewFile(); }
+		if (!this.FILE_CUSTOM.exists()) {
+
+			this.FILE_CUSTOM.createNewFile();
+
+		}
 
 		// ==================================================================================
 		// 3：读取配置
 		// NEW_CONFIG=true 为初始化过程中发现配置不存在 创建了新的配置
 
 		if (this.NEW_CONFIG) {
+
 			// CONFIG对象为Java property对象
 			this.CONFIG.setProperty("enable", "true");
 			this.CONFIG.setProperty("config1", "none");
@@ -165,8 +173,11 @@ public class Executor_DEMO extends ModuleExecutor {
 			this.CONFIG.setProperty("config4", "none");
 			// 不要忘记保存
 			this.saveConfig();
+
 		} else {
+
 			this.loadConfig();
+
 		}
 
 		// 按需分析配置文件
@@ -185,9 +196,11 @@ public class Executor_DEMO extends ModuleExecutor {
 		// 模块不需要每次doMessage时都判断 if ( enable )
 
 		if (this.ENABLE_DEMO) {
+
 			this.ENABLE_USER = true;
 			this.ENABLE_DISZ = true;
 			this.ENABLE_GROP = true;
+
 		}
 
 		return true;
@@ -199,9 +212,11 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public boolean boot() throws Exception {
+
 		this.thread = new Thread(new Worker());
 		this.thread.start();
 		return true;
+
 	}
 
 	/**
@@ -209,7 +224,9 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public boolean save() throws Exception {
+
 		return true;
+
 	}
 
 	/**
@@ -227,6 +244,7 @@ public class Executor_DEMO extends ModuleExecutor {
 		this.thread.join();
 
 		return true;
+
 	}
 
 	/**
@@ -234,9 +252,11 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public String[] exec(Message message) throws Exception {
+
 		return new String[] {
 				"此模块无可用命令"
 		};
+
 	}
 
 	/**
@@ -244,41 +264,55 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
 		// QQ系统通知为
-		if (userid == 1000000) { entry.adminInfo("系统消息 - （" + gropid + "）"); }
+		if (userid == 1000000) {
+
+			entry.adminInfo("系统消息 - （" + gropid + "）");
+
+		}
+
 	}
 
 	/**
 	 * 群成员减少时执行
 	 */
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-	}
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	/**
 	 * 用户发送私聊时执行
 	 */
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
+
 		return true;
+
 	}
 
 	/**
 	 * 讨论组消息时执行
 	 */
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
+
 		return true;
+
 	}
 
 	/***
 	 * 群聊消息时执行
 	 */
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
+
 		// 不要使用JcpApp.CQ发送消息
 		entry.gropInfo(gropid, userid, "MESSAGE");
 		return true;
+
 	}
 
 	// ==========================================================================================================================================================
@@ -292,7 +326,9 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
+
 		return null;
+
 	}
 
 	class Worker implements Runnable {
@@ -330,9 +366,9 @@ public class Executor_DEMO extends ModuleExecutor {
 						// 减去当前秒数 以对齐秒 使其能在 xx:xx:00 执行
 						time = time - date.getSeconds();
 						// 减去当前分钟 以对齐分 使其能在 xx:00:00 执行
-						time = time - (date.getMinutes() * 60);
+						time = time - date.getMinutes() * 60;
 						// 减去当前分钟 以对齐时 使其能在 00:00:00 执行
-						time = time - (date.getHours() * 3600);
+						time = time - date.getHours() * 3600;
 
 						// 转换为毫秒
 						time = time * 1000;
@@ -368,9 +404,11 @@ public class Executor_DEMO extends ModuleExecutor {
 						entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
 
 					}
+
 				}
 
 			} while (entry.isEnable());
+
 		}
 	}
 }

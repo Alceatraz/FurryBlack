@@ -1,5 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.common.module;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,10 +8,12 @@ import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
+
 
 public abstract class Module implements Serializable {
 
@@ -92,17 +95,27 @@ public abstract class Module implements Serializable {
 
 	public abstract String[] generateReport(int mode, Message message, Object... parameters);
 
-	public abstract void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
+	public abstract void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid)
+			throws Exception;
 
-	public abstract void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
+	public abstract void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid)
+			throws Exception;
 
 	public void initAppFolder() throws Exception {
 
 		if (this.FOLDER_ROOT.exists()) {
-			if (!this.FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_ROOT.getAbsolutePath()); }
+
+			if (!this.FOLDER_ROOT.isDirectory()) {
+
+				throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_ROOT.getAbsolutePath());
+
+			}
+
 		} else {
+
 			this.logger.seek("创建目录", this.FOLDER_ROOT.getAbsolutePath());
 			this.FOLDER_ROOT.mkdirs();
+
 		}
 
 	}
@@ -110,10 +123,18 @@ public abstract class Module implements Serializable {
 	public void initConfFolder() throws Exception {
 
 		if (this.FOLDER_CONF.exists()) {
-			if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_CONF.getAbsolutePath()); }
+
+			if (!this.FOLDER_CONF.isDirectory()) {
+
+				throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_CONF.getAbsolutePath());
+
+			}
+
 		} else {
+
 			this.logger.seek("创建目录", this.FOLDER_CONF.getAbsolutePath());
 			this.FOLDER_CONF.mkdirs();
+
 		}
 
 	}
@@ -121,10 +142,18 @@ public abstract class Module implements Serializable {
 	public void initDataFolder() throws Exception {
 
 		if (this.FOLDER_DATA.exists()) {
-			if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_DATA.getAbsolutePath()); }
+
+			if (!this.FOLDER_DATA.isDirectory()) {
+
+				throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_DATA.getAbsolutePath());
+
+			}
+
 		} else {
+
 			this.logger.seek("创建目录", this.FOLDER_DATA.getAbsolutePath());
 			this.FOLDER_DATA.mkdirs();
+
 		}
 
 	}
@@ -132,10 +161,18 @@ public abstract class Module implements Serializable {
 	public void initLogsFolder() throws Exception {
 
 		if (this.FOLDER_LOGS.exists()) {
-			if (!this.FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_LOGS.getAbsolutePath()); }
+
+			if (!this.FOLDER_LOGS.isDirectory()) {
+
+				throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_LOGS.getAbsolutePath());
+
+			}
+
 		} else {
+
 			this.logger.seek("创建目录", this.FOLDER_LOGS.getName());
 			this.FOLDER_LOGS.mkdirs();
+
 		}
 
 	}
@@ -143,86 +180,135 @@ public abstract class Module implements Serializable {
 	public void initPropertiesConfigurtion() throws Exception {
 
 		if (!this.FILE_CONFIG.exists()) {
+
 			this.logger.seek("创建文件", this.FILE_CONFIG.getAbsolutePath());
 			this.FILE_CONFIG.createNewFile();
 			this.NEW_CONFIG = true;
+
 		}
 
 	}
 
 	protected void loadConfig() throws Exception {
+
 		this.CONFIG.load(new FileInputStream(this.FILE_CONFIG));
+
 	}
 
 	protected void saveConfig() throws Exception {
+
 		this.CONFIG.store(new FileOutputStream(this.FILE_CONFIG), null);
+
 	}
 
 	public String MODULE_PACKAGENAME() {
+
 		return this.MODULE_PACKAGENAME;
+
 	}
 
 	public String MODULE_COMMANDNAME() {
+
 		return this.MODULE_COMMANDNAME;
+
 	}
 
 	public String MODULE_DISPLAYNAME() {
+
 		return this.MODULE_DISPLAYNAME;
+
 	}
 
 	public String MODULE_DESCRIPTION() {
+
 		return this.MODULE_DESCRIPTION;
+
 	}
 
 	public String MODULE_FULLHELP() {
+
 		return this.MODULE_FULLHELP;
+
 	}
 
 	public String genFullHelp() {
+
 		StringBuilder builder = new StringBuilder();
 		builder.append("模块：" + this.MODULE_PACKAGENAME + "v" + this.MODULE_VERSION + "\r\n");
 		builder.append("名称：" + this.MODULE_DISPLAYNAME + "\r\n");
 		builder.append("用途：" + this.MODULE_DESCRIPTION + "\r\n");
 		builder.append("命令：" + this.MODULE_COMMANDNAME + "\r\n");
 		builder.append("用法：");
+
 		if (this.MODULE_USAGE.length == 0) {
+
 			builder.append("无");
+
 		} else {
+
 			for (String temp : this.MODULE_USAGE) {
+
 				builder.append(temp + "\r\n");
+
 			}
+
 		}
 
 		builder.append("隐私声明：" + "\r\n");
 
 		builder.append("存储：" + "\r\n");
+
 		if (this.MODULE_PRIVACY_STORED.length == 0) {
+
 			builder.append("无" + "\r\n");
+
 		} else {
+
 			builder.append(this.MODULE_PRIVACY_STORED.length);
+
 			for (String temp : this.MODULE_PRIVACY_STORED) {
+
 				builder.append(" " + temp + "\r\n");
+
 			}
+
 		}
 		builder.append("缓存：" + "\r\n");
+
 		if (this.MODULE_PRIVACY_CACHED.length == 0) {
+
 			builder.append("无" + "\r\n");
+
 		} else {
+
 			builder.append(this.MODULE_PRIVACY_CACHED.length);
+
 			for (String temp : this.MODULE_PRIVACY_CACHED) {
+
 				builder.append(" " + temp + "\r\n");
+
 			}
+
 		}
 		builder.append("获取：" + "\r\n");
+
 		if (this.MODULE_PRIVACY_OBTAIN.length == 0) {
+
 			builder.append("无" + "\r\n");
+
 		} else {
+
 			builder.append(this.MODULE_PRIVACY_OBTAIN.length);
+
 			for (String temp : this.MODULE_PRIVACY_OBTAIN) {
+
 				builder.append(" " + temp + "\r\n");
+
 			}
+
 		}
 		return builder.toString();
+
 	}
 
 }

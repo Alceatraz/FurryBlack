@@ -1,19 +1,21 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+
 import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
+
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
@@ -22,6 +24,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+
 
 @ModuleExecutorComponent
 public class Executor_jrjp extends ModuleExecutor {
@@ -48,8 +51,7 @@ public class Executor_jrjp extends ModuleExecutor {
 			"群号-AV号对应表 - 每日UTC+8 00:00 清空"
 	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"获取命令发送人",
-			"被抽到成员的昵称和群昵称"
+			"获取命令发送人", "被抽到成员的昵称和群昵称"
 	};
 
 	// ==========================================================================================================================================================
@@ -68,7 +70,6 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	private Thread thread;
 
-	private SecureRandom random = new SecureRandom();
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -79,17 +80,8 @@ public class Executor_jrjp extends ModuleExecutor {
 
 		// @formatter:off
 
-		super(
-				MODULE_PACKAGENAME,
-				MODULE_COMMANDNAME,
-				MODULE_DISPLAYNAME,
-				MODULE_DESCRIPTION,
-				MODULE_VERSION,
-				MODULE_USAGE,
-				MODULE_PRIVACY_STORED,
-				MODULE_PRIVACY_CACHED,
-				MODULE_PRIVACY_OBTAIN
-				);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
+				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 		// @formatter:on
 
@@ -108,44 +100,71 @@ public class Executor_jrjp extends ModuleExecutor {
 
 		this.USER_IGNORE = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
-		if (!this.USER_IGNORE.exists()) { this.USER_IGNORE.createNewFile(); }
+		if (!this.USER_IGNORE.exists()) {
+
+			this.USER_IGNORE.createNewFile();
+
+		}
 
 		List<Group> groups = entry.getCQ().getGroupList();
 
 		for (Group group : groups) {
+
 			this.MEMBERS.put(group.getId(), new ArrayList<Long>());
 			this.IGNORES.put(group.getId(), new ArrayList<Long>());
+
 		}
 
 		long gropid;
 		long userid;
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.USER_IGNORE), StandardCharsets.UTF_8));
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(this.USER_IGNORE), StandardCharsets.UTF_8));
 
 		String line;
 		String[] temp;
 
 		while ((line = reader.readLine()) != null) {
 
-			if (line.startsWith("#")) { continue; }
-			if (!line.contains(":")) { continue; }
-			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+			if (line.startsWith("#")) {
+
+				continue;
+
+			}
+
+			if (!line.contains(":")) {
+
+				continue;
+
+			}
+
+			if (line.contains("#")) {
+
+				line = line.substring(0, line.indexOf("#")).trim();
+
+			}
 
 			temp = line.split(":");
 
 			if (temp.length != 2) {
+
 				this.logger.warn("配置错误", line);
 				continue;
+
 			}
 
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
 
 			if (this.IGNORES.containsKey(gropid)) {
+
 				this.IGNORES.get(gropid).add(userid);
 				this.logger.seek("排除用户", gropid + " > " + userid);
+
 			} else {
+
 				this.logger.seek("排除用户", "群不存在 " + gropid);
+
 			}
 
 		}
@@ -159,14 +178,24 @@ public class Executor_jrjp extends ModuleExecutor {
 
 			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
 
-				if (entry.isMyself(member.getQQId())) { continue; }
-				if (tempIgnores.contains(member.getQQId())) { continue; }
+				if (entry.isMyself(member.getQQId())) {
+
+					continue;
+
+				}
+
+				if (tempIgnores.contains(member.getQQId())) {
+
+					continue;
+
+				}
 
 				tempMembers.add(member.getQQId());
+
 			}
 
-			Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(this.random.nextInt(tempMembers.size())));
-			Executor_jrjp.this.AVCODE.put(group.getId(), (long) this.random.nextInt(70000000));
+			Executor_jrjp.this.VICTIM.put(group.getId(), tempMembers.get(entry.getNextInteger() % tempMembers.size()));
+			Executor_jrjp.this.AVCODE.put(group.getId(), entry.getSecureRandom().nextLong() % 70000000);
 
 		}
 
@@ -175,6 +204,7 @@ public class Executor_jrjp extends ModuleExecutor {
 		this.ENABLE_GROP = true;
 
 		return true;
+
 	}
 
 	@Override
@@ -186,11 +216,14 @@ public class Executor_jrjp extends ModuleExecutor {
 		this.thread.start();
 
 		return true;
+
 	}
 
 	@Override
 	public boolean save() throws Exception {
+
 		return true;
+
 	}
 
 	@Override
@@ -204,38 +237,47 @@ public class Executor_jrjp extends ModuleExecutor {
 		this.logger.info("工作线程已终止");
 
 		return true;
+
 	}
 
 	@Override
 	public String[] exec(Message message) throws Exception {
+
 		return new String[] {
 				"此模块无可用命令"
 		};
+
 	}
 
 	@Override
-	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-	}
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-	}
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
+
 		return true;
+
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
+
 		return true;
+
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 
 		long victim = this.VICTIM.get(gropid);
-		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www" + ".bilibili.com/video/av" + this.AVCODE.get(gropid));
+		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www"
+				+ ".bilibili.com/video/av" + this.AVCODE.get(gropid));
 		return true;
 
 	}
@@ -247,7 +289,9 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
+
 		return new String[0];
+
 	}
 
 	@SuppressWarnings("deprecation")
@@ -268,8 +312,8 @@ public class Executor_jrjp extends ModuleExecutor {
 						date = new Date();
 						time = 86400L;
 						time = time - date.getSeconds();
-						time = time - (date.getMinutes() * 60);
-						time = time - (date.getHours() * 3600);
+						time = time - date.getMinutes() * 60;
+						time = time - date.getHours() * 3600;
 						time = time * 1000;
 						Thread.sleep(time);
 
@@ -286,8 +330,8 @@ public class Executor_jrjp extends ModuleExecutor {
 						for (Long group : Executor_jrjp.this.MEMBERS.keySet()) {
 
 							temp = Executor_jrjp.this.MEMBERS.get(group);
-							victim = temp.get(Executor_jrjp.this.random.nextInt(temp.size()));
-							avcode = Executor_jrjp.this.random.nextInt(60000000);
+							victim = temp.get(entry.getNextInteger() % temp.size());
+							avcode = entry.getSecureRandom().nextInt(70000000);
 
 							Executor_jrjp.this.VICTIM.put(group, victim);
 							Executor_jrjp.this.AVCODE.put(group, avcode);
@@ -295,19 +339,27 @@ public class Executor_jrjp extends ModuleExecutor {
 							builder.append(group + " - " + " AV" + avcode + "\r\n");
 
 						}
+
 					}
 
 				} catch (InterruptedException exception) {
+
 					if (entry.isEnable()) {
+
 						long timeserial = System.currentTimeMillis();
 						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
 						Executor_jrjp.this.logger.exception(timeserial, exception);
+
 					} else {
+
 						Executor_jrjp.this.logger.full("关闭");
+
 					}
+
 				}
 
 			} while (entry.isEnable());
+
 		}
 	}
 }

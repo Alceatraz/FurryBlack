@@ -1,5 +1,6 @@
 package studio.blacktech.security.Cipher;
 
+
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -16,10 +17,12 @@ import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 
+
 import javax.crypto.KeyAgreement;
 import javax.crypto.interfaces.DHPublicKey;
 import javax.crypto.spec.DHParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
 
 /***
  * 使用标准JavaCipher包装的Diffie Hellman密钥交换算法，生成标准SecretKeySpec密钥。 *
@@ -46,6 +49,7 @@ public class DiffieHellmanKeyGenerator {
 			this.agreement = KeyAgreement.getInstance(this.factory.getAlgorithm());
 
 		} catch (NoSuchAlgorithmException exception) {
+
 			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
 			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
 		}
@@ -73,12 +77,14 @@ public class DiffieHellmanKeyGenerator {
 			return new String(base64, StandardCharsets.UTF_8);
 
 		} catch (NoSuchAlgorithmException | InvalidKeyException exception) {
+
 			// 这些异常不可能发生 - 使用ADoptOpenJDK 8
 			// NoSuchAlgorithmException ----------- 不允许用户自定义算法
 			// InvalidKeyException ---------------- 密钥由生成器生成
 			return null;
 
 		}
+
 	}
 
 	/**
@@ -120,6 +126,7 @@ public class DiffieHellmanKeyGenerator {
 			return null;
 
 		}
+
 	}
 
 	/**
@@ -163,7 +170,9 @@ public class DiffieHellmanKeyGenerator {
 			// 这些异常不可能发生 (非标准JVM和lib除外，经过测试ADoptOpenJDK不会出现错误)
 			// InvalidKeySpecException ------------ 合法密钥不会生成无效值保证绝对合法
 			return null;
+
 		}
+
 	}
 
 }
