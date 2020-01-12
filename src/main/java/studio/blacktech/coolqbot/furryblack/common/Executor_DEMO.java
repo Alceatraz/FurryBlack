@@ -56,25 +56,25 @@ public class Executor_DEMO extends ModuleExecutor {
 	// 命令用法，数组的每个元素应为一个参数组合用法及其说明
 	// 减号左右各一个空格
 	private static String[] MODULE_USAGE = new String[] {
-			"命令1 - 命令用法1",
-			"命令2 - 命令用法2",
-			"命令3 - 命令用法3",
-			"命令4 - 命令用法4",
+		"命令1 - 命令用法1",
+		"命令2 - 命令用法2",
+		"命令3 - 命令用法3",
+		"命令4 - 命令用法4",
 	};
 
 	// 如果需要将数据存储为文件 则应写明存储的内容及其用途 有效时限
 	public static String[] MODULE_PRIVACY_STORED = new String[] {
-			"隐私级别 - 用途"
+		"隐私级别 - 用途"
 	};
 
 	// 如果需要将数据存储在内存 则应写明存储的内容及其用途 有效时限
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"隐私级别 - 用途"
+		"隐私级别 - 用途"
 	};
 
 	// 如果需要获取用户相关的信息 则应写明内容及其用途 且获取的信息不应该储存 如果需要存储则将此功能写入MODULE_PRIVACY_CACHED
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"隐私级别 - 用途"
+		"隐私级别 - 用途"
 	};
 
 	// ==========================================================================================================================================================
@@ -102,6 +102,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+
 	/***
 	 * 调用模块实例化方法 此处不应执行任何代码
 	 *
@@ -111,19 +112,19 @@ public class Executor_DEMO extends ModuleExecutor {
 
 		// @formatter:off
 
-		super(
-				MODULE_PACKAGENAME,
-				MODULE_COMMANDNAME,
-				MODULE_DISPLAYNAME,
-				MODULE_DESCRIPTION,
-				MODULE_VERSION,
-				MODULE_USAGE,
-				MODULE_PRIVACY_STORED,
-				MODULE_PRIVACY_CACHED,
-				MODULE_PRIVACY_OBTAIN
-				);
+        super(
+                MODULE_PACKAGENAME,
+                MODULE_COMMANDNAME,
+                MODULE_DISPLAYNAME,
+                MODULE_DESCRIPTION,
+                MODULE_VERSION,
+                MODULE_USAGE,
+                MODULE_PRIVACY_STORED,
+                MODULE_PRIVACY_CACHED,
+                MODULE_PRIVACY_OBTAIN
+        );
 
-		// @formatter:on
+        // @formatter:on
 
 	}
 
@@ -138,53 +139,45 @@ public class Executor_DEMO extends ModuleExecutor {
 		// ==================================================================================
 		// 1：初始化配置及数据文件
 
-		this.initAppFolder();
-		this.initConfFolder();
-		this.initDataFolder();
-		this.initLogsFolder();
-		this.initPropertiesConfigurtion();
+		initAppFolder();
+		initConfFolder();
+		initDataFolder();
+		initLogsFolder();
+		initPropertiesConfigurtion();
 
 		// ==================================================================================
 		// 2：生成所有内存结构
 		// 应在此处实例化成员变量
 
-		this.MAP = new HashMap<>();
+		MAP = new HashMap<>();
 
 		// 关于文件路径：应使用Paths工具类以及内置的 FOLDER_CONF FOLDER_DATA FOLDER_LOGS来表示文件
-		this.FILE_CUSTOM = Paths.get(this.FOLDER_CONF.getAbsolutePath(), "custom.txt").toFile();
+		FILE_CUSTOM = Paths.get(FOLDER_CONF.getAbsolutePath(), "custom.txt").toFile();
 
-		if (!this.FILE_CUSTOM.exists()) {
-
-			this.FILE_CUSTOM.createNewFile();
-
-		}
+		if (!FILE_CUSTOM.exists()) FILE_CUSTOM.createNewFile();
 
 		// ==================================================================================
 		// 3：读取配置
 		// NEW_CONFIG=true 为初始化过程中发现配置不存在 创建了新的配置
 
-		if (this.NEW_CONFIG) {
+		if (NEW_CONFIG) {
 
 			// CONFIG对象为Java property对象
-			this.CONFIG.setProperty("enable", "true");
-			this.CONFIG.setProperty("config1", "none");
-			this.CONFIG.setProperty("config2", "none");
-			this.CONFIG.setProperty("config3", "none");
-			this.CONFIG.setProperty("config4", "none");
+			CONFIG.setProperty("enable", "true");
+			CONFIG.setProperty("config1", "none");
+			CONFIG.setProperty("config2", "none");
+			CONFIG.setProperty("config3", "none");
+			CONFIG.setProperty("config4", "none");
 			// 不要忘记保存
-			this.saveConfig();
+			saveConfig();
 
-		} else {
-
-			this.loadConfig();
-
-		}
+		} else loadConfig();
 
 		// 按需分析配置文件
-		this.ENABLE_DEMO = Boolean.parseBoolean(this.CONFIG.getProperty("enable"));
+		ENABLE_DEMO = Boolean.parseBoolean(CONFIG.getProperty("enable"));
 
 		// 按需初始化内存结构
-		this.MAP.put("1", "1");
+		MAP.put("1", "1");
 
 		// 如果需要包含需要获取所有群成员的功能，不应该在doMessage的时候获取 应通过初始化和增减成员函数来维护一个容器
 
@@ -195,11 +188,11 @@ public class Executor_DEMO extends ModuleExecutor {
 		// 则直接跳注册阶段
 		// 模块不需要每次doMessage时都判断 if ( enable )
 
-		if (this.ENABLE_DEMO) {
+		if (ENABLE_DEMO) {
 
-			this.ENABLE_USER = true;
-			this.ENABLE_DISZ = true;
-			this.ENABLE_GROP = true;
+			ENABLE_USER = true;
+			ENABLE_DISZ = true;
+			ENABLE_GROP = true;
 
 		}
 
@@ -213,8 +206,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	@Override
 	public boolean boot() throws Exception {
 
-		this.thread = new Thread(new Worker());
-		this.thread.start();
+		thread = new Thread(new Worker());
+		thread.start();
 		return true;
 
 	}
@@ -240,8 +233,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	public boolean shut() throws Exception {
 
 		// 如果包含子线程 应在此时中断
-		this.thread.interrupt();
-		this.thread.join();
+		thread.interrupt();
+		thread.join();
 
 		return true;
 
@@ -254,7 +247,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-				"此模块无可用命令"
+			"此模块无可用命令"
 		};
 
 	}
@@ -266,11 +259,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		// QQ系统通知为
-		if (userid == 1000000) {
-
-			entry.adminInfo("系统消息 - （" + gropid + "）");
-
-		}
+		if (userid == 1000000) entry.adminInfo("系统消息 - （" + gropid + "）");
 
 	}
 
@@ -285,7 +274,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		return true;
 
@@ -296,7 +285,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		return true;
 
@@ -307,7 +296,7 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		// 不要使用JcpApp.CQ发送消息
 		entry.gropInfo(gropid, userid, "MESSAGE");
@@ -331,6 +320,7 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	}
 
+
 	class Worker implements Runnable {
 
 		/**
@@ -349,66 +339,61 @@ public class Executor_DEMO extends ModuleExecutor {
 			// 最外层循环用于处理发生异常时是否继续运行
 			// 休眠被打断会产生InterruptedException
 
-			do {
+			do try {
 
-				try {
+				// 实际工作循环
+				while (true) {
 
-					// 实际工作循环
-					while (true) {
+					// 这是一个比较简约的延时计算
+					date = new Date();
 
-						// 这是一个比较简约的延时计算
-						date = new Date();
+					// 假设00:00:00(24:00:00)运行
 
-						// 假设00:00:00(24:00:00)运行
+					// 从00:00:00多少秒后运行
+					time = 86400L;
+					// 减去当前秒数 以对齐秒 使其能在 xx:xx:00 执行
+					time = time - date.getSeconds();
+					// 减去当前分钟 以对齐分 使其能在 xx:00:00 执行
+					time = time - date.getMinutes() * 60;
+					// 减去当前分钟 以对齐时 使其能在 00:00:00 执行
+					time = time - date.getHours() * 3600;
 
-						// 从00:00:00多少秒后运行
-						time = 86400L;
-						// 减去当前秒数 以对齐秒 使其能在 xx:xx:00 执行
-						time = time - date.getSeconds();
-						// 减去当前分钟 以对齐分 使其能在 xx:00:00 执行
-						time = time - date.getMinutes() * 60;
-						// 减去当前分钟 以对齐时 使其能在 00:00:00 执行
-						time = time - date.getHours() * 3600;
+					// 转换为毫秒
+					time = time * 1000;
 
-						// 转换为毫秒
-						time = time * 1000;
+					// 应当输出log以便于观察定时任务的状况
+					entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time);
 
-						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "休眠：" + time);
+					Thread.sleep(time);
 
-						Thread.sleep(time);
+					// 应当输出log以便于观察定时任务的状况
+					entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行");
 
-						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "执行");
+					// 此处执行实际任务
 
-						// 此处执行实际任务
-
-						// 应当输出log以便于观察定时任务的状况
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果");
-
-					}
-
-				} catch (Exception exception) {
-
-					// shut时 应打断休眠此时会产生异常
-
-					if (entry.isEnable()) {
-
-						// 如果框架运行中，则遇到了真正意义上的异常，应观察发生了什么
-						entry.getCQ().logWarning(MODULE_PACKAGENAME, "异常");
-						exception.printStackTrace();
-
-					} else {
-
-						// 如果框架关闭，则并非真的异常 此时将会跳出主循环 结束worker
-						entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
-
-					}
+					// 应当输出log以便于观察定时任务的状况
+					entry.getCQ().logInfo(MODULE_PACKAGENAME, "结果");
 
 				}
 
-			} while (entry.isEnable());
+			} catch (Exception exception) {
+
+				// shut时 应打断休眠此时会产生异常
+
+				if (entry.isEnable()) {
+
+					// 如果框架运行中，则遇到了真正意义上的异常，应观察发生了什么
+					entry.getCQ().logWarning(MODULE_PACKAGENAME, "异常");
+					exception.printStackTrace();
+
+				} else // 如果框架关闭，则并非真的异常 此时将会跳出主循环 结束worker
+					entry.getCQ().logInfo(MODULE_PACKAGENAME, "关闭");
+
+			}
+			while (entry.isEnable());
 
 		}
+
 	}
+
 }

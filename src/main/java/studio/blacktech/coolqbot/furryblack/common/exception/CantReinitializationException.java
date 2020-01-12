@@ -5,6 +5,7 @@ public class CantReinitializationException extends InitializationException {
 
 	private static final long serialVersionUID = 1L;
 
+
 	public CantReinitializationException() {
 
 		super();
@@ -28,4 +29,5 @@ public class CantReinitializationException extends InitializationException {
 		super(cause);
 
 	}
+
 }

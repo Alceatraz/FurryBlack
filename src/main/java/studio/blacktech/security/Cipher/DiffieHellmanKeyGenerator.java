@@ -38,6 +38,7 @@ public class DiffieHellmanKeyGenerator {
 	private static Encoder encoder = Base64.getEncoder();
 	private static Decoder decoder = Base64.getDecoder();
 
+
 	/**
 	 * 双方都使用此构造函数
 	 */
@@ -45,8 +46,8 @@ public class DiffieHellmanKeyGenerator {
 
 		try {
 
-			this.factory = KeyFactory.getInstance("DH");
-			this.agreement = KeyAgreement.getInstance(this.factory.getAlgorithm());
+			factory = KeyFactory.getInstance("DH");
+			agreement = KeyAgreement.getInstance(factory.getAlgorithm());
 
 		} catch (NoSuchAlgorithmException exception) {
 
@@ -67,13 +68,13 @@ public class DiffieHellmanKeyGenerator {
 
 			Provider provider = Security.getProvider("SUN");
 			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", provider);
-			KeyPairGenerator generator = KeyPairGenerator.getInstance(this.factory.getAlgorithm());
+			KeyPairGenerator generator = KeyPairGenerator.getInstance(factory.getAlgorithm());
 			generator.initialize(4096, random);
 
-			this.keyPair = generator.generateKeyPair();
-			this.agreement.init(this.keyPair.getPrivate());
+			keyPair = generator.generateKeyPair();
+			agreement.init(keyPair.getPrivate());
 
-			byte[] base64 = encoder.encode(this.keyPair.getPublic().getEncoded());
+			byte[] base64 = encoder.encode(keyPair.getPublic().getEncoded());
 			return new String(base64, StandardCharsets.UTF_8);
 
 		} catch (NoSuchAlgorithmException | InvalidKeyException exception) {
@@ -101,16 +102,16 @@ public class DiffieHellmanKeyGenerator {
 			byte[] publicKeyByte = decoder.decode(publicKeyString);
 
 			X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(publicKeyByte);
-			DHPublicKey publicKey = (DHPublicKey) this.factory.generatePublic(x509KeySpec);
+			DHPublicKey publicKey = (DHPublicKey) factory.generatePublic(x509KeySpec);
 			DHParameterSpec dhParamSpec = publicKey.getParams();
-			KeyPairGenerator generator = KeyPairGenerator.getInstance(this.factory.getAlgorithm());
+			KeyPairGenerator generator = KeyPairGenerator.getInstance(factory.getAlgorithm());
 			generator.initialize(dhParamSpec);
 
-			this.keyPair = generator.generateKeyPair();
-			this.agreement.init(this.keyPair.getPrivate());
-			this.agreement.doPhase(publicKey, true);
+			keyPair = generator.generateKeyPair();
+			agreement.init(keyPair.getPrivate());
+			agreement.doPhase(publicKey, true);
 
-			byte[] base64 = encoder.encode(this.keyPair.getPublic().getEncoded());
+			byte[] base64 = encoder.encode(keyPair.getPublic().getEncoded());
 			return new String(base64, StandardCharsets.UTF_8);
 
 		} catch (InvalidKeyException exception) {
@@ -136,7 +137,7 @@ public class DiffieHellmanKeyGenerator {
 	 */
 	public SecretKeySpec generateFinalKey() {
 
-		byte[] secret = this.agreement.generateSecret();
+		byte[] secret = agreement.generateSecret();
 		return new SecretKeySpec(secret, 0, 16, "AES");
 
 	}
@@ -154,10 +155,10 @@ public class DiffieHellmanKeyGenerator {
 
 			byte[] publicKeyByte = decoder.decode(publicKeyString);
 			X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(publicKeyByte);
-			DHPublicKey publicKey = (DHPublicKey) this.factory.generatePublic(x509KeySpec);
+			DHPublicKey publicKey = (DHPublicKey) factory.generatePublic(x509KeySpec);
 
-			this.agreement.doPhase(publicKey, true);
-			byte[] secret = this.agreement.generateSecret();
+			agreement.doPhase(publicKey, true);
+			byte[] secret = agreement.generateSecret();
 
 			return new SecretKeySpec(secret, 0, 16, "AES");
 

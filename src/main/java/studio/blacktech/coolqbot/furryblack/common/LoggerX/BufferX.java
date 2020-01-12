@@ -12,30 +12,27 @@ public class BufferX {
 	private StringBuilder builder;
 	private LinkedList<StringBuilder> builders = new LinkedList<>();
 
+
 	public BufferX() {
 
-		this.warp();
+		warp();
 
 	}
 
 	public void warp() {
 
 		StringBuilder temp = new StringBuilder();
-		this.builders.add(temp);
-		this.builder = temp;
+		builders.add(temp);
+		builder = temp;
 
 	}
 
 	public String[] make() {
 
-		String[] message = new String[this.builders.size()];
-		int length = this.builders.size();
+		String[] message = new String[builders.size()];
+		int length = builders.size();
 
-		for (int i = 0; i < length; i++) {
-
-			message[i] = this.builders.get(i).toString();
-
-		}
+		for (int i = 0; i < length; i++) message[i] = builders.get(i).toString();
 		return message;
 
 	}
@@ -48,33 +45,21 @@ public class BufferX {
 
 	public void merge(String... message) {
 
-		this.warp();
+		warp();
 
-		for (String temp : message) {
-
-			this.builders.add(new StringBuilder(temp));
-
-		}
+		for (String temp : message) builders.add(new StringBuilder(temp));
 
 	}
 
 	public void merge(BufferX... buffers) {
 
-		for (BufferX buffer : buffers) {
-
-			for (StringBuilder temp : buffer.dump()) {
-
-				this.builders.add(temp);
-
-			}
-
-		}
+		for (BufferX buffer : buffers) for (StringBuilder temp : buffer.dump()) builders.add(temp);
 
 	}
 
 	public LinkedList<StringBuilder> dump() {
 
-		return this.builders;
+		return builders;
 
 	}
 
@@ -85,20 +70,16 @@ public class BufferX {
 
 	public void exception(Exception exception) {
 
-		this.builder.append("[" + LoggerX.time() + "][EXCEPTION] 发生异常" + "\r\n");
+		builder.append("[" + LoggerX.time() + "][EXCEPTION] 发生异常" + "\r\n");
 
-		this.builder.append("异常原因：" + exception.getCause() + "\r\n");
-		this.builder.append("异常消息：" + exception.getMessage() + "\r\n");
-		this.builder.append("异常调用：" + exception.getClass().getName() + "\r\n");
+		builder.append("异常原因：" + exception.getCause() + "\r\n");
+		builder.append("异常消息：" + exception.getMessage() + "\r\n");
+		builder.append("异常调用：" + exception.getClass().getName() + "\r\n");
 
-		for (StackTraceElement temp : exception.getStackTrace()) {
+		for (StackTraceElement temp : exception.getStackTrace()) builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":"
+			+ temp.getLineNumber() + ")\r\n");
 
-			this.builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":"
-					+ temp.getLineNumber() + ")\r\n");
-
-		}
-
-		this.builder.setLength(this.builder.length() - 1);
+		builder.setLength(builder.length() - 1);
 
 	}
 
@@ -110,7 +91,7 @@ public class BufferX {
 	public String warn(String message) {
 
 		String temp = "[" + LoggerX.time() + "][WARN]" + message + "\r\n";
-		this.builder.append(temp);
+		builder.append(temp);
 		return this.info(message);
 
 	}
@@ -118,7 +99,7 @@ public class BufferX {
 	public String info(String message) {
 
 		String temp = "[" + LoggerX.time() + "][INFO]" + message + "\r\n";
-		this.builder.append(temp);
+		builder.append(temp);
 		return this.seek(message);
 
 	}
@@ -126,7 +107,7 @@ public class BufferX {
 	public String seek(String message) {
 
 		String temp = "[" + LoggerX.time() + "][SEEK]" + message + "\r\n";
-		this.builder.append(temp);
+		builder.append(temp);
 		return this.full(message);
 
 	}
@@ -134,7 +115,7 @@ public class BufferX {
 	public String full(String message) {
 
 		String temp = "[" + LoggerX.time() + "][FULL]" + message + "\r\n";
-		this.builder.append(temp);
+		builder.append(temp);
 		return message;
 
 	}
@@ -147,7 +128,7 @@ public class BufferX {
 	public String warn(String category, String message) {
 
 		String temp = "[" + LoggerX.time() + "][WARN][" + category + "]" + message + "\r\n";
-		this.builder.append(temp);
+		builder.append(temp);
 		return this.info(category, message);
 
 	}
@@ -155,7 +136,7 @@ public class BufferX {
 	public String info(String category, String message) {
 
 		String temp = "[" + LoggerX.time() + "][INFO][" + category + "]" + message + "\r\n";
-		this.builder.append(temp);
+		builder.append(temp);
 		return this.seek(category, message);
 
 	}
@@ -163,7 +144,7 @@ public class BufferX {
 	public String seek(String category, String message) {
 
 		String temp = "[" + LoggerX.time() + "][SEEK][" + category + "]" + message + "\r\n";
-		this.builder.append(temp);
+		builder.append(temp);
 		return this.full(category, message);
 
 	}
@@ -171,7 +152,7 @@ public class BufferX {
 	public String full(String category, String message) {
 
 		String temp = "[" + LoggerX.time() + "][FULL][" + category + "]" + message + "\r\n";
-		this.builder.append(temp);
+		builder.append(temp);
 		return message;
 
 	}
@@ -186,7 +167,7 @@ public class BufferX {
 		for (String line : message) {
 
 			String temp = "[" + LoggerX.time() + "][WARN]" + catgory + ": " + line + "\r\n";
-			this.builder.append(temp);
+			builder.append(temp);
 
 		}
 		return message;
@@ -198,7 +179,7 @@ public class BufferX {
 		for (String line : message) {
 
 			String temp = "[" + LoggerX.time() + "][INFO]" + catgory + ": " + line + "\r\n";
-			this.builder.append(temp);
+			builder.append(temp);
 
 		}
 		return message;
@@ -210,7 +191,7 @@ public class BufferX {
 		for (String line : message) {
 
 			String temp = "[" + LoggerX.time() + "][SEEK]" + catgory + ": " + line + "\r\n";
-			this.builder.append(temp);
+			builder.append(temp);
 
 		}
 		return message;
@@ -222,7 +203,7 @@ public class BufferX {
 		for (String line : message) {
 
 			String temp = "[" + LoggerX.time() + "][FULL]" + catgory + ": " + line + "\r\n";
-			this.builder.append(temp);
+			builder.append(temp);
 
 		}
 		return message;
@@ -234,11 +215,13 @@ public class BufferX {
 	//
 	// ==================================================================================================
 
+
 	private final static SimpleDateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
 	private final static SimpleDateFormat formater_time = new SimpleDateFormat("HH:mm:ss");
 	private final static SimpleDateFormat formater_full = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	// ================================================================
+
 
 	public static String date() {
 

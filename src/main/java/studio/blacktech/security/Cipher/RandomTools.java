@@ -8,6 +8,7 @@ public class RandomTools {
 
 	private static final String RANDOMRANGE = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+
 	public static final String genRandomPort() {
 
 		SecureRandom random = new SecureRandom();
@@ -37,12 +38,9 @@ public class RandomTools {
 
 		StringBuilder builder = new StringBuilder();
 
-		for (int i = 0; i < size; i++) {
-
-			builder.append(RandomTools.RANDOMRANGE.charAt(random.nextInt(62)));
-
-		}
+		for (int i = 0; i < size; i++) builder.append(RandomTools.RANDOMRANGE.charAt(random.nextInt(62)));
 		return builder.toString();
 
 	}
+
 }

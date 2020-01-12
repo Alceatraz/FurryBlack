@@ -30,6 +30,7 @@ public class LoggerX {
 
 	private String name;
 
+
 	public LoggerX(String name) {
 
 		this.name = name;
@@ -38,7 +39,7 @@ public class LoggerX {
 
 	public LoggerX(Object thisInstance) {
 
-		this.name = thisInstance.getClass().getSimpleName();
+		name = thisInstance.getClass().getSimpleName();
 
 	}
 
@@ -47,7 +48,7 @@ public class LoggerX {
 	 */
 	public static void init(File file) throws InitializationException {
 
-		if (INIT_LOCK) { throw new CantReinitializationException(); }
+		if (INIT_LOCK) throw new CantReinitializationException();
 		INIT_LOCK = true;
 		FILE_LOGGER = file;
 
@@ -66,16 +67,12 @@ public class LoggerX {
 		builder.append("异常消息：" + exception.getMessage());
 		builder.append("异常调用：" + exception.getClass().getName());
 
-		for (StackTraceElement temp : exception.getStackTrace()) {
-
-			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber()
-					+ ")\r\n");
-
-		}
+		for (StackTraceElement temp : exception.getStackTrace()) builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber()
+			+ ")\r\n");
 
 		builder.setLength(builder.length() - 1);
 
-		String temp = "[" + LoggerX.time() + "][EXCEPTION][" + this.name + "] 发生异常\r\n" + builder.toString();
+		String temp = "[" + LoggerX.time() + "][EXCEPTION][" + name + "] 发生异常\r\n" + builder.toString();
 
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
@@ -90,17 +87,13 @@ public class LoggerX {
 		builder.append("异常消息：" + exception.getMessage());
 		builder.append("异常调用：" + exception.getClass().getName());
 
-		for (StackTraceElement temp : exception.getStackTrace()) {
-
-			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber()
-					+ ")\r\n");
-
-		}
+		for (StackTraceElement temp : exception.getStackTrace()) builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber()
+			+ ")\r\n");
 
 		builder.setLength(builder.length() - 1);
 
-		String temp = "[" + LoggerX.time() + "][EXCEPTION][" + this.name + "] 发生异常\r\n时间序列号: " + timestamp
-				+ builder.toString();
+		String temp = "[" + LoggerX.time() + "][EXCEPTION][" + name + "] 发生异常\r\n时间序列号: " + timestamp
+			+ builder.toString();
 
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
@@ -115,17 +108,13 @@ public class LoggerX {
 		builder.append("异常消息：" + exception.getMessage());
 		builder.append("异常调用：" + exception.getClass().getName());
 
-		for (StackTraceElement temp : exception.getStackTrace()) {
-
-			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber()
-					+ ")\r\n");
-
-		}
+		for (StackTraceElement temp : exception.getStackTrace()) builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber()
+			+ ")\r\n");
 
 		builder.setLength(builder.length() - 1);
 
-		String temp = "[" + LoggerX.time() + "][EXCEPTION][" + this.name + "] " + catgory + "\r\n时间序列号: " + timestamp
-				+ builder.toString();
+		String temp = "[" + LoggerX.time() + "][EXCEPTION][" + name + "] " + catgory + "\r\n时间序列号: " + timestamp
+			+ builder.toString();
 
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
@@ -139,7 +128,7 @@ public class LoggerX {
 
 	public String raw(String catgory, String message) {
 
-		String temp = "[" + LoggerX.time() + "][RAW][" + this.name + "] " + catgory + "\n" + message + "\n[RAW-EOF]";
+		String temp = "[" + LoggerX.time() + "][RAW][" + name + "] " + catgory + "\n" + message + "\n[RAW-EOF]";
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -153,7 +142,7 @@ public class LoggerX {
 
 	public String warn(String message) {
 
-		String temp = "[" + LoggerX.time() + "][WARN][" + this.name + "]" + message;
+		String temp = "[" + LoggerX.time() + "][WARN][" + name + "]" + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -162,7 +151,7 @@ public class LoggerX {
 
 	public String info(String message) {
 
-		String temp = "[" + LoggerX.time() + "][INFO][" + this.name + "]" + message;
+		String temp = "[" + LoggerX.time() + "][INFO][" + name + "]" + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -171,7 +160,7 @@ public class LoggerX {
 
 	public String seek(String message) {
 
-		String temp = "[" + LoggerX.time() + "][SEEK][" + this.name + "]" + message;
+		String temp = "[" + LoggerX.time() + "][SEEK][" + name + "]" + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -180,7 +169,7 @@ public class LoggerX {
 
 	public String full(String message) {
 
-		String temp = "[" + LoggerX.time() + "][FULL][" + this.name + "]" + message;
+		String temp = "[" + LoggerX.time() + "][FULL][" + name + "]" + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -194,7 +183,7 @@ public class LoggerX {
 
 	public String warn(String catgory, String message) {
 
-		String temp = "[" + LoggerX.time() + "][WARN][" + this.name + "]" + catgory + ": " + message;
+		String temp = "[" + LoggerX.time() + "][WARN][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -203,7 +192,7 @@ public class LoggerX {
 
 	public String info(String catgory, String message) {
 
-		String temp = "[" + LoggerX.time() + "][INFO][" + this.name + "]" + catgory + ": " + message;
+		String temp = "[" + LoggerX.time() + "][INFO][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -212,7 +201,7 @@ public class LoggerX {
 
 	public String seek(String catgory, String message) {
 
-		String temp = "[" + LoggerX.time() + "][SEEK][" + this.name + "]" + catgory + ": " + message;
+		String temp = "[" + LoggerX.time() + "][SEEK][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -221,7 +210,7 @@ public class LoggerX {
 
 	public String full(String catgory, String message) {
 
-		String temp = "[" + LoggerX.time() + "][FULL][" + this.name + "]" + catgory + ": " + message;
+		String temp = "[" + LoggerX.time() + "][FULL][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -235,7 +224,7 @@ public class LoggerX {
 
 	public long warn(String catgory, long message) {
 
-		String temp = "[" + LoggerX.time() + "][WARN][" + this.name + "]" + catgory + ": " + message;
+		String temp = "[" + LoggerX.time() + "][WARN][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -244,7 +233,7 @@ public class LoggerX {
 
 	public long info(String catgory, long message) {
 
-		String temp = "[" + LoggerX.time() + "][INFO][" + this.name + "]" + catgory + ": " + message;
+		String temp = "[" + LoggerX.time() + "][INFO][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -253,7 +242,7 @@ public class LoggerX {
 
 	public long seek(String catgory, long message) {
 
-		String temp = "[" + LoggerX.time() + "][SEEK][" + this.name + "]" + catgory + ": " + message;
+		String temp = "[" + LoggerX.time() + "][SEEK][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -262,7 +251,7 @@ public class LoggerX {
 
 	public long full(String catgory, long message) {
 
-		String temp = "[" + LoggerX.time() + "][FULL][" + this.name + "]" + catgory + ": " + message;
+		String temp = "[" + LoggerX.time() + "][FULL][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -278,7 +267,7 @@ public class LoggerX {
 
 		for (String line : message) {
 
-			String temp = "[" + LoggerX.time() + "][WARN][" + this.name + "]" + catgory + ": " + line;
+			String temp = "[" + LoggerX.time() + "][WARN][" + name + "]" + catgory + ": " + line;
 			LoggerX.PRINT(temp);
 			LoggerX.WRITE(temp);
 
@@ -291,7 +280,7 @@ public class LoggerX {
 
 		for (String line : message) {
 
-			String temp = "[" + LoggerX.time() + "][INFO][" + this.name + "]" + catgory + ": " + line;
+			String temp = "[" + LoggerX.time() + "][INFO][" + name + "]" + catgory + ": " + line;
 			LoggerX.PRINT(temp);
 			LoggerX.WRITE(temp);
 
@@ -304,7 +293,7 @@ public class LoggerX {
 
 		for (String line : message) {
 
-			String temp = "[" + LoggerX.time() + "][SEEK][" + this.name + "]" + catgory + ": " + line;
+			String temp = "[" + LoggerX.time() + "][SEEK][" + name + "]" + catgory + ": " + line;
 			LoggerX.PRINT(temp);
 			LoggerX.WRITE(temp);
 
@@ -317,7 +306,7 @@ public class LoggerX {
 
 		for (String line : message) {
 
-			String temp = "[" + LoggerX.time() + "][FULL][" + this.name + "]" + catgory + ": " + line;
+			String temp = "[" + LoggerX.time() + "][FULL][" + name + "]" + catgory + ": " + line;
 			LoggerX.PRINT(temp);
 			LoggerX.WRITE(temp);
 
@@ -378,11 +367,7 @@ public class LoggerX {
 
 		LinkedList<String> tmp = new LinkedList<>();
 
-		for (int i = 0; i < raw.length(); i++) {
-
-			tmp.add(Integer.toHexString(raw.charAt(i) & 0xffff));
-
-		}
+		for (int i = 0; i < raw.length(); i++) tmp.add(Integer.toHexString(raw.charAt(i) & 0xffff));
 		String[] res = new String[tmp.size()];
 		tmp.toArray(res);
 		return res;

@@ -33,7 +33,7 @@ public class Executor_time extends ModuleExecutor {
 	private static String MODULE_DESCRIPTION = "那谁睡觉了吗";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"/time 看看谁该睡觉了"
+		"/time 看看谁该睡觉了"
 	};
 
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
@@ -60,32 +60,19 @@ public class Executor_time extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+
 	public Executor_time() throws Exception {
 
-		// @formatter:off
-
-		super(
-				MODULE_PACKAGENAME,
-				MODULE_COMMANDNAME,
-				MODULE_DISPLAYNAME,
-				MODULE_DESCRIPTION,
-				MODULE_VERSION,
-				MODULE_USAGE,
-				MODULE_PRIVACY_STORED,
-				MODULE_PRIVACY_CACHED,
-				MODULE_PRIVACY_OBTAIN
-				);
-
-		// @formatter:on
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
 	@Override
 	public boolean init() throws Exception {
 
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
 
 		return true;
 
@@ -116,7 +103,7 @@ public class Executor_time extends ModuleExecutor {
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-				"此模块无可用命令"
+			"此模块无可用命令"
 		};
 
 	}
@@ -129,27 +116,27 @@ public class Executor_time extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
-		entry.userInfo(userid, this.getTime());
+		entry.userInfo(userid, getTime());
 		return true;
 
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
-		entry.diszInfo(diszid, this.getTime());
+		entry.diszInfo(diszid, getTime());
 		return true;
 
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
-		entry.gropInfo(gropid, this.getTime());
+		entry.gropInfo(gropid, getTime());
 		return true;
 
 	}
@@ -158,14 +145,14 @@ public class Executor_time extends ModuleExecutor {
 
 		return
 		// @formatter:off
-				//
-				"世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", Executor_time.zone_00) + "\r\n" +
-				"美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + this.format(Executor_time.zone_W8) + "\r\n" +
-				"美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + this.format(Executor_time.zone_W4) + "\r\n" +
-				"欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + this.format(Executor_time.zone_E0) + "\r\n" +
-				//        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
-				"亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
-				// @formatter:on
+                //
+                "世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", Executor_time.zone_00) + "\r\n" +
+                        "美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + format(Executor_time.zone_W8) + "\r\n" +
+                        "美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + format(Executor_time.zone_W4) + "\r\n" +
+                        "欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + format(Executor_time.zone_E0) + "\r\n" +
+                        //        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
+                        "亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
+                // @formatter:on
 		;
 
 	}
@@ -174,37 +161,31 @@ public class Executor_time extends ModuleExecutor {
 	private String format(TimeZone timezone) {
 
 		// @formatter:off
-		boolean isEnableDST = false;
-		boolean isDisableDST = false;
-		StringBuilder builder = new StringBuilder();
-		Calendar today = Calendar.getInstance(timezone);
-		long current = today.getTimeInMillis();
-		Date begin = new Date(current);
-		begin.setMonth(1);
-		begin.setDate(1);
-		begin.setHours(0);
-		begin.setMinutes(0);
-		begin.setSeconds(0);
-		Calendar temp = Calendar.getInstance(timezone);
-		temp.setTime(new Date(begin.getTime() / 1000 * 1000));
-		for (long i = temp.getTimeInMillis(); i < current; i = temp.getTimeInMillis()) {
-			temp.add(Calendar.DATE, 1);
-			long t = temp.getTimeInMillis();
-			if (t - i < 86400000) {
-				isEnableDST = true;
-			} else if (t - i > 86400000) {
-				isDisableDST = true;
-			}
-		}
-		if (isEnableDST ^ isDisableDST) { builder.append(" 夏令时"); }
-		int TZ_DATE = Integer.parseInt(LoggerX.formatTime("dd", timezone));
-		int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", Executor_time.zone_E8));
-		if (E8_DATE - TZ_DATE > 0) {
-			builder.append(" 昨天," + TZ_DATE + "日");
-		} else if (E8_DATE - TZ_DATE < 0) {
-			builder.append(" 明天," + TZ_DATE + "日");
-		}
-		// @formatter:on
+        boolean isEnableDST = false;
+        boolean isDisableDST = false;
+        StringBuilder builder = new StringBuilder();
+        Calendar today = Calendar.getInstance(timezone);
+        long current = today.getTimeInMillis();
+        Date begin = new Date(current);
+        begin.setMonth(1);
+        begin.setDate(1);
+        begin.setHours(0);
+        begin.setMinutes(0);
+        begin.setSeconds(0);
+        Calendar temp = Calendar.getInstance(timezone);
+        temp.setTime(new Date(begin.getTime() / 1000 * 1000));
+        for (long i = temp.getTimeInMillis(); i < current; i = temp.getTimeInMillis()) {
+            temp.add(Calendar.DATE, 1);
+            long t = temp.getTimeInMillis();
+            if (t - i < 86400000) isEnableDST = true;
+			else if (t - i > 86400000) isDisableDST = true;
+        }
+        if (isEnableDST ^ isDisableDST) builder.append(" 夏令时");
+        int TZ_DATE = Integer.parseInt(LoggerX.formatTime("dd", timezone));
+        int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", Executor_time.zone_E8));
+        if (E8_DATE - TZ_DATE > 0) builder.append(" 昨天," + TZ_DATE + "日");
+		else if (E8_DATE - TZ_DATE < 0) builder.append(" 明天," + TZ_DATE + "日");
+        // @formatter:on
 		return builder.toString();
 
 	}

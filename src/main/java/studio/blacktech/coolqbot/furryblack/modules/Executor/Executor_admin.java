@@ -43,32 +43,19 @@ public class Executor_admin extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+
 	public Executor_admin() throws Exception {
 
-		// @formatter:off
-
-		super(
-				MODULE_PACKAGENAME,
-				MODULE_COMMANDNAME,
-				MODULE_DISPLAYNAME,
-				MODULE_DESCRIPTION,
-				MODULE_VERSION,
-				MODULE_USAGE,
-				MODULE_PRIVACY_STORED,
-				MODULE_PRIVACY_CACHED,
-				MODULE_PRIVACY_OBTAIN
-				);
-
-		// @formatter:on
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
 	@Override
 	public boolean init() throws Exception {
 
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
 
 		return true;
 
@@ -99,7 +86,7 @@ public class Executor_admin extends ModuleExecutor {
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-				"此模块无可用命令"
+			"此模块无可用命令"
 		};
 
 	}
@@ -116,7 +103,7 @@ public class Executor_admin extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		if (!entry.isAdmin(userid)) {
 
@@ -163,6 +150,7 @@ public class Executor_admin extends ModuleExecutor {
 					case "accept":
 						entry.adminInfo("Exit code → " + entry.getCQ().setFriendAddRequest(message.getSegment(2), 1));
 						break;
+
 					case "refuse":
 						entry.adminInfo("Exit code → " + entry.getCQ().setFriendAddRequest(message.getSegment(2), 2));
 						break;
@@ -182,15 +170,17 @@ public class Executor_admin extends ModuleExecutor {
 
 					case "accept":
 						entry.adminInfo(
-								"Exit code → " + entry.getCQ().setGroupAddRequest(message.getSegment(2), 2, 1, null));
+							"Exit code → " + entry.getCQ().setGroupAddRequest(message.getSegment(2), 2, 1, null));
 						break;
+
 					case "refuse":
 						entry.adminInfo(
-								"Exit code → " + entry.getCQ().setGroupAddRequest(message.getSegment(2), 2, 2, null));
+							"Exit code → " + entry.getCQ().setGroupAddRequest(message.getSegment(2), 2, 2, null));
 						break;
+
 					case "leave":
 						entry.adminInfo("Exit code → "
-								+ entry.getCQ().setGroupLeave(Long.parseLong(message.getSegment(2)), false));
+							+ entry.getCQ().setGroupLeave(Long.parseLong(message.getSegment(2)), false));
 						break;
 
 				}
@@ -205,7 +195,7 @@ public class Executor_admin extends ModuleExecutor {
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		if (!entry.isAdmin(userid)) {
 
@@ -220,7 +210,7 @@ public class Executor_admin extends ModuleExecutor {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		if (!entry.isAdmin(userid)) {
 

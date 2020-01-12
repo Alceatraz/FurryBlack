@@ -8,6 +8,7 @@ public class MessageUser extends Message {
 	private long typeid = 0;
 	private long userid = 0;
 
+
 	public MessageUser(int typeid, long userid, String message, int messageid, int messageFont) {
 
 		super(message, messageid, messageFont);
@@ -18,13 +19,13 @@ public class MessageUser extends Message {
 
 	public long typeid() {
 
-		return this.typeid;
+		return typeid;
 
 	}
 
 	public long userid() {
 
-		return this.userid;
+		return userid;
 
 	}
 
@@ -33,8 +34,8 @@ public class MessageUser extends Message {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("============================================\n");
-		builder.append("类型ID: " + this.typeid + "\n");
-		builder.append("用户ID: " + this.userid + "\n");
+		builder.append("类型ID: " + typeid + "\n");
+		builder.append("用户ID: " + userid + "\n");
 		builder.append(super.toString());
 		return builder.toString();
 
@@ -45,4 +46,5 @@ public class MessageUser extends Message {
 		return this;
 
 	}
+
 }

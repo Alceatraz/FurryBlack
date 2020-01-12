@@ -4,7 +4,6 @@ package studio.blacktech.coolqbot.furryblack.common;
 import javax.swing.JOptionPane;
 
 
-import org.meowy.cqp.jcq.entity.Anonymous;
 import org.meowy.cqp.jcq.entity.CoolQ;
 import org.meowy.cqp.jcq.entity.GroupFile;
 import org.meowy.cqp.jcq.entity.ICQVer;
@@ -27,16 +26,16 @@ import org.meowy.cqp.jcq.event.JcqAppAbstract;
  */
 
 @SuppressWarnings({
-		"deprecation",
-		"unused"
+	"deprecation",
+	"unused"
 })
 
 public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	/**
 	 * 关于新版：本版本只是为了测试下新做的插件能不能正常运行，并不包含任何 “新” 内容 新：指代 打包，调试运行
-	 * 新版改了整体架构，内部改动非常大，使用上
-	 * 除了包名改动别无区别 关于包名：可以通过批量替换将老程序里的[com.sobte]全部替换成[org.meowy]即可
+	 * 新版改了整体架构，内部改动非常大，使用上除了包名改动别无区别
+	 * 关于包名：可以通过批量替换将老程序里的[com.sobte]全部替换成[org.meowy]即可
 	 */
 
 	/**
@@ -126,7 +125,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	public int startup() {
 
 		// 获取应用数据目录(无需储存数据时，请将此行注释)
-		this.appDirectory = this.CQ.getAppDirectory();
+		appDirectory = CQ.getAppDirectory();
 		// 返回如：D:\CoolQ\data\app\org.meowy.cqp.jcq\data\app\com.example.demo\
 		// 应用的所有数据、配置【必须】存放于此目录，避免给用户带来困扰。
 		return 0;
@@ -159,7 +158,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	@Override
 	public int enable() {
 
-		this.enable = true;
+		enable = true;
 		return 0;
 
 	}
@@ -175,7 +174,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	@Override
 	public int disable() {
 
-		this.enable = false;
+		enable = false;
 		return 0;
 
 	}
@@ -200,7 +199,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	public int privateMsg(int subType, int msgId, long fromQQ, String msg, int font) {
 
 		// 这里处理消息
-		this.CQ.sendPrivateMsg(fromQQ, "你发送了这样的消息：" + msg + "\n来自Java插件");
+		CQ.sendPrivateMsg(fromQQ, "你发送了这样的消息：" + msg + "\n来自Java插件");
 		return IMsg.MSG_IGNORE;
 
 	}
@@ -219,16 +218,13 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
 	@Override
-	public int groupMsg(int subType, int msgId, long fromGroup, long fromQQ, String fromAnonymous, String msg,
-			int font) {
+	public int groupMsg(int subType, int msgId, long fromGroup, long fromQQ, String fromAnonymous, String msg, int font) {
 
 		// 如果消息来自匿名者
-		if (fromQQ == 80000000L && !fromAnonymous.equals("")) {
+		if (fromQQ == 80000000L && !fromAnonymous.equals("")) {}
 
-			// 将匿名用户信息放到 anonymous 变量中
-			Anonymous anonymous = this.CQ.getAnonymous(fromAnonymous);
-
-		}
+		// 将匿名用户信息放到 anonymous 变量中
+		// Anonymous anonymous = CQ.getAnonymous(fromAnonymous);
 
 		// 解析CQ码案例 如：[CQ:at,qq=100000]
 		// 解析CQ码 常用变量为 CC(CQCode) 此变量专为CQ码这种特定格式做了解析和封装
@@ -242,11 +238,9 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		// String file = CQ.getImage(image);// 获取酷Q 下载的图片地址
 
 		// 这里处理消息
-		if (fromGroup == 0L) { // 这里的 0L 可以换成您的测试群
 
-			this.CQ.sendGroupMsg(fromGroup, this.CC.at(fromQQ) + "你发送了这样的消息：" + msg + "\n来自Java插件");
+		if (fromGroup == 0L) CQ.sendGroupMsg(fromGroup, CC.at(fromQQ) + "你发送了这样的消息：" + msg + "\n来自Java插件");
 
-		}
 		return IMsg.MSG_IGNORE;
 
 	}
@@ -285,13 +279,9 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	@Override
 	public int groupUpload(int subType, int sendTime, long fromGroup, long fromQQ, String file) {
 
-		GroupFile groupFile = this.CQ.getGroupFile(file);
+		GroupFile groupFile = CQ.getGroupFile(file);
 
-		if (groupFile == null) { // 解析群文件信息，如果失败直接忽略该消息
-
-			return IMsg.MSG_IGNORE;
-
-		}
+		if (groupFile == null) return IMsg.MSG_IGNORE;
 		// 这里处理消息
 		return IMsg.MSG_IGNORE;
 
@@ -347,9 +337,9 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	public int groupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
 
 		// 这里处理消息
-		this.CQ.logInfo("fromGroup", "" + fromGroup);
-		this.CQ.logInfo("fromQQ", "" + fromQQ);
-		this.CQ.logInfo("beingOperateQQ", "" + beingOperateQQ);
+		CQ.logInfo("fromGroup", "" + fromGroup);
+		CQ.logInfo("fromQQ", "" + fromQQ);
+		CQ.logInfo("beingOperateQQ", "" + beingOperateQQ);
 		return IMsg.MSG_IGNORE;
 
 	}
@@ -430,7 +420,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 */
 	@Override
 	public int requestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg,
-			String responseFlag) {
+		String responseFlag) {
 		// 这里处理消息
 
 		/**

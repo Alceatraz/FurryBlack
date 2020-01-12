@@ -42,43 +42,39 @@ public class Executor_NULL extends ModuleExecutor {
 
 	// @formatter:off
 
-	public Executor_NULL() throws Exception {
+    public Executor_NULL() throws Exception {
 
-		// @formatter:off
+        // @formatter:off
 
-		super(
-				MODULE_PACKAGENAME,
-				MODULE_COMMANDNAME,
-				MODULE_DISPLAYNAME,
-				MODULE_DESCRIPTION,
-				MODULE_VERSION,
-				MODULE_USAGE,
-				MODULE_PRIVACY_STORED,
-				MODULE_PRIVACY_CACHED,
-				MODULE_PRIVACY_OBTAIN
-				);
+        super(
+                MODULE_PACKAGENAME,
+                MODULE_COMMANDNAME,
+                MODULE_DISPLAYNAME,
+                MODULE_DESCRIPTION,
+                MODULE_VERSION,
+                MODULE_USAGE,
+                MODULE_PRIVACY_STORED,
+                MODULE_PRIVACY_CACHED,
+                MODULE_PRIVACY_OBTAIN
+        );
 
-		// @formatter:on
+        // @formatter:on
 
 	}
 
 	@Override
 	public boolean init() throws Exception {
 
-		if (this.NEW_CONFIG) {
+		if (NEW_CONFIG) {
 
-			this.CONFIG.setProperty("", "");
-			this.saveConfig();
+			CONFIG.setProperty("", "");
+			saveConfig();
 
-		} else {
+		} else loadConfig();
 
-			this.loadConfig();
-
-		}
-
-		this.ENABLE_USER = false;
-		this.ENABLE_DISZ = false;
-		this.ENABLE_GROP = false;
+		ENABLE_USER = false;
+		ENABLE_DISZ = false;
+		ENABLE_GROP = false;
 
 		return false;
 
@@ -109,7 +105,7 @@ public class Executor_NULL extends ModuleExecutor {
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-				"此模块无可用命令"
+			"此模块无可用命令"
 		};
 
 	}
@@ -122,7 +118,7 @@ public class Executor_NULL extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		return true;
 
@@ -130,7 +126,7 @@ public class Executor_NULL extends ModuleExecutor {
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		return true;
 
@@ -138,7 +134,7 @@ public class Executor_NULL extends ModuleExecutor {
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		return true;
 

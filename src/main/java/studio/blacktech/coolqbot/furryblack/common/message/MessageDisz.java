@@ -8,6 +8,7 @@ public class MessageDisz extends Message {
 	private long diszid = 0;
 	private long userid = 0;
 
+
 	public MessageDisz(long diszid, long userid, String message, int messageid, int messageFont) {
 
 		super(message, messageid, messageFont);
@@ -18,13 +19,13 @@ public class MessageDisz extends Message {
 
 	public long diszid() {
 
-		return this.diszid;
+		return diszid;
 
 	}
 
 	public long userid() {
 
-		return this.userid;
+		return userid;
 
 	}
 
@@ -33,8 +34,8 @@ public class MessageDisz extends Message {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("============================================\n");
-		builder.append("组聊ID: " + this.diszid + "\n");
-		builder.append("用户ID: " + this.userid + "\n");
+		builder.append("组聊ID: " + diszid + "\n");
+		builder.append("用户ID: " + userid + "\n");
 		builder.append(super.toString());
 		return builder.toString();
 
@@ -45,4 +46,5 @@ public class MessageDisz extends Message {
 		return this;
 
 	}
+
 }

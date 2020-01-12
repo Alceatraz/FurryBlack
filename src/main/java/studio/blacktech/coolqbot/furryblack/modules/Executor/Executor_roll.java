@@ -30,14 +30,14 @@ public class Executor_roll extends ModuleExecutor {
 	private static String MODULE_DESCRIPTION = "生成随机数";
 	private static String MODULE_VERSION = "1.1";
 	private static String[] MODULE_USAGE = new String[] {
-			"/roll - 抽取真假",
-			"/roll 数字 - 从零到给定数字任选一个数字",
-			"/roll 数字 数字 - 从给定两个数字中间抽取一个"
+		"/roll - 抽取真假",
+		"/roll 数字 - 从零到给定数字任选一个数字",
+		"/roll 数字 数字 - 从给定两个数字中间抽取一个"
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"获取命令发送人"
+		"获取命令发送人"
 	};
 
 	// ==========================================================================================================================================================
@@ -59,32 +59,19 @@ public class Executor_roll extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+
 	public Executor_roll() throws Exception {
 
-		// @formatter:off
-
-		super(
-				MODULE_PACKAGENAME,
-				MODULE_COMMANDNAME,
-				MODULE_DISPLAYNAME,
-				MODULE_DESCRIPTION,
-				MODULE_VERSION,
-				MODULE_USAGE,
-				MODULE_PRIVACY_STORED,
-				MODULE_PRIVACY_CACHED,
-				MODULE_PRIVACY_OBTAIN
-				);
-
-		// @formatter:on
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
 	@Override
 	public boolean init() throws Exception {
 
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
 		return true;
 
 	}
@@ -114,7 +101,7 @@ public class Executor_roll extends ModuleExecutor {
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-				"此模块无可用命令"
+			"此模块无可用命令"
 		};
 
 	}
@@ -127,27 +114,27 @@ public class Executor_roll extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
-		entry.userInfo(userid, this.roll(message));
+		entry.userInfo(userid, roll(message));
 		return true;
 
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
-		entry.diszInfo(diszid, userid, this.roll(message));
+		entry.diszInfo(diszid, userid, roll(message));
 		return true;
 
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
-		entry.gropInfo(gropid, userid, this.roll(message));
+		entry.gropInfo(gropid, userid, roll(message));
 		return true;
 
 	}
@@ -164,16 +151,16 @@ public class Executor_roll extends ModuleExecutor {
 			case 0:
 				if (random.nextBoolean()) {
 
-					this.mode_fucker++;
+					mode_fucker++;
 					res = " [CQ:emoji,id=10000049]";
 
 				} else {
 
-					this.mode_fucked++;
+					mode_fucked++;
 					res = " [CQ:emoji,id=10000048]";
 
 				}
-				this.mode_1++;
+				mode_1++;
 				break;
 
 			// ============================================================
@@ -184,7 +171,7 @@ public class Executor_roll extends ModuleExecutor {
 
 					range = Integer.parseInt(message.getSegment()[0]);
 					res = Integer.toString(random.nextInt(range));
-					this.mode_2++;
+					mode_2++;
 
 				} catch (Exception exce) {
 
@@ -192,16 +179,16 @@ public class Executor_roll extends ModuleExecutor {
 
 					if (random.nextBoolean()) {
 
-						this.mode_fucker++;
+						mode_fucker++;
 						res = res + "[CQ:emoji,id=10000049]";
 
 					} else {
 
-						this.mode_fucked++;
+						mode_fucked++;
 						res = res + "[CQ:emoji,id=10000048]";
 
 					}
-					this.mode_1++;
+					mode_1++;
 
 				}
 				break;
@@ -222,13 +209,9 @@ public class Executor_roll extends ModuleExecutor {
 
 				}
 				int temp = random.nextInt(max);
-				if (temp < min) {
-
-					temp = temp / max * (max - min) + min;
-
-				}
+				if (temp < min) temp = temp / max * (max - min) + min;
 				res = Integer.toString(temp);
-				this.mode_3++;
+				mode_3++;
 				break;
 
 		}
@@ -242,20 +225,20 @@ public class Executor_roll extends ModuleExecutor {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
-		if (this.COUNT_USER + this.COUNT_DISZ + this.COUNT_GROP == 0) { return null; }
+		if (COUNT_USER + COUNT_DISZ + COUNT_GROP == 0) return null;
 		StringBuilder builder = new StringBuilder();
 		builder.append("模式1 - 真假: ");
-		builder.append(this.mode_1);
+		builder.append(mode_1);
 		builder.append(" (");
-		builder.append(this.mode_fucker);
+		builder.append(mode_fucker);
 		builder.append("/");
-		builder.append(this.mode_fucked);
+		builder.append(mode_fucked);
 		builder.append(")\r\n模式2 - 单限: ");
-		builder.append(this.mode_2);
+		builder.append(mode_2);
 		builder.append("\r\n模式3 - 双限: ");
-		builder.append(this.mode_3);
+		builder.append(mode_3);
 		String[] res = new String[] {
-				builder.toString()
+			builder.toString()
 		};
 		return res;
 

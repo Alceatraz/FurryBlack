@@ -30,13 +30,13 @@ public class Executor_dice extends ModuleExecutor {
 	private static String MODULE_DESCRIPTION = "发送一个骰子的魔法表情";
 	private static String MODULE_VERSION = "1.1";
 	private static String[] MODULE_USAGE = new String[] {
-			"/dice - 发送一个魔法表情",
-			"/dice 理由 - 为某事投掷一枚骰子"
+		"/dice - 发送一个魔法表情",
+		"/dice 理由 - 为某事投掷一枚骰子"
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"获取命令发送人"
+		"获取命令发送人"
 	};
 
 	// ==========================================================================================================================================================
@@ -51,32 +51,19 @@ public class Executor_dice extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+
 	public Executor_dice() throws Exception {
 
-		// @formatter:off
-
-		super(
-				MODULE_PACKAGENAME,
-				MODULE_COMMANDNAME,
-				MODULE_DISPLAYNAME,
-				MODULE_DESCRIPTION,
-				MODULE_VERSION,
-				MODULE_USAGE,
-				MODULE_PRIVACY_STORED,
-				MODULE_PRIVACY_CACHED,
-				MODULE_PRIVACY_OBTAIN
-				);
-
-		// @formatter:on
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
 	@Override
 	public boolean init() throws Exception {
 
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
 
 		return true;
 
@@ -107,7 +94,7 @@ public class Executor_dice extends ModuleExecutor {
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-				"此模块无可用命令"
+			"此模块无可用命令"
 		};
 
 	}
@@ -120,33 +107,33 @@ public class Executor_dice extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		// entry.userInfo(userid, message.getOptions() + "[CQ:dice]");
 		entry.userInfo(userid,
-				message.getOptions() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
+			message.getOptions() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
 		return true;
 
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		// entry.diszInfo(diszid, userid, message.getOptions() + "[CQ:dice]");
 		entry.diszInfo(diszid, userid,
-				message.getOptions() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
+			message.getOptions() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
 		return true;
 
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
 		// entry.gropInfo(gropid, userid, message.getOptions() + "[CQ:dice]");
 		entry.gropInfo(gropid, userid,
-				message.getOptions() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
+			message.getOptions() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
 		return true;
 
 	}

@@ -31,14 +31,14 @@ public class Executor_jrrp extends ModuleExecutor {
 	private static String MODULE_DESCRIPTION = "查看今天的运气值";
 	private static String MODULE_VERSION = "1.3";
 	private static String[] MODULE_USAGE = new String[] {
-			"/jrrp - 查看今日运气"
+		"/jrrp - 查看今日运气"
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"用户与运气对应表 - 每日UTC+8 00:00 清空"
+		"用户与运气对应表 - 每日UTC+8 00:00 清空"
 	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-			"获取命令发送人"
+		"获取命令发送人"
 	};
 
 	// ==========================================================================================================================================================
@@ -57,34 +57,21 @@ public class Executor_jrrp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+
 	public Executor_jrrp() throws Exception {
 
-		// @formatter:off
-
-		super(
-				MODULE_PACKAGENAME,
-				MODULE_COMMANDNAME,
-				MODULE_DISPLAYNAME,
-				MODULE_DESCRIPTION,
-				MODULE_VERSION,
-				MODULE_USAGE,
-				MODULE_PRIVACY_STORED,
-				MODULE_PRIVACY_CACHED,
-				MODULE_PRIVACY_OBTAIN
-				);
-
-		// @formatter:on
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
 	@Override
 	public boolean init() throws Exception {
 
-		this.JRRP = new HashMap<>();
+		JRRP = new HashMap<>();
 
-		this.ENABLE_USER = true;
-		this.ENABLE_DISZ = true;
-		this.ENABLE_GROP = true;
+		ENABLE_USER = true;
+		ENABLE_DISZ = true;
+		ENABLE_GROP = true;
 
 		return true;
 
@@ -93,10 +80,10 @@ public class Executor_jrrp extends ModuleExecutor {
 	@Override
 	public boolean boot() throws Exception {
 
-		this.logger.info("启动工作线程");
+		logger.info("启动工作线程");
 
-		this.thread = new Thread(new Worker());
-		this.thread.start();
+		thread = new Thread(new Worker());
+		thread.start();
 
 		return true;
 
@@ -112,12 +99,12 @@ public class Executor_jrrp extends ModuleExecutor {
 	@Override
 	public boolean shut() throws Exception {
 
-		this.logger.info("终止工作线程");
+		logger.info("终止工作线程");
 
-		this.thread.interrupt();
-		this.thread.join();
+		thread.interrupt();
+		thread.join();
 
-		this.logger.info("工作线程已终止");
+		logger.info("工作线程已终止");
 
 		return true;
 
@@ -127,7 +114,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-				"此模块无可用命令"
+			"此模块无可用命令"
 		};
 
 	}
@@ -140,42 +127,30 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
-		if (!this.JRRP.containsKey(userid)) {
-
-			this.JRRP.put(userid, entry.getNextInteger() % 100);
-
-		}
-		entry.userInfo(userid, "今天的运气是 " + this.JRRP.get(userid) + "% !!!");
+		if (!JRRP.containsKey(userid)) JRRP.put(userid, entry.getNextInteger() % 100);
+		entry.userInfo(userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
 		return true;
 
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
-		if (!this.JRRP.containsKey(userid)) {
-
-			this.JRRP.put(userid, entry.getNextInteger() % 100);
-
-		}
-		entry.diszInfo(diszid, userid, "今天的运气是 " + this.JRRP.get(userid) + "% !!!");
+		if (!JRRP.containsKey(userid)) JRRP.put(userid, entry.getNextInteger() % 100);
+		entry.diszInfo(diszid, userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
 		return true;
 
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+		throws Exception {
 
-		if (!this.JRRP.containsKey(userid)) {
-
-			this.JRRP.put(userid, entry.getNextInteger() % 100);
-
-		}
-		entry.gropInfo(gropid, userid, "今天的运气是 " + this.JRRP.get(userid) + "% !!!");
+		if (!JRRP.containsKey(userid)) JRRP.put(userid, entry.getNextInteger() % 100);
+		entry.gropInfo(gropid, userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
 		return true;
 
 	}
@@ -187,6 +162,7 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	}
 
+
 	@SuppressWarnings("deprecation")
 	class Worker implements Runnable {
 
@@ -197,42 +173,37 @@ public class Executor_jrrp extends ModuleExecutor {
 			long time;
 			Date date;
 
-			do {
+			do try {
 
-				try {
+				while (true) {
 
-					while (true) {
+					date = new Date();
+					time = 86400L;
+					time = time - date.getSeconds();
+					time = time - date.getMinutes() * 60;
+					time = time - date.getHours() * 3600;
+					time = time * 1000;
+					Thread.sleep(time);
 
-						date = new Date();
-						time = 86400L;
-						time = time - date.getSeconds();
-						time = time - date.getMinutes() * 60;
-						time = time - date.getHours() * 3600;
-						time = time * 1000;
-						Thread.sleep(time);
-
-						Executor_jrrp.this.JRRP.clear();
-
-					}
-
-				} catch (Exception exception) {
-
-					if (entry.isEnable()) {
-
-						long timeserial = System.currentTimeMillis();
-						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
-						Executor_jrrp.this.logger.exception(timeserial, exception);
-
-					} else {
-
-						Executor_jrrp.this.logger.full("关闭");
-
-					}
+					JRRP.clear();
 
 				}
 
-			} while (entry.isEnable());
+			} catch (Exception exception) {
+
+				if (entry.isEnable()) {
+
+					long timeserial = System.currentTimeMillis();
+					entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
+					Executor_jrrp.this.logger.exception(timeserial, exception);
+
+				} else Executor_jrrp.this.logger.full("关闭");
+
+			}
+			while (entry.isEnable());
 
 		}
+
 	}
+
 }
