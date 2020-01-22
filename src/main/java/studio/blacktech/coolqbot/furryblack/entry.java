@@ -220,8 +220,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			SYSTEMD.boot();
 
 			// ==========================================================================================================================
+
+			String bootCoast = (System.currentTimeMillis() - BOOTTIME) + "ms";
+
 			logger.info("完成", LoggerX.datetime());
-			logger.info("耗时", (System.currentTimeMillis() - BOOTTIME) + "ms");
+			logger.info("耗时", bootCoast);
 
 			// ==========================================================================================================================
 			// 启动完成 关闭debug
@@ -230,7 +233,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			DEBUG = false;
 			enable = true;
 
-			SYSTEMD.adminInfo("启动完成 " + LoggerX.datetime());
+			SYSTEMD.adminInfo("启动完成 耗时：" + bootCoast);
 
 		} catch (Exception exception) {
 
