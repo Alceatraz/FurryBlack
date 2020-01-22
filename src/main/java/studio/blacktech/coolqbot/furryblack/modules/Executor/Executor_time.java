@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
@@ -20,13 +19,11 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 public class Executor_time extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
-
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
-
 	private static String MODULE_PACKAGENAME = "Executor_Time";
 	private static String MODULE_COMMANDNAME = "time";
 	private static String MODULE_DISPLAYNAME = "环球时间";
@@ -35,17 +32,14 @@ public class Executor_time extends ModuleExecutor {
 	private static String[] MODULE_USAGE = new String[] {
 		"/time 看看谁该睡觉了"
 	};
-
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
-
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
-
 	private static final TimeZone zone_W8 = TimeZone.getTimeZone("America/Los_Angeles");
 	private static final TimeZone zone_W4 = TimeZone.getTimeZone("America/New_York");
 	private static final TimeZone zone_00 = TimeZone.getTimeZone("UTC");
@@ -53,7 +47,6 @@ public class Executor_time extends ModuleExecutor {
 	// private static final TimeZone zone_E1 =
 	// TimeZone.getTimeZone("Europe/Stockholm");
 	private static final TimeZone zone_E8 = TimeZone.getTimeZone("Asia/Shanghai");
-
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -67,16 +60,17 @@ public class Executor_time extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean init() throws Exception {
 
 		ENABLE_USER = true;
 		ENABLE_DISZ = true;
 		ENABLE_GROP = true;
-
 		return true;
 
 	}
+
 
 	@Override
 	public boolean boot() throws Exception {
@@ -85,6 +79,7 @@ public class Executor_time extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean save() throws Exception {
 
@@ -92,12 +87,14 @@ public class Executor_time extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean shut() throws Exception {
 
 		return true;
 
 	}
+
 
 	@Override
 	public String[] exec(Message message) throws Exception {
@@ -108,38 +105,45 @@ public class Executor_time extends ModuleExecutor {
 
 	}
 
-	@Override
-	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
+	}
+
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-		throws Exception {
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
+	}
+
+
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		entry.userInfo(userid, getTime());
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		entry.diszInfo(diszid, getTime());
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		entry.gropInfo(gropid, getTime());
 		return true;
 
 	}
+
 
 	private String getTime() {
 
@@ -157,6 +161,7 @@ public class Executor_time extends ModuleExecutor {
 
 	}
 
+
 	@SuppressWarnings("deprecation")
 	private String format(TimeZone timezone) {
 
@@ -173,28 +178,36 @@ public class Executor_time extends ModuleExecutor {
         begin.setMinutes(0);
         begin.setSeconds(0);
         Calendar temp = Calendar.getInstance(timezone);
-        temp.setTime(new Date(begin.getTime() / 1000 * 1000));
+        temp.setTime(new Date((begin.getTime() / 1000) * 1000));
         for (long i = temp.getTimeInMillis(); i < current; i = temp.getTimeInMillis()) {
             temp.add(Calendar.DATE, 1);
             long t = temp.getTimeInMillis();
-            if (t - i < 86400000) isEnableDST = true;
-			else if (t - i > 86400000) isDisableDST = true;
+            if ((t - i) < 86400000) {
+				isEnableDST = true;
+			} else if ((t - i) > 86400000) {
+				isDisableDST = true;
+			}
         }
-        if (isEnableDST ^ isDisableDST) builder.append(" 夏令时");
+        if (isEnableDST ^ isDisableDST) {
+			builder.append(" 夏令时");
+		}
         int TZ_DATE = Integer.parseInt(LoggerX.formatTime("dd", timezone));
         int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", Executor_time.zone_E8));
-        if (E8_DATE - TZ_DATE > 0) builder.append(" 昨天," + TZ_DATE + "日");
-		else if (E8_DATE - TZ_DATE < 0) builder.append(" 明天," + TZ_DATE + "日");
+        if ((E8_DATE - TZ_DATE) > 0) {
+			builder.append(" 昨天," + TZ_DATE + "日");
+		} else if ((E8_DATE - TZ_DATE) < 0) {
+			builder.append(" 明天," + TZ_DATE + "日");
+		}
         // @formatter:on
 		return builder.toString();
 
 	}
-
 	// ==========================================================================================================================================================
 	//
 	// 工具函数
 	//
 	// ==========================================================================================================================================================
+
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
@@ -202,5 +215,6 @@ public class Executor_time extends ModuleExecutor {
 		return new String[0];
 
 	}
+
 
 }

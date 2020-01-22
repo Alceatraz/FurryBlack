@@ -16,11 +16,13 @@ public class RandomTools {
 
 	}
 
+
 	public static final String genRandomString() {
 
 		return RandomTools.genRandomString(new SecureRandom());
 
 	}
+
 
 	public static final String genRandomString(int size) {
 
@@ -28,19 +30,23 @@ public class RandomTools {
 
 	}
 
+
 	public static final String genRandomString(SecureRandom random) {
 
 		return RandomTools.genRandomString(new SecureRandom(), 16);
 
 	}
 
+
 	public static final String genRandomString(SecureRandom random, int size) {
 
 		StringBuilder builder = new StringBuilder();
-
-		for (int i = 0; i < size; i++) builder.append(RandomTools.RANDOMRANGE.charAt(random.nextInt(62)));
+		for (int i = 0; i < size; i++) {
+			builder.append(RandomTools.RANDOMRANGE.charAt(random.nextInt(62)));
+		}
 		return builder.toString();
 
 	}
+
 
 }

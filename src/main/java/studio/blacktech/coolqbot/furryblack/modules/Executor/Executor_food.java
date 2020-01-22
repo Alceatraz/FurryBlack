@@ -4,7 +4,6 @@ package studio.blacktech.coolqbot.furryblack.modules.Executor;
 import java.security.SecureRandom;
 import java.util.TreeMap;
 
-
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -23,18 +22,15 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
  *
  * @author netuser
  */
-
 @ModuleExecutorComponent
 public class Executor_food extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
-
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
-
 	private static String MODULE_PACKAGENAME = "Executor_Food";
 	private static String MODULE_COMMANDNAME = "food";
 	private static String MODULE_DISPLAYNAME = "今天吃什么";
@@ -44,15 +40,12 @@ public class Executor_food extends ModuleExecutor {
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
-
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
-
 	private TreeMap<Integer, TreeMap<Integer, String>> MENU;
-
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -66,11 +59,11 @@ public class Executor_food extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean init() throws Exception {
 
 		MENU = new TreeMap<>();
-
 		// @formatter:off
 
         String[][] menu = new String[][]{
@@ -85,24 +78,21 @@ public class Executor_food extends ModuleExecutor {
         };
 
         // @formatter:on
-
-		for (int i = 1; i < menu.length + 1; i++) {
-
+		for (int i = 1; i < (menu.length + 1); i++) {
 			String[] tempmenu = menu[i - 1];
 			TreeMap<Integer, String> tempmap = new TreeMap<>();
-
-			for (int j = 0; j < tempmenu.length; j++) tempmap.put(j, tempmenu[j]);
+			for (int j = 0; j < tempmenu.length; j++) {
+				tempmap.put(j, tempmenu[j]);
+			}
 			MENU.put(i, tempmap);
-
 		}
-
 		ENABLE_USER = true;
 		ENABLE_DISZ = true;
 		ENABLE_GROP = true;
-
 		return true;
 
 	}
+
 
 	@Override
 	public boolean boot() throws Exception {
@@ -111,6 +101,7 @@ public class Executor_food extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean save() throws Exception {
 
@@ -118,12 +109,14 @@ public class Executor_food extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean shut() throws Exception {
 
 		return true;
 
 	}
+
 
 	@Override
 	public String[] exec(Message message) throws Exception {
@@ -134,44 +127,50 @@ public class Executor_food extends ModuleExecutor {
 
 	}
 
-	@Override
-	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
+	}
+
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-		throws Exception {
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
+	}
+
+
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		entry.userInfo(userid, chooseFood(message));
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		entry.diszInfo(diszid, userid, chooseFood(message));
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		entry.gropInfo(gropid, userid, chooseFood(message));
 		return true;
 
 	}
-
 	// ==========================================================================================================================================================
 	//
 	// 工具函数
 	//
 	// ==========================================================================================================================================================
+
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
@@ -180,37 +179,31 @@ public class Executor_food extends ModuleExecutor {
 
 	}
 
+
 	public String chooseFood(Message message) {
 
 		// food 1
 		StringBuilder builder = new StringBuilder();
-
 		if (message.getSection() == 0) {
-
 			for (int mode : MENU.keySet()) {
-
 				TreeMap<Integer, String> temp = MENU.get(mode);
 				builder.append("类别 " + mode + "：" + temp.get(0) + " " + (temp.size() - 1) + "种" + "\r\n");
-
 			}
 			builder.setLength(builder.length() - 2);
-
 		} else {
-
 			int mode = Integer.parseInt(message.getSegment(0));
-
 			if (MENU.containsKey(mode)) {
-
 				TreeMap<Integer, String> temp = MENU.get(mode);
 				SecureRandom random = new SecureRandom();
 				int res = random.nextInt(temp.size() - 1) + 1;
 				builder.append("从 " + temp.get(0) + " 抽到了：" + temp.get(res));
-
-			} else builder.append("没有这个种类，你在想Peach。");
-
+			} else {
+				builder.append("没有这个种类，你在想Peach。");
+			}
 		}
 		return builder.toString();
 
 	}
+
 
 }

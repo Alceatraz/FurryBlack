@@ -14,13 +14,11 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 public class Executor_kong extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
-
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
-
 	private static String MODULE_PACKAGENAME = "Executor_Kong";
 	private static String MODULE_COMMANDNAME = "kong";
 	private static String MODULE_DISPLAYNAME = "变臭";
@@ -34,13 +32,11 @@ public class Executor_kong extends ModuleExecutor {
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 		"获取命令发送人"
 	};
-
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
-
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -54,16 +50,17 @@ public class Executor_kong extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean init() throws Exception {
 
 		ENABLE_USER = true;
 		ENABLE_DISZ = true;
 		ENABLE_GROP = true;
-
 		return true;
 
 	}
+
 
 	@Override
 	public boolean boot() throws Exception {
@@ -72,6 +69,7 @@ public class Executor_kong extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean save() throws Exception {
 
@@ -79,12 +77,14 @@ public class Executor_kong extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean shut() throws Exception {
 
 		return true;
 
 	}
+
 
 	@Override
 	public String[] exec(Message message) throws Exception {
@@ -95,38 +95,45 @@ public class Executor_kong extends ModuleExecutor {
 
 	}
 
-	@Override
-	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
+	}
+
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-		throws Exception {
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
+	}
+
+
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		entry.userInfo(userid, message.getSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		entry.diszInfo(diszid, userid, message.getSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		entry.gropInfo(gropid, userid, message.getSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 
 	}
+
 
 	private static String kong(Message message) {
 
@@ -136,23 +143,20 @@ public class Executor_kong extends ModuleExecutor {
 		temp = temp.replaceAll("\\[CQ:.+\\]", "");
 		temp = temp.trim();
 		StringBuilder builder = new StringBuilder();
-
 		for (int i = 0; i < temp.length(); i++) {
-
 			builder.append(temp.charAt(i));
 			builder.append(" ");
-
 		}
 		builder.setLength(builder.length() - 1);
 		return builder.toString();
 
 	}
-
 	// ==========================================================================================================================================================
 	//
 	// 工具函数
 	//
 	// ==========================================================================================================================================================
+
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
@@ -160,5 +164,6 @@ public class Executor_kong extends ModuleExecutor {
 		return new String[0];
 
 	}
+
 
 }

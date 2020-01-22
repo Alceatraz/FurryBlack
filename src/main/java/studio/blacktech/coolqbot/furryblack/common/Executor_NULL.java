@@ -11,13 +11,11 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 public class Executor_NULL extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
-
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
-
 	private static String MODULE_PACKAGENAME = "Executor_NULL";
 	private static String MODULE_COMMANDNAME = "null";
 	private static String MODULE_DISPLAYNAME = "模板模块";
@@ -27,19 +25,16 @@ public class Executor_NULL extends ModuleExecutor {
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
-
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
-
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
 	//
 	// ==========================================================================================================================================================
-
 	// @formatter:off
 
     public Executor_NULL() throws Exception {
@@ -59,26 +54,25 @@ public class Executor_NULL extends ModuleExecutor {
         );
 
         // @formatter:on
-
 	}
+
 
 	@Override
 	public boolean init() throws Exception {
 
 		if (NEW_CONFIG) {
-
 			CONFIG.setProperty("", "");
 			saveConfig();
-
-		} else loadConfig();
-
+		} else {
+			loadConfig();
+		}
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
 		ENABLE_GROP = false;
-
 		return false;
 
 	}
+
 
 	@Override
 	public boolean boot() throws Exception {
@@ -87,6 +81,7 @@ public class Executor_NULL extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean save() throws Exception {
 
@@ -94,12 +89,14 @@ public class Executor_NULL extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean shut() throws Exception {
 
 		return false;
 
 	}
+
 
 	@Override
 	public String[] exec(Message message) throws Exception {
@@ -110,41 +107,47 @@ public class Executor_NULL extends ModuleExecutor {
 
 	}
 
-	@Override
-	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
 
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {}
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
+	}
+
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-		throws Exception {
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
+
+	}
+
+
+	@Override
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		return true;
 
 	}
-
 	// ==========================================================================================================================================================
 	//
 	// 工具函数
 	//
 	// ==========================================================================================================================================================
+
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
@@ -152,5 +155,6 @@ public class Executor_NULL extends ModuleExecutor {
 		return null;
 
 	}
+
 
 }

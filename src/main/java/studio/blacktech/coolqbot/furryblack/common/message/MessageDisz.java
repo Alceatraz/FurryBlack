@@ -1,10 +1,8 @@
 package studio.blacktech.coolqbot.furryblack.common.message;
 
-
 public class MessageDisz extends Message {
 
 	private static final long serialVersionUID = 1L;
-
 	private long diszid = 0;
 	private long userid = 0;
 
@@ -17,17 +15,20 @@ public class MessageDisz extends Message {
 
 	}
 
+
 	public long diszid() {
 
 		return diszid;
 
 	}
 
+
 	public long userid() {
 
 		return userid;
 
 	}
+
 
 	@Override
 	public String toString() {
@@ -41,10 +42,12 @@ public class MessageDisz extends Message {
 
 	}
 
+
 	public Message toMessage() {
 
 		return this;
 
 	}
+
 
 }

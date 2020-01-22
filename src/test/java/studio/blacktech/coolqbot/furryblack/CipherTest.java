@@ -51,17 +51,17 @@ public class CipherTest {
 		String malloryMessage = "I Hate You";
 
 		// 第一次发送消息， Digest使用 aliceMessage1 进行更新
-		String encryptByAlice1 = cipherAlice.encraptPhaseHash(aliceMessage1);
+		String encryptByAlice1 = cipherAlice.encryptPhaseHash(aliceMessage1);
 		String decryptByBob1 = cipherBob.decryptPhaseHash(encryptByAlice1);
 		assertEquals(aliceMessage1, decryptByBob1);
 
 		// 第二次发送消息， Digest使用 aliceMessage2 进行更新
-		String encryptByAlice2 = cipherAlice.encraptPhaseHash(aliceMessage2);
+		String encryptByAlice2 = cipherAlice.encryptPhaseHash(aliceMessage2);
 		String decryptByBob2 = cipherBob.decryptPhaseHash(encryptByAlice2);
 		assertEquals(aliceMessage2, decryptByBob2);
 
 		// Mallory的Digest是初始状态，没有经过aliceMessage1 aliceMessage2更新，所以Bob进行完整性检验时将会失败
-		String encryptByMallory = cipherMallory.encraptPhaseHash(malloryMessage);
+		String encryptByMallory = cipherMallory.encryptPhaseHash(malloryMessage);
 
 		try {
 			// 这里会抛出hash不一致的异常

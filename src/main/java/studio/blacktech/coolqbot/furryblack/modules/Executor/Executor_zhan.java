@@ -4,7 +4,6 @@ package studio.blacktech.coolqbot.furryblack.modules.Executor;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -18,13 +17,11 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 public class Executor_zhan extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
-
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
-
 	private static String MODULE_PACKAGENAME = "Executor_Zhan";
 	private static String MODULE_COMMANDNAME = "zhan";
 	private static String MODULE_DISPLAYNAME = "占卜";
@@ -33,22 +30,18 @@ public class Executor_zhan extends ModuleExecutor {
 	private static String[] MODULE_USAGE = new String[] {
 		"/zhan 理由 - 为某事占卜"
 	};
-
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 		"获取命令发送人"
 	};
-
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
-
 	private TreeMap<Integer, String> CARD;
 	private ArrayList<Integer> FREQ;
-
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -62,19 +55,18 @@ public class Executor_zhan extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean init() throws Exception {
 
 		CARD = new TreeMap<>();
 		FREQ = new ArrayList<>();
-
 		// =======================================
 		//
 		// 为什么不读配置文件？
 		// 我有理由相信，塔罗牌会保持44张不会变
 		//
 		// =======================================
-
 		CARD.put(0, "O. THE FOOL 愚者正位\r\n愚蠢 狂躁 挥霍无度 神志不清");
 		CARD.put(1, "O. THE FOOL 愚者逆位\r\n疏忽 缺乏 暮气 无效 虚荣");
 		CARD.put(2, "I. THE MAGICIAN 魔术师正位\r\n手段 灾难 痛苦 损失");
@@ -119,7 +111,6 @@ public class Executor_zhan extends ModuleExecutor {
 		CARD.put(41, "XX. THE LAST JUDGMENT 审判逆位\r\n弱点 胆怯 天真 决定 熟虑");
 		CARD.put(42, "XXI. THE WORLD 世界正位\r\n成功 道路 航程 换位");
 		CARD.put(43, "XXI. THE WORLD 世界逆位\r\n惯性 固执 停滞 持久");
-
 		// @formatter:off
         FREQ.add(0);
         FREQ.add(0);
@@ -165,13 +156,13 @@ public class Executor_zhan extends ModuleExecutor {
         FREQ.add(0);
         FREQ.add(0);
         FREQ.add(0);// @formatter:on
-
 		ENABLE_USER = true;
 		ENABLE_DISZ = true;
 		ENABLE_GROP = true;
 		return true;
 
 	}
+
 
 	@Override
 	public boolean boot() throws Exception {
@@ -180,6 +171,7 @@ public class Executor_zhan extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean save() throws Exception {
 
@@ -187,12 +179,14 @@ public class Executor_zhan extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean shut() throws Exception {
 
 		return true;
 
 	}
+
 
 	@Override
 	public String[] exec(Message message) throws Exception {
@@ -203,77 +197,78 @@ public class Executor_zhan extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
+
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
+
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		entry.userInfo(userid, chooseCard(message));
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		entry.diszInfo(diszid, userid, chooseCard(message));
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		entry.gropInfo(gropid, userid, chooseCard(message));
 		return true;
 
 	}
 
+
 	private String chooseCard(Message message) {
 
-		if (message.getSection() == 0) return "你不能占卜空气";
-		else {
-
+		if (message.getSection() == 0) {
+			return "你不能占卜空气";
+		} else {
 			int random = entry.getNextInteger();
 			FREQ.set(random, FREQ.get(random));
 			return "你因为 " + message.getOptions() + "\r\n抽到了：" + CARD.get(random);
-
 		}
 
 	}
 
+
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
-		if (COUNT_USER + COUNT_DISZ + COUNT_GROP == 0) return null;
+		if ((COUNT_USER + COUNT_DISZ + COUNT_GROP) == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		int coverage = 0;
-
-		for (int i = 0; i < 44; i++) if (FREQ.get(i) == 0) coverage++;
-		coverage = 44 - coverage;
-
 		for (int i = 0; i < 44; i++) {
-
-			if (FREQ.get(i) == 0) continue;
+			if (FREQ.get(i) == 0) { coverage++; }
+		}
+		coverage = 44 - coverage;
+		for (int i = 0; i < 44; i++) {
+			if (FREQ.get(i) == 0) { continue; }
 			builder.append("第");
 			builder.append(i + 1);
 			builder.append("张：");
 			builder.append(FREQ.get(i));
 			builder.append(" - ");
-			builder.append(FREQ.get(i) * 100 / coverage);
+			builder.append((FREQ.get(i) * 100) / coverage);
 			builder.append("%\r\n");
-
 		}
 		builder.append("出现了" + coverage + "张");
 		String[] res = new String[] {
@@ -282,5 +277,6 @@ public class Executor_zhan extends ModuleExecutor {
 		return res;
 
 	}
+
 
 }

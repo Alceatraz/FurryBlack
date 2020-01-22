@@ -14,13 +14,11 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 public class Executor_admin extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
-
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
-
 	private static String MODULE_PACKAGENAME = "Executor_Admin";
 	private static String MODULE_COMMANDNAME = "admin";
 	private static String MODULE_DISPLAYNAME = "管理工具";
@@ -30,13 +28,11 @@ public class Executor_admin extends ModuleExecutor {
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
-
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
-
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -50,16 +46,17 @@ public class Executor_admin extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean init() throws Exception {
 
 		ENABLE_USER = true;
 		ENABLE_DISZ = true;
 		ENABLE_GROP = true;
-
 		return true;
 
 	}
+
 
 	@Override
 	public boolean boot() throws Exception {
@@ -68,6 +65,7 @@ public class Executor_admin extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean shut() throws Exception {
 
@@ -75,12 +73,14 @@ public class Executor_admin extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean save() throws Exception {
 
 		return true;
 
 	}
+
 
 	@Override
 	public String[] exec(Message message) throws Exception {
@@ -91,167 +91,133 @@ public class Executor_admin extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
+
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
+
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		if (!entry.isAdmin(userid)) {
-
 			entry.userInfo(userid, "你不是我的Master");
 			return false;
-
 		}
-
 		if (message.getSection() == 0) {
-
 			entry.adminInfo(entry.getSystemd().generateReport(0, message, null, null));
 			return true;
-
 		}
-
 		switch (message.getSegment(0)) {
+		case "report":
+			entry.adminInfo(entry.getSystemd().reportSpecifiedModule(0, message, null, null));
+			break;
 
-			case "report":
-				entry.adminInfo(entry.getSystemd().reportSpecifiedModule(0, message, null, null));
+		case "reportall":
+			entry.adminInfo(entry.getSystemd().reportAllModules(0, message, null, null));
+			break;
 
+		case "exec":
+			entry.adminInfo(entry.getSystemd().exec(message));
+			break;
+
+		case "debug":
+			entry.adminInfo(entry.switchDEBUG() ? "DEBUG → Enable" : "DEBUG → Disable");
+			break;
+
+		case "friend":
+			if (message.getSection() < 2) {
+				entry.adminInfo("Exit code → 1 缺少参数");
+				return false;
+			}
+			switch (message.getSegment(1)) {
+			case "accept":
+				entry.adminInfo("Exit code → " + entry.getCQ().setFriendAddRequest(message.getSegment(2), 1));
 				break;
 
-			case "reportall":
-				entry.adminInfo(entry.getSystemd().reportAllModules(0, message, null, null));
+			case "refuse":
+				entry.adminInfo("Exit code → " + entry.getCQ().setFriendAddRequest(message.getSegment(2), 2));
+				break;
+			}
+			break;
+
+		case "group":
+			if (message.getSection() < 2) {
+				entry.adminInfo("Exit code → 1 缺少参数");
+				return false;
+			}
+			switch (message.getSegment(1)) {
+			case "accept":
+				entry.adminInfo("Exit code → " + entry.getCQ().setGroupAddRequest(message.getSegment(2), 2, 1, null));
 				break;
 
-			case "exec":
-				entry.adminInfo(entry.getSystemd().exec(message));
+			case "refuse":
+				entry.adminInfo("Exit code → " + entry.getCQ().setGroupAddRequest(message.getSegment(2), 2, 2, null));
 				break;
 
-			case "debug":
-				entry.adminInfo(entry.switchDEBUG() ? "DEBUG → Enable" : "DEBUG → Disable");
+			case "leave":
+				entry.adminInfo("Exit code → " + entry.getCQ().setGroupLeave(Long.parseLong(message.getSegment(2)), false));
 				break;
-
-			case "friend":
-				if (message.getSection() < 2) {
-
-					entry.adminInfo("Exit code → 1 缺少参数");
-					return false;
-
-				}
-				switch (message.getSegment(1)) {
-
-					case "accept":
-						entry.adminInfo("Exit code → " + entry.getCQ().setFriendAddRequest(message.getSegment(2), 1));
-						break;
-
-					case "refuse":
-						entry.adminInfo("Exit code → " + entry.getCQ().setFriendAddRequest(message.getSegment(2), 2));
-						break;
-
-				}
-
-				break;
-
-			case "group":
-				if (message.getSection() < 2) {
-
-					entry.adminInfo("Exit code → 1 缺少参数");
-					return false;
-
-				}
-				switch (message.getSegment(1)) {
-
-					case "accept":
-						entry.adminInfo(
-							"Exit code → " + entry.getCQ().setGroupAddRequest(message.getSegment(2), 2, 1, null));
-						break;
-
-					case "refuse":
-						entry.adminInfo(
-							"Exit code → " + entry.getCQ().setGroupAddRequest(message.getSegment(2), 2, 2, null));
-						break;
-
-					case "leave":
-						entry.adminInfo("Exit code → "
-							+ entry.getCQ().setGroupLeave(Long.parseLong(message.getSegment(2)), false));
-						break;
-
-				}
-
-				break;
-
+			}
+			break;
 		}
-
 		return true;
 
 	}
 
+
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		if (!entry.isAdmin(userid)) {
-
 			entry.diszInfo(diszid, "你不是我的Master");
 			return false;
-
 		}
-
 		return true;
 
 	}
+
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-		throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		if (!entry.isAdmin(userid)) {
-
 			entry.gropInfo(gropid, "你不是我的Master");
 			return false;
-
 		}
-
 		if (message.getSection() == 0) {
-
 			entry.adminInfo(entry.getSystemd().generateReport(0, message, null, null));
 			return true;
-
 		}
-
 		switch (message.getSegment(0)) {
+		case "report":
+			entry.gropInfo(gropid, entry.getSystemd().reportSpecifiedModule(0, message, null, null));
+			break;
 
-			case "report":
-				entry.gropInfo(gropid, entry.getSystemd().reportSpecifiedModule(0, message, null, null));
+		case "reportall":
+			entry.gropInfo(gropid, entry.getSystemd().reportAllModules(0, message, null, null));
+			break;
 
-				break;
-
-			case "reportall":
-				entry.gropInfo(gropid, entry.getSystemd().reportAllModules(0, message, null, null));
-				break;
-
-			case "exec":
-				entry.gropInfo(gropid, entry.getSystemd().exec(message));
-				break;
-
+		case "exec":
+			entry.gropInfo(gropid, entry.getSystemd().exec(message));
+			break;
 		}
-
 		return true;
 
 	}
-
 	// ==========================================================================================================================================================
 	//
 	// 工具函数
 	//
 	// ==========================================================================================================================================================
+
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
@@ -259,5 +225,6 @@ public class Executor_admin extends ModuleExecutor {
 		return new String[0];
 
 	}
+
 
 }
