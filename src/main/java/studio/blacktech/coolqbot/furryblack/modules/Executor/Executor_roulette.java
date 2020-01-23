@@ -32,14 +32,14 @@ public class Executor_roulette extends ModuleExecutor {
 	private static String MODULE_DESCRIPTION = "你看这子弹又尖又长，这名单又大又宽";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {
-		"/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌，十分钟仍未满员则自动解散对局"
+			"/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌，十分钟仍未满员则自动解散对局"
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-		"按照\"群-成员-回合\"的层级关系存储 - 回合结束或超时后下一次第一名玩家加入时释放"
+			"按照\"群-成员-回合\"的层级关系存储 - 回合结束或超时后下一次第一名玩家加入时释放"
 	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-		"获取命令发送人"
+			"获取命令发送人"
 	};
 	// ==========================================================================================================================================================
 	//
@@ -56,13 +56,12 @@ public class Executor_roulette extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-
 	public Executor_roulette() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
+				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
-
 
 	@Override
 	public boolean init() throws Exception {
@@ -82,14 +81,12 @@ public class Executor_roulette extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public boolean boot() throws Exception {
 
 		return true;
 
 	}
-
 
 	@Override
 	public boolean save() throws Exception {
@@ -98,7 +95,6 @@ public class Executor_roulette extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public boolean shut() throws Exception {
 
@@ -106,47 +102,44 @@ public class Executor_roulette extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-			"此模块无可用命令"
+				"此模块无可用命令"
 		};
 
 	}
-
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
 
 		return true;
 
 	}
 
-
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
 
 		return true;
 
 	}
 
-
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 
 		// 只有命令 没下注
 		if (message.getSection() == 0) {
@@ -176,19 +169,21 @@ public class Executor_roulette extends ModuleExecutor {
 				member = entry.getCQ().getGroupMemberInfo(gropid, round.player.get(i));
 				if (i == bullet) {
 					ROULETTE_FREQ.set(i, ROULETTE_FREQ.get(i) + 1);
-					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=10060]");
+					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i)
+							+ "): [CQ:face," + "id=169][CQ:emoji,id=10060]");
 				} else {
-					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=11093]");
+					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i)
+							+ "): [CQ:face," + "id=169][CQ:emoji,id=11093]");
 				}
 			}
-			entry.gropInfo(gropid, "@平安中国 目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
+			entry.gropInfo(gropid,
+					"@平安中国 目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
 			ROULETTE_ROUNDS.remove(gropid);
 			ROUND_SUCCESS++;
 		}
 		return true;
 
 	}
-
 
 	private class RouletteRound {
 
@@ -198,13 +193,11 @@ public class Executor_roulette extends ModuleExecutor {
 		int players = 0;
 		boolean lock = false;
 
-
 		RouletteRound() {
 
 			time = new Date();
 
 		}
-
 
 		public boolean join(long gropid, long userid, Message message) {
 
@@ -240,9 +233,7 @@ public class Executor_roulette extends ModuleExecutor {
 
 		}
 
-
 	}
-
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
@@ -281,11 +272,10 @@ public class Executor_roulette extends ModuleExecutor {
 			builder.append("%");
 		}
 		String[] res = new String[] {
-			builder.toString()
+				builder.toString()
 		};
 		return res;
 
 	}
-
 
 }

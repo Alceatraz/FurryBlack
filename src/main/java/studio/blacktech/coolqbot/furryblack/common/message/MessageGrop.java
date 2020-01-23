@@ -1,11 +1,11 @@
 package studio.blacktech.coolqbot.furryblack.common.message;
 
+
 public class MessageGrop extends Message {
 
 	private static final long serialVersionUID = 1L;
 	private long gropid = 0;
 	private long userid = 0;
-
 
 	public MessageGrop(long gropid, long userid, String message, int messageid, int messageFont) {
 
@@ -15,20 +15,17 @@ public class MessageGrop extends Message {
 
 	}
 
-
 	public long gropid() {
 
 		return gropid;
 
 	}
 
-
 	public long userid() {
 
 		return userid;
 
 	}
-
 
 	@Override
 	public String toString() {
@@ -42,12 +39,10 @@ public class MessageGrop extends Message {
 
 	}
 
-
 	public Message toMessage() {
 
 		return this;
 
 	}
-
 
 }

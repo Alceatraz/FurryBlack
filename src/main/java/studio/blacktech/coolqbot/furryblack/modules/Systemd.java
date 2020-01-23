@@ -10,8 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -64,11 +62,13 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 public class Systemd extends Module {
 
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Core_Systemd";
 	private static String MODULE_COMMANDNAME = "systemd";
 	private static String MODULE_DISPLAYNAME = "核心模块";
@@ -78,94 +78,121 @@ public class Systemd extends Module {
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	private int COUNT_USER_MESSAGE = 0;
 	private int COUNT_DISZ_MESSAGE = 0;
 	private int COUNT_GROP_MESSAGE = 0;
+
 	private long USERID_CQBOT = 0;
 	private long USERID_ADMIN = 0;
+
 	private boolean ENABLE_SCHEDULER = false;
+
 	private boolean ENABLE_TRIGGER_USER = false;
 	private boolean ENABLE_TRIGGER_DISZ = false;
 	private boolean ENABLE_TRIGGER_GROP = false;
+
 	private boolean ENABLE_LISENTER_USER = false;
 	private boolean ENABLE_LISENTER_DISZ = false;
 	private boolean ENABLE_LISENTER_GROP = false;
+
 	private boolean ENABLE_EXECUTOR_USER = false;
 	private boolean ENABLE_EXECUTOR_DISZ = false;
 	private boolean ENABLE_EXECUTOR_GROP = false;
+
 	private String CONFIG_SCHEDULER;
+
 	private String CONFIG_TRIGGER_USER;
 	private String CONFIG_TRIGGER_DISZ;
 	private String CONFIG_TRIGGER_GROP;
+
 	private String CONFIG_LISENTER_USER;
 	private String CONFIG_LISENTER_DISZ;
 	private String CONFIG_LISENTER_GROP;
+
 	private String CONFIG_EXECUTOR_USER;
 	private String CONFIG_EXECUTOR_DISZ;
 	private String CONFIG_EXECUTOR_GROP;
+
 	private String[] LIST_SCHEDULER = {};
+
 	private String[] LIST_TRIGGER_USER = {};
 	private String[] LIST_TRIGGER_DISZ = {};
 	private String[] LIST_TRIGGER_GROP = {};
+
 	private String[] LIST_LISENTER_USER = {};
 	private String[] LIST_LISENTER_DISZ = {};
 	private String[] LIST_LISENTER_GROP = {};
+
 	private String[] LIST_EXECUTOR_USER = {};
 	private String[] LIST_EXECUTOR_DISZ = {};
 	private String[] LIST_EXECUTOR_GROP = {};
+
 	private TreeMap<String, ModuleScheduler> SCHEDULER_INSTANCE;
+
 	private ArrayList<ModuleScheduler> SCHEDULER_ENABLED;
+
 	private TreeMap<String, ModuleTrigger> TRIGGER_INSTANCE;
+
 	private ArrayList<ModuleTrigger> TRIGGER_USER;
 	private ArrayList<ModuleTrigger> TRIGGER_DISZ;
 	private ArrayList<ModuleTrigger> TRIGGER_GROP;
+
 	private TreeMap<String, ModuleListener> LISTENER_INSTANCE;
+
 	private ArrayList<ModuleListener> LISTENER_USER;
 	private ArrayList<ModuleListener> LISTENER_DISZ;
 	private ArrayList<ModuleListener> LISTENER_GROP;
+
 	private TreeMap<String, ModuleExecutor> EXECUTOR_INSTANCE;
+
 	private TreeMap<String, ModuleExecutor> EXECUTOR_USER;
 	private TreeMap<String, ModuleExecutor> EXECUTOR_DISZ;
 	private TreeMap<String, ModuleExecutor> EXECUTOR_GROP;
+
 	private File FILE_NICKNAME_MAP;
 	private File FILE_MESSAGE_HELP;
 	private File FILE_MESSAGE_INFO;
 	private File FILE_MESSAGE_EULA;
 	private File FILE_SILENCE_GROP;
 	private File FILE_MEMBERCHANGE;
+
 	private String MESSAGE_HELP = "";
 	private String MESSAGE_INFO = "";
 	private String MESSAGE_EULA = "";
+
 	private String MESSAGE_LIST_USER = "";
 	private String MESSAGE_LIST_DISZ = "";
 	private String MESSAGE_LIST_GROP = "";
+
 	private TreeMap<Long, TreeMap<Long, String>> NICKNAME_MAP;
 	private HashSet<Long> MESSAGE_MUTE;
+
 	private boolean LOCK_INIT = false;
-	private SecureRandom secureRandom;
+
 	// ==========================================================================================================================================================
 	//
 	// 构造函数
 	//
 	// ==========================================================================================================================================================
 
-
 	public Systemd() throws Exception {
 
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
+
 	// ==========================================================================================================================================================
 	//
 	// 模块声明周期管理
 	//
 	// ==========================================================================================================================================================
-
 
 	/**
 	 * 你永远不应该执行这个方法
@@ -176,93 +203,129 @@ public class Systemd extends Module {
 	public boolean init() throws Exception {
 
 		if (LOCK_INIT) { throw new CantReinitializationException(); }
+
 		LOCK_INIT = true;
+
 		// =======================================================================================================================
 		// 初始化目录
 		// =======================================================================================================================
+
 		initAppFolder();
 		initConfFolder();
 		initLogsFolder();
+
 		// =======================================================================================================================
 		// 初始化内存结构
 		// =======================================================================================================================
+
 		SCHEDULER_INSTANCE = new TreeMap<>();
 		SCHEDULER_ENABLED = new ArrayList<>();
+
 		TRIGGER_INSTANCE = new TreeMap<>();
+
 		TRIGGER_USER = new ArrayList<>();
 		TRIGGER_DISZ = new ArrayList<>();
 		TRIGGER_GROP = new ArrayList<>();
+
 		LISTENER_INSTANCE = new TreeMap<>();
+
 		LISTENER_USER = new ArrayList<>();
 		LISTENER_DISZ = new ArrayList<>();
 		LISTENER_GROP = new ArrayList<>();
+
 		EXECUTOR_INSTANCE = new TreeMap<>();
+
 		EXECUTOR_USER = new TreeMap<>();
 		EXECUTOR_DISZ = new TreeMap<>();
 		EXECUTOR_GROP = new TreeMap<>();
+
 		MESSAGE_MUTE = new HashSet<>();
 		NICKNAME_MAP = new TreeMap<>();
-		secureRandom = SecureRandom.getInstance("SHA1PRNG", Security.getProvider("SUN"));
+
 		// =======================================================================================================================
 		// 读取配置文件
 		// =======================================================================================================================
+
 		if (NEW_CONFIG) {
+
 			logger.seek("配置文件不存在", "生成默认配置");
+
 			CONFIG.setProperty("logger_level", "0");
 			CONFIG.setProperty("userid_admin", "0");
 			CONFIG.setProperty("scheduler", "none");
+
 			CONFIG.setProperty("trigger_user", "none");
 			CONFIG.setProperty("trigger_disz", "none");
 			CONFIG.setProperty("trigger_grop", "none");
+
 			CONFIG.setProperty("listener_user", "none");
 			CONFIG.setProperty("listener_disz", "none");
 			CONFIG.setProperty("listener_grop", "none");
+
 			CONFIG.setProperty("executor_user", "none");
 			CONFIG.setProperty("executor_disz", "none");
 			CONFIG.setProperty("executor_grop", "none");
+
 			saveConfig();
+
 		} else {
+
 			loadConfig();
 		}
+
 		USERID_CQBOT = entry.getCQ().getLoginQQ();
 		USERID_ADMIN = Long.parseLong(CONFIG.getProperty("userid_admin", "0"));
+
 		if (USERID_ADMIN == 0) { throw new InitializationException("管理员账号配置错误"); }
+
 		logger.seek("机器人账号", USERID_CQBOT);
 		logger.seek("管理员账号", USERID_ADMIN);
+
 		for (Group group : entry.getCQ().getGroupList()) {
 			NICKNAME_MAP.put(group.getId(), new TreeMap<>());
 		}
+
 		// =======================================================================================================================
 		// 读取独立配置文件
 		// =======================================================================================================================
+
 		FILE_MESSAGE_HELP = Paths.get(FOLDER_CONF.getAbsolutePath(), "message_help.txt").toFile();
 		FILE_MESSAGE_INFO = Paths.get(FOLDER_CONF.getAbsolutePath(), "message_info.txt").toFile();
 		FILE_MESSAGE_EULA = Paths.get(FOLDER_CONF.getAbsolutePath(), "message_eula.txt").toFile();
 		FILE_SILENCE_GROP = Paths.get(FOLDER_CONF.getAbsolutePath(), "mute_grop.txt").toFile();
 		FILE_NICKNAME_MAP = Paths.get(FOLDER_CONF.getAbsolutePath(), "nickmap_grop.txt").toFile();
 		FILE_MEMBERCHANGE = Paths.get(FOLDER_LOGS.getAbsolutePath(), "member_change.txt").toFile();
+
 		if (!FILE_MESSAGE_HELP.exists()) { if (!FILE_MESSAGE_HELP.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
 		if (!FILE_MESSAGE_INFO.exists()) { if (!FILE_MESSAGE_INFO.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
 		if (!FILE_MESSAGE_EULA.exists()) { if (!FILE_MESSAGE_EULA.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
 		if (!FILE_SILENCE_GROP.exists()) { if (!FILE_SILENCE_GROP.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
 		if (!FILE_NICKNAME_MAP.exists()) { if (!FILE_NICKNAME_MAP.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
 		if (!FILE_MEMBERCHANGE.exists()) { if (!FILE_MEMBERCHANGE.createNewFile()) { throw new InitializationException("无法创建文件" + FILE_SILENCE_GROP.getName()); } }
+
 		long gropid;
 		long userid;
+
 		String line;
 		String[] temp;
+
 		BufferedReader readerHelp = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_MESSAGE_HELP), StandardCharsets.UTF_8));
 		BufferedReader readerInfo = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_MESSAGE_INFO), StandardCharsets.UTF_8));
 		BufferedReader readerEula = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_MESSAGE_EULA), StandardCharsets.UTF_8));
 		BufferedReader readerMute = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_SILENCE_GROP), StandardCharsets.UTF_8));
 		BufferedReader readerNick = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_NICKNAME_MAP), StandardCharsets.UTF_8));
+
 		// =======================================================================================
 		// 读取 help info eula 文本
+
 		StringBuilder builder = new StringBuilder();
+
 		logger.full("读取HELP模板消息");
+
 		while ((line = readerHelp.readLine()) != null) {
 			builder.append(line + "\r\n");
 		}
+
 		builder.setLength(builder.length() - 2);
 		MESSAGE_HELP = builder.toString();
 		builder = new StringBuilder();
@@ -577,7 +640,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 你永远不应该执行这个方法
 	 */
@@ -615,7 +677,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 你永远不应该执行这个方法
 	 */
@@ -649,7 +710,6 @@ public class Systemd extends Module {
 		return true;
 
 	}
-
 
 	/**
 	 * 你永远不应该执行这个方法
@@ -685,7 +745,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 你永远不应该执行这个方法
 	 */
@@ -697,7 +756,7 @@ public class Systemd extends Module {
 		String module = message.getSwitch("module");
 		if (module == null) {
 			return new String[] {
-				"参数错误 --module 为空"
+					"参数错误 --module 为空"
 			};
 		}
 		builder.info("指定模块", module);
@@ -706,81 +765,89 @@ public class Systemd extends Module {
 			builder.info("指定命令", message.getSegment(2));
 			if (message.getSection() < 2) {
 				return new String[] {
-					"参数错误 缺少行为参数 /admin exec --module=$NAME $ACTION"
+						"参数错误 缺少行为参数 /admin exec --module=$NAME $ACTION"
 				};
 			}
 			switch (message.getSegment(1)) {
-			case "nickmap":
-				int i = 0;
-				switch (message.getSegment(2)) {
-				case "dump":
-					File allUserDump = Paths.get(FOLDER_LOGS.getAbsolutePath(), "nickdump_" + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
-					allUserDump.createNewFile();
-					FileWriter dumper = new FileWriter(allUserDump, true);
-					for (Group group : entry.getCQ().getGroupList()) {
-						dumper.append("#===========================\n#" + group.getName() + "(" + group.getId() + ")\n");
-						for (Member memebr : entry.getCQ().getGroupMemberList(group.getId())) {
-							if (isMyself(memebr.getQQId())) { continue; }
-							dumper.append(group.getId() + ":" + memebr.getQQId() + ":" + getGropNick(group.getId(), memebr.getQQId()) + "\n");
-							i++;
-						}
-					}
-					dumper.flush();
-					dumper.close();
-					return new String[] {
-						"[" + MODULE_PACKAGENAME + "] " + "昵称转储" + i + "个，至" + allUserDump.getAbsolutePath()
-					};
+				case "nickmap":
+					int i = 0;
+					switch (message.getSegment(2)) {
+						case "dump":
+							File allUserDump = Paths.get(FOLDER_LOGS.getAbsolutePath(),
+									"nickdump_" + LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
+							allUserDump.createNewFile();
+							FileWriter dumper = new FileWriter(allUserDump, true);
+							for (Group group : entry.getCQ().getGroupList()) {
+								dumper.append("#===========================\n#" + group.getName() + "(" + group.getId()
+										+ ")\n");
+								for (Member memebr : entry.getCQ().getGroupMemberList(group.getId())) {
+									if (isMyself(memebr.getQQId())) { continue; }
+									dumper.append(group.getId() + ":" + memebr.getQQId() + ":"
+											+ getGropNick(group.getId(), memebr.getQQId()) + "\n");
+									i++;
+								}
+							}
+							dumper.flush();
+							dumper.close();
+							return new String[] {
+									"[" + MODULE_PACKAGENAME + "] " + "昵称转储" + i + "个，至" + allUserDump.getAbsolutePath()
+							};
 
-				case "save":
-					FILE_NICKNAME_MAP.delete();
-					FILE_NICKNAME_MAP.createNewFile();
-					FileWriter saver = new FileWriter(FILE_NICKNAME_MAP, true);
-					for (Group group : entry.getCQ().getGroupList()) {
-						saver.append("#===========================\n#" + group.getName() + "(" + group.getId() + ")\n");
-						for (Member memebr : entry.getCQ().getGroupMemberList(group.getId())) {
-							if (isMyself(memebr.getQQId())) { continue; }
-							saver.append(group.getId() + ":" + memebr.getQQId() + ":" + getGropNick(group.getId(), memebr.getQQId()) + "\n");
-						}
-					}
-					saver.flush();
-					saver.close();
-					return new String[] {
-						"[" + MODULE_PACKAGENAME + "] " + "昵称保存"
-					};
+						case "save":
+							FILE_NICKNAME_MAP.delete();
+							FILE_NICKNAME_MAP.createNewFile();
+							FileWriter saver = new FileWriter(FILE_NICKNAME_MAP, true);
+							for (Group group : entry.getCQ().getGroupList()) {
+								saver.append("#===========================\n#" + group.getName() + "(" + group.getId()
+										+ ")\n");
+								for (Member memebr : entry.getCQ().getGroupMemberList(group.getId())) {
+									if (isMyself(memebr.getQQId())) { continue; }
+									saver.append(group.getId() + ":" + memebr.getQQId() + ":"
+											+ getGropNick(group.getId(), memebr.getQQId()) + "\n");
+								}
+							}
+							saver.flush();
+							saver.close();
+							return new String[] {
+									"[" + MODULE_PACKAGENAME + "] " + "昵称保存"
+							};
 
-				case "load":
-					NICKNAME_MAP.clear();
-					long gropid;
-					long userid;
-					String line;
-					String[] temp;
-					BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_NICKNAME_MAP), StandardCharsets.UTF_8));
-					while ((line = reader.readLine()) != null) {
-						if (line.startsWith("#")) { continue; }
-						if (!line.contains(":")) { continue; }
-						if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
-						temp = line.split(":");
-						if (temp.length != 3) {
-							builder.seek(MODULE_PACKAGENAME, "此行配置无效", line);
-							continue;
-						}
-						gropid = Long.parseLong(temp[0]);
-						userid = Long.parseLong(temp[1]);
-						if (!NICKNAME_MAP.containsKey(gropid)) { NICKNAME_MAP.put(gropid, new TreeMap<Long, String>()); }
-						NICKNAME_MAP.get(gropid).put(userid, temp[2]);
-						i++;
+						case "load":
+							NICKNAME_MAP.clear();
+							long gropid;
+							long userid;
+							String line;
+							String[] temp;
+							BufferedReader reader = new BufferedReader(new InputStreamReader(
+									new FileInputStream(FILE_NICKNAME_MAP), StandardCharsets.UTF_8));
+							while ((line = reader.readLine()) != null) {
+								if (line.startsWith("#")) { continue; }
+								if (!line.contains(":")) { continue; }
+								if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+								temp = line.split(":");
+								if (temp.length != 3) {
+									builder.seek(MODULE_PACKAGENAME, "此行配置无效", line);
+									continue;
+								}
+								gropid = Long.parseLong(temp[0]);
+								userid = Long.parseLong(temp[1]);
+								if (!NICKNAME_MAP.containsKey(gropid)) {
+									NICKNAME_MAP.put(gropid, new TreeMap<Long, String>());
+								}
+								NICKNAME_MAP.get(gropid).put(userid, temp[2]);
+								i++;
+							}
+							reader.close();
+							return new String[] {
+									"[" + MODULE_PACKAGENAME + "] " + "昵称加载" + i + "个"
+							};
 					}
-					reader.close();
-					return new String[] {
-						"[" + MODULE_PACKAGENAME + "] " + "昵称加载" + i + "个"
-					};
-				}
-				break;
+					break;
 
-			default:
-				return new String[] {
-					"参数错误 无此子功能"
-				};
+				default:
+					return new String[] {
+							"参数错误 无此子功能"
+					};
 			}
 		} else if (SCHEDULER_INSTANCE.containsKey(module)) {
 			ModuleScheduler instance = SCHEDULER_INSTANCE.get(module);
@@ -800,7 +867,7 @@ public class Systemd extends Module {
 			report = instance.exec(message);
 		} else {
 			return new String[] {
-				"无此名称的模块"
+					"无此名称的模块"
 			};
 		}
 		if ((report == null) || (report.length == 0)) {
@@ -817,7 +884,6 @@ public class Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
-
 	/**
 	 * 你永远不应该执行这个方法
 	 */
@@ -828,10 +894,12 @@ public class Systemd extends Module {
 		if (isMyself(userid)) {
 			writer.append("# Bot Join Group " + LoggerX.datetime() + "\n");
 			for (Member memeber : entry.getCQ().getGroupMemberList(gropid)) {
-				writer.append(gropid + ":" + memeber.getQQId() + ":" + entry.getCQ().getStrangerInfo(memeber.getQQId()).getNick() + "\n");
+				writer.append(gropid + ":" + memeber.getQQId() + ":"
+						+ entry.getCQ().getStrangerInfo(memeber.getQQId()).getNick() + "\n");
 			}
 		} else {
-			writer.append("# Member Increase " + LoggerX.datetime() + "\n" + gropid + ":" + userid + ":" + entry.getCQ().getStrangerInfo(userid).getNick() + "\n\n");
+			writer.append("# Member Increase " + LoggerX.datetime() + "\n" + gropid + ":" + userid + ":"
+					+ entry.getCQ().getStrangerInfo(userid).getNick() + "\n\n");
 		}
 		writer.flush();
 		writer.close();
@@ -846,7 +914,6 @@ public class Systemd extends Module {
 		}
 
 	}
-
 
 	/**
 	 * 你永远不应该执行这个方法
@@ -871,7 +938,6 @@ public class Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
-
 	/**
 	 * 你永远不应该执行这个方法
 	 *
@@ -882,7 +948,8 @@ public class Systemd extends Module {
 	 * @param messagefont 你永远不应该执行这个方法
 	 * @throws Exception 你永远不应该执行这个方法
 	 */
-	public void doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public void doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
 
 		COUNT_USER_MESSAGE++;
 		if (ENABLE_TRIGGER_USER) {
@@ -898,41 +965,41 @@ public class Systemd extends Module {
 		}
 		if (message.isCommand()) {
 			switch (message.getCommand()) {
-			case "info":
-				sendInfo(userid);
-				break;
+				case "info":
+					sendInfo(userid);
+					break;
 
-			case "eula":
-				sendEula(userid);
-				break;
+				case "eula":
+					sendEula(userid);
+					break;
 
-			case "list":
-				sendListUser(userid);
-				break;
-
-			case "help":
-				if (message.getSection() == 0) {
-					this.sendHelp(userid);
-				} else {
-					this.sendHelp(userid, message.getSegment()[0]);
-				}
-				break;
-
-			default:
-				if (ENABLE_EXECUTOR_USER && EXECUTOR_USER.containsKey(message.getCommand())) {
-					EXECUTOR_USER.get(message.getCommand()).executeUserMessage(typeid, userid, message, messageid, messagefont);
-				} else {
-					this.userInfo(userid, "没有此插件，可用插件如下");
+				case "list":
 					sendListUser(userid);
-				}
-				break;
+					break;
+
+				case "help":
+					if (message.getSection() == 0) {
+						this.sendHelp(userid);
+					} else {
+						this.sendHelp(userid, message.getSegment()[0]);
+					}
+					break;
+
+				default:
+					if (ENABLE_EXECUTOR_USER && EXECUTOR_USER.containsKey(message.getCommand())) {
+						EXECUTOR_USER.get(message.getCommand()).executeUserMessage(typeid, userid, message, messageid,
+								messagefont);
+					} else {
+						this.userInfo(userid, "没有此插件，可用插件如下");
+						sendListUser(userid);
+					}
+					break;
 			}
 		} else {
 			this.userInfo(userid, "未识别的内容，本BOT没有聊天功能，请使用/help查看帮助。");
 		}
 
 	}
-
 
 	/**
 	 * 你永远不应该执行这个方法
@@ -944,7 +1011,8 @@ public class Systemd extends Module {
 	 * @param messagefont 你永远不应该执行这个方法
 	 * @throws Exception 你永远不应该执行这个方法
 	 */
-	public void doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public void doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
 
 		COUNT_DISZ_MESSAGE++;
 		if (ENABLE_TRIGGER_DISZ) {
@@ -960,43 +1028,43 @@ public class Systemd extends Module {
 		}
 		if (message.isCommand()) {
 			switch (message.getCommand()) {
-			case "info":
-				this.diszInfo(diszid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
-				sendInfo(userid);
-				break;
-
-			case "eula":
-				this.diszInfo(diszid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
-				sendEula(userid);
-				break;
-
-			case "list":
-				this.diszInfo(diszid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
-				sendListDisz(userid);
-				break;
-
-			case "help":
-				if (message.getSection() == 0) {
-					this.sendHelp(userid);
-				} else {
+				case "info":
 					this.diszInfo(diszid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
-					this.sendHelp(userid, message.getSegment()[0]);
-				}
-				break;
+					sendInfo(userid);
+					break;
 
-			default:
-				if (ENABLE_EXECUTOR_DISZ && EXECUTOR_DISZ.containsKey(message.getCommand())) {
-					EXECUTOR_DISZ.get(message.getCommand()).executeDiszMessage(diszid, userid, message, messageid, messagefont);
-				} else {
-					this.diszInfo(diszid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
+				case "eula":
+					this.diszInfo(diszid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
+					sendEula(userid);
+					break;
+
+				case "list":
+					this.diszInfo(diszid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
 					sendListDisz(userid);
-				}
-				break;
+					break;
+
+				case "help":
+					if (message.getSection() == 0) {
+						this.sendHelp(userid);
+					} else {
+						this.diszInfo(diszid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
+						this.sendHelp(userid, message.getSegment()[0]);
+					}
+					break;
+
+				default:
+					if (ENABLE_EXECUTOR_DISZ && EXECUTOR_DISZ.containsKey(message.getCommand())) {
+						EXECUTOR_DISZ.get(message.getCommand()).executeDiszMessage(diszid, userid, message, messageid,
+								messagefont);
+					} else {
+						this.diszInfo(diszid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
+						sendListDisz(userid);
+					}
+					break;
 			}
 		}
 
 	}
-
 
 	/**
 	 * 你永远不应该执行这个方法
@@ -1008,7 +1076,8 @@ public class Systemd extends Module {
 	 * @param messagefont 你永远不应该执行这个方法
 	 * @throws Exception 你永远不应该执行这个方法
 	 */
-	public void doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public void doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 
 		COUNT_GROP_MESSAGE++;
 		if (ENABLE_TRIGGER_GROP) {
@@ -1024,38 +1093,39 @@ public class Systemd extends Module {
 		}
 		if (message.isCommand()) {
 			switch (message.getCommand()) {
-			case "info":
-				this.gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
-				sendInfo(userid);
-				break;
-
-			case "eula":
-				this.gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
-				sendEula(userid);
-				break;
-
-			case "list":
-				this.gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
-				sendListGrop(userid);
-				break;
-
-			case "help":
-				if (message.getSection() == 0) {
-					this.sendHelp(userid);
-				} else {
+				case "info":
 					this.gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
-					this.sendHelp(userid, message.getSegment()[0]);
-				}
-				break;
+					sendInfo(userid);
+					break;
 
-			default:
-				if (ENABLE_EXECUTOR_GROP && EXECUTOR_GROP.containsKey(message.getCommand())) {
-					EXECUTOR_GROP.get(message.getCommand()).executeGropMessage(gropid, userid, message, messageid, messagefont);
-				} else {
-					this.gropInfo(gropid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
+				case "eula":
+					this.gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
+					sendEula(userid);
+					break;
+
+				case "list":
+					this.gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
 					sendListGrop(userid);
-				}
-				break;
+					break;
+
+				case "help":
+					if (message.getSection() == 0) {
+						this.sendHelp(userid);
+					} else {
+						this.gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
+						this.sendHelp(userid, message.getSegment()[0]);
+					}
+					break;
+
+				default:
+					if (ENABLE_EXECUTOR_GROP && EXECUTOR_GROP.containsKey(message.getCommand())) {
+						EXECUTOR_GROP.get(message.getCommand()).executeGropMessage(gropid, userid, message, messageid,
+								messagefont);
+					} else {
+						this.gropInfo(gropid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
+						sendListGrop(userid);
+					}
+					break;
 			}
 		}
 
@@ -1066,13 +1136,11 @@ public class Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
-
 	private void instantiationScheduler(ModuleScheduler instance) {
 
 		SCHEDULER_INSTANCE.put(instance.MODULE_COMMANDNAME(), instance);
 
 	}
-
 
 	private void instantiationTrigger(ModuleTrigger instance) {
 
@@ -1080,13 +1148,11 @@ public class Systemd extends Module {
 
 	}
 
-
 	private void instantiationListener(ModuleListener instance) {
 
 		LISTENER_INSTANCE.put(instance.MODULE_COMMANDNAME(), instance);
 
 	}
-
 
 	private void instantiationExecutor(ModuleExecutor instance) {
 
@@ -1098,7 +1164,6 @@ public class Systemd extends Module {
 	// 工具函数
 	//
 	// ==========================================================================================================================================================
-
 
 	/**
 	 * 生成报告的方法 你永远不应该执行这个方法
@@ -1127,7 +1192,8 @@ public class Systemd extends Module {
 		for (ModuleScheduler instance : SCHEDULER_ENABLED) {
 			if (instance.ENABLE()) { builder.append(instance.MODULE_PACKAGENAME() + "：" + instance.COUNT() + "\r\n"); }
 		}
-		builder.append("触发器：" + TRIGGER_USER.size() + "/" + TRIGGER_DISZ.size() + "/" + TRIGGER_GROP.size() + "个" + "\r\n");
+		builder.append(
+				"触发器：" + TRIGGER_USER.size() + "/" + TRIGGER_DISZ.size() + "/" + TRIGGER_GROP.size() + "个" + "\r\n");
 		for (String temp : TRIGGER_INSTANCE.keySet()) {
 			ModuleTrigger instance = TRIGGER_INSTANCE.get(temp);
 			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { continue; }
@@ -1139,7 +1205,8 @@ public class Systemd extends Module {
 			builder.append(instance.ENABLE_GROP() ? instance.BLOCK_GROP() : "关");
 			builder.append("\r\n");
 		}
-		builder.append("监听器：" + LISTENER_USER.size() + "/" + LISTENER_DISZ.size() + "/" + LISTENER_GROP.size() + "个" + "\r\n");
+		builder.append(
+				"监听器：" + LISTENER_USER.size() + "/" + LISTENER_DISZ.size() + "/" + LISTENER_GROP.size() + "个" + "\r\n");
 		for (String temp : LISTENER_INSTANCE.keySet()) {
 			ModuleListener instance = LISTENER_INSTANCE.get(temp);
 			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { continue; }
@@ -1151,7 +1218,8 @@ public class Systemd extends Module {
 			builder.append(instance.ENABLE_GROP() ? instance.COUNT_GROP() : "关");
 			builder.append("\r\n");
 		}
-		builder.append("执行器：" + EXECUTOR_USER.size() + "/" + EXECUTOR_DISZ.size() + "/" + EXECUTOR_GROP.size() + "个" + "\r\n");
+		builder.append(
+				"执行器：" + EXECUTOR_USER.size() + "/" + EXECUTOR_DISZ.size() + "/" + EXECUTOR_GROP.size() + "个" + "\r\n");
 		for (String temp : EXECUTOR_INSTANCE.keySet()) {
 			ModuleExecutor instance = EXECUTOR_INSTANCE.get(temp);
 			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { continue; }
@@ -1164,11 +1232,10 @@ public class Systemd extends Module {
 			builder.append("\r\n");
 		}
 		return new String[] {
-			builder.substring(0, builder.length() - 2)
+				builder.substring(0, builder.length() - 2)
 		};
 
 	}
-
 
 	public String[] reportAllModules(int mode, Message message, Object... parameters) {
 
@@ -1183,7 +1250,8 @@ public class Systemd extends Module {
 			if (temp == null) { builder01.append(instance.MODULE_PACKAGENAME() + "：" + instance.COUNT() + "无\r\n"); }
 		}
 		// part 2 触发器
-		builder02.append("触发器：" + TRIGGER_USER.size() + "/" + TRIGGER_DISZ.size() + "/" + TRIGGER_GROP.size() + "个" + "\r\n");
+		builder02.append(
+				"触发器：" + TRIGGER_USER.size() + "/" + TRIGGER_DISZ.size() + "/" + TRIGGER_GROP.size() + "个" + "\r\n");
 		for (String temp : TRIGGER_INSTANCE.keySet()) {
 			ModuleTrigger instance = TRIGGER_INSTANCE.get(temp);
 			if (!instance.ENABLE_USER() || !instance.ENABLE_DISZ() || !instance.ENABLE_GROP()) { continue; }
@@ -1203,7 +1271,8 @@ public class Systemd extends Module {
 			builder02.append("\r\n");
 		}
 		// part 3 监听器
-		builder03.append("监听器：" + LISTENER_USER.size() + "/" + LISTENER_DISZ.size() + "/" + LISTENER_GROP.size() + "个" + "\r\n");
+		builder03.append(
+				"监听器：" + LISTENER_USER.size() + "/" + LISTENER_DISZ.size() + "/" + LISTENER_GROP.size() + "个" + "\r\n");
 		for (String temp : LISTENER_INSTANCE.keySet()) {
 			ModuleListener instance = LISTENER_INSTANCE.get(temp);
 			if (!instance.ENABLE_USER() || !instance.ENABLE_DISZ() || !instance.ENABLE_GROP()) { continue; }
@@ -1223,7 +1292,8 @@ public class Systemd extends Module {
 			builder03.append("\r\n");
 		}
 		// part 4 执行器
-		builder04.append("执行器：" + EXECUTOR_USER.size() + "/" + EXECUTOR_DISZ.size() + "/" + EXECUTOR_GROP.size() + "个" + "\r\n");
+		builder04.append(
+				"执行器：" + EXECUTOR_USER.size() + "/" + EXECUTOR_DISZ.size() + "/" + EXECUTOR_GROP.size() + "个" + "\r\n");
 		for (String temp : EXECUTOR_INSTANCE.keySet()) {
 			ModuleExecutor instance = EXECUTOR_INSTANCE.get(temp);
 			if (!instance.ENABLE_USER() || !instance.ENABLE_DISZ() || !instance.ENABLE_GROP()) { continue; }
@@ -1243,14 +1313,11 @@ public class Systemd extends Module {
 			builder04.append("\r\n");
 		}
 		return new String[] {
-			builder01.substring(0, builder01.length() - 2),
-			builder02.substring(0, builder02.length() - 2),
-			builder03.substring(0, builder03.length() - 2),
-			builder04.substring(0, builder04.length() - 2),
+				builder01.substring(0, builder01.length() - 2), builder02.substring(0, builder02.length() - 2),
+				builder03.substring(0, builder03.length() - 2), builder04.substring(0, builder04.length() - 2),
 		};
 
 	}
-
 
 	public String[] reportSpecifiedModule(int mode, Message message, Object... parameters) {
 
@@ -1278,7 +1345,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 你永远不应该执行这个方法
 	 *
@@ -1291,54 +1357,53 @@ public class Systemd extends Module {
 		BufferX builder = new BufferX();
 		builder.info(LoggerX.datetime());
 		switch (level) {
-		case 0:
-			builder.info("init 0：切换启停");
-			if (entry.isEnable()) {
-				entry.setEnable(false);
-				builder.info("切换至停机");
-			} else {
-				entry.setEnable(true);
-				builder.info("切换至运行");
-			}
-			break;
+			case 0:
+				builder.info("init 0：切换启停");
+				if (entry.isEnable()) {
+					entry.setEnable(false);
+					builder.info("切换至停机");
+				} else {
+					entry.setEnable(true);
+					builder.info("切换至运行");
+				}
+				break;
 
-		case 1:
-			builder.info("init 1：初始化");
-			Systemd.this.init();
-			break;
+			case 1:
+				builder.info("init 1：初始化");
+				Systemd.this.init();
+				break;
 
-		case 2:
-			builder.info("init 2：启动");
-			Systemd.this.boot();
-			break;
+			case 2:
+				builder.info("init 2：启动");
+				Systemd.this.boot();
+				break;
 
-		case 3:
-			builder.info("init 3：保存");
-			Systemd.this.save();
-			break;
+			case 3:
+				builder.info("init 3：保存");
+				Systemd.this.save();
+				break;
 
-		case 4:
-			builder.info("init 4：关闭丢弃");
-			Systemd.this.shut();
-			break;
+			case 4:
+				builder.info("init 4：关闭丢弃");
+				Systemd.this.shut();
+				break;
 
-		case 5:
-			builder.info("init 5：保存关闭");
-			Systemd.this.save();
-			Systemd.this.shut();
-			break;
+			case 5:
+				builder.info("init 5：保存关闭");
+				Systemd.this.save();
+				Systemd.this.shut();
+				break;
 
-		case 6:
-			builder.info("init 6：保存重启");
-			Systemd.this.save();
-			Systemd.this.shut();
-			Systemd.this.boot();
-			break;
+			case 6:
+				builder.info("init 6：保存重启");
+				Systemd.this.save();
+				Systemd.this.shut();
+				Systemd.this.boot();
+				break;
 		}
 		return builder.make();
 
 	}
-
 
 	/**
 	 * 生成list命令发送的内容 你永远不应该执行这个方法
@@ -1349,7 +1414,8 @@ public class Systemd extends Module {
 	 * @param executors 执行器列表
 	 * @return 生成好的/list
 	 */
-	private String generateListMessage(String flagname, ArrayList<ModuleTrigger> triggers, ArrayList<ModuleListener> listeners, TreeMap<String, ModuleExecutor> executors) {
+	private String generateListMessage(String flagname, ArrayList<ModuleTrigger> triggers,
+			ArrayList<ModuleListener> listeners, TreeMap<String, ModuleExecutor> executors) {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("=================\r\n" + flagname + "启用的模块\r\n=================\r\n启用的触发器：");
@@ -1358,7 +1424,8 @@ public class Systemd extends Module {
 		} else {
 			builder.append(triggers.size() + "\r\n");
 			for (ModuleTrigger module : triggers) {
-				builder.append(module.MODULE_COMMANDNAME() + " > " + module.MODULE_DISPLAYNAME() + "：" + module.MODULE_DESCRIPTION() + "\r\n");
+				builder.append(module.MODULE_COMMANDNAME() + " > " + module.MODULE_DISPLAYNAME() + "："
+						+ module.MODULE_DESCRIPTION() + "\r\n");
 			}
 		}
 		builder.append("=================\r\n启用的监听器：");
@@ -1367,7 +1434,8 @@ public class Systemd extends Module {
 		} else {
 			builder.append(listeners.size() + "\r\n");
 			for (ModuleListener module : listeners) {
-				builder.append(module.MODULE_COMMANDNAME() + " > " + module.MODULE_DISPLAYNAME() + "：" + module.MODULE_DESCRIPTION() + "\r\n");
+				builder.append(module.MODULE_COMMANDNAME() + " > " + module.MODULE_DISPLAYNAME() + "："
+						+ module.MODULE_DESCRIPTION() + "\r\n");
 			}
 		}
 		builder.append("\r\n=================\r\n可用的执行器： ");
@@ -1378,14 +1446,14 @@ public class Systemd extends Module {
 			for (String temp : executors.keySet()) {
 				ModuleExecutor module = executors.get(temp);
 				module.genFullHelp();
-				builder.append(module.MODULE_COMMANDNAME() + " > " + module.MODULE_DISPLAYNAME() + "：" + module.MODULE_DESCRIPTION() + "\r\n");
+				builder.append(module.MODULE_COMMANDNAME() + " > " + module.MODULE_DISPLAYNAME() + "："
+						+ module.MODULE_DESCRIPTION() + "\r\n");
 			}
 		}
 		builder.append("=================");
 		return builder.toString();
 
 	}
-
 
 	public static String sha1(String message) {
 
@@ -1411,7 +1479,6 @@ public class Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
-
 	/**
 	 * 判断一个ID是否为BOT自身 entry对此方法进行了转发请勿在此执行
 	 *
@@ -1423,7 +1490,6 @@ public class Systemd extends Module {
 		return USERID_CQBOT == userid;
 
 	}
-
 
 	/**
 	 * 判断一个ID是否为管理员（JCQ设置的管理，并非QQ群管理） entry对此方法进行了转发请勿在此执行
@@ -1437,7 +1503,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 给管理员发消息 entry对此方法进行了转发请勿在此执行
 	 *
@@ -1448,7 +1513,6 @@ public class Systemd extends Module {
 		entry.getCQ().sendPrivateMsg(USERID_ADMIN, message);
 
 	}
-
 
 	/**
 	 * 给管理员发消息 entry对此方法进行了转发请勿在此执行
@@ -1463,7 +1527,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 给用户发私聊 entry对此方法进行了转发请勿在此执行
 	 *
@@ -1475,7 +1538,6 @@ public class Systemd extends Module {
 		entry.getCQ().sendPrivateMsg(userid, message);
 
 	}
-
 
 	/**
 	 * 给用户发私聊 entry对此方法进行了转发请勿在此执行
@@ -1491,7 +1553,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 在讨论组发消息 entry对此方法进行了转发请勿在此执行
 	 *
@@ -1503,7 +1564,6 @@ public class Systemd extends Module {
 		entry.getCQ().sendDiscussMsg(diszid, message);
 
 	}
-
 
 	/**
 	 * 在讨论组发消息 entry对此方法进行了转发请勿在此执行
@@ -1519,7 +1579,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 在讨论组发消息 并at某人 entry对此方法进行了转发请勿在此执行
 	 *
@@ -1532,7 +1591,6 @@ public class Systemd extends Module {
 		entry.getCQ().sendDiscussMsg(diszid, "[CQ:at,qq=" + userid + "] " + message);
 
 	}
-
 
 	/**
 	 * 在群聊发消息 entry对此方法进行了转发请勿在此执行
@@ -1549,7 +1607,6 @@ public class Systemd extends Module {
 		}
 
 	}
-
 
 	/**
 	 * 在群聊发消息 entry对此方法进行了转发请勿在此执行
@@ -1569,7 +1626,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 在群聊发消息 并at某人 entry对此方法进行了转发请勿在此执行
 	 *
@@ -1587,7 +1643,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 私聊某人 /info entry对此方法进行了转发请勿在此执行
 	 *
@@ -1598,7 +1653,6 @@ public class Systemd extends Module {
 		entry.getCQ().sendPrivateMsg(userid, MESSAGE_INFO);
 
 	}
-
 
 	/**
 	 * 私聊某人 /eula entry对此方法进行了转发请勿在此执行
@@ -1611,7 +1665,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 私聊某人 /help entry对此方法进行了转发请勿在此执行
 	 *
@@ -1622,7 +1675,6 @@ public class Systemd extends Module {
 		entry.getCQ().sendPrivateMsg(userid, MESSAGE_HELP);
 
 	}
-
 
 	/**
 	 * 私聊某人 /help $name entry对此方法进行了转发请勿在此执行
@@ -1640,7 +1692,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 私聊某人 私聊模式/list entry对此方法进行了转发请勿在此执行
 	 *
@@ -1652,7 +1703,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 私聊某人 讨论组模式/list entry对此方法进行了转发请勿在此执行
 	 *
@@ -1663,7 +1713,6 @@ public class Systemd extends Module {
 		entry.getCQ().sendPrivateMsg(userid, MESSAGE_LIST_DISZ);
 
 	}
-
 
 	/**
 	 * 私聊某人 群组模式/list entry对此方法进行了转发请勿在此执行
@@ -1681,7 +1730,6 @@ public class Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
-
 	/**
 	 * 从昵称对应表查找昵称 entry对此方法进行了转发请勿在此执行
 	 *
@@ -1693,7 +1741,6 @@ public class Systemd extends Module {
 		return entry.getCQ().getStrangerInfo(userid).getNick();
 
 	}
-
 
 	/**
 	 * 从昵称对应表查找昵称 entry对此方法进行了转发请勿在此执行
@@ -1717,43 +1764,6 @@ public class Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
-
-	/**
-	 * 获取系统随机生成器 entry对此方法进行了转发请勿在此执行
-	 *
-	 * @return SecureRandom
-	 */
-	public SecureRandom getSecureRandom() {
-
-		return secureRandom;
-
-	}
-
-
-	/**
-	 * 生成一个随机数 entry对此方法进行了转发请勿在此执行
-	 *
-	 * @return Int
-	 */
-	public int getNextInteger() {
-
-		// int a = secureRandom.nextInt();
-		// int b = a >>> 20;
-		// int c = a >>> 12;
-		// int d = b ^ c;
-		// int e = a ^ d;
-		// int f = e >>> 7;
-		// int g = e >>> 4;
-		// int h = f ^ g;
-		// int i = e ^ h;
-		// return i;
-		int random = secureRandom.nextInt();
-		int temp = random ^ (random >>> 20) ^ (random >>> 12);
-		return temp ^ (temp >>> 7) ^ (temp >>> 4);
-
-	}
-
-
 	/**
 	 * 获取定时器 entry对此方法进行了转发请勿在此执行
 	 *
@@ -1765,7 +1775,6 @@ public class Systemd extends Module {
 		return SCHEDULER_INSTANCE.get(name);
 
 	}
-
 
 	/**
 	 * 获取触发器 entry对此方法进行了转发请勿在此执行
@@ -1779,7 +1788,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 获取监听器 entry对此方法进行了转发请勿在此执行
 	 *
@@ -1792,7 +1800,6 @@ public class Systemd extends Module {
 
 	}
 
-
 	/**
 	 * 获取执行器 entry对此方法进行了转发请勿在此执行
 	 *
@@ -1804,6 +1811,5 @@ public class Systemd extends Module {
 		return EXECUTOR_INSTANCE.get(name);
 
 	}
-
 
 }

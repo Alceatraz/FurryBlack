@@ -56,7 +56,6 @@ public class Executor_NULL extends ModuleExecutor {
         // @formatter:on
 	}
 
-
 	@Override
 	public boolean init() throws Exception {
 
@@ -73,14 +72,12 @@ public class Executor_NULL extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public boolean boot() throws Exception {
 
 		return false;
 
 	}
-
 
 	@Override
 	public boolean save() throws Exception {
@@ -89,7 +86,6 @@ public class Executor_NULL extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public boolean shut() throws Exception {
 
@@ -97,47 +93,44 @@ public class Executor_NULL extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-			"此模块无可用命令"
+				"此模块无可用命令"
 		};
 
 	}
-
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
 
 		return true;
 
 	}
 
-
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
 
 		return true;
 
 	}
 
-
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 
 		return true;
 
@@ -148,13 +141,11 @@ public class Executor_NULL extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
 		return null;
 
 	}
-
 
 }

@@ -27,20 +27,17 @@ public class LoggerX {
 	private static File FILE_LOGGER;
 	private String name;
 
-
 	public LoggerX(String name) {
 
 		this.name = name;
 
 	}
 
-
 	public LoggerX(Object thisInstance) {
 
 		name = thisInstance.getClass().getSimpleName();
 
 	}
-
 
 	/**
 	 * 必须传入绝对路径
@@ -57,7 +54,6 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-
 	public void exception(Exception exception) {
 
 		StringBuilder builder = new StringBuilder();
@@ -65,7 +61,8 @@ public class LoggerX {
 		builder.append("异常消息：" + exception.getMessage());
 		builder.append("异常调用：" + exception.getClass().getName());
 		for (StackTraceElement temp : exception.getStackTrace()) {
-			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
+			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber()
+					+ ")\r\n");
 		}
 		builder.setLength(builder.length() - 1);
 		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] 发生异常\r\n" + builder.toString();
@@ -74,7 +71,6 @@ public class LoggerX {
 
 	}
 
-
 	public void exception(long timestamp, Exception exception) {
 
 		StringBuilder builder = new StringBuilder();
@@ -82,15 +78,16 @@ public class LoggerX {
 		builder.append("异常消息：" + exception.getMessage());
 		builder.append("异常调用：" + exception.getClass().getName());
 		for (StackTraceElement temp : exception.getStackTrace()) {
-			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
+			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber()
+					+ ")\r\n");
 		}
 		builder.setLength(builder.length() - 1);
-		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] 发生异常\r\n时间序列号: " + timestamp + builder.toString();
+		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] 发生异常\r\n时间序列号: " + timestamp
+				+ builder.toString();
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 
 	}
-
 
 	public void exception(long timestamp, String catgory, Exception exception) {
 
@@ -99,10 +96,12 @@ public class LoggerX {
 		builder.append("异常消息：" + exception.getMessage());
 		builder.append("异常调用：" + exception.getClass().getName());
 		for (StackTraceElement temp : exception.getStackTrace()) {
-			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
+			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber()
+					+ ")\r\n");
 		}
 		builder.setLength(builder.length() - 1);
-		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] " + catgory + "\r\n时间序列号: " + timestamp + builder.toString();
+		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] " + catgory + "\r\n时间序列号: " + timestamp
+				+ builder.toString();
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 
@@ -112,10 +111,10 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-
 	public String raw(String catgory, String message) {
 
-		String temp = "[" + LoggerX.datetime() + "][RAW-MESSAGE][" + name + "] " + catgory + "\r\n" + message + "\r\n[RAW-EOF]\r\n";
+		String temp = "[" + LoggerX.datetime() + "][RAW-MESSAGE][" + name + "] " + catgory + "\r\n" + message
+				+ "\r\n[RAW-EOF]\r\n";
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
@@ -125,7 +124,6 @@ public class LoggerX {
 	//
 	//
 	// ==================================================================================================
-
 
 	public String warn(String message) {
 
@@ -136,7 +134,6 @@ public class LoggerX {
 
 	}
 
-
 	public String info(String message) {
 
 		String temp = "[" + LoggerX.datetime() + "][INFO][" + name + "]" + message;
@@ -146,7 +143,6 @@ public class LoggerX {
 
 	}
 
-
 	public String seek(String message) {
 
 		String temp = "[" + LoggerX.datetime() + "][SEEK][" + name + "]" + message;
@@ -155,7 +151,6 @@ public class LoggerX {
 		return message;
 
 	}
-
 
 	public String full(String message) {
 
@@ -170,7 +165,6 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-
 	public String warn(String catgory, String message) {
 
 		String temp = "[" + LoggerX.datetime() + "][WARN][" + name + "]" + catgory + ": " + message;
@@ -179,7 +173,6 @@ public class LoggerX {
 		return message;
 
 	}
-
 
 	public String info(String catgory, String message) {
 
@@ -190,7 +183,6 @@ public class LoggerX {
 
 	}
 
-
 	public String seek(String catgory, String message) {
 
 		String temp = "[" + LoggerX.datetime() + "][SEEK][" + name + "]" + catgory + ": " + message;
@@ -199,7 +191,6 @@ public class LoggerX {
 		return message;
 
 	}
-
 
 	public String full(String catgory, String message) {
 
@@ -214,7 +205,6 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-
 	public long warn(String catgory, long message) {
 
 		String temp = "[" + LoggerX.datetime() + "][WARN][" + name + "]" + catgory + ": " + message;
@@ -223,7 +213,6 @@ public class LoggerX {
 		return message;
 
 	}
-
 
 	public long info(String catgory, long message) {
 
@@ -234,7 +223,6 @@ public class LoggerX {
 
 	}
 
-
 	public long seek(String catgory, long message) {
 
 		String temp = "[" + LoggerX.datetime() + "][SEEK][" + name + "]" + catgory + ": " + message;
@@ -243,7 +231,6 @@ public class LoggerX {
 		return message;
 
 	}
-
 
 	public long full(String catgory, long message) {
 
@@ -258,7 +245,6 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-
 	public String[] warn(String catgory, String... message) {
 
 		for (String line : message) {
@@ -269,7 +255,6 @@ public class LoggerX {
 		return message;
 
 	}
-
 
 	public String[] info(String catgory, String... message) {
 
@@ -282,7 +267,6 @@ public class LoggerX {
 
 	}
 
-
 	public String[] seek(String catgory, String... message) {
 
 		for (String line : message) {
@@ -293,7 +277,6 @@ public class LoggerX {
 		return message;
 
 	}
-
 
 	public String[] full(String catgory, String... message) {
 
@@ -310,13 +293,11 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-
 	private static void PRINT(String message) {
 
 		System.out.println(message);
 
 	}
-
 
 	private static void WRITE(String message) {
 
@@ -336,7 +317,6 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-
 	public static String unicode(String raw) {
 
 		StringBuilder builder = new StringBuilder();
@@ -347,7 +327,6 @@ public class LoggerX {
 		return builder.toString();
 
 	}
-
 
 	public static String[] unicodeid(String raw) {
 
@@ -365,13 +344,11 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-
 	public static String date() {
 
 		return formater_date.format(new Date());
 
 	}
-
 
 	public static String date(Date date) {
 
@@ -379,13 +356,11 @@ public class LoggerX {
 
 	}
 
-
 	public static String date(long timestamp) {
 
 		return formater_date.format(new Date(timestamp));
 
 	}
-
 
 	public static String time() {
 
@@ -393,13 +368,11 @@ public class LoggerX {
 
 	}
 
-
 	public static String time(Date date) {
 
 		return formater_time.format(date);
 
 	}
-
 
 	public static String time(long timestamp) {
 
@@ -407,20 +380,17 @@ public class LoggerX {
 
 	}
 
-
 	public static String datetime() {
 
 		return formater_full.format(new Date());
 
 	}
 
-
 	public static String datetime(Date date) {
 
 		return formater_full.format(date);
 
 	}
-
 
 	public static String datetime(long timestamp) {
 
@@ -429,13 +399,11 @@ public class LoggerX {
 	}
 	// ================================================================
 
-
 	public static String formatTime(String format) {
 
 		return new SimpleDateFormat(format).format(new Date());
 
 	}
-
 
 	public static String formatTime(String format, Date date) {
 
@@ -443,13 +411,11 @@ public class LoggerX {
 
 	}
 
-
 	public static String formatTime(String format, long timestamp) {
 
 		return new SimpleDateFormat(format).format(new Date(timestamp));
 
 	}
-
 
 	public static String formatTime(String format, TimeZone timezone) {
 
@@ -459,7 +425,6 @@ public class LoggerX {
 
 	}
 
-
 	public static String formatTime(String format, TimeZone timezone, Date date) {
 
 		SimpleDateFormat formater = new SimpleDateFormat(format);
@@ -467,7 +432,6 @@ public class LoggerX {
 		return formater.format(date);
 
 	}
-
 
 	public static String formatTime(String format, TimeZone timezone, long timestamp) {
 
@@ -477,6 +441,5 @@ public class LoggerX {
 
 	}
 	// ================================================================
-
 
 }

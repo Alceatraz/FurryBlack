@@ -12,13 +12,11 @@ public class BufferX {
 	private StringBuilder builder;
 	private LinkedList<StringBuilder> builders = new LinkedList<>();
 
-
 	public BufferX() {
 
 		warp();
 
 	}
-
 
 	public void warp() {
 
@@ -27,7 +25,6 @@ public class BufferX {
 		builder = temp;
 
 	}
-
 
 	public String[] make() {
 
@@ -39,7 +36,6 @@ public class BufferX {
 		return message;
 
 	}
-
 
 	/**
 	 * OMG . this is too shit , I will figure out a better way
@@ -55,7 +51,6 @@ public class BufferX {
 
 	}
 
-
 	public void merge(BufferX... buffers) {
 
 		for (BufferX buffer : buffers) {
@@ -65,7 +60,6 @@ public class BufferX {
 		}
 
 	}
-
 
 	public LinkedList<StringBuilder> dump() {
 
@@ -77,7 +71,6 @@ public class BufferX {
 	//
 	// ==================================================================================================
 
-
 	public void exception(Exception exception) {
 
 		builder.append("[" + LoggerX.time() + "][EXCEPTION] 发生异常" + "\r\n");
@@ -85,7 +78,8 @@ public class BufferX {
 		builder.append("异常消息：" + exception.getMessage() + "\r\n");
 		builder.append("异常调用：" + exception.getClass().getName() + "\r\n");
 		for (StackTraceElement temp : exception.getStackTrace()) {
-			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
+			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber()
+					+ ")\r\n");
 		}
 		builder.setLength(builder.length() - 1);
 
@@ -95,7 +89,6 @@ public class BufferX {
 	//
 	// ==================================================================================================
 
-
 	public String warn(String message) {
 
 		String temp = "[" + LoggerX.time() + "][WARN]" + message + "\r\n";
@@ -103,7 +96,6 @@ public class BufferX {
 		return this.info(message);
 
 	}
-
 
 	public String info(String message) {
 
@@ -113,7 +105,6 @@ public class BufferX {
 
 	}
 
-
 	public String seek(String message) {
 
 		String temp = "[" + LoggerX.time() + "][SEEK]" + message + "\r\n";
@@ -121,7 +112,6 @@ public class BufferX {
 		return this.full(message);
 
 	}
-
 
 	public String full(String message) {
 
@@ -135,7 +125,6 @@ public class BufferX {
 	//
 	// ==================================================================================================
 
-
 	public String warn(String category, String message) {
 
 		String temp = "[" + LoggerX.time() + "][WARN][" + category + "]" + message + "\r\n";
@@ -143,7 +132,6 @@ public class BufferX {
 		return this.info(category, message);
 
 	}
-
 
 	public String info(String category, String message) {
 
@@ -153,7 +141,6 @@ public class BufferX {
 
 	}
 
-
 	public String seek(String category, String message) {
 
 		String temp = "[" + LoggerX.time() + "][SEEK][" + category + "]" + message + "\r\n";
@@ -161,7 +148,6 @@ public class BufferX {
 		return this.full(category, message);
 
 	}
-
 
 	public String full(String category, String message) {
 
@@ -175,7 +161,6 @@ public class BufferX {
 	//
 	// ==================================================================================================
 
-
 	public String[] warn(String catgory, String... message) {
 
 		for (String line : message) {
@@ -185,7 +170,6 @@ public class BufferX {
 		return message;
 
 	}
-
 
 	public String[] info(String catgory, String... message) {
 
@@ -197,7 +181,6 @@ public class BufferX {
 
 	}
 
-
 	public String[] seek(String catgory, String... message) {
 
 		for (String line : message) {
@@ -207,7 +190,6 @@ public class BufferX {
 		return message;
 
 	}
-
 
 	public String[] full(String catgory, String... message) {
 
@@ -223,12 +205,10 @@ public class BufferX {
 	//
 	// ==================================================================================================
 
-
 	private final static SimpleDateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
 	private final static SimpleDateFormat formater_time = new SimpleDateFormat("HH:mm:ss");
 	private final static SimpleDateFormat formater_full = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	// ================================================================
-
 
 	public static String date() {
 
@@ -236,13 +216,11 @@ public class BufferX {
 
 	}
 
-
 	public static String date(Date date) {
 
 		return BufferX.formater_date.format(date);
 
 	}
-
 
 	public static String date(long timestamp) {
 
@@ -250,13 +228,11 @@ public class BufferX {
 
 	}
 
-
 	public static String time() {
 
 		return BufferX.formater_time.format(new Date());
 
 	}
-
 
 	public static String time(Date date) {
 
@@ -264,13 +240,11 @@ public class BufferX {
 
 	}
 
-
 	public static String time(long timestamp) {
 
 		return BufferX.formater_time.format(new Date(timestamp));
 
 	}
-
 
 	public static String datetime() {
 
@@ -278,13 +252,11 @@ public class BufferX {
 
 	}
 
-
 	public static String datetime(Date date) {
 
 		return BufferX.formater_full.format(date);
 
 	}
-
 
 	public static String datetime(long timestamp) {
 
@@ -293,13 +265,11 @@ public class BufferX {
 	}
 	// ================================================================
 
-
 	public static String formatTime(String format) {
 
 		return new SimpleDateFormat(format).format(new Date());
 
 	}
-
 
 	public static String formatTime(String format, Date date) {
 
@@ -307,13 +277,11 @@ public class BufferX {
 
 	}
 
-
 	public static String formatTime(String format, long timestamp) {
 
 		return new SimpleDateFormat(format).format(new Date(timestamp));
 
 	}
-
 
 	public static String formatTime(String format, TimeZone timezone) {
 
@@ -323,7 +291,6 @@ public class BufferX {
 
 	}
 
-
 	public static String formatTime(String format, TimeZone timezone, Date date) {
 
 		SimpleDateFormat formater = new SimpleDateFormat(format);
@@ -331,7 +298,6 @@ public class BufferX {
 		return formater.format(date);
 
 	}
-
 
 	public static String formatTime(String format, TimeZone timezone, long timestamp) {
 
@@ -341,6 +307,5 @@ public class BufferX {
 
 	}
 	// ================================================================
-
 
 }

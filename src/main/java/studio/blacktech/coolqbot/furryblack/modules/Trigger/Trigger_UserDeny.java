@@ -39,7 +39,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	private static String MODULE_VERSION = "2.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {
-		"按照\"群-成员\"的层级关系手动配置被阻止的用户"
+			"按照\"群-成员\"的层级关系手动配置被阻止的用户"
 	};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
@@ -68,13 +68,12 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	//
 	// ==========================================================================================================================================================
 
-
 	public Trigger_UserDeny() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
+				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
-
 
 	@Override
 	public boolean init() throws Exception {
@@ -113,9 +112,12 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		ENABLE_USER = Boolean.parseBoolean(CONFIG.getProperty("enable_user", "false"));
 		ENABLE_DISZ = Boolean.parseBoolean(CONFIG.getProperty("enable_disz", "false"));
 		ENABLE_GROP = Boolean.parseBoolean(CONFIG.getProperty("enable_grop", "false"));
-		BufferedReader readerUser = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_USERIGNORE), StandardCharsets.UTF_8));
-		BufferedReader readerDisz = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_DISZIGNORE), StandardCharsets.UTF_8));
-		BufferedReader readerGrop = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_GROPIGNORE), StandardCharsets.UTF_8));
+		BufferedReader readerUser = new BufferedReader(
+				new InputStreamReader(new FileInputStream(FILE_USERIGNORE), StandardCharsets.UTF_8));
+		BufferedReader readerDisz = new BufferedReader(
+				new InputStreamReader(new FileInputStream(FILE_DISZIGNORE), StandardCharsets.UTF_8));
+		BufferedReader readerGrop = new BufferedReader(
+				new InputStreamReader(new FileInputStream(FILE_GROPIGNORE), StandardCharsets.UTF_8));
 		long userid;
 		long diszid;
 		long gropid;
@@ -193,14 +195,12 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	}
 
-
 	@Override
 	public boolean boot() throws Exception {
 
 		return true;
 
 	}
-
 
 	@Override
 	public boolean save() throws Exception {
@@ -209,7 +209,6 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	}
 
-
 	@Override
 	public boolean shut() throws Exception {
 
@@ -217,36 +216,35 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	}
 
-
 	@Override
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-			"此模块无可用命令"
+				"此模块无可用命令"
 		};
 
 	}
-
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
 
 		if (USER_IGNORE.contains(userid)) {
 			DENY_USER_COUNT.put(userid, DENY_USER_COUNT.get(userid) + 1);
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_USER_LOGGER, true), StandardCharsets.UTF_8));
-			String temp = "[" + LoggerX.datetime() + "] " + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n";
+			BufferedWriter writer = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(FILE_DENY_USER_LOGGER, true), StandardCharsets.UTF_8));
+			String temp = "[" + LoggerX.datetime() + "] " + entry.getNickname(userid) + "(" + userid + ") "
+					+ message.getRawMessage() + "\n";
 			writer.write(temp);
 			writer.flush();
 			writer.close();
@@ -257,9 +255,9 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	}
 
-
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
 
 		if (USER_IGNORE.contains(userid)) {
 			DENY_USER_COUNT.put(userid, DENY_USER_COUNT.get(userid) + 1);
@@ -269,8 +267,10 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		} else {
 			return false;
 		}
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_DISZ_LOGGER, true), StandardCharsets.UTF_8));
-		String temp = "[" + LoggerX.datetime() + "] " + diszid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n";
+		BufferedWriter writer = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(FILE_DENY_DISZ_LOGGER, true), StandardCharsets.UTF_8));
+		String temp = "[" + LoggerX.datetime() + "] " + diszid + " - " + entry.getNickname(userid) + "(" + userid + ") "
+				+ message.getRawMessage() + "\n";
 		writer.write(temp);
 		writer.flush();
 		writer.close();
@@ -278,9 +278,9 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	}
 
-
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 
 		if (USER_IGNORE.contains(userid)) {
 			DENY_USER_COUNT.put(userid, DENY_USER_COUNT.get(userid) + 1);
@@ -290,15 +290,16 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		} else {
 			return false;
 		}
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_GROP_LOGGER, true), StandardCharsets.UTF_8));
-		String temp = "[" + LoggerX.datetime() + "] " + gropid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n";
+		BufferedWriter writer = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(FILE_DENY_GROP_LOGGER, true), StandardCharsets.UTF_8));
+		String temp = "[" + LoggerX.datetime() + "] " + gropid + " - " + entry.getNickname(userid) + "(" + userid + ") "
+				+ message.getRawMessage() + "\n";
 		writer.write(temp);
 		writer.flush();
 		writer.close();
 		return true;
 
 	}
-
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
@@ -377,11 +378,10 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		}
 		builder.setLength(builder.length() - 1);
 		String[] res = new String[] {
-			builder.toString()
+				builder.toString()
 		};
 		return res;
 
 	}
-
 
 }

@@ -47,22 +47,19 @@ public class Executor_DEMO extends ModuleExecutor {
 	// 命令用法，数组的每个元素应为一个参数组合用法及其说明
 	// 减号左右各一个空格
 	private static String[] MODULE_USAGE = new String[] {
-		"命令1 - 命令用法1",
-		"命令2 - 命令用法2",
-		"命令3 - 命令用法3",
-		"命令4 - 命令用法4",
+			"命令1 - 命令用法1", "命令2 - 命令用法2", "命令3 - 命令用法3", "命令4 - 命令用法4",
 	};
 	// 如果需要将数据存储为文件 则应写明存储的内容及其用途 有效时限
 	public static String[] MODULE_PRIVACY_STORED = new String[] {
-		"隐私级别 - 用途"
+			"隐私级别 - 用途"
 	};
 	// 如果需要将数据存储在内存 则应写明存储的内容及其用途 有效时限
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {
-		"隐私级别 - 用途"
+			"隐私级别 - 用途"
 	};
 	// 如果需要获取用户相关的信息 则应写明内容及其用途 且获取的信息不应该储存 如果需要存储则将此功能写入MODULE_PRIVACY_CACHED
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-		"隐私级别 - 用途"
+			"隐私级别 - 用途"
 	};
 	// ==========================================================================================================================================================
 	//
@@ -82,7 +79,6 @@ public class Executor_DEMO extends ModuleExecutor {
 	// 生命周期函数
 	//
 	// ==========================================================================================================================================================
-
 
 	/***
 	 * 调用模块实例化方法 此处不应执行任何代码
@@ -106,7 +102,6 @@ public class Executor_DEMO extends ModuleExecutor {
 
         // @formatter:on
 	}
-
 
 	/**
 	 * 生命周期函数 初始化阶段
@@ -165,7 +160,6 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	}
 
-
 	/**
 	 * 如果有 应在此处初始化工作线程并运行 如果ENABLE_MODE=false则不会注册 则不会执行boot的内容
 	 */
@@ -178,7 +172,6 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	}
 
-
 	/**
 	 * 如果需要保存数据 则应该在此处保存数据 注意 这个函数不意味着结束
 	 */
@@ -188,7 +181,6 @@ public class Executor_DEMO extends ModuleExecutor {
 		return true;
 
 	}
-
 
 	/**
 	 * 如果有 应在此处打断工作线程 和剩余的关闭逻辑
@@ -207,7 +199,6 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	}
 
-
 	/**
 	 * 用于管理和debug /admin exec --module=demo xxx xxxx xxx xxxx xxxxx xxxxxxx
 	 */
@@ -215,11 +206,10 @@ public class Executor_DEMO extends ModuleExecutor {
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-			"此模块无可用命令"
+				"此模块无可用命令"
 		};
 
 	}
-
 
 	/**
 	 * 群成员增加时执行
@@ -232,7 +222,6 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	}
 
-
 	/**
 	 * 群成员减少时执行
 	 */
@@ -241,34 +230,34 @@ public class Executor_DEMO extends ModuleExecutor {
 
 	}
 
-
 	/**
 	 * 用户发送私聊时执行
 	 */
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
 
 		return true;
 
 	}
-
 
 	/**
 	 * 讨论组消息时执行
 	 */
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
 
 		return true;
 
 	}
 
-
 	/***
 	 * 群聊消息时执行
 	 */
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 
 		// 不要使用JcpApp.CQ发送消息
 		entry.gropInfo(gropid, userid, "MESSAGE");
@@ -281,7 +270,6 @@ public class Executor_DEMO extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-
 	/***
 	 * 生成模块报告 数组每个元素就会产生一条消息 避免消息过长
 	 */
@@ -291,7 +279,6 @@ public class Executor_DEMO extends ModuleExecutor {
 		return null;
 
 	}
-
 
 	class Worker implements Runnable {
 
@@ -347,8 +334,6 @@ public class Executor_DEMO extends ModuleExecutor {
 
 		}
 
-
 	}
-
 
 }

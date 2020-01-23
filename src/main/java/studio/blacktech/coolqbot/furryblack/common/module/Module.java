@@ -73,16 +73,23 @@ public abstract class Module implements Serializable {
 
     // @formatter:on
 
-
 	public abstract boolean init() throws Exception;
-	public abstract boolean boot() throws Exception;
-	public abstract boolean save() throws Exception;
-	public abstract boolean shut() throws Exception;
-	public abstract String[] exec(Message message) throws Exception;
-	public abstract String[] generateReport(int mode, Message message, Object... parameters);
-	public abstract void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
-	public abstract void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
 
+	public abstract boolean boot() throws Exception;
+
+	public abstract boolean save() throws Exception;
+
+	public abstract boolean shut() throws Exception;
+
+	public abstract String[] exec(Message message) throws Exception;
+
+	public abstract String[] generateReport(int mode, Message message, Object... parameters);
+
+	public abstract void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid)
+			throws Exception;
+
+	public abstract void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid)
+			throws Exception;
 
 	public void initAppFolder() throws Exception {
 
@@ -95,7 +102,6 @@ public abstract class Module implements Serializable {
 
 	}
 
-
 	public void initConfFolder() throws Exception {
 
 		if (FOLDER_CONF.exists()) {
@@ -106,7 +112,6 @@ public abstract class Module implements Serializable {
 		}
 
 	}
-
 
 	public void initDataFolder() throws Exception {
 
@@ -119,7 +124,6 @@ public abstract class Module implements Serializable {
 
 	}
 
-
 	public void initLogsFolder() throws Exception {
 
 		if (FOLDER_LOGS.exists()) {
@@ -131,7 +135,6 @@ public abstract class Module implements Serializable {
 
 	}
 
-
 	public void initPropertiesConfigurtion() throws Exception {
 
 		if (!FILE_CONFIG.exists()) {
@@ -142,13 +145,11 @@ public abstract class Module implements Serializable {
 
 	}
 
-
 	protected void loadConfig() throws Exception {
 
 		CONFIG.load(new FileInputStream(FILE_CONFIG));
 
 	}
-
 
 	protected void saveConfig() throws Exception {
 
@@ -156,13 +157,11 @@ public abstract class Module implements Serializable {
 
 	}
 
-
 	public String MODULE_PACKAGENAME() {
 
 		return MODULE_PACKAGENAME;
 
 	}
-
 
 	public String MODULE_COMMANDNAME() {
 
@@ -170,13 +169,11 @@ public abstract class Module implements Serializable {
 
 	}
 
-
 	public String MODULE_DISPLAYNAME() {
 
 		return MODULE_DISPLAYNAME;
 
 	}
-
 
 	public String MODULE_DESCRIPTION() {
 
@@ -184,13 +181,11 @@ public abstract class Module implements Serializable {
 
 	}
 
-
 	public String MODULE_FULLHELP() {
 
 		return MODULE_FULLHELP;
 
 	}
-
 
 	public String genFullHelp() {
 
@@ -238,6 +233,5 @@ public abstract class Module implements Serializable {
 		return builder.toString();
 
 	}
-
 
 }

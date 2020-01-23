@@ -10,7 +10,6 @@ public abstract class ModuleTrigger extends Module {
 
 	private static final long serialVersionUID = 1L;
 
-
 	// @formatter:off
     public ModuleTrigger(
             String MODULE_PACKAGENAME,
@@ -38,7 +37,6 @@ public abstract class ModuleTrigger extends Module {
     }
     // @formatter:on
 
-
 	protected int COUNT_USER = 0;
 	protected int COUNT_DISZ = 0;
 	protected int COUNT_GROP = 0;
@@ -49,35 +47,38 @@ public abstract class ModuleTrigger extends Module {
 	protected boolean ENABLE_DISZ = false;
 	protected boolean ENABLE_GROP = false;
 
+	public abstract boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception;
 
-	public abstract boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception;
-	public abstract boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception;
-	public abstract boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception;
+	public abstract boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception;
 
+	public abstract boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception;
 
-	public boolean executeUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean executeUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
 
 		COUNT_USER++;
 		return doUserMessage(typeid, userid, message, messageid, messagefont);
 
 	}
 
-
-	public boolean executeDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean executeDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
 
 		COUNT_DISZ++;
 		return doDiszMessage(diszid, userid, message, messageid, messagefont);
 
 	}
 
-
-	public boolean executeGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean executeGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 
 		COUNT_GROP++;
 		return doGropMessage(gropid, userid, message, messageid, messagefont);
 
 	}
-
 
 	public int COUNT_USER() {
 
@@ -85,13 +86,11 @@ public abstract class ModuleTrigger extends Module {
 
 	}
 
-
 	public int COUNT_DISZ() {
 
 		return COUNT_DISZ;
 
 	}
-
 
 	public int COUNT_GROP() {
 
@@ -99,13 +98,11 @@ public abstract class ModuleTrigger extends Module {
 
 	}
 
-
 	public int BLOCK_USER() {
 
 		return BLOCK_USER;
 
 	}
-
 
 	public int BLOCK_DISZ() {
 
@@ -113,13 +110,11 @@ public abstract class ModuleTrigger extends Module {
 
 	}
 
-
 	public int BLOCK_GROP() {
 
 		return BLOCK_GROP;
 
 	}
-
 
 	public boolean ENABLE_USER() {
 
@@ -127,19 +122,16 @@ public abstract class ModuleTrigger extends Module {
 
 	}
 
-
 	public boolean ENABLE_DISZ() {
 
 		return ENABLE_DISZ;
 
 	}
 
-
 	public boolean ENABLE_GROP() {
 
 		return ENABLE_GROP;
 
 	}
-
 
 }

@@ -40,7 +40,6 @@ public class Message implements Serializable {
 	private TreeMap<String, String> switchs;
 	// ===================================================================================
 
-
 	public Message(String message, int messageid, int messageFont) {
 
 		sendTime = System.currentTimeMillis();
@@ -50,7 +49,6 @@ public class Message implements Serializable {
 
 	}
 	// ===================================================================================
-
 
 	public Message parse() {
 
@@ -130,7 +128,6 @@ public class Message implements Serializable {
 	}
 	// ===================================================================================
 
-
 	/**
 	 * 将消息去掉命令以后 从指定位置拼接
 	 *
@@ -151,7 +148,6 @@ public class Message implements Serializable {
 
 	}
 	// ===================================================================================
-
 
 	@Override
 	public String toString() {
@@ -227,7 +223,6 @@ public class Message implements Serializable {
 	}
 	// ===================================================================================
 
-
 	/**
 	 * 获取消息ID
 	 *
@@ -238,7 +233,6 @@ public class Message implements Serializable {
 		return messageId;
 
 	}
-
 
 	/**
 	 * 获取消息字体
@@ -252,7 +246,6 @@ public class Message implements Serializable {
 	}
 	// ===================================================================================
 
-
 	/**
 	 * 获取消息发送时间 毫秒时间戳
 	 *
@@ -263,7 +256,6 @@ public class Message implements Serializable {
 		return sendTime;
 
 	}
-
 
 	/**
 	 * 获取消息发送时间 Date对象
@@ -277,7 +269,6 @@ public class Message implements Serializable {
 	}
 	// ===================================================================================
 
-
 	/**
 	 * 获取原始消息
 	 *
@@ -288,7 +279,6 @@ public class Message implements Serializable {
 		return rawMessage;
 
 	}
-
 
 	/**
 	 * 获取原始消息长度
@@ -302,7 +292,6 @@ public class Message implements Serializable {
 	}
 	// ===================================================================================
 
-
 	/**
 	 * 获取命令内容 即去掉/ 如果不是命令则为null 执行器以外的地方不应执行这个函数
 	 *
@@ -313,7 +302,6 @@ public class Message implements Serializable {
 		return cmdMessage;
 
 	}
-
 
 	/**
 	 * 获取命令 即去掉/以空格切分的[0] 如果不是命令则为null 执行器以外的地方不应执行这个函数
@@ -326,7 +314,6 @@ public class Message implements Serializable {
 
 	}
 
-
 	/**
 	 * 获取参数 即去掉/以后按空格切分的[1:] 如果不是命令则为null 执行器以外的地方不应执行这个函数
 	 *
@@ -337,7 +324,6 @@ public class Message implements Serializable {
 		return options;
 
 	}
-
 
 	/**
 	 * 获取参数长度 即去掉/以后按空格切分的[1:]的元素数量 如果不是命令则为0 执行器以外的地方不应执行这个函数
@@ -350,7 +336,6 @@ public class Message implements Serializable {
 
 	}
 
-
 	/**
 	 * 获取所有的参数 即去掉/以后按空格切分的[1:]的元素 如果不是命令则为null 执行器以外的地方不应执行这个函数
 	 *
@@ -361,7 +346,6 @@ public class Message implements Serializable {
 		return segment;
 
 	}
-
 
 	/***
 	 * 获取参数 即去掉/以后按空格切分的index+1, 如果不是命令则为null 执行器以外的地方不应执行这个函数
@@ -375,7 +359,6 @@ public class Message implements Serializable {
 
 	}
 
-
 	/**
 	 * 获取开关的值 --name=value 形式的参数为开关 如果不是命令或不存在此参数则为null 执行器以外的地方不应执行这个函数
 	 *
@@ -387,7 +370,6 @@ public class Message implements Serializable {
 		return switchs.get(name);
 
 	}
-
 
 	/**
 	 * 是否包含指定名字的开关
@@ -402,7 +384,6 @@ public class Message implements Serializable {
 	}
 	// ===================================================================================
 
-
 	/**
 	 * 消息是否为命令
 	 *
@@ -413,7 +394,6 @@ public class Message implements Serializable {
 		return isCommand;
 
 	}
-
 
 	/**
 	 * 消息是否为红包
@@ -426,7 +406,6 @@ public class Message implements Serializable {
 
 	}
 
-
 	/**
 	 * 消息是否为短视频
 	 *
@@ -437,7 +416,6 @@ public class Message implements Serializable {
 		return isQQVideo;
 
 	}
-
 
 	/**
 	 * 消息是否为闪照
@@ -450,7 +428,6 @@ public class Message implements Serializable {
 
 	}
 
-
 	/**
 	 * 消息是否为纯CQ码
 	 *
@@ -462,7 +439,6 @@ public class Message implements Serializable {
 
 	}
 
-
 	/**
 	 * 消息是否包含图片
 	 *
@@ -473,7 +449,6 @@ public class Message implements Serializable {
 		return hasPicture;
 
 	}
-
 
 	/**
 	 * 获取消息中的所有图片
@@ -487,7 +462,6 @@ public class Message implements Serializable {
 	}
 	// ===================================================================================
 
-
 	/**
 	 * 获取分析后的消息
 	 *
@@ -499,7 +473,6 @@ public class Message implements Serializable {
 
 	}
 
-
 	/**
 	 * 获取分析后的消息长度
 	 *
@@ -510,6 +483,5 @@ public class Message implements Serializable {
 		return resLength;
 
 	}
-
 
 }

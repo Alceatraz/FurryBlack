@@ -1,9 +1,9 @@
 package studio.blacktech.coolqbot.furryblack.common.exception;
 
+
 public class NotAFolderException extends InitializationException {
 
 	private static final long serialVersionUID = 1L;
-
 
 	public NotAFolderException() {
 
@@ -11,13 +11,11 @@ public class NotAFolderException extends InitializationException {
 
 	}
 
-
 	public NotAFolderException(String message) {
 
 		super(message);
 
 	}
-
 
 	public NotAFolderException(String message, Throwable cause) {
 
@@ -25,12 +23,10 @@ public class NotAFolderException extends InitializationException {
 
 	}
 
-
 	public NotAFolderException(Throwable cause) {
 
 		super(cause);
 
 	}
-
 
 }

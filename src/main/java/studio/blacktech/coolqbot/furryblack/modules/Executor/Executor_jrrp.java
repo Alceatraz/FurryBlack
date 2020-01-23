@@ -11,6 +11,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import sutdio.blacktech.common.security.RandomTool;
 
 
 @ModuleExecutorComponent
@@ -28,14 +29,14 @@ public class Executor_jrrp extends ModuleExecutor {
 	private static String MODULE_DESCRIPTION = "查看今天的运气值";
 	private static String MODULE_VERSION = "1.3";
 	private static String[] MODULE_USAGE = new String[] {
-		"/jrrp - 查看今日运气"
+			"/jrrp - 查看今日运气"
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-		"用户与运气对应表 - 每日UTC+8 00:00 清空"
+			"用户与运气对应表 - 每日UTC+8 00:00 清空"
 	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-		"获取命令发送人"
+			"获取命令发送人"
 	};
 	// ==========================================================================================================================================================
 	//
@@ -50,13 +51,12 @@ public class Executor_jrrp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-
 	public Executor_jrrp() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
+				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
-
 
 	@Override
 	public boolean init() throws Exception {
@@ -69,7 +69,6 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public boolean boot() throws Exception {
 
@@ -80,14 +79,12 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public boolean save() throws Exception {
 
 		return true;
 
 	}
-
 
 	@Override
 	public boolean shut() throws Exception {
@@ -100,58 +97,54 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-			"此模块无可用命令"
+				"此模块无可用命令"
 		};
 
 	}
-
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
 
-		if (!JRRP.containsKey(userid)) { JRRP.put(userid, entry.getNextInteger() % 100); }
+		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
 		entry.userInfo(userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
 		return true;
 
 	}
 
-
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
 
-		if (!JRRP.containsKey(userid)) { JRRP.put(userid, entry.getNextInteger() % 100); }
+		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
 		entry.diszInfo(diszid, userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
 		return true;
 
 	}
 
-
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 
-		if (!JRRP.containsKey(userid)) { JRRP.put(userid, entry.getNextInteger() % 100); }
+		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
 		entry.gropInfo(gropid, userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
 		return true;
 
 	}
-
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
@@ -159,7 +152,6 @@ public class Executor_jrrp extends ModuleExecutor {
 		return new String[0];
 
 	}
-
 
 	@SuppressWarnings("deprecation")
 	class Worker implements Runnable {
@@ -194,8 +186,6 @@ public class Executor_jrrp extends ModuleExecutor {
 
 		}
 
-
 	}
-
 
 }

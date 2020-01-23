@@ -22,8 +22,7 @@ import org.meowy.cqp.jcq.event.JcqAppAbstract;
  * 辅助开发变量: {@link JcqAppAbstract#CQ CQ}({@link org.meowy.cqp.jcq.entity.CoolQ 酷Q核心操作类}), {@link JcqAppAbstract#CC CC}({@link org.meowy.cqp.jcq.message.CQCode 酷Q码操作类}), 具体功能可以查看文档
  */
 @SuppressWarnings({
-	"deprecation",
-	"unused"
+		"deprecation", "unused"
 })
 public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
@@ -37,7 +36,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 使用新的方式加载CQ （建议使用这种方式）
 	 *
@@ -48,7 +46,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		super(CQ);
 
 	}
-
 
 	/**
 	 * 用main方法调试可以最大化的加快开发效率，检测和定位错误位置 以下就是使用Main方法进行测试的一个简易案例
@@ -89,7 +86,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 打包后将不会调用 请不要在此事件中写其他代码
 	 *
@@ -107,7 +103,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		return ICQVer.CQAPIVER + "," + AppID;
 
 	}
-
 
 	/**
 	 * 酷Q启动 (Type=1001)<br>
@@ -128,7 +123,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 酷Q退出 (Type=1002)<br>
 	 * 本方法会在酷Q【主线程】中被调用。<br>
@@ -142,7 +136,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		return 0;
 
 	}
-
 
 	/**
 	 * 应用已被启用 (Type=1003)<br>
@@ -160,7 +153,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 应用将被停用 (Type=1004)<br>
 	 * 当应用被停用前，将收到此事件。<br>
@@ -176,7 +168,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		return 0;
 
 	}
-
 
 	/**
 	 * 私聊消息 (Type=21)<br>
@@ -201,7 +192,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 群消息 (Type=2)<br>
 	 * 本方法会在酷Q【线程】中被调用。<br>
@@ -216,7 +206,8 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
 	@Override
-	public int groupMsg(int subType, int msgId, long fromGroup, long fromQQ, String fromAnonymous, String msg, int font) {
+	public int groupMsg(int subType, int msgId, long fromGroup, long fromQQ, String fromAnonymous, String msg,
+			int font) {
 
 		// 如果消息来自匿名者
 		if ((fromQQ == 80000000L) && !fromAnonymous.equals("")) {}
@@ -238,7 +229,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 讨论组消息 (Type=4)<br>
 	 * 本方法会在酷Q【线程】中被调用。<br>
@@ -258,7 +248,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		return IMsg.MSG_IGNORE;
 
 	}
-
 
 	/**
 	 * 群文件上传事件 (Type=11)<br>
@@ -281,7 +270,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 群事件-管理员变动 (Type=101)<br>
 	 * 本方法会在酷Q【线程】中被调用。<br>
@@ -298,7 +286,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		return IMsg.MSG_IGNORE;
 
 	}
-
 
 	/**
 	 * 群事件-群成员减少 (Type=102)<br>
@@ -317,7 +304,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		return IMsg.MSG_IGNORE;
 
 	}
-
 
 	/**
 	 * 群事件-群成员增加 (Type=103)<br>
@@ -341,7 +327,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 群事件-群禁言 (Type=104)<br>
 	 * 本方法会在酷Q【线程】中被调用。<br>
@@ -362,7 +347,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 好友事件-好友已添加 (Type=201)<br>
 	 * 本方法会在酷Q【线程】中被调用。<br>
@@ -379,7 +363,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		return IMsg.MSG_IGNORE;
 
 	}
-
 
 	/**
 	 * 请求-好友添加 (Type=301)<br>
@@ -405,7 +388,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 请求-群添加 (Type=302)<br>
 	 * 本方法会在酷Q【线程】中被调用。<br>
@@ -419,7 +401,8 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
 	 */
 	@Override
-	public int requestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
+	public int requestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg,
+			String responseFlag) {
 
 		// 这里处理消息
 		/**
@@ -431,7 +414,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		return IMsg.MSG_IGNORE;
 
 	}
-
 
 	/**
 	 * 本函数会在JCQ【线程】中被调用。
@@ -445,7 +427,6 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 
 	}
 
-
 	/**
 	 * 本函数会在酷Q【线程】中被调用。
 	 *
@@ -457,6 +438,5 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 		return 0;
 
 	}
-
 
 }

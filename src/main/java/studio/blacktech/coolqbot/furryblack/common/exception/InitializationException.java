@@ -1,9 +1,9 @@
 package studio.blacktech.coolqbot.furryblack.common.exception;
 
+
 public class InitializationException extends Exception {
 
 	private static final long serialVersionUID = 1L;
-
 
 	public InitializationException() {
 
@@ -11,13 +11,11 @@ public class InitializationException extends Exception {
 
 	}
 
-
 	public InitializationException(String message) {
 
 		super(message);
 
 	}
-
 
 	public InitializationException(String message, Throwable cause) {
 
@@ -25,12 +23,10 @@ public class InitializationException extends Exception {
 
 	}
 
-
 	public InitializationException(Throwable cause) {
 
 		super(cause);
 
 	}
-
 
 }

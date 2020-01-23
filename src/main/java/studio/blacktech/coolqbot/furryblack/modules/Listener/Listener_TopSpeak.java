@@ -52,7 +52,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_VERSION = "30.2";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {
-		"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
+			"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
 	};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
@@ -72,13 +72,12 @@ public class Listener_TopSpeak extends ModuleListener {
 	//
 	// ==========================================================================================================================================================
 
-
 	public Listener_TopSpeak() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
+				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -90,10 +89,13 @@ public class Listener_TopSpeak extends ModuleListener {
 		GROUP_REPORT = new ArrayList<>();
 		GROUP_STATUS_STORAGE = Paths.get(FOLDER_DATA.getAbsolutePath(), "shui").toFile();
 		CONFIG_ENABLE_REPORT = Paths.get(FOLDER_CONF.getAbsolutePath(), "daily_report.txt").toFile();
-		if (!CONFIG_ENABLE_REPORT.exists()) { if (!CONFIG_ENABLE_REPORT.createNewFile()) { throw new InitializationException("无法创建文件" + CONFIG_ENABLE_REPORT.getName()); } }
+		if (!CONFIG_ENABLE_REPORT.exists()) {
+			if (!CONFIG_ENABLE_REPORT.createNewFile()) { throw new InitializationException("无法创建文件" + CONFIG_ENABLE_REPORT.getName()); }
+		}
 		// 读取每日自动汇报配置文件
 		String line;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8));
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8));
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
@@ -111,7 +113,8 @@ public class Listener_TopSpeak extends ModuleListener {
 				long time = GROUP_STATUS.get(gropid).initdt;
 				logger.seek("群 " + gropid, LoggerX.datetime(new Date(time)) + "(" + time + ")");
 			}
-			File GROUP_STATUS_LEGACY = Paths.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
+			File GROUP_STATUS_LEGACY = Paths
+					.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
 			GROUP_STATUS_STORAGE.renameTo(GROUP_STATUS_LEGACY);
 			GROUP_STATUS_STORAGE.delete();
 		} else {
@@ -126,7 +129,8 @@ public class Listener_TopSpeak extends ModuleListener {
 				for (Member member : members) {
 					if (!groupStatus.USER_STATUS.containsKey(member.getQQId())) {
 						groupStatus.USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
-						logger.seek("新建成员", group.getId() + " > " + entry.getNickname(member.getQQId()) + "(" + member.getQQId() + ")");
+						logger.seek("新建成员", group.getId() + " > " + entry.getNickname(member.getQQId()) + "("
+								+ member.getQQId() + ")");
 					}
 				}
 			} else {
@@ -141,7 +145,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	}
 
-
 	@Override
 	public boolean boot() throws Exception {
 
@@ -152,7 +155,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	}
 
-
 	@Override
 	public boolean save() throws Exception {
 
@@ -161,7 +163,6 @@ public class Listener_TopSpeak extends ModuleListener {
 		return true;
 
 	}
-
 
 	@Override
 	public boolean shut() throws Exception {
@@ -174,37 +175,37 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	}
 
-
 	@Override
 	public String[] exec(Message message) throws Exception {
 
 		if (message.getSection() < 1) {
 			return new String[] {
-				"参数不足"
+					"参数不足"
 			};
 		}
 		String command = message.getSegment()[1];
 		switch (command) {
-		case "save":
-			File DAILY_BACKUP = Paths.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
-			saveData(DAILY_BACKUP);
-			return new String[] {
-				"保存存档 - " + DAILY_BACKUP.getName()
-			};
+			case "save":
+				File DAILY_BACKUP = Paths
+						.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak")
+						.toFile();
+				saveData(DAILY_BACKUP);
+				return new String[] {
+						"保存存档 - " + DAILY_BACKUP.getName()
+				};
 
-		case "dump":
-			return new String[] {
-				"暂未实现"
-			};
+			case "dump":
+				return new String[] {
+						"暂未实现"
+				};
 
-		default:
-			return new String[] {
-				"参数不足 save/dump"
-			};
+			default:
+				return new String[] {
+						"参数不足 save/dump"
+				};
 		}
 
 	}
-
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
@@ -217,7 +218,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	}
 
-
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
@@ -229,30 +229,30 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	}
 
-
 	// ==========================================================================================================================================================
 	//
 	//
 	//
 	// ==========================================================================================================================================================
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
 
 		return false;
 
 	}
 
-
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
 
 		return false;
 
 	}
 
-
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 		// @formatter:off
 
         // 用以确定是不存在组还是不存在人
@@ -271,13 +271,12 @@ public class Listener_TopSpeak extends ModuleListener {
 	//
 	// ==========================================================================================================================================================
 
-
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
 		if (!message.hasSwitch("gropid")) {
 			return new String[] {
-				"参数错误 --gropid 为空"
+					"参数错误 --gropid 为空"
 			};
 		}
 		long gropid = Long.parseLong(message.getSwitch("gropid"));
@@ -287,21 +286,21 @@ public class Listener_TopSpeak extends ModuleListener {
 		if (message.hasSwitch("limit")) {
 			String[] limits = message.getSwitch("limit").split(",");
 			switch (limits.length) {
-			case 3:
-				limitPicture = Integer.parseInt(limits[2]);
-			case 2:
-				limitRepeat = Integer.parseInt(limits[1]);
-			case 1:
-				limitRank = Integer.parseInt(limits[0]);
+				case 3:
+					limitPicture = Integer.parseInt(limits[2]);
+				case 2:
+					limitRepeat = Integer.parseInt(limits[1]);
+				case 1:
+					limitRank = Integer.parseInt(limits[0]);
 			}
 		}
 		switch (mode) {
-		case 10:
-			return generateMemberRank(gropid, limitRank, limitRepeat, limitPicture);
+			case 10:
+				return generateMemberRank(gropid, limitRank, limitRepeat, limitPicture);
 
-		case 20:
-			if (message.hasSwitch("match")) {
-				String match = message.getSwitch("match"); // @formatter:off
+			case 20:
+				if (message.hasSwitch("match")) {
+					String match = message.getSwitch("match"); // @formatter:off
                     if (match.length() == 0) {
 						return new String[]{"参数错误 --match 为空"};
 					}

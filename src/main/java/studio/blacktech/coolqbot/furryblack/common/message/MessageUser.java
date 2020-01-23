@@ -1,11 +1,11 @@
 package studio.blacktech.coolqbot.furryblack.common.message;
 
+
 public class MessageUser extends Message {
 
 	private static final long serialVersionUID = 1L;
 	private long typeid = 0;
 	private long userid = 0;
-
 
 	public MessageUser(int typeid, long userid, String message, int messageid, int messageFont) {
 
@@ -15,20 +15,17 @@ public class MessageUser extends Message {
 
 	}
 
-
 	public long typeid() {
 
 		return typeid;
 
 	}
 
-
 	public long userid() {
 
 		return userid;
 
 	}
-
 
 	@Override
 	public String toString() {
@@ -42,12 +39,10 @@ public class MessageUser extends Message {
 
 	}
 
-
 	public Message toMessage() {
 
 		return this;
 
 	}
-
 
 }

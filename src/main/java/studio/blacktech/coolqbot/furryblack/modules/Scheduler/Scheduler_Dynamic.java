@@ -58,13 +58,12 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	//
 	// ==========================================================================================================================================================
 
-
 	public Scheduler_Dynamic() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
+				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
-
 
 	@Override
 	public boolean init() throws Exception {
@@ -100,7 +99,6 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	}
 
-
 	@Override
 	public boolean boot() throws Exception {
 
@@ -112,14 +110,12 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	}
 
-
 	@Override
 	public boolean save() throws Exception {
 
 		return true;
 
 	}
-
 
 	@Override
 	public boolean shut() throws Exception {
@@ -133,46 +129,43 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	}
 
-
 	@Override
 	public String[] exec(Message message) throws Exception {
 
 		if (message.getSection() < 2) {
 			return new String[] {
-				"参数不足"
+					"参数不足"
 			};
 		}
 		String command = message.getSegment(1);
 		switch (command) {
-		case "get":
-			return new String[] {
-				getAddress()
-			};
+			case "get":
+				return new String[] {
+						getAddress()
+				};
 
-		case "set":
-			if (message.getSection() == 2) {
+			case "set":
+				if (message.getSection() == 2) {
+					return new String[] {
+							this.setAddress()
+					};
+				} else {
+					return new String[] {
+							this.setAddress(message.getSegment(2))
+					};
+				}
+			default:
 				return new String[] {
-					this.setAddress()
+						"此模块无此命令 - " + message.getSegment(1)
 				};
-			} else {
-				return new String[] {
-					this.setAddress(message.getSegment(2))
-				};
-			}
-		default:
-			return new String[] {
-				"此模块无此命令 - " + message.getSegment(1)
-			};
 		}
 
 	}
-
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 
 	}
-
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
@@ -183,7 +176,6 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	// 工具函数
 	//
 	// ==========================================================================================================================================================
-
 
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
@@ -206,12 +198,11 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		builder.append("\r\n访问失败：");
 		builder.append(COUNT_FAILED);
 		String[] res = new String[] {
-			builder.toString()
+				builder.toString()
 		};
 		return res;
 
 	}
-
 
 	@SuppressWarnings("deprecation")
 	class Worker implements Runnable {
@@ -251,24 +242,24 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 								COUNT_FAILED++;
 							} else // 成功的话
 									// 利用正则判断是否是正常的ip地址
-								if (Pattern.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}", address)) {
-									// 成功的话 设置地址
-									respons = Scheduler_Dynamic.this.setAddress(address);
-									// 是否设置成功
-									if (respons == null) {
-										// 失败的话 增加失败计数
-										failcount++;
-										COUNT_FAILED++;
-									} else {
-										// 成功的话 重置失败计数
-										failcount = 0;
-										if (respons.startsWith("good")) { COUNT_CHANGE++; }
-									}
-								} else {
-									// 不是正常地址 增加失败计数
+							if (Pattern.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}", address)) {
+								// 成功的话 设置地址
+								respons = Scheduler_Dynamic.this.setAddress(address);
+								// 是否设置成功
+								if (respons == null) {
+									// 失败的话 增加失败计数
 									failcount++;
 									COUNT_FAILED++;
+								} else {
+									// 成功的话 重置失败计数
+									failcount = 0;
+									if (respons.startsWith("good")) { COUNT_CHANGE++; }
 								}
+							} else {
+								// 不是正常地址 增加失败计数
+								failcount++;
+								COUNT_FAILED++;
+							}
 						} else {
 							// 成功的话 重置失败计数
 							failcount = 0;
@@ -294,9 +285,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 		}
 
-
 	}
-
 
 	public String getAddress() {
 
@@ -321,7 +310,6 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		}
 
 	}
-
 
 	public String setAddress() {
 
@@ -348,7 +336,6 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	}
 
-
 	public String setAddress(String address) {
 
 		try {
@@ -373,6 +360,5 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 		}
 
 	}
-
 
 }

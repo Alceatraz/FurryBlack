@@ -1,9 +1,9 @@
 package studio.blacktech.coolqbot.furryblack.common.exception;
 
+
 public class CantReinitializationException extends InitializationException {
 
 	private static final long serialVersionUID = 1L;
-
 
 	public CantReinitializationException() {
 
@@ -11,13 +11,11 @@ public class CantReinitializationException extends InitializationException {
 
 	}
 
-
 	public CantReinitializationException(String message) {
 
 		super(message);
 
 	}
-
 
 	public CantReinitializationException(String message, Throwable cause) {
 
@@ -25,12 +23,10 @@ public class CantReinitializationException extends InitializationException {
 
 	}
 
-
 	public CantReinitializationException(Throwable cause) {
 
 		super(cause);
 
 	}
-
 
 }

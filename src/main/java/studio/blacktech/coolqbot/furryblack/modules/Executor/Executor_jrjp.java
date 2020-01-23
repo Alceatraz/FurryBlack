@@ -22,6 +22,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import sutdio.blacktech.common.security.RandomTool;
 
 
 @ModuleExecutorComponent
@@ -39,16 +40,14 @@ public class Executor_jrjp extends ModuleExecutor {
 	private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
 	private static String MODULE_VERSION = "1.3";
 	private static String[] MODULE_USAGE = new String[] {
-		"/jrjp - 查看今日祭品"
+			"/jrjp - 查看今日祭品"
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-		"群号-QQ号对应表 - 每日UTC+8 00:00 清空",
-		"群号-AV号对应表 - 每日UTC+8 00:00 清空"
+			"群号-QQ号对应表 - 每日UTC+8 00:00 清空", "群号-AV号对应表 - 每日UTC+8 00:00 清空"
 	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
-		"获取命令发送人",
-		"被抽到成员的昵称和群昵称"
+			"获取命令发送人", "被抽到成员的昵称和群昵称"
 	};
 	// ==========================================================================================================================================================
 	//
@@ -67,13 +66,12 @@ public class Executor_jrjp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-
 	public Executor_jrjp() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
+				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
-
 
 	@Override
 	public boolean init() throws Exception {
@@ -88,7 +86,8 @@ public class Executor_jrjp extends ModuleExecutor {
 		if (!USER_IGNORE.exists()) { USER_IGNORE.createNewFile(); }
 		long gropid;
 		long userid;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
 		String line;
 		String[] temp;
 		while ((line = reader.readLine()) != null) {
@@ -111,7 +110,8 @@ public class Executor_jrjp extends ModuleExecutor {
 		List<Group> groups = entry.getCQ().getGroupList();
 		groups.forEach((group) -> {
 			long tempGroupID = group.getId();
-			ArrayList<Long> tempIgnores = IGNORES.containsKey(tempGroupID) ? IGNORES.get(tempGroupID) : new ArrayList<>();
+			ArrayList<Long> tempIgnores = IGNORES.containsKey(tempGroupID) ? IGNORES.get(tempGroupID)
+					: new ArrayList<>();
 			ArrayList<Long> tempMembers = new ArrayList<>();
 			List<Member> members = entry.getCQ().getGroupMemberList(tempGroupID);
 			for (Member member : members) {
@@ -120,9 +120,9 @@ public class Executor_jrjp extends ModuleExecutor {
 				if (tempIgnores.contains(tempUserID)) { continue; }
 				tempMembers.add(tempUserID);
 			}
-			int random = entry.getSecureRandom().nextInt(tempMembers.size());
+			int random = RandomTool.nextInt(tempMembers.size());
 			VICTIM.put(tempGroupID, tempMembers.get(random));
-			AVCODE.put(tempGroupID, entry.getSecureRandom().nextLong() % 70000000);
+			AVCODE.put(tempGroupID, RandomTool.nextLong() % 70000000);
 			MEMBERS.put(tempGroupID, tempMembers);
 		});
 		ENABLE_USER = false;
@@ -131,7 +131,6 @@ public class Executor_jrjp extends ModuleExecutor {
 		return true;
 
 	}
-
 
 	@Override
 	public boolean boot() throws Exception {
@@ -143,14 +142,12 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public boolean save() throws Exception {
 
 		return true;
 
 	}
-
 
 	@Override
 	public boolean shut() throws Exception {
@@ -163,50 +160,48 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-			"此模块无可用命令"
+				"此模块无可用命令"
 		};
 
 	}
-
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
 
 		return true;
 
 	}
 
-
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
 
 		return true;
 
 	}
 
-
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 
 		long victim = VICTIM.get(gropid);
-		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + AVCODE.get(gropid));
+		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim
+				+ ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + AVCODE.get(gropid));
 		return true;
 
 	}
@@ -216,14 +211,12 @@ public class Executor_jrjp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
 		return new String[0];
 
 	}
-
 
 	@SuppressWarnings("deprecation")
 	class Worker implements Runnable {
@@ -248,9 +241,9 @@ public class Executor_jrjp extends ModuleExecutor {
 						MEMBERS.entrySet().forEach((element) -> {
 							long tempGroupID = element.getKey();
 							ArrayList<Long> tempMembers = element.getValue();
-							int random = entry.getSecureRandom().nextInt(tempMembers.size());
+							int random = RandomTool.nextInt(tempMembers.size());
 							VICTIM.put(tempGroupID, tempMembers.get(random));
-							AVCODE.put(tempGroupID, entry.getSecureRandom().nextLong() % 70000000);
+							AVCODE.put(tempGroupID, RandomTool.nextLong() % 70000000);
 						});
 					}
 				} catch (InterruptedException exception) {
@@ -266,8 +259,6 @@ public class Executor_jrjp extends ModuleExecutor {
 
 		}
 
-
 	}
-
 
 }

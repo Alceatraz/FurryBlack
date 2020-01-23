@@ -30,7 +30,7 @@ public class Executor_time extends ModuleExecutor {
 	private static String MODULE_DESCRIPTION = "那谁睡觉了吗";
 	private static String MODULE_VERSION = "1.0";
 	private static String[] MODULE_USAGE = new String[] {
-		"/time 看看谁该睡觉了"
+			"/time 看看谁该睡觉了"
 	};
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -53,13 +53,12 @@ public class Executor_time extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-
 	public Executor_time() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
+				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
-
 
 	@Override
 	public boolean init() throws Exception {
@@ -71,14 +70,12 @@ public class Executor_time extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public boolean boot() throws Exception {
 
 		return true;
 
 	}
-
 
 	@Override
 	public boolean save() throws Exception {
@@ -87,7 +84,6 @@ public class Executor_time extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public boolean shut() throws Exception {
 
@@ -95,55 +91,51 @@ public class Executor_time extends ModuleExecutor {
 
 	}
 
-
 	@Override
 	public String[] exec(Message message) throws Exception {
 
 		return new String[] {
-			"此模块无可用命令"
+				"此模块无可用命令"
 		};
 
 	}
-
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
-
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
+			throws Exception {
 
 		entry.userInfo(userid, getTime());
 		return true;
 
 	}
 
-
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
+			throws Exception {
 
 		entry.diszInfo(diszid, getTime());
 		return true;
 
 	}
 
-
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
+			throws Exception {
 
 		entry.gropInfo(gropid, getTime());
 		return true;
 
 	}
-
 
 	private String getTime() {
 
@@ -160,7 +152,6 @@ public class Executor_time extends ModuleExecutor {
 		;
 
 	}
-
 
 	@SuppressWarnings("deprecation")
 	private String format(TimeZone timezone) {
@@ -208,13 +199,11 @@ public class Executor_time extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
 		return new String[0];
 
 	}
-
 
 }
