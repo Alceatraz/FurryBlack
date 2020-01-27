@@ -207,9 +207,9 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		readerDisz.close();
 		readerGrop.close();
 
-		ENABLE_USER = ENABLE_USER && (GLOBAL_USER_IGNORE.size() > 0);
-		ENABLE_DISZ = ENABLE_USER || (ENABLE_DISZ && ((GLOBAL_DISZ_IGNORE.size() + DISZ_MEMBER_IGNORE.size()) > 0));
-		ENABLE_GROP = ENABLE_USER || (ENABLE_GROP && ((GLOBAL_GROP_IGNORE.size() + GROP_MEMBER_IGNORE.size()) > 0));
+		ENABLE_USER = ENABLE_USER && GLOBAL_USER_IGNORE.size() > 0;
+		ENABLE_DISZ = ENABLE_USER || ENABLE_DISZ && GLOBAL_DISZ_IGNORE.size() + DISZ_MEMBER_IGNORE.size() > 0;
+		ENABLE_GROP = ENABLE_USER || ENABLE_GROP && GLOBAL_GROP_IGNORE.size() + GROP_MEMBER_IGNORE.size() > 0;
 
 		for (Long tempuserid : GLOBAL_USER_IGNORE) {
 			DENY_USER_COUNT.put(tempuserid, 0);
@@ -401,7 +401,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 			}
 		}
 
-		if ((COUNT_USER == 0) && (COUNT_DISZ == 0) && (COUNT_GROP == 0)) { return null; }
+		if (COUNT_USER == 0 && COUNT_DISZ == 0 && COUNT_GROP == 0) { return null; }
 
 		StringBuilder builder = new StringBuilder();
 

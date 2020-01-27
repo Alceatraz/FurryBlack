@@ -210,7 +210,7 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 			int font) {
 
 		// 如果消息来自匿名者
-		if ((fromQQ == 80000000L) && !fromAnonymous.equals("")) {}
+		if (fromQQ == 80000000L && !fromAnonymous.equals("")) {}
 		// 将匿名用户信息放到 anonymous 变量中
 		// Anonymous anonymous = CQ.getAnonymous(fromAnonymous);
 		// 解析CQ码案例 如：[CQ:at,qq=100000]

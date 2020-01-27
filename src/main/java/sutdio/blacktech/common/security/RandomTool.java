@@ -64,8 +64,8 @@ public class RandomTool {
 	public static int hashInt() {
 
 		int random = secureRandom.nextInt();
-		int phase1 = ((random >>> 20) ^ (random >>> 12)) ^ random;
-		int phase2 = (phase1 >>> 7) ^ (phase1 >>> 4);
+		int phase1 = random >>> 20 ^ random >>> 12 ^ random;
+		int phase2 = phase1 >>> 7 ^ phase1 >>> 4;
 		return phase1 ^ phase2;
 
 	}

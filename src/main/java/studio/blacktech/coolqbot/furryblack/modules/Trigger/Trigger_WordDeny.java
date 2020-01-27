@@ -263,7 +263,7 @@ public class Trigger_WordDeny extends ModuleTrigger {
 			BLOCK_GROP = BLOCK_GROP + BLOCK_GROP_STORE.get(temp).size();
 		}
 
-		if ((BLOCK_USER == 0) && (BLOCK_DISZ == 0) && (BLOCK_GROP == 0)) { return null; }
+		if (BLOCK_USER == 0 && BLOCK_DISZ == 0 && BLOCK_GROP == 0) { return null; }
 
 		String[] res;
 		StringBuilder builder;

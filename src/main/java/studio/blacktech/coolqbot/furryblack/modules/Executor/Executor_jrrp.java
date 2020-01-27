@@ -169,8 +169,8 @@ public class Executor_jrrp extends ModuleExecutor {
 						date = new Date();
 						time = 86400L;
 						time = time - date.getSeconds();
-						time = time - (date.getMinutes() * 60);
-						time = time - (date.getHours() * 3600);
+						time = time - date.getMinutes() * 60;
+						time = time - date.getHours() * 3600;
 						time = time * 1000;
 						Thread.sleep(time);
 						JRRP.clear();

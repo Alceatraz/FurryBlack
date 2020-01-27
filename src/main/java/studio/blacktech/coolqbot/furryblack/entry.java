@@ -230,7 +230,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 			// ==========================================================================================================================
 
-			String bootCoast = (System.currentTimeMillis() - BOOTTIME) + "ms";
+			String bootCoast = System.currentTimeMillis() - BOOTTIME + "ms";
 
 			logger.info("完成", LoggerX.datetime());
 			logger.info("耗时", bootCoast);

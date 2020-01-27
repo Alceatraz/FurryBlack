@@ -165,7 +165,7 @@ public class Executor_roulette extends ModuleExecutor {
 		}
 
 		// 对局超时就新建一个
-		if ((round.time.getTime() + 600000) < new Date().getTime()) {
+		if (round.time.getTime() + 600000 < new Date().getTime()) {
 			ROUND_EXPIRED++;
 			round = new RouletteRound();
 			ROULETTE_ROUNDS.remove(gropid);
@@ -254,7 +254,7 @@ public class Executor_roulette extends ModuleExecutor {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
-		if ((COUNT_USER + COUNT_DISZ + COUNT_GROP) == 0) { return null; }
+		if (COUNT_USER + COUNT_DISZ + COUNT_GROP == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		builder.append("成功回合 : ");
 		builder.append(ROUND_SUCCESS);
@@ -264,27 +264,27 @@ public class Executor_roulette extends ModuleExecutor {
 			builder.append("\r\n第一发 : ");
 			builder.append(ROULETTE_FREQ.get(0));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(0) * 100) / ROUND_SUCCESS);
+			builder.append(ROULETTE_FREQ.get(0) * 100 / ROUND_SUCCESS);
 			builder.append("%\r\n第二发 : ");
 			builder.append(ROULETTE_FREQ.get(1));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(1) * 100) / ROUND_SUCCESS);
+			builder.append(ROULETTE_FREQ.get(1) * 100 / ROUND_SUCCESS);
 			builder.append("%\r\n第三发 : ");
 			builder.append(ROULETTE_FREQ.get(2));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(2) * 100) / ROUND_SUCCESS);
+			builder.append(ROULETTE_FREQ.get(2) * 100 / ROUND_SUCCESS);
 			builder.append("%\r\n第四发 : ");
 			builder.append(ROULETTE_FREQ.get(3));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(3) * 100) / ROUND_SUCCESS);
+			builder.append(ROULETTE_FREQ.get(3) * 100 / ROUND_SUCCESS);
 			builder.append("%\r\n第五发 : ");
 			builder.append(ROULETTE_FREQ.get(4));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(4) * 100) / ROUND_SUCCESS);
+			builder.append(ROULETTE_FREQ.get(4) * 100 / ROUND_SUCCESS);
 			builder.append("%\r\n第六发 : ");
 			builder.append(ROULETTE_FREQ.get(5));
 			builder.append(" - ");
-			builder.append((ROULETTE_FREQ.get(5) * 100) / ROUND_SUCCESS);
+			builder.append(ROULETTE_FREQ.get(5) * 100 / ROUND_SUCCESS);
 			builder.append("%");
 		}
 		String[] res = new String[] {

@@ -190,7 +190,7 @@ public class Executor_roll extends ModuleExecutor {
 					return "参数必须是罗马数字";
 				}
 				int temp = random.nextInt(max);
-				if (temp < min) { temp = ((temp / max) * (max - min)) + min; }
+				if (temp < min) { temp = temp / max * (max - min) + min; }
 				res = Integer.toString(temp);
 				mode_3++;
 				break;
@@ -204,7 +204,7 @@ public class Executor_roll extends ModuleExecutor {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
-		if ((COUNT_USER + COUNT_DISZ + COUNT_GROP) == 0) { return null; }
+		if (COUNT_USER + COUNT_DISZ + COUNT_GROP == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		builder.append("模式1 - 真假: ");
 		builder.append(mode_1);

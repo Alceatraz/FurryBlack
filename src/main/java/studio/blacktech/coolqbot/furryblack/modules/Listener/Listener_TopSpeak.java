@@ -88,8 +88,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public boolean init() throws Exception {
 
 		initAppFolder();
@@ -104,7 +104,10 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		if (!CONFIG_ENABLE_REPORT.exists() && !CONFIG_ENABLE_REPORT.createNewFile()) { throw new InitializationException("无法创建文件" + CONFIG_ENABLE_REPORT.getName()); }
 
+
+		// =================================================================
 		// 读取每日自动汇报配置文件
+
 		String line;
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8));
 
@@ -117,50 +120,72 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		reader.close();
 
+
+		// =================================================================
 		// 读取存档文件
+
+		HashSet<Long> groupIdStorage = new HashSet<>();
+
 		if (GROUP_STATUS_STORAGE.exists()) {
 
+			logger.seek("读取存档");
 			ObjectInputStream loader = new ObjectInputStream(new FileInputStream(GROUP_STATUS_STORAGE));
-
 			GROUP_STATUS = (HashMap<Long, GroupStatus>) loader.readObject();
-
 			loader.close();
-
-			logger.seek("读取存档", GROUP_STATUS.size() == 0 ? "空" : "包含" + GROUP_STATUS.size() + "个群");
+			logger.seek("读取完成", GROUP_STATUS.size() == 0 ? "空" : "包含" + GROUP_STATUS.size() + "个群");
 
 			for (long gropid : GROUP_STATUS.keySet()) {
+				groupIdStorage.add(gropid); // 这个用于移除已经不存在的群的存档
 				long time = GROUP_STATUS.get(gropid).initdt;
 				logger.seek("群 " + gropid, LoggerX.datetime(new Date(time)) + "(" + time + ")");
 			}
 
 			File GROUP_STATUS_LEGACY = Paths.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".old").toFile();
-
 			GROUP_STATUS_STORAGE.renameTo(GROUP_STATUS_LEGACY);
 			GROUP_STATUS_STORAGE.delete();
+
 		} else {
 			logger.seek("存档不存在");
 			GROUP_STATUS = new HashMap<>();
 		}
 
+
+		// =================================================================
+		// 检查内存存档状态
+
 		List<Group> groups = entry.getCQ().getGroupList();
+
+		HashSet<Long> groupIdCoverge = new HashSet<>();
 
 		for (Group group : groups) {
 
-			if (GROUP_STATUS.containsKey(group.getId())) {
+			long gropid = group.getId();
 
-				GroupStatus groupStatus = GROUP_STATUS.get(group.getId());
-				List<Member> members = entry.getCQ().getGroupMemberList(group.getId());
+			groupIdCoverge.add(gropid); // 这个用于移除已经不存在的群的存档
 
+			if (GROUP_STATUS.containsKey(gropid)) {
+				GroupStatus groupStatus = GROUP_STATUS.get(gropid);
+				List<Member> members = entry.getCQ().getGroupMemberList(gropid);
 				for (Member member : members) {
 					if (!groupStatus.USER_STATUS.containsKey(member.getQQId())) {
 						groupStatus.USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
 						logger.seek("新建成员", group.getId() + " > " + entry.getNickname(member.getQQId()) + "(" + member.getQQId() + ")");
 					}
 				}
-
 			} else {
 				GROUP_STATUS.put(group.getId(), new GroupStatus(group.getId()));
 				logger.seek("新建群", group.getName() + "(" + group.getId() + ")");
+			}
+		}
+
+
+		// 这个用于移除已经不存在的群的存档 这么写很傻逼
+		// 但是在迭代的时候如果同时对其进行修改就会抛出java.util.ConcurrentModificationException异常
+		// 所以不能直接GROUP_STATUS.keySet()
+		for (Long tempGroupid : groupIdStorage) {
+			if (!groupIdCoverge.contains(tempGroupid)) {
+				logger.seek("移除多余存档 " + tempGroupid);
+				GROUP_STATUS.remove(tempGroupid);
 			}
 		}
 
@@ -185,8 +210,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public boolean save() throws Exception {
 
-		logger.info("数据序列化");
+		logger.info("数据开始保存");
 		saveData(GROUP_STATUS_STORAGE);
+		logger.info("数据保存完成");
 		return true;
 
 	}
@@ -238,7 +264,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 					String raw = message.getSwitch("filter");
 
-					if ((raw == null) || (raw.length() != 3)) {
+					if (raw == null || raw.length() != 3) {
 						return new String[] {
 								"BinMask位置 命令 纯码 原始消息"
 						};
@@ -301,34 +327,24 @@ public class Listener_TopSpeak extends ModuleListener {
 
 					for (Message element : userStatus.MESSAGES) {
 
-						if (element.isHongbao()) {
-							continue;
-						}
-						if (element.isQQVideo()) {
-							continue;
-						}
-						if (element.isSnappic()) {
-							continue;
-						}
-
+						if (element.isHongbao()) continue;
+						if (element.isQQVideo()) continue;
+						if (element.isSnappic()) continue;
 						if (P && element.isPureCQC()) {
 							fileWriter.write(element.getRawMessage());
 							continue;
 						}
-
 						if (C && element.isCommand()) {
 							fileWriter.write(element.getRawMessage());
 							continue;
 						}
-
 						if (R && element.hasPicture()) {
 							fileWriter.write(element.getRawMessage() + "\n");
 						} else {
 							fileWriter.write(element.getResMessage() + "\n");
 						}
-
-
 					}
+
 					fileWriter.write("\n\n");
 				}
 
@@ -349,52 +365,45 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-
 		if (entry.isMyself(userid)) {
 			GROUP_STATUS.put(gropid, new GroupStatus(gropid));
 		} else {
 			GROUP_STATUS.get(gropid).USER_STATUS.put(userid, new UserStatus(userid));
 		}
-
 	}
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-
 		if (entry.isMyself(userid)) {
 			GROUP_STATUS.remove(gropid);
 		} else {
 			GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
 		}
-
 	}
 
+
 	// ==========================================================================================================================================================
 	//
 	//
 	//
 	// ==========================================================================================================================================================
+
 	@Override
 	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-
 		return false;
-
 	}
 
 	@Override
 	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-
 		return false;
-
 	}
 
 	@Override
 	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-
 		GROUP_STATUS.get(gropid).say(userid, message);
 		return true;
-
 	}
+
 	// ==========================================================================================================================================================
 	//
 	//
@@ -431,7 +440,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
 
 		switch (mode) {
-
 
 			case 10:
 				String[] result = generateMemberRank(gropid, limitRank, limitRepeat, limitPicture);
@@ -491,7 +499,11 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	}
 
-	// ==========================================================================================================================
+	// ==========================================================================================================================================================
+	//
+	//
+	//
+	// ==========================================================================================================================================================
 
 	/**
 	 * 这个函数写了好几百行 而且我不打算告诉你这个的运行逻辑
@@ -552,13 +564,10 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				int userCharacter = userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE;
 
-				if (userCharacter < 1) {
-					continue;
-				}
+				if (userCharacter < 1) continue;
 
-				if (!allMemberRank.containsKey(userCharacter)) {
-					allMemberRank.put(userCharacter, new HashSet<>());
-				}
+				if (!allMemberRank.containsKey(userCharacter)) allMemberRank.put(userCharacter, new HashSet<>());
+
 				allMemberRank.get(userCharacter).add(userid);
 			}
 
@@ -589,9 +598,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						if (userStatus.USER_HONGBAOS > 0) { builder.append("/" + userStatus.USER_HONGBAOS + "包"); }
 						builder.append("\r\n");
 
-						if ((limitRank != -1) && (++limit > limitRank)) {
-							break loop; // limit = -1 表示无限
-						}
+						if (limitRank != -1 && ++limit > limitRank) break loop; // limit = -1 表示无限
 
 						if (++slice == 10) {
 							report.add(builder.substring(0, builder.length() - 2));
@@ -683,9 +690,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				String sentence = allMessageRankTempEntry.getKey();
 				int sentenceRepeatCount = allMessageRankTempEntry.getValue();
 
-				if (!allMessageRank.containsKey(sentenceRepeatCount)) {
-					allMessageRank.put(sentenceRepeatCount, new HashSet<>());
-				}
+				if (!allMessageRank.containsKey(sentenceRepeatCount)) allMessageRank.put(sentenceRepeatCount, new HashSet<>());
 
 				allMessageRank.get(sentenceRepeatCount).add(sentence);
 			}
@@ -711,9 +716,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					for (String sentence : messageRepeat) {
 						builder.append("No." + order + " - " + messageRepeatCount + "次：" + sentence + "\r\n");
 
-						if ((limitRepeat != -1) && (++limit > limitRepeat)) {
-							break loop; // limit = -1 表示无限
-						}
+						if (limitRepeat != -1 && ++limit > limitRepeat) break loop; // limit = -1 表示无限
 
 						if (++slice == 10) {
 							report.add(builder.substring(0, builder.length() - 2));
@@ -758,13 +761,9 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				int tempCount = allPictureRankTemp.get(raw);
 
-				if (allPictureRank.containsKey(tempCount)) {
-					allPictureRank.get(tempCount).add(raw);
-				} else {
-					HashSet<String> tempSet = new HashSet<>();
-					tempSet.add(raw);
-					allPictureRank.put(tempCount, tempSet);
-				}
+				if (!allPictureRank.containsKey(tempCount)) allPictureRank.put(tempCount, new HashSet<>());
+
+				allPictureRank.get(tempCount).add(raw);
 			}
 
 
@@ -784,9 +783,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						String imageURL = CQCode.getInstance().getCQImage(pictureCode).getUrl();
 						report.add("No." + order + " - " + pictureRepeatCount + "次：" + imageURL);
 
-						if ((limitRepeat != -1) && (++limit > limitPicture)) {
-							break loop; // limit = -1 表示无限
-						}
+						if (limitRepeat != -1 && ++limit > limitPicture) break loop; // limit = -1 表示无限
 					}
 				}
 			}
@@ -797,6 +794,14 @@ public class Listener_TopSpeak extends ModuleListener {
 		return report.toArray(new String[report.size()]);
 
 	}
+
+
+	// ==========================================================================================================================================================
+	//
+	//
+	//
+	// ==========================================================================================================================================================
+
 
 	private String[] generateMemberCountGrep(long gropid, String content, int limitRank) {
 
@@ -814,43 +819,36 @@ public class Listener_TopSpeak extends ModuleListener {
 		int position;
 		int contextLength = content.length();
 
+		// step 1 在所有消息中搜索
+
 		TreeMap<Integer, HashSet<Long>> memberCountRank = new TreeMap<>((a, b) -> b - a);
 
 		for (Long userid : groupStatus.USER_STATUS.keySet()) {
 
-			int userMatchCount = 0;
-
 			UserStatus userStatus = groupStatus.USER_STATUS.get(userid);
+
+			int userMatchCount = 0;
 
 			for (String message : userStatus.USER_SENTENCE) {
 				while ((position = message.indexOf(content)) > 0) {
-
 					message = message.substring(position + contextLength);
 					userMatchCount++;
 					totalMatchCount++;
-
 				}
 			}
 
-			if (userMatchCount == 0) {
-				continue;
-			}
-
-			if (!memberCountRank.containsKey(userMatchCount)) {
-				memberCountRank.put(userMatchCount, new HashSet<>());
-			}
-
+			if (userMatchCount == 0) continue;
+			if (!memberCountRank.containsKey(userMatchCount)) memberCountRank.put(userMatchCount, new HashSet<>());
 			memberCountRank.get(userMatchCount).add(userid);
 
 		}
 
+		// step 2 生成报告
+
 		builder.append(" 出现了：" + totalMatchCount + "次");
 
 		report.add(builder.toString());
-
 		builder = new StringBuilder();
-
-		memberCountRank.remove(1);
 
 		if (memberCountRank.size() > 0) {
 
@@ -858,41 +856,38 @@ public class Listener_TopSpeak extends ModuleListener {
 			int limit = 0;
 			int slice = 0;
 
-			for (int userMatchCount : memberCountRank.keySet()) {
 
-				HashSet<Long> tempSet = memberCountRank.get(userMatchCount);
+			loop: for (Entry<Integer, HashSet<Long>> memberCountRankEntry : memberCountRank.entrySet()) {
 
-				for (Long userid : tempSet) {
+				int userMatchCount = memberCountRankEntry.getKey();
+				HashSet<Long> tempSet = memberCountRankEntry.getValue();
 
-					if ((limitRank != 0) && (limit >= limitRank)) { break; }
 
+				for (long userid : tempSet) {
 					builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + userMatchCount + "次\r\n");
 
-					limit++;
+					if (++limit > limitRank) break loop;
 
-					if (slice == 50) {
-
+					if (++slice == 50) {
 						report.add(builder.substring(0, builder.length() - 2));
 						builder = new StringBuilder();
 						slice = 0;
-
 					}
-
 				}
-
-				if ((limitRank != 0) && (limit >= limitRank)) { break; }
-
 				order = order + tempSet.size();
-
 			}
-
 			report.add(builder.substring(0, builder.length() - 2));
-
 		}
-
 		return report.toArray(new String[report.size()]);
-
 	}
+
+
+	// ==========================================================================================================================================================
+	//
+	//
+	//
+	// ==========================================================================================================================================================
+
 
 	private String[] generateMemberRegexGrep(long gropid, String content, int limitRank) {
 
@@ -907,48 +902,38 @@ public class Listener_TopSpeak extends ModuleListener {
 		builder.append(groupStatus.GROP_MESSAGES + "条消息中(共" + groupStatus.GROP_CHARACTER + "字)\r\n");
 		builder.append("之中 " + content);
 
+		// step 1 在所有消息中搜索
+
 		TreeMap<Integer, HashSet<Long>> memberCountRank = new TreeMap<>((a, b) -> b - a);
 
 		for (Long userid : groupStatus.USER_STATUS.keySet()) {
 
-			int userMatchCount = 0;
-
 			UserStatus userStatus = groupStatus.USER_STATUS.get(userid);
+
+			int userMatchCount = 0;
 
 			Pattern pattern = Pattern.compile(content);
 
 			for (String message : userStatus.USER_SENTENCE) {
-
 				Matcher matcher = pattern.matcher(message);
-
 				while (matcher.find()) {
-
 					userMatchCount++;
 					totalMatchCount++;
-
 				}
-
 			}
 
-			if (userMatchCount == 0) {
-				continue;
-			}
-
-			if (!memberCountRank.containsKey(userMatchCount)) {
-				memberCountRank.put(userMatchCount, new HashSet<>());
-			}
-
+			if (userMatchCount == 0) continue;
+			if (!memberCountRank.containsKey(userMatchCount)) memberCountRank.put(userMatchCount, new HashSet<>());
 			memberCountRank.get(userMatchCount).add(userid);
 
 		}
 
+		// step 2 生成报告
+
 		builder.append(" 出现了：" + totalMatchCount + "次");
 
 		report.add(builder.toString());
-
 		builder = new StringBuilder();
-
-		memberCountRank.remove(1);
 
 		if (memberCountRank.size() > 0) {
 
@@ -956,59 +941,45 @@ public class Listener_TopSpeak extends ModuleListener {
 			int limit = 0;
 			int slice = 0;
 
-			for (int userMatchCount : memberCountRank.keySet()) {
 
-				HashSet<Long> tempSet = memberCountRank.get(userMatchCount);
+			loop: for (Entry<Integer, HashSet<Long>> memberCountRankEntry : memberCountRank.entrySet()) {
 
-				for (Long userid : tempSet) {
+				int userMatchCount = memberCountRankEntry.getKey();
+				HashSet<Long> tempSet = memberCountRankEntry.getValue();
 
-					if ((limitRank != 0) && (limit >= limitRank)) {
-						break;
-					}
-
+				for (long userid : tempSet) {
 					builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + userMatchCount + "次\r\n");
 
-					limit++;
+					if (++limit > limitRank) break loop;
 
-					if (slice == 50) {
-
+					if (++slice == 50) {
 						report.add(builder.substring(0, builder.length() - 2));
 						builder = new StringBuilder();
 						slice = 0;
-
 					}
-
 				}
-
-				if ((limitRank != 0) && (limit >= limitRank)) {
-					break;
-				}
-
 				order = order + tempSet.size();
-
 			}
-
 			report.add(builder.substring(0, builder.length() - 2));
-
 		}
-
 		return report.toArray(new String[report.size()]);
-
 	}
+
 
 	private void saveData(File file) {
 
 		try {
 
-			if (file.exists()) {
-				file.delete();
-			}
+			if (file.exists()) file.delete();
 
 			FileOutputStream stream = new FileOutputStream(file);
-
 			ObjectOutputStream saver = new ObjectOutputStream(stream);
 
+			logger.info("保存数据");
+
 			GROUP_STATUS.forEach((key, value) -> value.clean()); // 清理掉所有不需要保存的数据
+
+			logger.info("整理数据");
 
 			saver.writeObject(GROUP_STATUS);
 			saver.close();
@@ -1017,9 +988,8 @@ public class Listener_TopSpeak extends ModuleListener {
 			stream.close();
 
 		} catch (Exception exception) {
-
+			logger.exception(exception);
 		}
-
 	}
 
 
@@ -1041,8 +1011,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
 						time = 86400L;
 						time = time - date.getSeconds();
-						time = time - (date.getMinutes() * 60);
-						time = time - (date.getHours() * 3600);
+						time = time - date.getMinutes() * 60;
+						time = time - date.getHours() * 3600;
 						time = time * 1000;
 
 						if (entry.DEBUG()) {
@@ -1112,8 +1082,11 @@ class GroupStatus implements Serializable {
 
 	public GroupStatus(long gropid) {
 
+
 		initdt = System.currentTimeMillis();
 		this.gropid = gropid;
+
+		entry.getCQ().logDebug("创新的组存档", initdt + " " + gropid);
 
 		for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
 			USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
@@ -1122,15 +1095,11 @@ class GroupStatus implements Serializable {
 	}
 
 	public void clean() {
-		GROP_SENTENCE.clear();
-		GROP_COMMANDS.clear();
-		GROP_PICTURES.clear();
-		GROP_SNAPSHOT = 0;
-		GROP_HONGBAOS = 0;
-		GROP_TAPVIDEO = 0;
-		GROP_MESSAGES = 0;
-		GROP_CHARACTER = 0;
-		GROP_PURECCODE = 0;
+		entry.getCQ().logDebug("FurryBlackDebug", "grop " + gropid);
+		USER_STATUS.forEach((key, value) -> value.clean());
+		GROP_SENTENCE = null;
+		GROP_COMMANDS = null;
+		GROP_PICTURES = null;
 	}
 
 	public void say(long userid, MessageGrop message) {
@@ -1197,14 +1166,10 @@ class UserStatus implements Serializable {
 	}
 
 	public void clean() {
-		USER_COMMANDS.clear();
-		USER_SENTENCE.clear();
-		USER_PICTURES.clear();
-		USER_SNAPSHOT = 0;
-		USER_HONGBAOS = 0;
-		USER_TAPVIDEO = 0;
-		USER_CHARACTER = 0;
-		USER_PURECCODE = 0;
+		entry.getCQ().logDebug("FurryBlackDexebug", "   user " + userid);
+		USER_COMMANDS = null;
+		USER_SENTENCE = null;
+		USER_PICTURES = null;
 	}
 
 	public void say(MessageGrop message) {

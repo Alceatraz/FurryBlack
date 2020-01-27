@@ -243,7 +243,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 						date = new Date();
 						time = 300L;
 						time = time - date.getSeconds();
-						time = time - ((date.getMinutes() % 10) * 60);
+						time = time - date.getMinutes() % 10 * 60;
 						if (time < 60) { time = time + 300; }
 						time = time * 1000;
 						if (entry.DEBUG()) { Scheduler_Dynamic.this.logger.full("工作线程休眠：" + time); }

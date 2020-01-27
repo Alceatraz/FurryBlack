@@ -996,7 +996,7 @@ public class Systemd extends Module {
 					"无此名称的模块"
 			};
 		}
-		if ((report == null) || (report.length == 0)) {
+		if (report == null || report.length == 0) {
 			builder.info("模块没有返回任何消息");
 			return builder.make();
 		} else {

@@ -306,9 +306,9 @@ public class Executor_DEMO extends ModuleExecutor {
 						// 减去当前秒数 以对齐秒 使其能在 xx:xx:00 执行
 						time = time - date.getSeconds();
 						// 减去当前分钟 以对齐分 使其能在 xx:00:00 执行
-						time = time - (date.getMinutes() * 60);
+						time = time - date.getMinutes() * 60;
 						// 减去当前分钟 以对齐时 使其能在 00:00:00 执行
-						time = time - (date.getHours() * 3600);
+						time = time - date.getHours() * 3600;
 						// 转换为毫秒
 						time = time * 1000;
 						// 应当输出log以便于观察定时任务的状况

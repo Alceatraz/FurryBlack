@@ -181,7 +181,7 @@ public class Executor_time extends ModuleExecutor {
 
         Calendar temp = Calendar.getInstance(timezone);
 
-        temp.setTime(new Date((begin.getTime() / 1000) * 1000));
+        temp.setTime(new Date(begin.getTime() / 1000 * 1000));
 
         for (long i = temp.getTimeInMillis(); i < current; i = temp.getTimeInMillis()) {
 
@@ -189,9 +189,9 @@ public class Executor_time extends ModuleExecutor {
 
             long t = temp.getTimeInMillis();
 
-            if ((t - i) < 86400000) {
+            if (t - i < 86400000) {
 				isEnableDST = true;
-			} else if ((t - i) > 86400000) {
+			} else if (t - i > 86400000) {
 				isDisableDST = true;
 			}
         }
@@ -203,9 +203,9 @@ public class Executor_time extends ModuleExecutor {
         int TZ_DATE = Integer.parseInt(LoggerX.formatTime("dd", timezone));
         int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", Executor_time.zone_E8));
 
-        if ((E8_DATE - TZ_DATE) > 0) {
+        if (E8_DATE - TZ_DATE > 0) {
 			builder.append(" 昨天," + TZ_DATE + "日");
-		} else if ((E8_DATE - TZ_DATE) < 0) {
+		} else if (E8_DATE - TZ_DATE < 0) {
 			builder.append(" 明天," + TZ_DATE + "日");
 		}
 

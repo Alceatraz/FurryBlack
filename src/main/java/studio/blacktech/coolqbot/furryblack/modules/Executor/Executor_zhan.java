@@ -241,7 +241,7 @@ public class Executor_zhan extends ModuleExecutor {
 	@Override
 	public String[] generateReport(int mode, Message message, Object... parameters) {
 
-		if ((COUNT_USER + COUNT_DISZ + COUNT_GROP) == 0) { return null; }
+		if (COUNT_USER + COUNT_DISZ + COUNT_GROP == 0) { return null; }
 		StringBuilder builder = new StringBuilder();
 		int coverage = 0;
 		for (int i = 0; i < 44; i++) {
@@ -256,7 +256,7 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append("张：");
 			builder.append(FREQ.get(i));
 			builder.append(" - ");
-			builder.append((FREQ.get(i) * 100) / coverage);
+			builder.append(FREQ.get(i) * 100 / coverage);
 			builder.append("%\r\n");
 		}
 		builder.append("出现了" + coverage + "张");

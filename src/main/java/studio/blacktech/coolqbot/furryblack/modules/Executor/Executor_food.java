@@ -83,7 +83,7 @@ public class Executor_food extends ModuleExecutor {
 
         // @formatter:on
 
-		for (int i = 1; i < (menu.length + 1); i++) {
+		for (int i = 1; i < menu.length + 1; i++) {
 			String[] tempmenu = menu[i - 1];
 			TreeMap<Integer, String> tempmap = new TreeMap<>();
 			for (int j = 0; j < tempmenu.length; j++) {
