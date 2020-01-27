@@ -16,11 +16,13 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 public class Executor_roll extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Executor_Roll";
 	private static String MODULE_COMMANDNAME = "roll";
 	private static String MODULE_DISPLAYNAME = "生成随机数";
@@ -34,16 +36,20 @@ public class Executor_roll extends ModuleExecutor {
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人"
 	};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	private int mode_1 = 0;
 	private int mode_2 = 0;
 	private int mode_3 = 0;
+
 	private int mode_fucked = 0;
 	private int mode_fucker = 0;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -52,8 +58,7 @@ public class Executor_roll extends ModuleExecutor {
 
 	public Executor_roll() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
-				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
@@ -63,6 +68,7 @@ public class Executor_roll extends ModuleExecutor {
 		ENABLE_USER = true;
 		ENABLE_DISZ = true;
 		ENABLE_GROP = true;
+
 		return true;
 
 	}
@@ -108,8 +114,7 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		entry.userInfo(userid, roll(message));
 		return true;
@@ -117,8 +122,7 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		entry.diszInfo(diszid, userid, roll(message));
 		return true;
@@ -126,8 +130,7 @@ public class Executor_roll extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		entry.gropInfo(gropid, userid, roll(message));
 		return true;
@@ -138,8 +141,11 @@ public class Executor_roll extends ModuleExecutor {
 
 		String res = null;
 		SecureRandom random = new SecureRandom();
+
 		switch (message.getSection()) {
+
 			// ============================================================
+
 			case 0:
 				if (random.nextBoolean()) {
 					mode_fucker++;
@@ -150,6 +156,7 @@ public class Executor_roll extends ModuleExecutor {
 				}
 				mode_1++;
 				break;
+
 			// ============================================================
 
 			case 1:
@@ -170,6 +177,7 @@ public class Executor_roll extends ModuleExecutor {
 					mode_1++;
 				}
 				break;
+
 			// ============================================================
 
 			case 2:
@@ -187,7 +195,8 @@ public class Executor_roll extends ModuleExecutor {
 				mode_3++;
 				break;
 		}
-		// ============================================================
+
+
 		return res;
 
 	}

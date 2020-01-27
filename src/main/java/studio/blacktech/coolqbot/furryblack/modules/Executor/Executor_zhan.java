@@ -18,11 +18,13 @@ import sutdio.blacktech.common.security.RandomTool;
 public class Executor_zhan extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Executor_Zhan";
 	private static String MODULE_COMMANDNAME = "zhan";
 	private static String MODULE_DISPLAYNAME = "占卜";
@@ -36,13 +38,17 @@ public class Executor_zhan extends ModuleExecutor {
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人"
 	};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	private TreeMap<Integer, String> CARD;
+
 	private ArrayList<Integer> FREQ;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -51,8 +57,7 @@ public class Executor_zhan extends ModuleExecutor {
 
 	public Executor_zhan() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
-				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
@@ -96,7 +101,7 @@ public class Executor_zhan extends ModuleExecutor {
 		CARD.put(24, "XII. THE HANGED MAN 吊人正位\r\n智慧 牺牲 审判 细心 眼光");
 		CARD.put(25, "XII. THE HANGED MAN 吊人逆位\r\n自私 群众 人民");
 		CARD.put(26, "XIII. DEATH 死亡正位\r\n终结 死亡 毁灭 腐朽");
-		CARD.put(27, "XIII. DEATH 死亡逆位\r\n惯性 石化 梦游 昏 睡");
+		CARD.put(27, "XIII. DEATH 死亡逆位\r\n惯性 石化 梦游 昏 睡"); // 怎 么 多 了 个 空 格 啊
 		CARD.put(28, "XIV. TEMPERANCE 节制正位\r\n经济 适度 节俭 管理 住所");
 		CARD.put(29, "XIV. TEMPERANCE 节制逆位\r\n教会 分离 不幸的组合 冲突的利益");
 		CARD.put(30, "XV. THE DEVIL 恶魔正位\r\n毁坏 暴力 强迫 愤怒 额外努力 死亡");
@@ -206,8 +211,7 @@ public class Executor_zhan extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		entry.diszInfo(diszid, userid, chooseCard(message));
 		return true;
@@ -215,8 +219,7 @@ public class Executor_zhan extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		entry.gropInfo(gropid, userid, chooseCard(message));
 		return true;
@@ -244,6 +247,7 @@ public class Executor_zhan extends ModuleExecutor {
 		for (int i = 0; i < 44; i++) {
 			if (FREQ.get(i) == 0) { coverage++; }
 		}
+
 		coverage = 44 - coverage;
 		for (int i = 0; i < 44; i++) {
 			if (FREQ.get(i) == 0) { continue; }

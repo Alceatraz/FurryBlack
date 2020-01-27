@@ -56,7 +56,10 @@ public class RandomTool {
 	}
 
 	/**
-	 * 关于hashInt的名字由来：JDK7中HashMap使用了一个搅拌算法 可以防止弱的hash算法产生的严重hash碰撞 虽然在JDK8由于HashMap整个重构导致被替代了 但是 他在搅乱输入的方面 不是一般的好用
+	 * 关于hashInt的名字由来：JDK7中HashMap使用了一个搅拌算法
+	 * 可以防止弱的hash算法产生的严重hash碰撞
+	 * 虽然在JDK8由于HashMap整个重构导致被替代了
+	 * 但是 他在搅乱输入的方面 不是一般的好用
 	 */
 	public static int hashInt() {
 

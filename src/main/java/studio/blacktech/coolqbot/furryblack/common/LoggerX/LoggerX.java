@@ -440,6 +440,39 @@ public class LoggerX {
 		return formater.format(new Date(timestamp));
 
 	}
+
+	public static String duration(long time) {
+
+		long ss = time;
+		long dd = ss / 86400;
+		ss = ss % 86400;
+		long hh = ss / 3600;
+		ss = ss % 3600;
+		long mm = ss / 60;
+		ss = ss % 60;
+
+		return dd + " - " + hh + ":" + mm + ":" + ss;
+
+	}
+
+	public static String durationMille(long time) {
+
+		long ms = time;
+
+
+		long dd = ms / 86400000;
+		ms = ms % 86400000;
+		long hh = ms / 3600000;
+		ms = ms % 3600000;
+		long mm = ms / 60000;
+		ms = ms % 60000;
+		long ss = ms / 1000;
+		ms = ms % 1000;
+
+		return dd + " - " + hh + ":" + mm + ":" + ss + ":" + String.format("%04d", ms);
+
+	}
+
 	// ================================================================
 
 }

@@ -21,11 +21,13 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 public class Executor_roulette extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Executor_Roulette";
 	private static String MODULE_COMMANDNAME = "roulette";
 	private static String MODULE_DISPLAYNAME = "俄罗斯轮盘赌";
@@ -41,15 +43,20 @@ public class Executor_roulette extends ModuleExecutor {
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人"
 	};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	private HashMap<Long, RouletteRound> ROULETTE_ROUNDS;
+
 	private ArrayList<Integer> ROULETTE_FREQ;
+
 	private int ROUND_EXPIRED = 0;
 	private int ROUND_SUCCESS = 0;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -58,8 +65,7 @@ public class Executor_roulette extends ModuleExecutor {
 
 	public Executor_roulette() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
-				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
@@ -67,16 +73,20 @@ public class Executor_roulette extends ModuleExecutor {
 	public boolean init() throws Exception {
 
 		ROULETTE_ROUNDS = new HashMap<>();
+
 		ROULETTE_FREQ = new ArrayList<>();
+
 		ROULETTE_FREQ.add(0);
 		ROULETTE_FREQ.add(0);
 		ROULETTE_FREQ.add(0);
 		ROULETTE_FREQ.add(0);
 		ROULETTE_FREQ.add(0);
 		ROULETTE_FREQ.add(0);
+
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
 		ENABLE_GROP = true;
+
 		return true;
 
 	}
@@ -122,38 +132,38 @@ public class Executor_roulette extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		// 只有命令 没下注
 		if (message.getSection() == 0) {
 			entry.gropInfo(gropid, userid, "不下注是8koi的");
 			return true;
 		}
+
 		// 对局不存在 创建一个
 		if (!ROULETTE_ROUNDS.containsKey(gropid)) { ROULETTE_ROUNDS.put(gropid, new RouletteRound()); }
+
 		// 获取本群对局
 		RouletteRound round = ROULETTE_ROUNDS.get(gropid);
 		if (round.lock) {
 			// Module.gropInfo(gropid, "你是最佳第七人，你妈妈不爱你，你甚至不配拥有名字。");
 			return false;
 		}
+
 		// 对局超时就新建一个
 		if ((round.time.getTime() + 600000) < new Date().getTime()) {
 			ROUND_EXPIRED++;
@@ -161,26 +171,32 @@ public class Executor_roulette extends ModuleExecutor {
 			ROULETTE_ROUNDS.remove(gropid);
 			ROULETTE_ROUNDS.put(gropid, round);
 		}
+
 		if (round.join(gropid, userid, message)) {
+
 			entry.gropInfo(gropid, "名单已凑齐 装填子弹中");
+
 			int bullet = new SecureRandom().nextInt(6);
+
 			Member member;
+
 			for (int i = 0; i < 6; i++) {
 				member = entry.getCQ().getGroupMemberInfo(gropid, round.player.get(i));
 				if (i == bullet) {
 					ROULETTE_FREQ.set(i, ROULETTE_FREQ.get(i) + 1);
-					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i)
-							+ "): [CQ:face," + "id=169][CQ:emoji,id=10060]");
+					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=10060]");
 				} else {
-					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i)
-							+ "): [CQ:face," + "id=169][CQ:emoji,id=11093]");
+					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=11093]");
 				}
 			}
-			entry.gropInfo(gropid,
-					"@平安中国 目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
+
+			entry.gropInfo(gropid, "@平安俄罗斯 目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
+
 			ROULETTE_ROUNDS.remove(gropid);
+
 			ROUND_SUCCESS++;
 		}
+
 		return true;
 
 	}

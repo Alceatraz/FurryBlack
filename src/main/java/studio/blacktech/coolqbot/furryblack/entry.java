@@ -33,12 +33,15 @@ import studio.blacktech.coolqbot.furryblack.modules.Systemd;
  *
  * @author Alceatraz Warprays
  */
+
 public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener {
+
 	// ==========================================================================================================================================================
 	//
 	// 宇宙恒量
 	//
 	// ==========================================================================================================================================================
+
 	// 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 	// 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 	// 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
@@ -51,6 +54,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		return ICQVer.CQAPIVER + "," + AppID;
 
 	}
+
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
@@ -67,6 +71,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		System.out.println("This is a JCQ plugin, Not a executable jar file!");
 
 	}
+
 	// ==========================================================================================================================================================
 	//
 	// 公共恒量
@@ -74,33 +79,44 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// ==========================================================================================================================================================
 
 	// 版本ID
-	public final static String VerID = "15.2 2020-01-12 (15:00)";
+	public final static String VerID = "15.4 2020-01-27 (17:00)";
+
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();
+
 	// 自身Jar文件
 	private static JarFile JAR_INSTANCE;
+
 	// 是否启用DEBUG的开关 启动过程为true 启动完成时改为false 此设计有助于debug和启动时异常排查
 	private static boolean DEBUG = true;
+
 	// 日志
 	private static LoggerX logger;
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	// Systemd 对象的持有
 	private static Systemd SYSTEMD;
+
 	// CQ对象的持有
 	private static CoolQ CQ;
+
 	// 继承自JCQ, JcqAbstract包含这个对象
 	private static boolean enable = false;
+
 	// 继承自JCQ, JcqAbstract包含这个对象
 	private static String appDirectory;
+
 	private File FOLDER_ROOT;
 	// private File FOLDER_CONF;
 	// private File FOLDER_DATA;
 	private File FOLDER_LOGS;
 	private File FILE_LOGGER;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -159,9 +175,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			// this.FOLDER_CONF = Paths.get(appDirectory, "Core_Entry","conf").toFile();
 			// this.FOLDER_DATA = Paths.get(appDirectory, "Core_Entry","data").toFile();
 			FOLDER_LOGS = Paths.get(appDirectory, "Core_Entry", "logs").toFile();
-			FILE_LOGGER = Paths
-					.get(appDirectory, "Core_Entry", "logs", LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt")
-					.toFile();
+			FILE_LOGGER = Paths.get(appDirectory, "Core_Entry", "logs", LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
 
 			// ==========================================================================================================================
 			// 初始化文件夹
@@ -285,8 +299,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public int privateMsg(int typeid, int messageid, long userid, String message, int messagefont) {
 
 		try {
-			SYSTEMD.doUserMessage(typeid, userid, new MessageUser(typeid, userid, message, messageid, messagefont),
-					messageid, messagefont);
+			SYSTEMD.doUserMessage(typeid, userid, new MessageUser(typeid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
 			SYSTEMD.adminInfo("[私聊消息异常] 时间序列号 - " + time + " 原因：\r\n" + exception.getMessage());
@@ -309,8 +322,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public int discussMsg(int typeid, int messageid, long diszid, long userid, String message, int messagefont) {
 
 		try {
-			SYSTEMD.doDiszMessage(diszid, userid, new MessageDisz(diszid, userid, message, messageid, messagefont),
-					messageid, messagefont);
+			SYSTEMD.doDiszMessage(diszid, userid, new MessageDisz(diszid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
 			SYSTEMD.adminInfo("[组聊消息异常] 序列号 - " + time + " 原因：\r\n" + exception.getMessage());
@@ -335,8 +347,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			int messagefont) {
 
 		try {
-			SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont),
-					messageid, messagefont);
+			SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
 			SYSTEMD.adminInfo("[群聊消息异常] 序列号 - " + time + " 原因：\r\n" + exception.getMessage());
@@ -373,8 +384,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			SYSTEMD.groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
 
 			logger.info("成员增加", "类型：" + typeName + " 群聊：" + gropid + " 管理：" + operNick + " 用户：" + userNick);
-			SYSTEMD.adminInfo("[成员增加] " + LoggerX.datetime() + "\r\n类型：" + typeName + "\r\n群聊：" + gropid + "\r\n管理："
-					+ operNick + "\r\n用户：" + userNick);
+			SYSTEMD.adminInfo("[成员增加] " + LoggerX.datetime() + "\r\n类型：" + typeName + "\r\n群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户：" + userNick);
 
 		} catch (Exception exception) {
 
@@ -402,13 +412,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 			if (typeid == 1) {
 				logger.info("成员减少", "类型：主动离开 群聊：" + gropid + " 用户：" + userNick);
-				SYSTEMD.adminInfo(
-						"[成员减少] " + LoggerX.datetime() + "\r\n类型：主动离开\r\n群聊：" + gropid + "\r\n用户：" + userNick);
+				SYSTEMD.adminInfo("[成员减少] " + LoggerX.datetime() + "\r\n类型：主动离开\r\n群聊：" + gropid + "\r\n用户：" + userNick);
 			} else {
 				String operNick = SYSTEMD.getNickname(operid) + "(" + operid + ")";
 				logger.info("成员减少", "类型：管理踢出 群聊：" + gropid + " 管理：" + operNick + " 用户：" + userNick);
-				SYSTEMD.adminInfo("[成员减少] " + LoggerX.datetime() + "\r\n类型：管理踢出\r\n群聊：" + gropid + "\r\n管理：" + operNick
-						+ "\r\n用户：" + userNick);
+				SYSTEMD.adminInfo("[成员减少] " + LoggerX.datetime() + "\r\n类型：管理踢出\r\n群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户：" + userNick);
 			}
 
 		} catch (Exception exception) {
@@ -447,8 +455,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		SYSTEMD.userInfo(userid,
-				"你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
+		SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
 		SYSTEMD.sendEula(userid);
 		SYSTEMD.sendHelp(userid);
 		SYSTEMD.sendListUser(userid);
@@ -465,8 +472,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		String nick = SYSTEMD.getNickname(userid);
 		logger.full("添加好友", "时间" + sendtime + " 用户：" + nick + "(" + userid + ")" + " 信息：" + message + " 标志：" + flag);
-		SYSTEMD.adminInfo("[收到好友请求] - " + sendtime + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message
-				+ "\r\n标志：" + flag);
+		SYSTEMD.adminInfo("[收到好友请求] - " + sendtime + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message + "\r\n标志：" + flag);
 		SYSTEMD.adminInfo("/admin friend accept " + flag);
 		SYSTEMD.adminInfo("/admin friend refuse " + flag);
 		return 0;
@@ -481,15 +487,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		String nick = SYSTEMD.getNickname(userid);
 		if (typeid == 1) {
-			logger.full("收到加群申请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息"
-					+ message + " 标志" + flag);
-			SYSTEMD.adminInfo("[收到加群申请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")"
-					+ "\r\n信息" + message + "\r\n标志" + flag);
+			logger.full("收到加群申请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息" + message + " 标志" + flag);
+			SYSTEMD.adminInfo("[收到加群申请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息" + message + "\r\n标志" + flag);
 		} else {
-			logger.full("收到入群邀请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息"
-					+ message + " 标志" + flag);
-			SYSTEMD.adminInfo("[收到入群邀请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")"
-					+ "\r\n信息" + message + "\r\n标志" + flag);
+			logger.full("收到入群邀请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息" + message + " 标志" + flag);
+			SYSTEMD.adminInfo("[收到入群邀请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息" + message + "\r\n标志" + flag);
 			SYSTEMD.adminInfo("/admin group accept " + flag);
 			SYSTEMD.adminInfo("/admin group refuse " + flag);
 		}
@@ -498,49 +500,39 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	}
 
 	/**
-	 * 禁言事件 不应该在此处修改任何内容 交叉逻辑我改了四次 都没有好的办法
+	 * 禁言事件 不应该在此处修改任何内容 交叉逻辑我改了四次 都没有更好的办法
 	 */
 	@Override
 	public int groupBan(int typeid, int sendtime, long gropid, long operid, long userid, long duration) {
 
 		String operNick = SYSTEMD.getNickname(operid) + "(" + operid + ")";
+
 		if (userid == 0) {
+
 			if (typeid == 2) {
-				long ss = duration;
-				long dd = ss / 86400;
-				ss = ss % 86400;
-				long hh = ss / 3600;
-				ss = ss % 3600;
-				long mm = ss / 60;
-				ss = ss % 60;
-				String time = "时间：" + duration + " (" + dd + " - " + hh + ":" + mm + ":" + ss + ")";
+				String time = "时间：" + duration + " (" + LoggerX.duration(duration) + ")";
 				logger.full("全体禁言", sendtime + "群聊：" + gropid + " 管理：" + operNick + " 时常：" + time);
-				SYSTEMD.adminInfo(
-						"[全体禁言] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n时常：" + time);
+				SYSTEMD.adminInfo("[全体禁言] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n时常：" + time);
 			} else {
 				logger.full("全体解禁", sendtime + "群聊：" + gropid + " 管理：" + operNick);
 				SYSTEMD.adminInfo("[全体解禁] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick);
 			}
+
 		} else {
+
 			String userNick = SYSTEMD.getNickname(userid) + "(" + userid + ")";
+
 			if (typeid == 2) {
-				long ss = duration;
-				long dd = ss / 86400;
-				ss = ss % 86400;
-				long hh = ss / 3600;
-				ss = ss % 3600;
-				long mm = ss / 60;
-				ss = ss % 60;
-				String time = "时间：" + duration + " (" + dd + " - " + hh + ":" + mm + ":" + ss + ")";
+				String time = "时间：" + duration + " (" + LoggerX.duration(duration) + ")";
 				logger.full("成员禁言", sendtime + "群聊：" + gropid + " 管理：" + operNick + " 用户：" + userNick + " 时常：" + time);
-				SYSTEMD.adminInfo("[成员禁言] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户："
-						+ userNick + "\r\n时常：" + time);
+				SYSTEMD.adminInfo("[成员禁言] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户：" + userNick + "\r\n时常：" + time);
 			} else {
 				logger.full("成员解禁", sendtime + "群聊：" + gropid + " 管理：" + operNick + " 用户：" + userNick);
-				SYSTEMD.adminInfo(
-						"[成员解禁] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户：" + userNick);
+				SYSTEMD.adminInfo("[成员解禁] - " + sendtime + "\r\n" + "群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户：" + userNick);
 			}
+
 		}
+
 		return 0;
 
 	}

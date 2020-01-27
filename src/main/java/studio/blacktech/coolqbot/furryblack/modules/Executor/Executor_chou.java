@@ -29,11 +29,13 @@ import sutdio.blacktech.common.security.RandomTool;
 public class Executor_chou extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Executor_Chou";
 	private static String MODULE_COMMANDNAME = "chou";
 	private static String MODULE_DISPLAYNAME = "随机抽人";
@@ -47,14 +49,18 @@ public class Executor_chou extends ModuleExecutor {
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人", "获取群成员列表"
 	};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	private HashMap<Long, ArrayList<Long>> MEMBERS;
 	private HashMap<Long, ArrayList<Long>> IGNORES;
+
 	private File FILE_IGNORE_USER;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -63,8 +69,7 @@ public class Executor_chou extends ModuleExecutor {
 
 	public Executor_chou() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
-				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
@@ -73,42 +78,59 @@ public class Executor_chou extends ModuleExecutor {
 
 		initAppFolder();
 		initConfFolder();
+
 		MEMBERS = new HashMap<>();
 		IGNORES = new HashMap<>();
+
 		FILE_IGNORE_USER = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
+
 		if (!FILE_IGNORE_USER.exists()) { FILE_IGNORE_USER.createNewFile(); }
+
 		List<Group> groups = entry.getCQ().getGroupList();
+
 		for (Group group : groups) {
 			MEMBERS.put(group.getId(), new ArrayList<Long>());
 			IGNORES.put(group.getId(), new ArrayList<Long>());
 		}
+
 		long gropid;
 		long userid;
+
 		String line;
 		String[] temp;
-		BufferedReader reader = new BufferedReader(
-				new InputStreamReader(new FileInputStream(FILE_IGNORE_USER), StandardCharsets.UTF_8));
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_IGNORE_USER), StandardCharsets.UTF_8));
+
 		while ((line = reader.readLine()) != null) {
+
 			if (line.startsWith("#")) { continue; }
 			if (!line.contains(":")) { continue; }
 			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+
 			temp = line.split(":");
+
 			if (temp.length != 2) {
 				logger.warn("配置无效", line);
 				continue;
 			}
+
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
+
 			if (IGNORES.containsKey(gropid)) {
 				IGNORES.get(gropid).add(userid);
 				logger.seek("排除用户", gropid + " > " + userid);
 			} else {
 				logger.seek("排除用户", "群不存在 " + gropid);
 			}
+
 		}
+
 		reader.close();
+
 		ArrayList<Long> tempMembers;
 		ArrayList<Long> tempIgnores;
+
 		for (Group group : groups) {
 			tempMembers = MEMBERS.get(group.getId());
 			tempIgnores = IGNORES.get(group.getId());
@@ -118,9 +140,11 @@ public class Executor_chou extends ModuleExecutor {
 				tempMembers.add(member.getQQId());
 			}
 		}
+
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
 		ENABLE_GROP = true;
+
 		return true;
 
 	}
@@ -159,6 +183,7 @@ public class Executor_chou extends ModuleExecutor {
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		ArrayList<Long> tempMembers = new ArrayList<>();
+
 		if (IGNORES.containsKey(gropid)) {
 			ArrayList<Long> tempIgnores = IGNORES.get(gropid);
 			for (Member tempUserid : entry.getCQ().getGroupMemberList(gropid)) {
@@ -187,43 +212,45 @@ public class Executor_chou extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		ArrayList<Long> members = MEMBERS.get(gropid);
+
 		int size = members.size();
+
 		if (size < 3) {
 			entry.gropInfo(gropid, userid, "至少需要三个成员");
 		} else {
+
 			long chouid = 0;
+
 			do {
 				chouid = members.get(RandomTool.nextInt(size));
 			} while (chouid == userid);
+
 			QQInfo member = entry.getCQ().getStrangerInfo(chouid);
+
 			if (message.getSection() == 1) {
-				entry.gropInfo(gropid, userid,
-						"随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")");
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")");
 			} else {
-				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid
-						+ ")： " + message.getOptions());
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getOptions());
 			}
 		}
+
 		return true;
 
 	}

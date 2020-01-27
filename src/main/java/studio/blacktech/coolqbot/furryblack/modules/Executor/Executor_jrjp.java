@@ -29,11 +29,13 @@ import sutdio.blacktech.common.security.RandomTool;
 public class Executor_jrjp extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Executor_JRJP";
 	private static String MODULE_COMMANDNAME = "jrjp";
 	private static String MODULE_DISPLAYNAME = "祭祀";
@@ -49,17 +51,22 @@ public class Executor_jrjp extends ModuleExecutor {
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人", "被抽到成员的昵称和群昵称"
 	};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	private HashMap<Long, Long> AVCODE;
 	private HashMap<Long, Long> VICTIM;
+
 	private HashMap<Long, ArrayList<Long>> MEMBERS;
 	private HashMap<Long, ArrayList<Long>> IGNORES;
+
 	private File USER_IGNORE;
 	private Thread thread;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -68,8 +75,7 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	public Executor_jrjp() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
-				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
@@ -78,18 +84,25 @@ public class Executor_jrjp extends ModuleExecutor {
 
 		initAppFolder();
 		initConfFolder();
+
 		AVCODE = new HashMap<>();
 		VICTIM = new HashMap<>();
+
 		MEMBERS = new HashMap<>();
 		IGNORES = new HashMap<>();
+
 		USER_IGNORE = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
+
 		if (!USER_IGNORE.exists()) { USER_IGNORE.createNewFile(); }
+
 		long gropid;
 		long userid;
-		BufferedReader reader = new BufferedReader(
-				new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
+
 		String line;
 		String[] temp;
+
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("#")) { continue; }
 			if (!line.contains(":")) { continue; }
@@ -105,29 +118,42 @@ public class Executor_jrjp extends ModuleExecutor {
 			IGNORES.get(gropid).add(userid);
 			logger.seek("排除用户", gropid + " > " + userid);
 		}
+
 		reader.close();
+
 		// 读取忽略列表到IGNORE 结合IGNORE生成可用成员到MEMBER 由MEMBER生成VICTIM和AVCODE
+
 		List<Group> groups = entry.getCQ().getGroupList();
+
 		groups.forEach((group) -> {
+
 			long tempGroupID = group.getId();
-			ArrayList<Long> tempIgnores = IGNORES.containsKey(tempGroupID) ? IGNORES.get(tempGroupID)
-					: new ArrayList<>();
+
+			ArrayList<Long> tempIgnores = IGNORES.containsKey(tempGroupID) ? IGNORES.get(tempGroupID) : new ArrayList<>();
 			ArrayList<Long> tempMembers = new ArrayList<>();
+
 			List<Member> members = entry.getCQ().getGroupMemberList(tempGroupID);
+
 			for (Member member : members) {
 				long tempUserID = member.getQQId();
 				if (entry.isMyself(tempUserID)) { continue; }
 				if (tempIgnores.contains(tempUserID)) { continue; }
 				tempMembers.add(tempUserID);
 			}
+
 			int random = RandomTool.nextInt(tempMembers.size());
+
 			VICTIM.put(tempGroupID, tempMembers.get(random));
 			AVCODE.put(tempGroupID, RandomTool.nextLong() % 70000000);
+
 			MEMBERS.put(tempGroupID, tempMembers);
+
 		});
+
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
 		ENABLE_GROP = true;
+
 		return true;
 
 	}
@@ -180,28 +206,24 @@ public class Executor_jrjp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		long victim = VICTIM.get(gropid);
-		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim
-				+ ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + AVCODE.get(gropid));
+		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + AVCODE.get(gropid));
 		return true;
 
 	}

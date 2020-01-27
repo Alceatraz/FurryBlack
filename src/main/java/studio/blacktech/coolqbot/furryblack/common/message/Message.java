@@ -14,30 +14,47 @@ import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 
 public class Message implements Serializable {
 
-	private final static String REGEX_IMAGE = "\\[CQ:image,file=\\w{32}\\.\\w{3}\\]";
 	private static final long serialVersionUID = 1L;
+
+	private final static String REGEX_IMAGE = "\\[CQ:image,file=\\w{32}\\.\\w{3}\\]";
+
+
 	private int messageId = 0;
 	private int messageFt = 0;
+
 	private long sendTime = 0;
+
 	private String rawMessage = "";
 	private String resMessage = "";
+
 	private int rawLength = 0;
 	private int resLength = 0;
+
 	private String cmdMessage = "";
+
 	private String command = "";
 	private String options = "";
+
 	private String[] segment = {};
+
 	private String[] picture = {};
+
 	private int section = 0;
+
 	private boolean hasPicture = false;
+
 	private boolean isCommand = false;
 	private boolean isSnappic = false;
 	private boolean isQQVideo = false;
 	private boolean isHongbao = false;
 	private boolean isPureCQC = false;
+
 	private boolean parsed = false;
+
 	private LinkedList<String> segmentParts;
+
 	private TreeMap<String, String> switchs;
+
 	// ===================================================================================
 
 	public Message(String message, int messageid, int messageFont) {
@@ -48,50 +65,86 @@ public class Message implements Serializable {
 		rawMessage = message;
 
 	}
+
 	// ===================================================================================
 
 	public Message parse() {
 
 		if (parsed) { return this; }
+
 		parsed = true;
 		rawLength = rawMessage.length();
+
 		if (rawMessage.matches("/[a-z]+.*")) {
+
 			// 居然因为这么一条鬼消息出BUG了 -> /招手[CQ:at,qq=XXXXXXXX]
+
 			isCommand = true;
+
 			// 去掉 /
 			// 去掉首尾多余空格
 			// 合并所有连续空格
+
 			cmdMessage = rawMessage.substring(1);
 			cmdMessage = cmdMessage.trim();
 			cmdMessage = cmdMessage.replaceAll("\\s+", " ");
+
 			int indexOfSpace = cmdMessage.indexOf(' ');
+
 			// 是否无参数命令
+
 			if (indexOfSpace < 0) {
 				command = cmdMessage;
 			} else {
+
 				// 切开
 				// 命令
 				// 参数
+
 				command = cmdMessage.substring(0, indexOfSpace);
+
 				options = cmdMessage.substring(indexOfSpace + 1);
+
 				String[] flag;
+
 				switchs = new TreeMap<>();
 				segmentParts = new LinkedList<>();
-				// 提取所有 --XX=XXXX 形式的开关
+
+				// 提取所有 --XX=XXXX 和 --XX形式的开关
 				// 提取所有其他内容为参数
+
 				for (String temp : options.split(" ")) {
-					if (temp.startsWith("--") && (temp.indexOf("=") > 0)) {
+
+//					if (temp.startsWith("--") && (temp.indexOf("=") > 0)) {
+//						temp = temp.substring(2);
+//						flag = temp.split("=");
+//						switchs.put(flag[0], flag[1]);
+//					} else {
+//						segmentParts.add(temp);
+//					}
+
+					if (temp.startsWith("--")) {
 						temp = temp.substring(2);
-						flag = temp.split("=");
-						switchs.put(flag[0], flag[1]);
+
+						if (temp.indexOf("=") > 0) {
+							flag = temp.split("=");
+							switchs.put(flag[0], flag[1]);
+						} else {
+							switchs.put(temp, null);
+						}
 					} else {
 						segmentParts.add(temp);
 					}
+
 				}
+
 				segment = new String[segmentParts.size()];
+
 				segmentParts.toArray(segment);
 				section = segment.length;
+
 			}
+
 		} else if (rawMessage.startsWith("&#91;闪照&#93;")) {
 			isSnappic = true;
 		} else if (rawMessage.startsWith("&#91;视频&#93;")) {
@@ -99,33 +152,48 @@ public class Message implements Serializable {
 		} else if (rawMessage.startsWith("&#91;QQ红包&#93;")) {
 			isHongbao = true;
 		} else {
+
 			// 如果是普通消息
 			// 提取所有图片
+
 			Pattern pattern = Pattern.compile(Message.REGEX_IMAGE);
 			Matcher matcher = pattern.matcher(rawMessage);
+
 			ArrayList<String> temp = new ArrayList<>(1);
+
 			if (matcher.find()) {
+
 				hasPicture = true;
+
 				do {
 					temp.add(matcher.group());
 				} while (matcher.find());
+
 				picture = new String[temp.size()];
+
 				temp.toArray(picture);
 			}
+
 			// 删除所有CQ码
 			// 删除所有空白字符
+
 			resMessage = rawMessage.replaceAll("\\[CQ:.+\\]", "").trim();
 			resMessage = resMessage.replaceAll("\\s+", "").trim();
 			resLength = resMessage.length();
+
 			// 删除所有空白字符以后长度为0 则不视为正常消息
 			// 比如@时会在最后自动加一个空格
 			// [CQ:at=1234567890]□
 			// 多次连续at会产生多个空格，不应用 ==" " 判断
+
 			if (resLength == 0) { isPureCQC = true; }
+
 		}
+
 		return this;
 
 	}
+
 	// ===================================================================================
 
 	/**
@@ -147,16 +215,19 @@ public class Message implements Serializable {
 		}
 
 	}
+
 	// ===================================================================================
 
 	@Override
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
+
 		builder.append("============================================\n");
 		builder.append("时间戳：" + LoggerX.datetime(new Date(sendTime)) + "(" + sendTime + ")" + "\n");
 		builder.append("消息ID：" + messageId + "\n");
 		builder.append("字体ID：" + messageFt + "\n");
+
 		builder.append("============================================\n");
 		builder.append("原始内容：" + rawMessage + "\n");
 		builder.append("原始长度：" + rawLength + "\n");
@@ -166,8 +237,10 @@ public class Message implements Serializable {
 			builder.append(Integer.toHexString(rawMessage.charAt(i) & 0xffff));
 		}
 		builder.append("\n");
+
 		builder.append("============================================\n");
 		builder.append("是否命令：" + (isCommand ? "True" : "False") + "\n");
+
 		if (isCommand) {
 			builder.append("============================================\n");
 			builder.append("命令内容：" + cmdMessage + "\n");
@@ -194,6 +267,7 @@ public class Message implements Serializable {
 			builder.append("是否视频：" + (isQQVideo ? "True" : "False") + "\n");
 			builder.append("是否红包：" + (isHongbao ? "True" : "False") + "\n");
 			builder.append("是否纯码：" + (isPureCQC ? "True" : "False") + "\n");
+
 			builder.append("============================================\n");
 			builder.append("包含图片：" + (hasPicture ? "True" : "False") + "\n");
 			if (hasPicture) {

@@ -18,11 +18,13 @@ import sutdio.blacktech.common.security.RandomTool;
 public class Executor_jrrp extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Executor_JRRP";
 	private static String MODULE_COMMANDNAME = "jrrp";
 	private static String MODULE_DISPLAYNAME = "今日运气";
@@ -38,13 +40,17 @@ public class Executor_jrrp extends ModuleExecutor {
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人"
 	};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	private HashMap<Long, Integer> JRRP;
+
 	private Thread thread;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -53,8 +59,7 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	public Executor_jrrp() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
-				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
@@ -117,8 +122,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
 		entry.userInfo(userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
@@ -127,8 +131,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
 		entry.diszInfo(diszid, userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
@@ -137,8 +140,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
 		entry.gropInfo(gropid, userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");

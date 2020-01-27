@@ -6,6 +6,7 @@ public abstract class ModuleScheduler extends Module {
 	private static final long serialVersionUID = 1L;
 
 	// @formatter:off
+
     public ModuleScheduler(
             String MODULE_PACKAGENAME,
             String MODULE_COMMANDNAME,
@@ -29,6 +30,7 @@ public abstract class ModuleScheduler extends Module {
                 MODULE_PRIVACY_OBTAIN
         );
     }
+
     // @formatter:on
 
 	protected int COUNT = 0;

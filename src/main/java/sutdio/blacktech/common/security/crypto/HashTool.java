@@ -23,6 +23,13 @@ public class HashTool {
 		}
 	}
 
+
+	// ==========================================================================================
+
+
+	/**
+	 * md5
+	 */
 	public static String md5(byte[] message) {
 
 		byte[] digested = md5Digest.digest(message);
@@ -40,6 +47,12 @@ public class HashTool {
 
 	}
 
+
+	// ==========================================================================================
+
+	/**
+	 * sha256
+	 */
 	public static String sha256(byte[] message) {
 
 		byte[] digested = sha256Digest.digest(message);
@@ -58,6 +71,21 @@ public class HashTool {
 		return sha256(message).toUpperCase();
 
 	}
+
+	public static String sha256(String message) {
+
+		return sha256(message.getBytes());
+	}
+
+	public static String SHA256(String message) {
+
+		return SHA256(message.getBytes());
+
+	}
+
+
+	// ==========================================================================================
+
 
 	public static String sha384(byte[] message) {
 
@@ -78,6 +106,24 @@ public class HashTool {
 
 	}
 
+
+	public static String sha384(String message) {
+
+		return sha384(message.getBytes());
+	}
+
+	public static String SHA384(String message) {
+
+		return SHA384(message.getBytes());
+
+	}
+
+
+	// ==========================================================================================
+
+	/**
+	 * sha512
+	 */
 	public static String sha512(byte[] message) {
 
 		byte[] digested = sha512Digest.digest(message);
@@ -94,6 +140,17 @@ public class HashTool {
 	public static String SHA512(byte[] message) {
 
 		return sha512(message).toUpperCase();
+
+	}
+
+	public static String sha512(String message) {
+
+		return sha512(message.getBytes());
+	}
+
+	public static String SHA512(String message) {
+
+		return SHA512(message.getBytes());
 
 	}
 

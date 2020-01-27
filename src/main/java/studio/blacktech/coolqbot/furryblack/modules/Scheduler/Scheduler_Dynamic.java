@@ -19,11 +19,13 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 public class Scheduler_Dynamic extends ModuleScheduler {
 
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Scheduler_Dynamic";
 	private static String MODULE_COMMANDNAME = "dynamic";
 	private static String MODULE_DISPLAYNAME = "动态域名";
@@ -33,25 +35,33 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	private String API_GETADDRESS;
 	private String API_SETADDRESS;
+
 	private String CLIENTUA;
 	private String HOSTNAME;
 	private String PASSWORD;
+
 	private Thread thread;
+
 	private int COUNT_GETIP = 0;
 	private int COUNT_SETIP = 0;
 	private int COUNT_FRESH = 0;
+
 	private int COUNT_GETIP_FAILED = 0;
 	private int COUNT_SETIP_FAILED = 0;
 	private int COUNT_FRESH_FAILED = 0;
+
 	private int COUNT_CHANGE = 0;
 	private int COUNT_FAILED = 0;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -60,8 +70,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 	public Scheduler_Dynamic() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
-				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
@@ -70,6 +79,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 
 		initAppFolder();
 		initPropertiesConfigurtion();
+
 		if (NEW_CONFIG) {
 			logger.seek("配置文件不存在 - 生成默认配置");
 			CONFIG.setProperty("enable", "false");
@@ -78,24 +88,36 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			CONFIG.setProperty("clientua", "BTSCoolQ/1.0");
 			CONFIG.setProperty("hostname", "");
 			CONFIG.setProperty("password", "");
+
 			saveConfig();
+
 		} else {
+
 			loadConfig();
+
 		}
+
 		ENABLE = Boolean.parseBoolean(CONFIG.getProperty("enable", "false"));
+
 		logger.seek("开关", ENABLE ? "启用" : "禁用");
+
 		if (!ENABLE) { return false; }
+
 		API_GETADDRESS = CONFIG.getProperty("getaddress", "");
 		API_SETADDRESS = CONFIG.getProperty("setaddress", "");
+
 		CLIENTUA = CONFIG.getProperty("clientua", "BTSCoolQ/1.0");
 		HOSTNAME = CONFIG.getProperty("hostname", "");
 		PASSWORD = CONFIG.getProperty("password", "");
+
 		logger.seek("获取", API_GETADDRESS);
 		logger.seek("刷新", API_SETADDRESS);
 		logger.seek("标识", CLIENTUA);
 		logger.seek("域名", HOSTNAME);
 		logger.seek("密码", PASSWORD.substring(6, 12));
+
 		return true;
+
 
 	}
 

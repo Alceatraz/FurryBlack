@@ -19,11 +19,13 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 public class Executor_time extends ModuleExecutor {
 
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Executor_Time";
 	private static String MODULE_COMMANDNAME = "time";
 	private static String MODULE_DISPLAYNAME = "环球时间";
@@ -35,18 +37,20 @@ public class Executor_time extends ModuleExecutor {
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	private static final TimeZone zone_W8 = TimeZone.getTimeZone("America/Los_Angeles");
 	private static final TimeZone zone_W4 = TimeZone.getTimeZone("America/New_York");
 	private static final TimeZone zone_00 = TimeZone.getTimeZone("UTC");
 	private static final TimeZone zone_E0 = TimeZone.getTimeZone("Europe/London");
-	// private static final TimeZone zone_E1 =
-	// TimeZone.getTimeZone("Europe/Stockholm");
+	// private static final TimeZone zone_E1 = TimeZone.getTimeZone("Europe/Stockholm");
 	private static final TimeZone zone_E8 = TimeZone.getTimeZone("Asia/Shanghai");
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -55,8 +59,7 @@ public class Executor_time extends ModuleExecutor {
 
 	public Executor_time() throws Exception {
 
-		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION,
-				MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 
 	}
 
@@ -111,8 +114,7 @@ public class Executor_time extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
 		entry.userInfo(userid, getTime());
 		return true;
@@ -120,8 +122,7 @@ public class Executor_time extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
 
 		entry.diszInfo(diszid, getTime());
 		return true;
@@ -129,8 +130,7 @@ public class Executor_time extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
 
 		entry.gropInfo(gropid, getTime());
 		return true;
@@ -139,57 +139,78 @@ public class Executor_time extends ModuleExecutor {
 
 	private String getTime() {
 
-		return
 		// @formatter:off
-                //
-                "世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", Executor_time.zone_00) + "\r\n" +
-                        "美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + format(Executor_time.zone_W8) + "\r\n" +
-                        "美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + format(Executor_time.zone_W4) + "\r\n" +
-                        "欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + format(Executor_time.zone_E0) + "\r\n" +
-                        //        "欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
-                        "亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
-                // @formatter:on
+
+		return
+
+            "世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", Executor_time.zone_00) + "\r\n" +
+            "美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + format(Executor_time.zone_W8) + "\r\n" +
+            "美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + format(Executor_time.zone_W4) + "\r\n" +
+            "欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + format(Executor_time.zone_E0) + "\r\n" +
+            //"欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
+            "亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
 		;
 
+		// @formatter:on
 	}
 
+	/**
+	 * 这个算法非常牛逼 而且我不打算解释
+	 */
 	@SuppressWarnings("deprecation")
 	private String format(TimeZone timezone) {
 
 		// @formatter:off
+
         boolean isEnableDST = false;
         boolean isDisableDST = false;
+
         StringBuilder builder = new StringBuilder();
+
         Calendar today = Calendar.getInstance(timezone);
+
         long current = today.getTimeInMillis();
+
         Date begin = new Date(current);
+
         begin.setMonth(1);
         begin.setDate(1);
         begin.setHours(0);
         begin.setMinutes(0);
         begin.setSeconds(0);
+
         Calendar temp = Calendar.getInstance(timezone);
+
         temp.setTime(new Date((begin.getTime() / 1000) * 1000));
+
         for (long i = temp.getTimeInMillis(); i < current; i = temp.getTimeInMillis()) {
+
             temp.add(Calendar.DATE, 1);
+
             long t = temp.getTimeInMillis();
+
             if ((t - i) < 86400000) {
 				isEnableDST = true;
 			} else if ((t - i) > 86400000) {
 				isDisableDST = true;
 			}
         }
+
         if (isEnableDST ^ isDisableDST) {
 			builder.append(" 夏令时");
 		}
+
         int TZ_DATE = Integer.parseInt(LoggerX.formatTime("dd", timezone));
         int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", Executor_time.zone_E8));
+
         if ((E8_DATE - TZ_DATE) > 0) {
 			builder.append(" 昨天," + TZ_DATE + "日");
 		} else if ((E8_DATE - TZ_DATE) < 0) {
 			builder.append(" 明天," + TZ_DATE + "日");
 		}
+
         // @formatter:on
+
 		return builder.toString();
 
 	}

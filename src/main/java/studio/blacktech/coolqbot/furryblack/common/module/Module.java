@@ -17,6 +17,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.Message;
 public abstract class Module implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
 	private String MODULE_PACKAGENAME;
 	private String MODULE_COMMANDNAME;
 	private String MODULE_DISPLAYNAME;
@@ -26,15 +27,21 @@ public abstract class Module implements Serializable {
 	private String[] MODULE_PRIVACY_STORED;
 	private String[] MODULE_PRIVACY_CACHED;
 	private String[] MODULE_PRIVACY_OBTAIN;
+
 	public String MODULE_FULLHELP;
+
 	protected Properties CONFIG = new Properties();
+
 	protected File FOLDER_ROOT;
 	protected File FOLDER_CONF;
 	protected File FOLDER_DATA;
 	protected File FOLDER_LOGS;
 	protected File FILE_CONFIG;
+
 	protected boolean NEW_CONFIG = false;
+
 	protected LoggerX logger;
+
 	// @formatter:off
 
     public Module(
@@ -85,11 +92,9 @@ public abstract class Module implements Serializable {
 
 	public abstract String[] generateReport(int mode, Message message, Object... parameters);
 
-	public abstract void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid)
-			throws Exception;
+	public abstract void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
 
-	public abstract void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid)
-			throws Exception;
+	public abstract void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
 
 	public void initAppFolder() throws Exception {
 
@@ -190,6 +195,7 @@ public abstract class Module implements Serializable {
 	public String genFullHelp() {
 
 		StringBuilder builder = new StringBuilder();
+
 		builder.append("模块：" + MODULE_PACKAGENAME + "v" + MODULE_VERSION + "\r\n");
 		builder.append("名称：" + MODULE_DISPLAYNAME + "\r\n");
 		builder.append("用途：" + MODULE_DESCRIPTION + "\r\n");
