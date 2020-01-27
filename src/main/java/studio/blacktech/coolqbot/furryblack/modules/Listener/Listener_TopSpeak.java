@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,7 +53,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群统计";
 	private static String MODULE_DESCRIPTION = "水群统计";
-	private static String MODULE_VERSION = "31.0";
+	private static String MODULE_VERSION = "32.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {
 			"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
@@ -209,6 +210,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					"参数不足"
 			};
 		}
+
 		String command = message.getSegment()[1];
 
 		switch (command) {
@@ -221,8 +223,120 @@ public class Listener_TopSpeak extends ModuleListener {
 				};
 
 			case "dump":
+
+				if (!message.hasSwitch("gropid")) {
+					return new String[] {
+							"参数错误 --gropid 为空"
+					};
+				}
+
+				boolean C = false;
+				boolean P = false;
+				boolean R = false;
+
+				if (message.hasSwitch("filter")) {
+
+					String raw = message.getSwitch("filter");
+
+					if ((raw == null) || (raw.length() != 3)) {
+						return new String[] {
+								"BinMask位置 命令 纯码 原始消息"
+						};
+					}
+
+					C = raw.charAt(0) == '1' ? true : false;
+					P = raw.charAt(0) == '1' ? true : false;
+					R = raw.charAt(0) == '1' ? true : false;
+
+				}
+
+
+				long gropid = Long.parseLong(message.getSwitch("gropid"));
+
+				File dumpFile = Paths.get(FOLDER_LOGS.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + "_dump.txt").toFile();
+				dumpFile.createNewFile();
+
+				FileWriter fileWriter = new FileWriter(dumpFile);
+
+				fileWriter.write("## RANK\n\n\n\n");
+
+				String[] result = generateMemberRank(gropid, -1, -1, -1);
+
+				for (String part : result) {
+					fileWriter.append(part);
+					fileWriter.append("\n");
+				}
+
+				fileWriter.write("\n\n\n## DUMP\n\n\n\n");
+
+
+				GroupStatus groupStatus = GROUP_STATUS.get(gropid).sum();
+
+				fileWriter.write("创建时间：" + LoggerX.formatTime("yyyy-MM-dd HH:mm:ss", new Date(groupStatus.initdt)) + "(" + groupStatus.initdt + ")\n\n");
+				fileWriter.write("总消息数：" + groupStatus.GROP_MESSAGES + "\n");
+				fileWriter.write("发言条数：" + (groupStatus.GROP_SENTENCE.size() + groupStatus.GROP_PURECCODE) + "\n");
+				fileWriter.write("发言字数：" + groupStatus.GROP_CHARACTER + "\n");
+				fileWriter.write("命令次数：" + groupStatus.GROP_COMMANDS.size() + "\n");
+				fileWriter.write("发言图数：" + groupStatus.GROP_PICTURES.size() + "\n");
+				fileWriter.write("闪照图数：" + groupStatus.GROP_SNAPSHOT + "\n");
+				fileWriter.write("视频个数：" + groupStatus.GROP_TAPVIDEO + "\n");
+				fileWriter.write("红包个数：" + groupStatus.GROP_HONGBAOS + "\n\n");
+
+				for (Entry<Long, UserStatus> userStatusEntry : groupStatus.USER_STATUS.entrySet()) {
+
+					Long userid = userStatusEntry.getKey();
+
+					UserStatus userStatus = userStatusEntry.getValue();
+
+					fileWriter.write("# =============================================================================\n");
+					fileWriter.write("# 用户：" + entry.getGropnick(gropid, userid) + "(" + userid + ")\n");
+					fileWriter.write("# 发言条数：" + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "\n");
+					fileWriter.write("# 发言字数：" + userStatus.USER_CHARACTER + "\n");
+					fileWriter.write("# 命令次数：" + userStatus.USER_COMMANDS.size() + "\n");
+					fileWriter.write("# 发言图数：" + userStatus.USER_PICTURES.size() + "\n");
+					fileWriter.write("# 闪照图数：" + userStatus.USER_SNAPSHOT + "\n");
+					fileWriter.write("# 视频个数：" + userStatus.USER_TAPVIDEO + "\n");
+					fileWriter.write("# 红包个数：" + userStatus.USER_HONGBAOS + "\n\n");
+					fileWriter.write("# =============================================================================\n");
+
+					for (Message element : userStatus.MESSAGES) {
+
+						if (element.isHongbao()) {
+							continue;
+						}
+						if (element.isQQVideo()) {
+							continue;
+						}
+						if (element.isSnappic()) {
+							continue;
+						}
+
+						if (P && element.isPureCQC()) {
+							fileWriter.write(element.getRawMessage());
+							continue;
+						}
+
+						if (C && element.isCommand()) {
+							fileWriter.write(element.getRawMessage());
+							continue;
+						}
+
+						if (R && element.hasPicture()) {
+							fileWriter.write(element.getRawMessage() + "\n");
+						} else {
+							fileWriter.write(element.getResMessage() + "\n");
+						}
+
+
+					}
+					fileWriter.write("\n\n");
+				}
+
+				fileWriter.flush();
+				fileWriter.close();
+
 				return new String[] {
-						"暂未实现"
+						"已将结果保存至文件 " + dumpFile.getName()
 				};
 
 			default:
@@ -394,8 +508,16 @@ public class Listener_TopSpeak extends ModuleListener {
 		builder = new StringBuilder();
 
 		// ===========================================================
+		//
+		// 第一部分 基础统计数据
+		//
+		// ===========================================================
 
-		builder.append("（1/4）水群统计 " + limitRank + "/" + limitRepeat + "/" + limitPicture + "\r\n");
+		String valueRank = limitRank > 0 ? String.valueOf(limitRank) : limitRank == 0 ? "无限" : "关";
+		String valueRepeat = limitRepeat > 0 ? String.valueOf(limitRepeat) : limitRepeat == 0 ? "无限" : "关";
+		String valuePicture = limitPicture > 0 ? String.valueOf(limitPicture) : limitPicture == 0 ? "无限" : "关";
+
+		builder.append("（1/4）水群统计 " + valueRank + "/" + valueRepeat + "/" + valuePicture + "\r\n");
 		builder.append("自" + LoggerX.formatTime("yyyy-MM-dd HH", new Date(groupStatus.initdt)) + ":00 以来" + "\r\n");
 		builder.append("总消息数：" + groupStatus.GROP_MESSAGES + "\r\n");
 		builder.append("发言条数：" + (groupStatus.GROP_SENTENCE.size() + groupStatus.GROP_PURECCODE) + "\r\n");
@@ -408,32 +530,41 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		report.add(builder.toString());
 
+
+		// ===========================================================
+		//
+		// 第二部分 成员按照发言条数排序
+		//
 		// ===========================================================
 
-		if (limitRank != 0) {
 
-			UserStatus userStatus;
+		if (limitRank != 0) { // limit = 0 表示关闭
+
+
+			// step 1 历遍所有消息 统计重复次数
+
 			TreeMap<Integer, HashSet<Long>> allMemberRank = new TreeMap<>((a, b) -> b - a);
 
-			for (long userid : groupStatus.USER_STATUS.keySet()) {
+			for (Entry<Long, UserStatus> groupStatusEntry : groupStatus.USER_STATUS.entrySet()) {
 
-				userStatus = groupStatus.USER_STATUS.get(userid);
+				long userid = groupStatusEntry.getKey();
+				UserStatus userStatus = groupStatusEntry.getValue();
 
 				int userCharacter = userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE;
 
-				if (userCharacter > 0) {
-					if (allMemberRank.containsKey(userCharacter)) {
-						allMemberRank.get(userCharacter).add(userid);
-					} else {
-
-						HashSet<Long> tempSet = new HashSet<>();
-						tempSet.add(userid);
-						allMemberRank.put(userCharacter, tempSet);
-
-					}
+				if (userCharacter < 1) {
+					continue;
 				}
 
+				if (!allMemberRank.containsKey(userCharacter)) {
+					allMemberRank.put(userCharacter, new HashSet<>());
+				}
+				allMemberRank.get(userCharacter).add(userid);
 			}
+
+
+			// step 2 输出报告
+
 
 			if (allMemberRank.size() > 0) {
 
@@ -444,44 +575,49 @@ public class Listener_TopSpeak extends ModuleListener {
 				int limit = 0;
 				int slice = 0;
 
-				for (int userRank : allMemberRank.keySet()) {
+				loop: for (Entry<Integer, HashSet<Long>> allMemberRankEntry : allMemberRank.entrySet()) {
 
-					HashSet<Long> tempSet = allMemberRank.get(userRank);
+					HashSet<Long> membersWithSameRank = allMemberRankEntry.getValue();
 
-					for (Long userid : tempSet) {
+					for (long userid : membersWithSameRank) {
 
-						userStatus = groupStatus.USER_STATUS.get(userid);
-
+						UserStatus userStatus = groupStatus.USER_STATUS.get(userid);
 						builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "句/" + userStatus.USER_CHARACTER + "字");
 						if (userStatus.USER_PICTURES.size() > 0) { builder.append("/" + userStatus.USER_PICTURES.size() + "图"); }
 						if (userStatus.USER_SNAPSHOT > 0) { builder.append("/" + userStatus.USER_SNAPSHOT + "闪"); }
 						if (userStatus.USER_TAPVIDEO > 0) { builder.append("/" + userStatus.USER_TAPVIDEO + "片"); }
 						if (userStatus.USER_HONGBAOS > 0) { builder.append("/" + userStatus.USER_HONGBAOS + "包"); }
-
 						builder.append("\r\n");
 
-						limit++;
-						slice++;
+						if ((limitRank != -1) && (++limit > limitRank)) {
+							break loop; // limit = -1 表示无限
+						}
 
-						if (slice == 30) {
-
+						if (++slice == 10) {
 							report.add(builder.substring(0, builder.length() - 2));
 							builder = new StringBuilder();
 							slice = 0;
-
 						}
-						if ((limitRank > 0) && (limit >= limitRank)) { break; }
+
 					}
-					if ((limitRank > 0) && (limit >= limitRank)) { break; }
-					order = order + tempSet.size();
+					order = order + membersWithSameRank.size();
 				}
 				report.add(builder.substring(0, builder.length() - 2));
 			}
 		}
 
+
+		// ===========================================================
+		//
+		// 第三部分 整句重复频度排序
+		//
 		// ===========================================================
 
-		if (limitRepeat != 0) {
+
+		if (limitRepeat != 0) { // limit = 0 表示关闭
+
+
+			// step 1 历遍所有消息 统计重复次数
 
 			HashMap<String, Integer> allMessageRankTemp = new HashMap<>();
 
@@ -535,26 +671,27 @@ public class Listener_TopSpeak extends ModuleListener {
 				} else {
 					allMessageRankTemp.put(messageContent, 1);
 				}
-
 			}
+
+
+			// step 2 历遍重复次数表 按照次数排序
 
 			TreeMap<Integer, HashSet<String>> allMessageRank = new TreeMap<>((a, b) -> b - a);
 
-			for (String raw : allMessageRankTemp.keySet()) {
+			for (Entry<String, Integer> allMessageRankTempEntry : allMessageRankTemp.entrySet()) {
 
-				int tempCount = allMessageRankTemp.get(raw);
+				String sentence = allMessageRankTempEntry.getKey();
+				int sentenceRepeatCount = allMessageRankTempEntry.getValue();
 
-				if (allMessageRank.containsKey(tempCount)) {
-					allMessageRank.get(tempCount).add(raw);
-				} else {
-					HashSet<String> tempSet = new HashSet<>();
-					tempSet.add(raw);
-					allMessageRank.put(tempCount, tempSet);
+				if (!allMessageRank.containsKey(sentenceRepeatCount)) {
+					allMessageRank.put(sentenceRepeatCount, new HashSet<>());
 				}
 
+				allMessageRank.get(sentenceRepeatCount).add(sentence);
 			}
 
-			// allMessageRank.remove(1);
+
+			// step 3 输出报告
 
 			if (allMessageRank.size() > 0) {
 
@@ -565,39 +702,42 @@ public class Listener_TopSpeak extends ModuleListener {
 				int limit = 0;
 				int slice = 0;
 
-				for (int messageRank : allMessageRank.keySet()) {
+				loop: for (Entry<Integer, HashSet<String>> allMessageRankEntry : allMessageRank.entrySet()) {
 
-					HashSet<String> tempSet = allMessageRank.get(messageRank);
+					int messageRepeatCount = allMessageRankEntry.getKey();
 
-					for (String messageContent : tempSet) {
+					HashSet<String> messageRepeat = allMessageRankEntry.getValue();
 
-						builder.append("No." + order + " - " + messageRank + "次：" + messageContent + "\r\n");
+					for (String sentence : messageRepeat) {
+						builder.append("No." + order + " - " + messageRepeatCount + "次：" + sentence + "\r\n");
 
-						limit++;
-						slice++;
+						if ((limitRepeat != -1) && (++limit > limitRepeat)) {
+							break loop; // limit = -1 表示无限
+						}
 
-						if ((limitRepeat > 0) && (limit >= limitRepeat)) { break; }
-
-						if (slice == 50) {
+						if (++slice == 10) {
 							report.add(builder.substring(0, builder.length() - 2));
 							builder = new StringBuilder();
 							slice = 0;
 						}
 					}
-
-					if ((limitRepeat > 0) && (limit >= limitRepeat)) { break; }
-					order = order + tempSet.size();
-
+					order = order + messageRepeat.size();
 				}
-
-				report.add(builder.substring(0, builder.length() - 2));
-
 			}
 		}
 
+
+		// ===========================================================
+		//
+		// 第四部分 图片重复频度排序
+		//
 		// ===========================================================
 
-		if (limitPicture != 0) {
+
+		if (limitPicture != 0) { // limit = 0 表示关闭
+
+
+			// step 1 历遍所有消息 统计重复次数
 
 			HashMap<String, Integer> allPictureRankTemp = new HashMap<>();
 
@@ -609,6 +749,8 @@ public class Listener_TopSpeak extends ModuleListener {
 				}
 			}
 
+
+			// step 2 历遍重复次数表 按照次数排序
 
 			TreeMap<Integer, HashSet<String>> allPictureRank = new TreeMap<>((a, b) -> b - a);
 
@@ -625,28 +767,27 @@ public class Listener_TopSpeak extends ModuleListener {
 				}
 			}
 
-			// allPictureRank.remove(1);
+
+			// step 3 输出报告
 
 			if (allPictureRank.size() > 0) {
 
 				int order = 1;
 				int limit = 0;
 
-				for (int pictureRank : allPictureRank.keySet()) {
+				loop: for (Entry<Integer, HashSet<String>> allPictureRankEntry : allPictureRank.entrySet()) {
 
-					HashSet<String> tempSet = allPictureRank.get(pictureRank);
+					int pictureRepeatCount = allPictureRankEntry.getKey();
+					HashSet<String> pictures = allPictureRankEntry.getValue();
 
-					for (String picture : tempSet) {
-						if ((limitPicture > 0) && (limit >= limitPicture)) { break; }
-						String image = CQCode.getInstance().getCQImage(picture).getUrl();
-						report.add("No." + order + " - " + pictureRank + "次：" + image.substring(0, image.indexOf("?")));
-						limit++;
+					for (String pictureCode : pictures) {
+						String imageURL = CQCode.getInstance().getCQImage(pictureCode).getUrl();
+						report.add("No." + order + " - " + pictureRepeatCount + "次：" + imageURL);
+
+						if ((limitRepeat != -1) && (++limit > limitPicture)) {
+							break loop; // limit = -1 表示无限
+						}
 					}
-
-					order = order + tempSet.size();
-
-					if ((limitPicture > 0) && (limit >= limitPicture)) { break; }
-
 				}
 			}
 		}
@@ -867,7 +1008,9 @@ public class Listener_TopSpeak extends ModuleListener {
 
 			ObjectOutputStream saver = new ObjectOutputStream(stream);
 
-			saver.writeObject(Listener_TopSpeak.this.GROUP_STATUS);
+			GROUP_STATUS.forEach((key, value) -> value.clean()); // 清理掉所有不需要保存的数据
+
+			saver.writeObject(GROUP_STATUS);
 			saver.close();
 
 			stream.flush();
@@ -978,14 +1121,23 @@ class GroupStatus implements Serializable {
 
 	}
 
+	public void clean() {
+		GROP_SENTENCE.clear();
+		GROP_COMMANDS.clear();
+		GROP_PICTURES.clear();
+		GROP_SNAPSHOT = 0;
+		GROP_HONGBAOS = 0;
+		GROP_TAPVIDEO = 0;
+		GROP_MESSAGES = 0;
+		GROP_CHARACTER = 0;
+		GROP_PURECCODE = 0;
+	}
+
 	public void say(long userid, MessageGrop message) {
-
 		USER_STATUS.get(userid).say(message);
-
 	}
 
 	public GroupStatus sum() {
-
 		GROP_SENTENCE = new LinkedList<>();
 		GROP_COMMANDS = new LinkedList<>();
 		GROP_PICTURES = new LinkedList<>();
@@ -1016,7 +1168,6 @@ class GroupStatus implements Serializable {
 		}
 
 		return this;
-
 	}
 
 }
@@ -1042,15 +1193,22 @@ class UserStatus implements Serializable {
 
 
 	public UserStatus(long userid) {
-
 		this.userid = userid;
+	}
 
+	public void clean() {
+		USER_COMMANDS.clear();
+		USER_SENTENCE.clear();
+		USER_PICTURES.clear();
+		USER_SNAPSHOT = 0;
+		USER_HONGBAOS = 0;
+		USER_TAPVIDEO = 0;
+		USER_CHARACTER = 0;
+		USER_PURECCODE = 0;
 	}
 
 	public void say(MessageGrop message) {
-
 		MESSAGES.add(message);
-
 	}
 
 	public UserStatus sum() {
@@ -1090,11 +1248,9 @@ class UserStatus implements Serializable {
 				}
 				USER_SENTENCE.add(temp.getResMessage());
 				USER_CHARACTER = USER_CHARACTER + temp.getResLength();
-
 			}
 		}
 		return this;
-
 	}
 
 }
