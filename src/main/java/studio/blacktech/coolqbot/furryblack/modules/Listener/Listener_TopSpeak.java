@@ -449,12 +449,12 @@ public class Listener_TopSpeak extends ModuleListener {
 				fileWriter.write("发言字数：" + groupStatus.GROP_CHARACTER + "\n");
 				fileWriter.write("命令次数：" + groupStatus.GROP_COMMANDS.size() + "\n");
 				fileWriter.write("发言图数：" + groupStatus.GROP_PICTURES.size() + "\n");
-				fileWriter.write("涂鸦个数：" + groupStatus.GROP_SCRAWLS + "\r\n");
-				fileWriter.write("礼物个数：" + groupStatus.GROP_PRESENT + "\r\n");
-				fileWriter.write("红包个数：" + groupStatus.GROP_ENVELOPE + "\r\n");
-				fileWriter.write("视频个数：" + groupStatus.GROP_TAPVIDEO + "\r\n");
-				fileWriter.write("闪照图数：" + groupStatus.GROP_SNAPSHOT + "\r\n");
-				fileWriter.write("听歌次数：" + groupStatus.GROP_SYNCMUSIC);
+				fileWriter.write("涂鸦个数：" + groupStatus.GROP_SCRAWLS + "\n");
+				fileWriter.write("礼物个数：" + groupStatus.GROP_PRESENT + "\n");
+				fileWriter.write("红包个数：" + groupStatus.GROP_ENVELOPE + "\n");
+				fileWriter.write("视频个数：" + groupStatus.GROP_TAPVIDEO + "\n");
+				fileWriter.write("闪照图数：" + groupStatus.GROP_SNAPSHOT + "\n");
+				fileWriter.write("听歌次数：" + groupStatus.GROP_SYNCMUSIC + "\n");
 
 				for (Entry<Long, String> allMessageByTimeEntry : allMessageByTime.entrySet()) fileWriter.write(allMessageByTimeEntry.getValue());
 
@@ -648,9 +648,9 @@ public class Listener_TopSpeak extends ModuleListener {
 		//
 		// ===========================================================
 
-		String valueRank = limitRank > 0 ? String.valueOf(limitRank) : limitRank == 0 ? "无限" : "关";
-		String valueRepeat = limitRepeat > 0 ? String.valueOf(limitRepeat) : limitRepeat == 0 ? "无限" : "关";
-		String valuePicture = limitPicture > 0 ? String.valueOf(limitPicture) : limitPicture == 0 ? "无限" : "关";
+		String valueRank = limitRank > 0 ? String.valueOf(limitRank) : limitRank == 0 ? "关" : "无限";
+		String valueRepeat = limitRepeat > 0 ? String.valueOf(limitRepeat) : limitRepeat == 0 ? "关" : "无限";
+		String valuePicture = limitPicture > 0 ? String.valueOf(limitPicture) : limitPicture == 0 ? "关" : "无限";
 
 		builder.append("（1/4）水群统计 " + valueRank + "/" + valueRepeat + "/" + valuePicture + "\r\n");
 		builder.append("自" + LoggerX.formatTime("yyyy-MM-dd HH", new Date(groupStatus.initdt)) + ":00 以来" + "\r\n");
