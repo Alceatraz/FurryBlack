@@ -53,7 +53,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群统计";
 	private static String MODULE_DESCRIPTION = "水群统计";
-	private static String MODULE_VERSION = "32.0";
+	private static String MODULE_VERSION = "33.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {
 			"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
@@ -83,9 +83,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	// ==========================================================================================================================================================
 
 	public Listener_TopSpeak() throws Exception {
-
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
-
 	}
 
 	@Override
@@ -167,9 +165,11 @@ public class Listener_TopSpeak extends ModuleListener {
 				GroupStatus groupStatus = GROUP_STATUS.get(gropid);
 				List<Member> members = entry.getCQ().getGroupMemberList(gropid);
 				for (Member member : members) {
-					if (!groupStatus.USER_STATUS.containsKey(member.getQQId())) {
-						groupStatus.USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
-						logger.seek("新建成员", group.getId() + " > " + entry.getNickname(member.getQQId()) + "(" + member.getQQId() + ")");
+					long userid = member.getQQId();
+					if (entry.isMyself(userid)) GROUP_STATUS.get(gropid).USER_STATUS.remove(userid); // 移除自身存档
+					if (!groupStatus.USER_STATUS.containsKey(userid)) {
+						groupStatus.USER_STATUS.put(userid, new UserStatus(userid));
+						logger.seek("新建成员", gropid + " > " + entry.getNickname(userid) + "(" + userid + ")");
 					}
 				}
 			} else {
@@ -231,6 +231,10 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public String[] exec(Message message) throws Exception {
 
+
+		long a = System.nanoTime();
+
+
 		if (message.getSection() < 1) {
 			return new String[] {
 					"参数不足"
@@ -239,121 +243,230 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		String command = message.getSegment()[1];
 
+		int i = 0;
+
 		switch (command) {
+
+
+			// ================================================================================================
+			// 重设所有消息的 type 用于存档迁移
+
+			case "flush":
+				for (Entry<Long, GroupStatus> groupStatusStorageEntry : GROUP_STATUS.entrySet()) {
+					GroupStatus groupStatus = groupStatusStorageEntry.getValue();
+					for (Entry<Long, UserStatus> userStatusStorageEntry : groupStatus.USER_STATUS.entrySet()) {
+						UserStatus userStatus = userStatusStorageEntry.getValue();
+						for (MessageGrop tempMessage : userStatus.MESSAGES) {
+							tempMessage.setType();
+							i++;
+						}
+					}
+				}
+				return new String[] {
+						"耗时 " + (System.nanoTime() - a) / 1000000 + "ms 重设所有消息类型 " + i + "条"
+				};
+
+
+			// ================================================================================================
+			// 重设所有消息的解析结果 并重新解析
+
+			case "parse":
+				for (Entry<Long, GroupStatus> groupStatusStorageEntry : GROUP_STATUS.entrySet()) {
+					GroupStatus groupStatus = groupStatusStorageEntry.getValue();
+					for (Entry<Long, UserStatus> userStatusStorageEntry : groupStatus.USER_STATUS.entrySet()) {
+						UserStatus userStatus = userStatusStorageEntry.getValue();
+						for (MessageGrop tempMessage : userStatus.MESSAGES) {
+							tempMessage.reParse();
+							i++;
+						}
+					}
+				}
+				return new String[] {
+						"耗时 " + (System.nanoTime() - a) / 1000000 + "ms 解析所有消息 " + i + "条"
+				};
+
+
+			// ================================================================================================
+
+			case "list":
+
+				StringBuilder builder = new StringBuilder();
+
+				// admin exec --module=shui list
+				if (message.getSection() == 2) {
+
+					builder.append("包含 " + GROUP_STATUS.size() + "个群\r\n");
+
+					for (Entry<Long, GroupStatus> groupStatusStorageEntry : GROUP_STATUS.entrySet()) {
+						long gropid = groupStatusStorageEntry.getKey();
+						GroupStatus groupStatus = groupStatusStorageEntry.getValue();
+						long initTime = groupStatus.initdt;
+						builder.append("群：" + gropid + "[" + LoggerX.datetime(initTime) + "] " + groupStatus.USER_STATUS.size() + "个\r\n");
+					}
+
+					builder.setLength(builder.length() - 2);
+
+				} else if (message.getSection() == 3) {
+
+					long gropid = Long.parseLong(message.getSegment(2));
+
+					GroupStatus groupStatus = GROUP_STATUS.get(gropid);
+
+					for (Entry<Long, UserStatus> userStatusEntry : groupStatus.USER_STATUS.entrySet()) {
+						long userid = userStatusEntry.getKey();
+						UserStatus userStatus = userStatusEntry.getValue();
+						builder.append(entry.getGropnick(gropid, userid) + "(" + userid + ") " + userStatus.MESSAGES.size() + "句\r\n");
+					}
+				} else {
+					builder.append("命令错误");
+				}
+
+				return new String[] {
+						builder.toString()
+				};
+
+
+			// ================================================================================================
+
+			case "delete":
+
+				if (message.getSection() == 3) {
+					long gropid = Long.parseLong(message.getSegment(2));
+					GROUP_STATUS.remove(gropid);
+					return new String[] {
+							"群号：" + gropid + "已删除"
+					};
+				} else if (message.getSection() == 4) {
+					long gropid = Long.parseLong(message.getSegment(2));
+					long userid = Long.parseLong(message.getSegment(3));
+					GROUP_STATUS.get(gropid).USER_STATUS.remove(userid);
+					return new String[] {
+							"群号：" + gropid + " 用户：" + userid + "已删除"
+					};
+				}
+
+				return new String[] {
+						"错误：需要群号或者群+用户"
+				};
+
+
+			// ================================================================================================
 
 			case "save":
 				File DAILY_BACKUP = Paths.get(FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
 				saveData(DAILY_BACKUP);
 				return new String[] {
-						"保存存档 - " + DAILY_BACKUP.getName()
+						"耗时 " + (System.nanoTime() - a) / 1000000 + "ms 存存档 " + DAILY_BACKUP.getName()
 				};
 
-			case "dump":
 
+			// ================================================================================================
+
+			case "dump":
 				if (!message.hasSwitch("gropid")) {
 					return new String[] {
 							"参数错误 --gropid 为空"
 					};
 				}
 
-				boolean C = false;
-				boolean P = false;
-				boolean R = false;
-
-				if (message.hasSwitch("filter")) {
-
-					String raw = message.getSwitch("filter");
-
-					if (raw == null || raw.length() != 3) {
-						return new String[] {
-								"BinMask位置 命令 纯码 原始消息"
-						};
-					}
-
-					C = raw.charAt(0) == '1' ? true : false;
-					P = raw.charAt(0) == '1' ? true : false;
-					R = raw.charAt(0) == '1' ? true : false;
-
-				}
-
-
 				long gropid = Long.parseLong(message.getSwitch("gropid"));
 
-				File dumpFile = Paths.get(FOLDER_LOGS.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + "_dump.txt").toFile();
+				File dumpFolder = Paths.get(FOLDER_LOGS.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + "_dump").toFile();
+
+				dumpFolder.mkdirs();
+
+				// =====================================================================================
+				// 写入无trim的全局排行榜
+
+				File dumpFile = Paths.get(dumpFolder.getAbsolutePath(), "global_rank.txt").toFile();
 				dumpFile.createNewFile();
 
 				FileWriter fileWriter = new FileWriter(dumpFile);
 
-				fileWriter.write("## RANK\n\n\n\n");
-
-				String[] result = generateMemberRank(gropid, -1, -1, -1);
+				String[] result = generateMemberRank(gropid, -1, -1, -1, false);
 
 				for (String part : result) {
 					fileWriter.append(part);
 					fileWriter.append("\n");
 				}
 
-				fileWriter.write("\n\n\n## DUMP\n\n\n\n");
+				fileWriter.flush();
+				fileWriter.close();
 
 
-				GroupStatus groupStatus = GROUP_STATUS.get(gropid).sum();
+				TreeMap<Long, String> allMessageByTime = new TreeMap<>();
 
-				fileWriter.write("创建时间：" + LoggerX.formatTime("yyyy-MM-dd HH:mm:ss", new Date(groupStatus.initdt)) + "(" + groupStatus.initdt + ")\n\n");
+				// =====================================================================================
+				// 按照用户写入发言记录
+
+
+				GroupStatus groupStatus = GROUP_STATUS.get(gropid);
+
+				String record = "存档创建时间：" + LoggerX.formatTime("yyyy-MM-dd HH:mm:ss", new Date(groupStatus.initdt)) + "(" + groupStatus.initdt + ")\n\n\n\n";
+
+				for (Entry<Long, UserStatus> userStatusEntry : groupStatus.USER_STATUS.entrySet()) {
+
+					Long userid = userStatusEntry.getKey();
+					UserStatus userStatus = userStatusEntry.getValue();
+
+					dumpFile = Paths.get(dumpFolder.getAbsolutePath(), "user_" + userid + "_" + entry.getGropnick(gropid, userid) + ".txt").toFile();
+					dumpFile.createNewFile();
+
+					fileWriter = new FileWriter(dumpFile);
+
+					fileWriter.write(record);
+					fileWriter.write("用户：" + entry.getGropnick(gropid, userid) + "(" + userid + ")\n");
+					fileWriter.write("发言条数：" + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "\n");
+					fileWriter.write("发言字数：" + userStatus.USER_CHARACTER + "\n");
+					fileWriter.write("命令次数：" + userStatus.USER_COMMANDS.size() + "\n");
+					fileWriter.write("发言图数：" + userStatus.USER_PICTURES.size() + "\n");
+					fileWriter.write("涂鸦个数：" + userStatus.USER_SCRAWLS + "\n");
+					fileWriter.write("礼物个数：" + userStatus.USER_PRESENT + "\n");
+					fileWriter.write("红包个数：" + userStatus.USER_ENVELOPE + "\n");
+					fileWriter.write("视频个数：" + userStatus.USER_TAPVIDEO + "\n");
+					fileWriter.write("闪照图数：" + userStatus.USER_SNAPSHOT + "\n");
+					fileWriter.write("听歌次数：" + userStatus.USER_SYNCMUSIC + "\n");
+
+					for (Message element : userStatus.MESSAGES) {
+						String sendTime = "[" + LoggerX.datetime(element.getSendtime()) + "]";
+						fileWriter.write(sendTime + element.getRawMessage() + "\n");
+						String userInfo = "{" + entry.getGropnick(gropid, userid) + "(" + userid + ")}";
+						allMessageByTime.put(element.getSendtime(), sendTime + userInfo + element.getRawMessage() + "\n");
+					}
+
+					fileWriter.flush();
+					fileWriter.close();
+				}
+
+				dumpFile = Paths.get(dumpFolder.getAbsolutePath(), "timeline.txt").toFile();
+				dumpFile.createNewFile();
+
+				fileWriter = new FileWriter(dumpFile);
+
+				fileWriter.write(record);
 				fileWriter.write("总消息数：" + groupStatus.GROP_MESSAGES + "\n");
 				fileWriter.write("发言条数：" + (groupStatus.GROP_SENTENCE.size() + groupStatus.GROP_PURECCODE) + "\n");
 				fileWriter.write("发言字数：" + groupStatus.GROP_CHARACTER + "\n");
 				fileWriter.write("命令次数：" + groupStatus.GROP_COMMANDS.size() + "\n");
 				fileWriter.write("发言图数：" + groupStatus.GROP_PICTURES.size() + "\n");
-				fileWriter.write("闪照图数：" + groupStatus.GROP_SNAPSHOT + "\n");
-				fileWriter.write("视频个数：" + groupStatus.GROP_TAPVIDEO + "\n");
-				fileWriter.write("红包个数：" + groupStatus.GROP_HONGBAOS + "\n\n");
+				fileWriter.write("涂鸦个数：" + groupStatus.GROP_SCRAWLS + "\r\n");
+				fileWriter.write("礼物个数：" + groupStatus.GROP_PRESENT + "\r\n");
+				fileWriter.write("红包个数：" + groupStatus.GROP_ENVELOPE + "\r\n");
+				fileWriter.write("视频个数：" + groupStatus.GROP_TAPVIDEO + "\r\n");
+				fileWriter.write("闪照图数：" + groupStatus.GROP_SNAPSHOT + "\r\n");
+				fileWriter.write("听歌次数：" + groupStatus.GROP_SYNCMUSIC);
 
-				for (Entry<Long, UserStatus> userStatusEntry : groupStatus.USER_STATUS.entrySet()) {
-
-					Long userid = userStatusEntry.getKey();
-
-					UserStatus userStatus = userStatusEntry.getValue();
-
-					fileWriter.write("# =============================================================================\n");
-					fileWriter.write("# 用户：" + entry.getGropnick(gropid, userid) + "(" + userid + ")\n");
-					fileWriter.write("# 发言条数：" + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "\n");
-					fileWriter.write("# 发言字数：" + userStatus.USER_CHARACTER + "\n");
-					fileWriter.write("# 命令次数：" + userStatus.USER_COMMANDS.size() + "\n");
-					fileWriter.write("# 发言图数：" + userStatus.USER_PICTURES.size() + "\n");
-					fileWriter.write("# 闪照图数：" + userStatus.USER_SNAPSHOT + "\n");
-					fileWriter.write("# 视频个数：" + userStatus.USER_TAPVIDEO + "\n");
-					fileWriter.write("# 红包个数：" + userStatus.USER_HONGBAOS + "\n\n");
-					fileWriter.write("# =============================================================================\n");
-
-					for (Message element : userStatus.MESSAGES) {
-
-						if (element.isHongbao()) continue;
-						if (element.isQQVideo()) continue;
-						if (element.isSnappic()) continue;
-						if (P && element.isPureCQC()) {
-							fileWriter.write(element.getRawMessage());
-							continue;
-						}
-						if (C && element.isCommand()) {
-							fileWriter.write(element.getRawMessage());
-							continue;
-						}
-						if (R && element.hasPicture()) {
-							fileWriter.write(element.getRawMessage() + "\n");
-						} else {
-							fileWriter.write(element.getResMessage() + "\n");
-						}
-					}
-
-					fileWriter.write("\n\n");
-				}
+				for (Entry<Long, String> allMessageByTimeEntry : allMessageByTime.entrySet()) fileWriter.write(allMessageByTimeEntry.getValue());
 
 				fileWriter.flush();
 				fileWriter.close();
 
 				return new String[] {
-						"已将结果保存至文件 " + dumpFile.getName()
+						"耗时 " + (System.nanoTime() - a) / 1000000 + "ms 保存至" + dumpFolder.getName()
 				};
+
+
+			// ================================================================================================
 
 			default:
 				return new String[] {
@@ -438,11 +551,12 @@ public class Listener_TopSpeak extends ModuleListener {
 			}
 		}
 
+		boolean trim = message.hasSwitch("no-trim") ? false : true;
 
 		switch (mode) {
 
 			case 10:
-				String[] result = generateMemberRank(gropid, limitRank, limitRepeat, limitPicture);
+				String[] result = generateMemberRank(gropid, limitRank, limitRepeat, limitPicture, trim);
 				if (message.hasSwitch("dump")) {
 					File dumpFile = Paths.get(FOLDER_LOGS.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + "_rank.txt").toFile();
 					try {
@@ -471,7 +585,9 @@ public class Listener_TopSpeak extends ModuleListener {
 				if (message.hasSwitch("match")) {
 					String match = message.getSwitch("match");
 					if (match.length() == 0) {
-
+						return new String[] {
+								"参数错误 --match 为空"
+						};
 					}
 					return generateMemberCountGrep(gropid, match, limitRank);
 
@@ -507,8 +623,15 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	/**
 	 * 这个函数写了好几百行 而且我不打算告诉你这个的运行逻辑
+	 *
+	 * @param gropid       群号
+	 * @param limitRank    排名 limit
+	 * @param limitRepeat  复读 limit
+	 * @param limitPicture 图片 limit
+	 * @param trim         是否裁剪 无重复的发言和图片
+	 * @return 报告
 	 */
-	private String[] generateMemberRank(long gropid, int limitRank, int limitRepeat, int limitPicture) {
+	private String[] generateMemberRank(long gropid, int limitRank, int limitRepeat, int limitPicture, boolean trim) {
 
 		StringBuilder builder;
 		LinkedList<String> report = new LinkedList<>();
@@ -536,9 +659,12 @@ public class Listener_TopSpeak extends ModuleListener {
 		builder.append("发言字数：" + groupStatus.GROP_CHARACTER + "\r\n");
 		builder.append("命令次数：" + groupStatus.GROP_COMMANDS.size() + "\r\n");
 		builder.append("发言图数：" + groupStatus.GROP_PICTURES.size() + "\r\n");
-		builder.append("闪照图数：" + groupStatus.GROP_SNAPSHOT + "\r\n");
+		builder.append("涂鸦个数：" + groupStatus.GROP_SCRAWLS + "\r\n");
+		builder.append("礼物个数：" + groupStatus.GROP_PRESENT + "\r\n");
+		builder.append("红包个数：" + groupStatus.GROP_ENVELOPE + "\r\n");
 		builder.append("视频个数：" + groupStatus.GROP_TAPVIDEO + "\r\n");
-		builder.append("红包个数：" + groupStatus.GROP_HONGBAOS);
+		builder.append("闪照图数：" + groupStatus.GROP_SNAPSHOT + "\r\n");
+		builder.append("听歌次数：" + groupStatus.GROP_SYNCMUSIC);
 
 		report.add(builder.toString());
 
@@ -591,11 +717,17 @@ public class Listener_TopSpeak extends ModuleListener {
 					for (long userid : membersWithSameRank) {
 
 						UserStatus userStatus = groupStatus.USER_STATUS.get(userid);
+
 						builder.append("No." + order + " - " + entry.getGropnick(gropid, userid) + "(" + userid + ") " + (userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE) + "句/" + userStatus.USER_CHARACTER + "字");
-						if (userStatus.USER_PICTURES.size() > 0) { builder.append("/" + userStatus.USER_PICTURES.size() + "图"); }
-						if (userStatus.USER_SNAPSHOT > 0) { builder.append("/" + userStatus.USER_SNAPSHOT + "闪"); }
-						if (userStatus.USER_TAPVIDEO > 0) { builder.append("/" + userStatus.USER_TAPVIDEO + "片"); }
-						if (userStatus.USER_HONGBAOS > 0) { builder.append("/" + userStatus.USER_HONGBAOS + "包"); }
+
+						if (userStatus.USER_PICTURES.size() > 0) builder.append("/" + userStatus.USER_PICTURES.size() + "图");
+						if (userStatus.USER_SNAPSHOT > 0) builder.append("/" + userStatus.USER_SNAPSHOT + "闪");
+						if (userStatus.USER_TAPVIDEO > 0) builder.append("/" + userStatus.USER_TAPVIDEO + "片");
+						if (userStatus.USER_ENVELOPE > 0) builder.append("/" + userStatus.USER_ENVELOPE + "包");
+						if (userStatus.USER_SCRAWLS > 0) builder.append("/" + userStatus.USER_SCRAWLS + "画");
+						if (userStatus.USER_PRESENT > 0) builder.append("/" + userStatus.USER_PRESENT + "礼");
+						if (userStatus.USER_SYNCMUSIC > 0) builder.append("/" + userStatus.USER_SYNCMUSIC + "听");
+
 						builder.append("\r\n");
 
 						if (limitRank != -1 && ++limit > limitRank) break loop; // limit = -1 表示无限
@@ -696,6 +828,9 @@ public class Listener_TopSpeak extends ModuleListener {
 			}
 
 
+			if (trim) allMessageRank.remove(1);
+
+
 			// step 3 输出报告
 
 			if (allMessageRank.size() > 0) {
@@ -765,6 +900,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				allPictureRank.get(tempCount).add(raw);
 			}
+
+			if (trim) allPictureRank.remove(1);
 
 
 			// step 3 输出报告
@@ -975,13 +1112,11 @@ public class Listener_TopSpeak extends ModuleListener {
 			FileOutputStream stream = new FileOutputStream(file);
 			ObjectOutputStream saver = new ObjectOutputStream(stream);
 
-			logger.info("保存数据");
-
 			GROUP_STATUS.forEach((key, value) -> value.clean()); // 清理掉所有不需要保存的数据
 
-			logger.info("整理数据");
-
 			saver.writeObject(GROUP_STATUS);
+
+			saver.flush();
 			saver.close();
 
 			stream.flush();
@@ -995,67 +1130,37 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@SuppressWarnings("deprecation")
 	class Worker implements Runnable {
-
 		@Override
 		public void run() {
-
 			long time;
 			Date date;
-
 			do {
 				try {
-
 					while (true) {
-
 						date = new Date();
-
 						time = 86400L;
 						time = time - date.getSeconds();
 						time = time - date.getMinutes() * 60;
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
-
-						if (entry.DEBUG()) {
-							Listener_TopSpeak.this.logger.full("工作线程休眠：" + time);
-						}
-
 						Thread.sleep(time);
-
-						if (entry.DEBUG()) {
-							Listener_TopSpeak.this.logger.full("工作线程执行");
-						}
-
 						File DAILY_BACKUP = Paths.get(Listener_TopSpeak.this.FOLDER_DATA.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".bak").toFile();
-
 						saveData(DAILY_BACKUP);
-
-						for (long temp : GROUP_REPORT) {
-							entry.gropInfo(temp, generateMemberRank(temp, 10, 10, 3));
-						}
-
 						Listener_TopSpeak.this.logger.seek("定时备份", DAILY_BACKUP.getAbsolutePath());
-
+						for (long temp : GROUP_REPORT) entry.gropInfo(temp, generateMemberRank(temp, 10, 10, 3, true));
 					}
-
 				} catch (Exception exception) {
-
 					if (entry.isEnable()) {
-
 						long timeserial = System.currentTimeMillis();
 						entry.adminInfo("[每日任务发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
 						Listener_TopSpeak.this.logger.exception(timeserial, "每日任务发生异常", exception);
-
 					} else {
 						Listener_TopSpeak.this.logger.full("关闭");
 					}
-
 				}
 			} while (entry.isEnable());
-
 		}
-
 	}
-
 }
 
 
@@ -1072,13 +1177,15 @@ class GroupStatus implements Serializable {
 	public LinkedList<String> GROP_COMMANDS;
 	public LinkedList<String> GROP_PICTURES;
 
-	public int GROP_SNAPSHOT = 0;
-	public int GROP_HONGBAOS = 0;
-	public int GROP_TAPVIDEO = 0;
 	public int GROP_MESSAGES = 0;
 	public int GROP_CHARACTER = 0;
 	public int GROP_PURECCODE = 0;
-
+	public int GROP_SCRAWLS = 0;
+	public int GROP_PRESENT = 0;
+	public int GROP_ENVELOPE = 0;
+	public int GROP_TAPVIDEO = 0;
+	public int GROP_SNAPSHOT = 0;
+	public int GROP_SYNCMUSIC = 0;
 
 	public GroupStatus(long gropid) {
 
@@ -1095,7 +1202,6 @@ class GroupStatus implements Serializable {
 	}
 
 	public void clean() {
-		entry.getCQ().logDebug("FurryBlackDebug", "grop " + gropid);
 		USER_STATUS.forEach((key, value) -> value.clean());
 		GROP_SENTENCE = null;
 		GROP_COMMANDS = null;
@@ -1107,32 +1213,40 @@ class GroupStatus implements Serializable {
 	}
 
 	public GroupStatus sum() {
+
 		GROP_SENTENCE = new LinkedList<>();
 		GROP_COMMANDS = new LinkedList<>();
 		GROP_PICTURES = new LinkedList<>();
 
-		GROP_SNAPSHOT = 0;
-		GROP_HONGBAOS = 0;
-		GROP_TAPVIDEO = 0;
 		GROP_MESSAGES = 0;
 		GROP_CHARACTER = 0;
 		GROP_PURECCODE = 0;
+		GROP_SCRAWLS = 0;
+		GROP_PRESENT = 0;
+		GROP_ENVELOPE = 0;
+		GROP_TAPVIDEO = 0;
+		GROP_SNAPSHOT = 0;
+		GROP_SYNCMUSIC = 0;
 
 		for (long userid : USER_STATUS.keySet()) {
 
 			UserStatus userStauts = USER_STATUS.get(userid).sum();
+
 			GROP_SENTENCE.addAll(userStauts.USER_SENTENCE);
 			GROP_COMMANDS.addAll(userStauts.USER_COMMANDS);
 			GROP_PICTURES.addAll(userStauts.USER_PICTURES);
-
-			GROP_SNAPSHOT = GROP_SNAPSHOT + userStauts.USER_SNAPSHOT;
-			GROP_HONGBAOS = GROP_HONGBAOS + userStauts.USER_HONGBAOS;
-			GROP_TAPVIDEO = GROP_TAPVIDEO + userStauts.USER_TAPVIDEO;
 
 			GROP_MESSAGES = GROP_MESSAGES + userStauts.MESSAGES.size();
 
 			GROP_CHARACTER = GROP_CHARACTER + userStauts.USER_CHARACTER;
 			GROP_PURECCODE = GROP_PURECCODE + userStauts.USER_PURECCODE;
+
+			GROP_SCRAWLS = GROP_SCRAWLS + userStauts.USER_SCRAWLS;
+			GROP_PRESENT = GROP_PRESENT + userStauts.USER_PRESENT;
+			GROP_ENVELOPE = GROP_ENVELOPE + userStauts.USER_ENVELOPE;
+			GROP_TAPVIDEO = GROP_TAPVIDEO + userStauts.USER_TAPVIDEO;
+			GROP_SNAPSHOT = GROP_SNAPSHOT + userStauts.USER_SNAPSHOT;
+			GROP_SYNCMUSIC = GROP_SYNCMUSIC + userStauts.USER_SYNCMUSIC;
 
 		}
 
@@ -1154,11 +1268,14 @@ class UserStatus implements Serializable {
 	public LinkedList<String> USER_SENTENCE;
 	public LinkedList<String> USER_PICTURES;
 
-	public int USER_SNAPSHOT = 0;
-	public int USER_HONGBAOS = 0;
-	public int USER_TAPVIDEO = 0;
 	public int USER_CHARACTER = 0;
 	public int USER_PURECCODE = 0;
+	public int USER_SCRAWLS = 0;
+	public int USER_PRESENT = 0;
+	public int USER_ENVELOPE = 0;
+	public int USER_TAPVIDEO = 0;
+	public int USER_SNAPSHOT = 0;
+	public int USER_SYNCMUSIC = 0;
 
 
 	public UserStatus(long userid) {
@@ -1166,7 +1283,6 @@ class UserStatus implements Serializable {
 	}
 
 	public void clean() {
-		entry.getCQ().logDebug("FurryBlackDexebug", "   user " + userid);
 		USER_COMMANDS = null;
 		USER_SENTENCE = null;
 		USER_PICTURES = null;
@@ -1184,35 +1300,60 @@ class UserStatus implements Serializable {
 
 		USER_CHARACTER = 0;
 		USER_PURECCODE = 0;
-		USER_SNAPSHOT = 0;
+		USER_SCRAWLS = 0;
+		USER_PRESENT = 0;
+		USER_ENVELOPE = 0;
 		USER_TAPVIDEO = 0;
-		USER_HONGBAOS = 0;
+		USER_SNAPSHOT = 0;
+		USER_SYNCMUSIC = 0;
 
 		for (MessageGrop temp : MESSAGES) {
-			if (temp.isCommand()) {
-				USER_COMMANDS.add(temp.getCommand());
-			} else if (temp.isSnappic()) {
-				USER_SNAPSHOT++;
-			} else if (temp.isQQVideo()) {
-				USER_TAPVIDEO++;
-			} else if (temp.isHongbao()) {
-				USER_HONGBAOS++;
-			} else if (temp.hasPicture()) {
-				for (String image : temp.getPicture()) {
-					USER_PICTURES.add(image);
-				}
-			} else if (temp.isPureCQC()) {
 
-				USER_PURECCODE++;
-				USER_CHARACTER++;
+			switch (temp.getType()) {
 
-			} else {
+				// 垃圾消息
 
-				if (temp.getResLength() == 0) {
+				case Scrawls:
+					USER_SCRAWLS++;
 					continue;
-				}
-				USER_SENTENCE.add(temp.getResMessage());
-				USER_CHARACTER = USER_CHARACTER + temp.getResLength();
+
+				case Present:
+					USER_PRESENT++;
+					continue;
+
+				case Envelope:
+					USER_ENVELOPE++;
+					continue;
+
+				case TapVideo:
+					USER_TAPVIDEO++;
+					continue;
+
+				case SnapShot:
+					USER_SNAPSHOT++;
+					continue;
+
+				case SyncMusic:
+					USER_SYNCMUSIC++;
+					continue;
+
+				// 正常消息
+
+				case Command:
+					USER_COMMANDS.add(temp.getCmdMessage());
+					continue;
+
+				case PureCode:
+					USER_PURECCODE++;
+					USER_CHARACTER++;
+					continue;
+
+				case Normal:
+					// if (temp.getResLength() == 0) continue;
+					if (temp.hasPicture()) for (String image : temp.getPicture()) USER_PICTURES.add(image);
+					USER_SENTENCE.add(temp.getResMessage());
+					USER_CHARACTER = USER_CHARACTER + temp.getResLength();
+					continue;
 			}
 		}
 		return this;

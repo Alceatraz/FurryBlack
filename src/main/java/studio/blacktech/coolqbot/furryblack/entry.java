@@ -79,7 +79,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// ==========================================================================================================================================================
 
 	// 版本ID
-	public final static String VerID = "15.5 2020-01-27 (20:00)";
+	public final static String VerID = "15.6 2020-01-28 (14:00)";
 
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();
@@ -455,7 +455,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
+		SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。只有BTS官方运行的FurryBlackBot才是“白熊”，由其他人使用本SDK开发运营的帐号与BTS无关。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
 		SYSTEMD.sendEula(userid);
 		SYSTEMD.sendHelp(userid);
 		SYSTEMD.sendListUser(userid);
@@ -546,8 +546,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		String type = typeid == 1 ? "解除" : "任命";
 		String nick = SYSTEMD.getNickname(userid);
 		logger.full("管理员变动", "群" + gropid + " " + type + " " + nick + "(" + userid + ")");
-		SYSTEMD.adminInfo("[管理员变动] - " + sendtime + "\r\n群聊：" + gropid + "\r\n类型：" + type + "\r\n用户：" + nick + "("
-				+ userid + ")");
+		SYSTEMD.adminInfo("[管理员变动] - " + sendtime + "\r\n群聊：" + gropid + "\r\n类型：" + type + "\r\n用户：" + nick + "(" + userid + ")");
 		return 0;
 
 	}
@@ -557,15 +556,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	@Override
 	public int groupUpload(int typeid, int sendtime, long gropid, long userid, String file) {
-
 		return 0;
-
 	}
+
+
 	// ==========================================================================================================================================================
 	//
 	// 工具函数
 	//
 	// ==========================================================================================================================================================
+
 
 	/**
 	 * 获取CQ对象 1.3.0开始CQ不再是静态调用
@@ -573,10 +573,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return CQ对象
 	 */
 	public static CoolQ getCQ() {
-
 		return CQ;
-
 	}
+
 
 	/**
 	 * 获取自身JarFile
@@ -584,10 +583,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return JarFile对象
 	 */
 	public static JarFile getJar() {
-
 		return JAR_INSTANCE;
-
 	}
+
 
 	/**
 	 * 获取存储目录的路径
@@ -595,10 +593,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 存储路径
 	 */
 	public static String getAppDirectory() {
-
 		return appDirectory;
-
 	}
+
 
 	/**
 	 * 切换DEBUG模式
@@ -606,11 +603,10 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 是否开启DEBUG模式
 	 */
 	public static boolean switchDEBUG() {
-
 		DEBUG = !DEBUG;
 		return DEBUG;
-
 	}
+
 
 	/**
 	 * 获取是否开启DEBUG模式
@@ -618,10 +614,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 是否开启DEBUG模式
 	 */
 	public static boolean DEBUG() {
-
 		return DEBUG;
-
 	}
+
 
 	/**
 	 * 获取开关状态
@@ -629,10 +624,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 开 / 关
 	 */
 	public static boolean isEnable() {
-
 		return enable;
-
 	}
+
 
 	/**
 	 * 设置开关
@@ -640,15 +634,15 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param mode 开 / 关
 	 */
 	public static void setEnable(boolean mode) {
-
 		enable = mode;
-
 	}
+
 	// ==========================================================================================================================================================
 	//
 	// 方法传递 消息
 	//
 	// ==========================================================================================================================================================
+
 
 	/**
 	 * 获取Systemd对象
@@ -656,9 +650,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return Systemd对象
 	 */
 	public static Systemd getSystemd() {
-
 		return SYSTEMD;
-
 	}
 
 
@@ -669,9 +661,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 是 / 否
 	 */
 	public static boolean isMyself(long userid) {
-
 		return SYSTEMD.isMyself(userid);
-
 	}
 
 	/**
@@ -681,9 +671,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 是 / 否
 	 */
 	public static boolean isAdmin(long userid) {
-
 		return SYSTEMD.isAdmin(userid);
-
 	}
 
 	/**
@@ -692,9 +680,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void adminInfo(String message) {
-
 		SYSTEMD.adminInfo(message);
-
 	}
 
 	/**
@@ -703,9 +689,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void adminInfo(String[] message) {
-
 		SYSTEMD.adminInfo(message);
-
 	}
 
 	/**
@@ -715,9 +699,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void userInfo(long userid, String message) {
-
 		SYSTEMD.userInfo(userid, message);
-
 	}
 
 	/**
@@ -727,9 +709,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void userInfo(long userid, String[] message) {
-
 		SYSTEMD.userInfo(userid, message);
-
 	}
 
 	/**
@@ -739,9 +719,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void diszInfo(long diszid, String message) {
-
 		SYSTEMD.diszInfo(diszid, message);
-
 	}
 
 	/**
@@ -751,9 +729,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void diszInfo(long diszid, String[] message) {
-
 		SYSTEMD.diszInfo(diszid, message);
-
 	}
 
 	/**
@@ -764,9 +740,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void diszInfo(long diszid, long userid, String message) {
-
 		SYSTEMD.diszInfo(diszid, userid, message);
-
 	}
 
 	/**
@@ -776,9 +750,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void gropInfo(long gropid, String message) {
-
 		SYSTEMD.gropInfo(gropid, message);
-
 	}
 
 	/**
@@ -788,9 +760,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void gropInfo(long gropid, String[] message) {
-
 		SYSTEMD.gropInfo(gropid, message);
-
 	}
 
 	/**
@@ -801,15 +771,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param message 消息
 	 */
 	public static void gropInfo(long gropid, long userid, String message) {
-
 		SYSTEMD.gropInfo(gropid, userid, message);
-
 	}
+
+
 	// ==========================================================================================================================================================
 	//
 	// 方法传递
 	//
 	// ==========================================================================================================================================================
+
 
 	/**
 	 * 私聊某人 /info
@@ -817,10 +788,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendInfo(long userid) {
-
 		SYSTEMD.sendInfo(userid);
-
 	}
+
 
 	/**
 	 * 私聊某人 /eula
@@ -828,10 +798,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendEula(long userid) {
-
 		SYSTEMD.sendEula(userid);
-
 	}
+
 
 	/**
 	 * 私聊某人 /help
@@ -839,10 +808,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendHelp(long userid) {
-
 		SYSTEMD.sendHelp(userid);
-
 	}
+
 
 	/**
 	 * 私聊某人 /help $name
@@ -851,10 +819,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param name   模块名
 	 */
 	public static void sendHelp(long userid, String name) {
-
 		SYSTEMD.sendHelp(userid, name);
-
 	}
+
 
 	/**
 	 * 私聊某人 私聊模式/list
@@ -862,10 +829,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendListUser(long userid) {
-
 		SYSTEMD.sendListUser(userid);
-
 	}
+
 
 	/**
 	 * 私聊某人 讨论组模式/list
@@ -873,9 +839,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendListDisz(long userid) {
-
 		SYSTEMD.sendListDisz(userid);
-
 	}
 
 	/**
@@ -884,10 +848,10 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 */
 	public static void sendListGrop(long userid) {
-
 		SYSTEMD.sendListGrop(userid);
-
 	}
+
+
 	// ==========================================================================================================================================================
 	//
 	// 方法传递
@@ -901,10 +865,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 昵称
 	 */
 	public static String getNickname(long userid) {
-
 		return SYSTEMD.getNickname(userid);
-
 	}
+
 
 	/**
 	 * 从昵称对应表查找昵称
@@ -914,15 +877,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 昵称
 	 */
 	public static String getGropnick(long gropid, long userid) {
-
 		return SYSTEMD.getGropNick(gropid, userid);
-
 	}
+
+
 	// ==========================================================================================================================================================
 	//
 	// 方法传递
 	//
 	// ==========================================================================================================================================================
+
 
 	/**
 	 * 获取定时器
@@ -931,10 +895,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 实例
 	 */
 	public static ModuleScheduler getScheduler(String name) {
-
 		return SYSTEMD.getScheduler(name);
-
 	}
+
 
 	/**
 	 * 获取触发器
@@ -943,10 +906,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 实例
 	 */
 	public static ModuleTrigger getTrigger(String name) {
-
 		return SYSTEMD.getTrigger(name);
-
 	}
+
 
 	/**
 	 * 获取监听器
@@ -955,10 +917,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 实例
 	 */
 	public static ModuleListener getListener(String name) {
-
 		return SYSTEMD.getListener(name);
-
 	}
+
 
 	/**
 	 * 获取执行器
@@ -967,9 +928,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 实例
 	 */
 	public static ModuleExecutor getExecutor(String name) {
-
 		return SYSTEMD.getExecutor(name);
-
 	}
 
 }

@@ -119,6 +119,14 @@ public class Executor_zhan extends ModuleExecutor {
 		CARD.put(42, "XXI. THE WORLD 世界正位\r\n成功 道路 航程 换位");
 		CARD.put(43, "XXI. THE WORLD 世界逆位\r\n惯性 固执 停滞 持久");
 
+
+		// =======================================
+		//
+		// 为什么不写循环
+		// 显而易见的 写死是运行效率最高的
+		//
+		// =======================================
+
 		FREQ.add(0);
 		FREQ.add(0);
 		FREQ.add(0);
