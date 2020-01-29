@@ -69,7 +69,8 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	private ArrayList<Long> GROUP_REPORT;
 
-	private HashMap<Long, GroupStatus> GROUP_STATUS;
+//	private HashMap<Long, GroupStatus> GROUP_STATUS;
+	public HashMap<Long, GroupStatus> GROUP_STATUS;
 
 	private Thread thread;
 
@@ -371,19 +372,34 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				long gropid = Long.parseLong(message.getSwitch("gropid"));
 
+				if (!entry.DEBUG()) entry.switchDEBUG();
+
+				for (Entry<Long, GroupStatus> groupStatusStorageEntry : GROUP_STATUS.entrySet()) {
+					GroupStatus groupStatus = groupStatusStorageEntry.getValue();
+					for (Entry<Long, UserStatus> userStatusStorageEntry : groupStatus.USER_STATUS.entrySet()) {
+						UserStatus userStatus = userStatusStorageEntry.getValue();
+						for (MessageGrop tempMessage : userStatus.MESSAGES) {
+							tempMessage.setType();
+							tempMessage.reParse();
+						}
+					}
+				}
+
+				if (entry.DEBUG()) entry.switchDEBUG();
+
 				File dumpFolder = Paths.get(FOLDER_LOGS.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + "_dump").toFile();
 
 				dumpFolder.mkdirs();
 
 				// =====================================================================================
-				// 写入无trim的全局排行榜
+				// 写入trim的全局排行榜
 
 				File dumpFile = Paths.get(dumpFolder.getAbsolutePath(), "global_rank.txt").toFile();
 				dumpFile.createNewFile();
 
 				FileWriter fileWriter = new FileWriter(dumpFile);
 
-				String[] result = generateMemberRank(gropid, -1, -1, -1, false);
+				String[] result = generateMemberRank(gropid, -1, -1, -1, true);
 
 				for (String part : result) {
 					fileWriter.append(part);
@@ -685,14 +701,15 @@ public class Listener_TopSpeak extends ModuleListener {
 
 			for (Entry<Long, UserStatus> groupStatusEntry : groupStatus.USER_STATUS.entrySet()) {
 
-				long userid = groupStatusEntry.getKey();
 				UserStatus userStatus = groupStatusEntry.getValue();
+
+				if (userStatus.MESSAGES.size() == 0) continue; // 过滤掉没说话的
+
+				long userid = groupStatusEntry.getKey();
 
 				int userCharacter = userStatus.USER_SENTENCE.size() + userStatus.USER_PURECCODE;
 
-				if (userCharacter < 1) continue;
-
-				if (!allMemberRank.containsKey(userCharacter)) allMemberRank.put(userCharacter, new HashSet<>());
+				if (!allMemberRank.containsKey(userCharacter)) allMemberRank.put(userCharacter, new HashSet<>()); // 没有则新建
 
 				allMemberRank.get(userCharacter).add(userid);
 			}
@@ -707,7 +724,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				builder.append("（2/4）成员排行：" + "\r\n");
 
 				int order = 1;
-				int limit = 0;
+				int limit = 1;
 				int slice = 0;
 
 				loop: for (Entry<Integer, HashSet<Long>> allMemberRankEntry : allMemberRank.entrySet()) {
@@ -715,6 +732,14 @@ public class Listener_TopSpeak extends ModuleListener {
 					HashSet<Long> membersWithSameRank = allMemberRankEntry.getValue();
 
 					for (long userid : membersWithSameRank) {
+
+						if (limitRank != -1 && limit++ > limitRank) break loop; // limit = -1 表示无限
+
+						if (slice++ == 10) {
+							slice = 0;
+							report.add(builder.substring(0, builder.length() - 2));
+							builder = new StringBuilder();
+						}
 
 						UserStatus userStatus = groupStatus.USER_STATUS.get(userid);
 
@@ -729,15 +754,6 @@ public class Listener_TopSpeak extends ModuleListener {
 						if (userStatus.USER_SYNCMUSIC > 0) builder.append("/" + userStatus.USER_SYNCMUSIC + "听");
 
 						builder.append("\r\n");
-
-						if (limitRank != -1 && ++limit > limitRank) break loop; // limit = -1 表示无限
-
-						if (++slice == 10) {
-							report.add(builder.substring(0, builder.length() - 2));
-							builder = new StringBuilder();
-							slice = 0;
-						}
-
 					}
 					order = order + membersWithSameRank.size();
 				}
@@ -764,46 +780,31 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				messageContent = messageContent.trim();
 
-				if (messageContent.length() == 0) {
-					continue;
-				} else if (messageContent.matches("\\s+")) {
-					continue;
-				} else if (messageContent.equals("¿")) {
-					messageContent = "？";
-				} else if (messageContent.equals("?")) {
-					messageContent = "？";
-				} else if (messageContent.equals("??")) {
-					messageContent = "？？";
-				} else if (messageContent.equals("???")) {
-					messageContent = "？？？";
-				} else if (messageContent.equals("????")) {
-					messageContent = "？？？？";
-				} else if (messageContent.equals("wky")) {
-					messageContent = "我可以";
-				} else if (messageContent.equals("whl")) {
-					messageContent = "我好了";
-				} else if (messageContent.equals("hso")) {
-					messageContent = "好骚哦";
-				} else if (messageContent.equals("tql")) {
-					messageContent = "太强了";
-				} else if (messageContent.equals("tfl")) {
-					messageContent = "太富了";
-				} else if (messageContent.equals("tcl")) {
-					messageContent = "太草了";
-				} else if (messageContent.equals("ghs")) {
-					messageContent = "搞黄色";
-				} else if (messageContent.equals("草")) {
-					messageContent = "草";
-				} else if (messageContent.equals("操")) {
-					messageContent = "草";
-				} else if (messageContent.equals("艹")) {
-					messageContent = "草";
-				} else if (messageContent.equals("好色哦")) {
-					messageContent = "好骚哦";
-				} else {
-					// SAM IS RAGE
-					// SAM IS RAGE
-				}
+				// @formatter:off
+
+				// 合并常见消息
+
+				if (messageContent.length() == 0) continue;
+				else if (messageContent.matches("\\s+")) continue;
+				else if (messageContent.equals("¿")) messageContent = "？";
+				else if (messageContent.equals("?")) messageContent = "？";
+				else if (messageContent.equals("??")) messageContent = "？";
+				else if (messageContent.equals("???")) messageContent = "？";
+				else if (messageContent.equals("????")) messageContent = "？";
+				else if (messageContent.equals("wky")) messageContent = "我可以";
+				else if (messageContent.equals("whl")) messageContent = "我好了";
+				else if (messageContent.equals("hso")) messageContent = "好骚哦";
+				else if (messageContent.equals("tql")) messageContent = "太强了";
+				else if (messageContent.equals("tfl")) messageContent = "太富了";
+				else if (messageContent.equals("tcl")) messageContent = "太草了";
+				else if (messageContent.equals("ghs")) messageContent = "搞黄色";
+				else if (messageContent.equals("gkd")) messageContent = "搞快点";
+				else if (messageContent.equals("草")) messageContent = "草";
+				else if (messageContent.equals("操")) messageContent = "草";
+				else if (messageContent.equals("艹")) messageContent = "草";
+				else if (messageContent.equals("好色哦")) messageContent = "好骚哦";
+
+				// @formatter:on
 
 				if (allMessageRankTemp.containsKey(messageContent)) {
 					allMessageRankTemp.put(messageContent, allMessageRankTemp.get(messageContent) + 1);
@@ -839,7 +840,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				builder.append("（3/4）整句排行：" + "\r\n");
 
 				int order = 1;
-				int limit = 0;
+				int limit = 1;
 				int slice = 0;
 
 				loop: for (Entry<Integer, HashSet<String>> allMessageRankEntry : allMessageRank.entrySet()) {
@@ -849,18 +850,20 @@ public class Listener_TopSpeak extends ModuleListener {
 					HashSet<String> messageRepeat = allMessageRankEntry.getValue();
 
 					for (String sentence : messageRepeat) {
-						builder.append("No." + order + " - " + messageRepeatCount + "次：" + sentence + "\r\n");
 
-						if (limitRepeat != -1 && ++limit > limitRepeat) break loop; // limit = -1 表示无限
+						if (limitRepeat != -1 && limit++ > limitRepeat) break loop; // limit = -1 表示无限
 
-						if (++slice == 10) {
+						if (slice++ == 10) {
+							slice = 0;
 							report.add(builder.substring(0, builder.length() - 2));
 							builder = new StringBuilder();
-							slice = 0;
 						}
+
+						builder.append("No." + order + " - " + messageRepeatCount + "次：" + sentence + "\r\n");
 					}
 					order = order + messageRepeat.size();
 				}
+				report.add(builder.substring(0, builder.length() - 2));
 			}
 		}
 
@@ -909,7 +912,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			if (allPictureRank.size() > 0) {
 
 				int order = 1;
-				int limit = 0;
+				int limit = 1;
 
 				loop: for (Entry<Integer, HashSet<String>> allPictureRankEntry : allPictureRank.entrySet()) {
 
@@ -917,10 +920,11 @@ public class Listener_TopSpeak extends ModuleListener {
 					HashSet<String> pictures = allPictureRankEntry.getValue();
 
 					for (String pictureCode : pictures) {
-						String imageURL = CQCode.getInstance().getCQImage(pictureCode).getUrl();
-						report.add("No." + order + " - " + pictureRepeatCount + "次：" + imageURL);
 
-						if (limitRepeat != -1 && ++limit > limitPicture) break loop; // limit = -1 表示无限
+						if (limitRepeat != -1 && limit++ > limitPicture) break loop; // limit = -1 表示无限
+
+						String imageURL = CQCode.getInstance().getCQImage(pictureCode).getUrl();
+						report.add("No." + order + " - " + pictureRepeatCount + "次 " + imageURL);
 					}
 				}
 			}
@@ -1077,7 +1081,6 @@ public class Listener_TopSpeak extends ModuleListener {
 			int order = 1;
 			int limit = 0;
 			int slice = 0;
-
 
 			loop: for (Entry<Integer, HashSet<Long>> memberCountRankEntry : memberCountRank.entrySet()) {
 

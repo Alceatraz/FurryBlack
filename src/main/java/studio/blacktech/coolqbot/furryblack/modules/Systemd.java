@@ -1077,25 +1077,15 @@ public class Systemd extends Module {
 
 		COUNT_USER_MESSAGE++;
 
-		if (ENABLE_TRIGGER_USER) {
-			for (ModuleTrigger temp : TRIGGER_USER) {
-				if (temp.executeUserMessage(typeid, userid, message, messageid, messagefont)) { return; }
-			}
-		}
+		if (ENABLE_TRIGGER_USER) for (ModuleTrigger temp : TRIGGER_USER) if (temp.executeUserMessage(typeid, userid, message, messageid, messagefont)) return;
 
 		message.parse();
 
-		if (ENABLE_LISENTER_USER) {
-			for (ModuleListener temp : LISTENER_USER) {
-				temp.executeUserMessage(typeid, userid, message, messageid, messagefont);
-			}
-		}
+		if (ENABLE_LISENTER_USER) for (ModuleListener temp : LISTENER_USER) temp.executeUserMessage(typeid, userid, message, messageid, messagefont);
 
 		if (message.isCommand()) {
 
-			if (entry.DEBUG()) {
-				System.out.println(message);
-			}
+			if (entry.DEBUG()) logger.full(message.toString());
 
 			switch (message.getCommand()) {
 				case "info":
@@ -1147,25 +1137,15 @@ public class Systemd extends Module {
 
 		COUNT_DISZ_MESSAGE++;
 
-		if (ENABLE_TRIGGER_DISZ) {
-			for (ModuleTrigger temp : TRIGGER_DISZ) {
-				if (temp.executeDiszMessage(diszid, userid, message, messageid, messagefont)) { return; }
-			}
-		}
+		if (ENABLE_TRIGGER_DISZ) for (ModuleTrigger temp : TRIGGER_DISZ) if (temp.executeDiszMessage(diszid, userid, message, messageid, messagefont)) return;
 
 		message.parse();
 
-		if (ENABLE_LISENTER_DISZ) {
-			for (ModuleListener temp : LISTENER_DISZ) {
-				temp.executeDiszMessage(diszid, userid, message, messageid, messagefont);
-			}
-		}
+		if (ENABLE_LISENTER_DISZ) for (ModuleListener temp : LISTENER_DISZ) temp.executeDiszMessage(diszid, userid, message, messageid, messagefont);
 
 		if (message.isCommand()) {
 
-			if (entry.DEBUG()) {
-				System.out.println(message);
-			}
+			if (entry.DEBUG()) logger.full(message.toString());
 
 			switch (message.getCommand()) {
 				case "info":
@@ -1219,27 +1199,20 @@ public class Systemd extends Module {
 
 		COUNT_GROP_MESSAGE++;
 
-		if (ENABLE_TRIGGER_GROP) {
-			for (ModuleTrigger temp : TRIGGER_GROP) {
-				if (temp.executeGropMessage(gropid, userid, message, messageid, messagefont)) { return; }
-			}
-		}
+		if (ENABLE_TRIGGER_GROP) for (ModuleTrigger temp : TRIGGER_GROP) if (temp.executeGropMessage(gropid, userid, message, messageid, messagefont)) return;
 
 		message.parse();
 
-		if (ENABLE_LISENTER_GROP) {
-			for (ModuleListener temp : LISTENER_GROP) {
-				temp.executeGropMessage(gropid, userid, message, messageid, messagefont);
-			}
-		}
+		if (ENABLE_LISENTER_GROP) for (ModuleListener temp : LISTENER_GROP) temp.executeGropMessage(gropid, userid, message, messageid, messagefont);
+
+		if (MESSAGE_MUTE.contains(gropid)) return;
 
 		if (message.isCommand()) {
 
-			if (entry.DEBUG()) {
-				System.out.println(message);
-			}
+			if (entry.DEBUG()) logger.full(message.toString());
 
 			switch (message.getCommand()) {
+
 				case "info":
 					this.gropInfo(gropid, userid, "已发送至私聊，如未收到请允许临时会话或添加好友");
 					sendInfo(userid);
