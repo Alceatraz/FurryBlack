@@ -53,7 +53,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群统计";
 	private static String MODULE_DESCRIPTION = "水群统计";
-	private static String MODULE_VERSION = "33.0";
+	private static String MODULE_VERSION = "33.1";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {
 			"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
