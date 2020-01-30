@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -23,6 +24,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.meowy.cqp.jcq.entity.CQImage;
 import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
 import org.meowy.cqp.jcq.message.CQCode;
@@ -76,6 +78,9 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	private File CONFIG_ENABLE_REPORT;
 	private File GROUP_STATUS_STORAGE;
+
+	private boolean downloding = false;
+	private Thread downloadTask;
 
 	// ==========================================================================================================================================================
 	//
@@ -190,6 +195,8 @@ public class Listener_TopSpeak extends ModuleListener {
 			}
 		}
 
+		GROUP_STATUS.forEach((key, value) -> value.parse());
+
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
 		ENABLE_GROP = true;
@@ -244,46 +251,61 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		String command = message.getSegment()[1];
 
-		int i = 0;
 
 		switch (command) {
 
-
 			// ================================================================================================
-			// 重设所有消息的 type 用于存档迁移
+			// 下载所有消息的图片
 
-			case "flush":
-				for (Entry<Long, GroupStatus> groupStatusStorageEntry : GROUP_STATUS.entrySet()) {
-					GroupStatus groupStatus = groupStatusStorageEntry.getValue();
-					for (Entry<Long, UserStatus> userStatusStorageEntry : groupStatus.USER_STATUS.entrySet()) {
-						UserStatus userStatus = userStatusStorageEntry.getValue();
-						for (MessageGrop tempMessage : userStatus.MESSAGES) {
-							tempMessage.setType();
-							i++;
-						}
-					}
-				}
-				return new String[] {
-						"耗时 " + (System.nanoTime() - a) / 1000000 + "ms 重设所有消息类型 " + i + "条"
+			case "download":
+
+				if (downloding) return new String[] {
+						"后台任务已开始"
 				};
 
+				downloding = true;
+
+				downloadTask = new Thread(() -> {
+
+					int total = 0;
+					int download = 0;
+					int failed = 0;
+
+					for (Entry<Long, GroupStatus> statusEntry : GROUP_STATUS.entrySet()) {
+						int[] temp = statusEntry.getValue().download();
+						total = total + temp[0];
+						download = download + temp[1];
+						failed = failed + temp[2];
+					}
+
+					entry.adminInfo("下载任务已完成\r\n耗时：" + (System.nanoTime() - a) / 1000000 + "ms\r\n共计：" + total + "\r\n下载：" + download + "\r\n失败：" + failed);
+
+				});
+
+				downloadTask.start();
+
+				return new String[] {
+						"后台任务已开始"
+				};
+
+
+			case "stop":
+
+				downloadTask.interrupt();
+
+				return new String[] {
+						"后台任务已中断"
+				};
 
 			// ================================================================================================
 			// 重设所有消息的解析结果 并重新解析
 
 			case "parse":
-				for (Entry<Long, GroupStatus> groupStatusStorageEntry : GROUP_STATUS.entrySet()) {
-					GroupStatus groupStatus = groupStatusStorageEntry.getValue();
-					for (Entry<Long, UserStatus> userStatusStorageEntry : groupStatus.USER_STATUS.entrySet()) {
-						UserStatus userStatus = userStatusStorageEntry.getValue();
-						for (MessageGrop tempMessage : userStatus.MESSAGES) {
-							tempMessage.reParse();
-							i++;
-						}
-					}
-				}
+
+				GROUP_STATUS.forEach((key, value) -> value.parse());
+
 				return new String[] {
-						"耗时 " + (System.nanoTime() - a) / 1000000 + "ms 解析所有消息 " + i + "条"
+						"耗时 " + (System.nanoTime() - a) / 1000000 + "ms"
 				};
 
 
@@ -293,7 +315,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				StringBuilder builder = new StringBuilder();
 
-				// admin exec --module=shui list
 				if (message.getSection() == 2) {
 
 					builder.append("包含 " + GROUP_STATUS.size() + "个群\r\n");
@@ -370,24 +391,11 @@ public class Listener_TopSpeak extends ModuleListener {
 					};
 				}
 
+				if (message.hasSwitch("parse")) GROUP_STATUS.forEach((key, value) -> value.parse());
+
 				long gropid = Long.parseLong(message.getSwitch("gropid"));
 
-				if (!entry.DEBUG()) entry.switchDEBUG();
-
-				for (Entry<Long, GroupStatus> groupStatusStorageEntry : GROUP_STATUS.entrySet()) {
-					GroupStatus groupStatus = groupStatusStorageEntry.getValue();
-					for (Entry<Long, UserStatus> userStatusStorageEntry : groupStatus.USER_STATUS.entrySet()) {
-						UserStatus userStatus = userStatusStorageEntry.getValue();
-						for (MessageGrop tempMessage : userStatus.MESSAGES) {
-							tempMessage.setType();
-							tempMessage.reParse();
-						}
-					}
-				}
-
-				if (entry.DEBUG()) entry.switchDEBUG();
-
-				File dumpFolder = Paths.get(FOLDER_LOGS.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + "_dump").toFile();
+				File dumpFolder = Paths.get(FOLDER_LOGS.getAbsolutePath(), LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + "-dump").toFile();
 
 				dumpFolder.mkdirs();
 
@@ -399,7 +407,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				FileWriter fileWriter = new FileWriter(dumpFile);
 
-				String[] result = generateMemberRank(gropid, -1, -1, -1, true);
+				String[] result = generateMemberRank(gropid, -1, -1, -1, message.hasSwitch("no-trim") ? false : true); // 是否修剪掉只出现一次的内容
 
 				for (String part : result) {
 					fileWriter.append(part);
@@ -411,6 +419,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 
 				TreeMap<Long, String> allMessageByTime = new TreeMap<>();
+
 
 				// =====================================================================================
 				// 按照用户写入发言记录
@@ -443,7 +452,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					fileWriter.write("闪照图数：" + userStatus.USER_SNAPSHOT + "\n");
 					fileWriter.write("听歌次数：" + userStatus.USER_SYNCMUSIC + "\n");
 
-					for (Message element : userStatus.MESSAGES) {
+					for (MessageGrop element : userStatus.MESSAGES) {
 						String sendTime = "[" + LoggerX.datetime(element.getSendtime()) + "]";
 						fileWriter.write(sendTime + element.getRawMessage() + "\n");
 						String userInfo = "{" + entry.getGropnick(gropid, userid) + "(" + userid + ")}";
@@ -1190,19 +1199,17 @@ class GroupStatus implements Serializable {
 	public int GROP_SNAPSHOT = 0;
 	public int GROP_SYNCMUSIC = 0;
 
-	public GroupStatus(long gropid) {
 
+	public GroupStatus(long gropid) {
 
 		initdt = System.currentTimeMillis();
 		this.gropid = gropid;
 
 		entry.getCQ().logDebug("创新的组存档", initdt + " " + gropid);
 
-		for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
-			USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
-		}
-
+		for (Member member : entry.getCQ().getGroupMemberList(gropid)) USER_STATUS.put(member.getQQId(), new UserStatus(member.getQQId()));
 	}
+
 
 	public void clean() {
 		USER_STATUS.forEach((key, value) -> value.clean());
@@ -1211,9 +1218,33 @@ class GroupStatus implements Serializable {
 		GROP_PICTURES = null;
 	}
 
+
+	public void parse() {
+		USER_STATUS.forEach((key, value) -> value.parse());
+	}
+
+
+	public int[] download() {
+		int total = 0;
+		int download = 0;
+		int failed = 0;
+		for (Entry<Long, UserStatus> userStatusEntry : USER_STATUS.entrySet()) {
+			int[] temp = userStatusEntry.getValue().download();
+			total = total + temp[0];
+			download = download + temp[1];
+			failed = failed + temp[2];
+		}
+		System.out.println("群聊完成下载 " + gropid + " " + total + " - " + download + "/" + failed);
+		return new int[] {
+				total, download, failed
+		};
+	}
+
+
 	public void say(long userid, MessageGrop message) {
 		USER_STATUS.get(userid).say(message);
 	}
+
 
 	public GroupStatus sum() {
 
@@ -1285,10 +1316,53 @@ class UserStatus implements Serializable {
 		this.userid = userid;
 	}
 
+
 	public void clean() {
+		MESSAGES.forEach(MessageGrop::clean);
 		USER_COMMANDS = null;
 		USER_SENTENCE = null;
 		USER_PICTURES = null;
+	}
+
+
+	public void parse() {
+		MESSAGES.forEach(MessageGrop::parse);
+	}
+
+
+	public int[] download() {
+
+		int total = 0;
+		int download = 0;
+		int failed = 0;
+
+		for (MessageGrop message : MESSAGES) {
+
+			if (!message.hasPicture()) continue;
+
+			int length = message.getPictureLength();
+
+			total = total + length;
+
+			for (int i = 0; i < length; i++) {
+				String code = message.getPicture(i);
+				CQImage image = CQCode.getInstance().getCQImage(code);
+				File file = Paths.get(entry.getPictureStorePath(), code.substring(16, 51)).toFile();
+				if (file.exists()) continue;
+				try {
+					image.download(file);
+					download++;
+				} catch (IOException exception) {
+					failed++;
+				}
+			}
+		}
+
+		System.out.println("  成员 " + userid + " " + total + " - " + download + "/" + failed);
+
+		return new int[] {
+				total, download, failed
+		};
 	}
 
 	public void say(MessageGrop message) {
@@ -1311,6 +1385,10 @@ class UserStatus implements Serializable {
 		USER_SYNCMUSIC = 0;
 
 		for (MessageGrop temp : MESSAGES) {
+
+			if (temp == null) continue;
+
+			if (temp.getType() == null) temp.parse();
 
 			switch (temp.getType()) {
 

@@ -9,7 +9,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 
 
@@ -23,23 +22,21 @@ public class Message implements Serializable {
 	private int messageFt = 0;
 	private long sendTime = 0;
 
-	private String rawMessage = "";
-	private String resMessage = "";
+	private String rawMessage = null;
+	private String resMessage = null;
 
 	private int rawLength = 0;
 	private int resLength = 0;
 
 	private int section = 0;
-	private String cmdMessage = "";
-	private String command = "";
-	private String options = "";
-	private String[] segment = {};
+	private String cmdMessage = null;
+	private String command = null;
+	private String options = null;
+	private String[] segment = null;
 	private LinkedList<String> segmentParts;
 	private TreeMap<String, String> switchs;
 
-	private String[] picture = {};
-
-	private boolean parsed = false;
+	private String[] picture = null;
 
 	private boolean isCommand = false;
 	private boolean hasPicture = false;
@@ -60,16 +57,32 @@ public class Message implements Serializable {
 
 	// ===================================================================================
 
-	public Message parse() {
+	public Message clean() {
+		resMessage = null;
+		rawLength = 0;
+		resLength = 0;
+		section = 0;
+		cmdMessage = null;
+		command = null;
+		options = null;
+		segment = null;
+		segmentParts = null;
+		switchs = null;
+		picture = null;
+		isCommand = false;
+		hasPicture = false;
+		type = null;
+		return this;
+	}
 
-		if (parsed) return this;
-		parsed = true;
+	public Message parse() {
 
 		rawLength = rawMessage.length();
 
 		if (rawMessage.matches("/[a-z]+.*")) { // 居然因为这么一条鬼消息出BUG了 -> /招手[CQ:at,qq=XXXXXXXX] 所以使用正则判断
 
 			type = MessageType.Command;
+
 			isCommand = true;
 
 			cmdMessage = rawMessage.substring(1); // 去掉 /
@@ -127,6 +140,8 @@ public class Message implements Serializable {
 			type = MessageType.SyncMusic;
 		} else {
 
+			type = MessageType.Normal;
+
 			// 如果是普通消息
 
 			Pattern pattern = Pattern.compile(Message.REGEX_IMAGE);
@@ -134,12 +149,12 @@ public class Message implements Serializable {
 
 			ArrayList<String> temp = new ArrayList<>(1);
 
-			if (matcher.find()) { // 提取所有图片
-				hasPicture = true;
-				do { temp.add(matcher.group()); } while (matcher.find());
-				picture = new String[temp.size()];
-				temp.toArray(picture);
-			}
+			while (matcher.find()) temp.add(matcher.group());
+
+			picture = new String[temp.size()];
+			temp.toArray(picture);
+
+			hasPicture = picture.length > 0;
 
 			resMessage = rawMessage.replaceAll("\\[CQ:.+\\]", "").trim(); // 删除所有CQ码
 			resMessage = resMessage.replaceAll("\\s+", "").trim(); // 删除所有空白字符
@@ -446,6 +461,14 @@ public class Message implements Serializable {
 		return picture;
 	}
 
+	public String getPicture(int i) {
+		return picture[i];
+	}
+
+	public int getPictureLength() {
+		return picture.length;
+	}
+
 
 	// ===================================================================================
 
@@ -467,26 +490,6 @@ public class Message implements Serializable {
 	 */
 	public int getResLength() {
 		return resLength;
-	}
-
-
-	// ===================================================================================
-
-
-	/**
-	 * 重新分析消息
-	 */
-	public void reParse() {
-		if (entry.DEBUG()) {
-			parsed = false;
-			parse();
-		}
-	}
-
-	public void setType() {
-		if (entry.DEBUG()) {
-			type = MessageType.Normal;
-		}
 	}
 
 }

@@ -111,11 +111,15 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// 继承自JCQ, JcqAbstract包含这个对象
 	private static String appDirectory;
 
+	private static String pictureStorePath;
+
 	private File FOLDER_ROOT;
-	// private File FOLDER_CONF;
-	// private File FOLDER_DATA;
+	private File FOLDER_CONF;
+	private File FOLDER_DATA;
+	private File FOLDER_PICS;
 	private File FOLDER_LOGS;
 	private File FILE_LOGGER;
+
 
 	// ==========================================================================================================================================================
 	//
@@ -167,28 +171,42 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 			appDirectory = CQ.getAppDirectory();
 
+
 			// ==========================================================================================================================
 			// 实例化 data/ logs/ 对象
 
 			FOLDER_ROOT = Paths.get(appDirectory, "Core_Entry").toFile();
 
-			// this.FOLDER_CONF = Paths.get(appDirectory, "Core_Entry","conf").toFile();
-			// this.FOLDER_DATA = Paths.get(appDirectory, "Core_Entry","data").toFile();
+
+			FOLDER_CONF = Paths.get(appDirectory, "Core_Entry", "conf").toFile();
+
+
+			FOLDER_DATA = Paths.get(appDirectory, "Core_Entry", "data").toFile();
+			FOLDER_PICS = Paths.get(appDirectory, "Core_Entry", "data", "picture").toFile();
+
+
 			FOLDER_LOGS = Paths.get(appDirectory, "Core_Entry", "logs").toFile();
 			FILE_LOGGER = Paths.get(appDirectory, "Core_Entry", "logs", LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
+
+
+			pictureStorePath = FOLDER_PICS.getAbsolutePath();
+
 
 			// ==========================================================================================================================
 			// 初始化文件夹
 
-			if (!FOLDER_ROOT.exists()) { FOLDER_ROOT.mkdirs(); }
-			// if (!this.FOLDER_CONF.exists()) this.FOLDER_CONF.mkdirs();
-			// if (!this.FOLDER_DATA.exists()) this.FOLDER_DATA.mkdirs();
-			if (!FOLDER_LOGS.exists()) { FOLDER_LOGS.mkdirs(); }
+			if (!FOLDER_ROOT.exists()) FOLDER_ROOT.mkdirs();
+			if (!FOLDER_CONF.exists()) FOLDER_CONF.mkdirs();
+			if (!FOLDER_DATA.exists()) FOLDER_DATA.mkdirs();
+			if (!FOLDER_PICS.exists()) FOLDER_PICS.mkdirs();
+			if (!FOLDER_LOGS.exists()) FOLDER_LOGS.mkdirs();
 
-			if (!FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_ROOT.getAbsolutePath()); }
-			// if (!this.FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_CONF.getAbsolutePath()); }
-			// if (!this.FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + this.FOLDER_DATA.getAbsolutePath()); }
-			if (!FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath()); }
+			if (!FOLDER_ROOT.isDirectory()) throw new NotAFolderException("文件夹被文件占位：" + FOLDER_ROOT.getAbsolutePath());
+			if (!FOLDER_CONF.isDirectory()) throw new NotAFolderException("文件夹被文件占位：" + FOLDER_CONF.getAbsolutePath());
+			if (!FOLDER_DATA.isDirectory()) throw new NotAFolderException("文件夹被文件占位：" + FOLDER_DATA.getAbsolutePath());
+			if (!FOLDER_PICS.isDirectory()) throw new NotAFolderException("文件夹被文件占位：" + FOLDER_PICS.getAbsolutePath());
+			if (!FOLDER_LOGS.isDirectory()) throw new NotAFolderException("文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath());
+
 
 			// ==========================================================================================================================
 			// 初始化 日志 系统
@@ -200,6 +218,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 			logger = new LoggerX("Core_Entry");
 			logger.info("启动", LoggerX.datetime());
+
 
 			// ==========================================================================================================================
 			// 获取APP本身的Jar
@@ -213,20 +232,24 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			logger.full("加载", jarFile.getAbsolutePath());
 			JAR_INSTANCE = new JarFile(jarFile);
 
+
 			// ==========================================================================================================================
 			// 实例化 系统
 
 			SYSTEMD = new Systemd();
+
 
 			// ==========================================================================================================================
 			// 初始化 系统
 
 			SYSTEMD.init();
 
+
 			// ==========================================================================================================================
 			// 启动 系统
 
 			SYSTEMD.boot();
+
 
 			// ==========================================================================================================================
 
@@ -234,6 +257,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 			logger.info("完成", LoggerX.datetime());
 			logger.info("耗时", bootCoast);
+
 
 			// ==========================================================================================================================
 			// 启动完成 关闭debug
@@ -594,6 +618,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	public static String getAppDirectory() {
 		return appDirectory;
+	}
+
+
+	/**
+	 * 获取图片存储路径
+	 *
+	 * @return 图片存储路径
+	 */
+	public static String getPictureStorePath() {
+		return pictureStorePath;
 	}
 
 
