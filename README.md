@@ -38,6 +38,83 @@ GitEE的组织名字居然会过长不能写，蛋疼，请记住这个群组名
 
 **以上都是我编的，我实在编不下去了**  
 
+## 部署
+
+shui 水群统计模块 使用了PostgreSQL
+
+```
+create user furryblack with password 'furryblack';
+create database furryblack owner furryblack;
+grant all privileges on database furryblack to furryblack;
+
+CREATE SEQUENCE serial_chat_history
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
+
+CREATE TABLE "public"."chat_history" (
+  "id" int8 NOT NULL DEFAULT nextval('serial_chat_history'::regclass),
+  "message_id" int8,
+  "message_font" int8,
+  "message_time" int8,
+  "grop_id" int8,
+  "user_id" int8,
+  "type_id" int4,
+  "message" text COLLATE "pg_catalog"."default"
+);
+
+CREATE TABLE "public"."chat_pictures" (
+  "image_code" varchar(255) COLLATE "pg_catalog"."default",
+  "file_url" varchar(4096) COLLATE "pg_catalog"."default",
+  "file_name" varchar(4096) COLLATE "pg_catalog"."default"
+);
+ALTER TABLE "public"."chat_pictures" ADD CONSTRAINT "chat_pictures_pkey" PRIMARY KEY ("image_code");
+```
+
+统计某用户的发图频率 (这个玩意套了五层 习惯就好)
+
+```
+SELECT 
+	temp_table_4."count",
+	temp_table_4.code,
+	chat_picture.image_code
+FROM (
+	SELECT 
+		counts as "count",result AS code
+	FROM (
+		SELECT 
+			*,count(*) AS counts
+		FROM (
+			SELECT 
+				match[1] AS result
+			FROM (
+				SELECT 
+					chat_history.message 
+				FROM 
+					chat_history
+				WHERE
+					chat_history.grop_id = 123123123 AND
+					chat_history.user_id = 123123123 AND
+					chat_history.message_time BETWEEN 1577808000000 AND 1580400000000
+			) AS temp_table_1
+			CROSS JOIN LATERAL 
+				regexp_matches(temp_table_1.message, '\[CQ:image,file=\w{32}\.\w{3,4}\]','g') 
+				AS match
+		) AS temp_table_2
+		GROUP BY 1
+		ORDER BY 2 DESC
+	) AS temp_table_3
+	WHERE
+		temp_table_3.counts > 1
+) AS temp_table_4
+LEFT JOIN 
+	chat_picture
+ON
+	temp_table_4.code = chat_picture.image_code
+```
+
 ## 开发
 
 ### 约定大于规范  

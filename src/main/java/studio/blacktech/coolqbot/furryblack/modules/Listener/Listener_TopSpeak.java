@@ -13,6 +13,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +34,6 @@ import org.meowy.cqp.jcq.message.CQCode;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerComponent;
 import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
@@ -40,7 +42,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
 
 
-@ModuleListenerComponent
+//@ModuleListenerComponent
 public class Listener_TopSpeak extends ModuleListener {
 
 	private static final long serialVersionUID = 1L;
@@ -82,6 +84,13 @@ public class Listener_TopSpeak extends ModuleListener {
 	private boolean downloding = false;
 	private Thread downloadTask;
 
+	private boolean JDBC_ENABLE;
+	private String JDBC_HOSTNAME;
+	private String JDBC_USERNAME;
+	private String JDBC_PASSWORD;
+
+	private Connection connection;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -100,13 +109,42 @@ public class Listener_TopSpeak extends ModuleListener {
 		initConfFolder();
 		initLogsFolder();
 		initDataFolder();
+		initPropertiesConfigurtion();
+
+		if (NEW_CONFIG) {
+			logger.seek("配置文件不存在 - 生成默认配置");
+			CONFIG.setProperty("postgresql.enable", "false");
+			CONFIG.setProperty("postgresql.hostname", "jdbc:postgresql://localhost:5432/furryblack");
+			CONFIG.setProperty("postgresql.username", "furryblack");
+			CONFIG.setProperty("postgresql.password", "furryblack");
+			saveConfig();
+		} else {
+			loadConfig();
+		}
+
+
+		JDBC_ENABLE = Boolean.parseBoolean(CONFIG.getProperty("postgresql.enable"));
+
+		JDBC_HOSTNAME = CONFIG.getProperty("postgresql.hostname");
+		JDBC_USERNAME = CONFIG.getProperty("postgresql.username");
+		JDBC_PASSWORD = CONFIG.getProperty("postgresql.password");
+
+		logger.seek("数据库", JDBC_HOSTNAME);
+		logger.seek("帐号", JDBC_USERNAME);
+		logger.seek("密码", JDBC_PASSWORD);
+
+		if (JDBC_ENABLE) {
+			Class.forName("org.postgresql.Driver");
+			connection = DriverManager.getConnection(JDBC_HOSTNAME, JDBC_USERNAME, JDBC_PASSWORD);
+			if (connection == null) throw new InitializationException("数据库连接失败");
+		}
 
 		GROUP_REPORT = new ArrayList<>();
 
 		GROUP_STATUS_STORAGE = Paths.get(FOLDER_DATA.getAbsolutePath(), "shui").toFile();
 		CONFIG_ENABLE_REPORT = Paths.get(FOLDER_CONF.getAbsolutePath(), "daily_report.txt").toFile();
 
-		if (!CONFIG_ENABLE_REPORT.exists() && !CONFIG_ENABLE_REPORT.createNewFile()) { throw new InitializationException("无法创建文件" + CONFIG_ENABLE_REPORT.getName()); }
+		if (!CONFIG_ENABLE_REPORT.exists() && !CONFIG_ENABLE_REPORT.createNewFile()) throw new InitializationException("无法创建文件" + CONFIG_ENABLE_REPORT.getName());
 
 
 		// =================================================================
@@ -174,6 +212,7 @@ public class Listener_TopSpeak extends ModuleListener {
 					long userid = member.getQQId();
 					if (entry.isMyself(userid)) GROUP_STATUS.get(gropid).USER_STATUS.remove(userid); // 移除自身存档
 					if (!groupStatus.USER_STATUS.containsKey(userid)) {
+						if (entry.isMyself(userid)) continue;
 						groupStatus.USER_STATUS.put(userid, new UserStatus(userid));
 						logger.seek("新建成员", gropid + " > " + entry.getNickname(userid) + "(" + userid + ")");
 					}
@@ -295,6 +334,75 @@ public class Listener_TopSpeak extends ModuleListener {
 
 				return new String[] {
 						"后台任务已中断"
+				};
+
+			// ================================================================================================
+			// 下载所有消息的图片
+
+			case "move":
+
+				int messageCount = 0;
+				int pictureCount = 0;
+
+				String INSERT_MESSAGE = "INSERT INTO chat_history (message_id,message_font,message_time,grop_id,user_id,type_id,message) VALUES (?,?,?,?,?,?,?) RETURNING id";
+				String INSERT_PICTURE = "INSERT INTO chat_picture (image_code,file_url,file_name) VALUES (?,?,?) ON CONFLICT (image_code) DO NOTHING";
+
+				PreparedStatement preparedStatementMessage = connection.prepareStatement(INSERT_MESSAGE);
+
+				PreparedStatement preparedStatementPicture = connection.prepareStatement(INSERT_PICTURE);
+
+				for (Entry<Long, GroupStatus> groupStatusEntry : GROUP_STATUS.entrySet()) {
+
+					long gropid = groupStatusEntry.getKey();
+					GroupStatus groupStatus = groupStatusEntry.getValue();
+
+					for (Entry<Long, UserStatus> userStatusEntry : groupStatus.USER_STATUS.entrySet()) {
+
+						long userid = userStatusEntry.getKey();
+						UserStatus userStatus = userStatusEntry.getValue();
+
+						System.out.println("用户 " + gropid + "." + userid);
+
+						for (MessageGrop userMessage : userStatus.MESSAGES) {
+
+							preparedStatementMessage.setLong(1, userMessage.getMessageId());
+							preparedStatementMessage.setLong(2, userMessage.getMessageFont());
+							preparedStatementMessage.setLong(3, userMessage.getSendtime());
+							preparedStatementMessage.setLong(4, gropid);
+							preparedStatementMessage.setLong(5, userid);
+							preparedStatementMessage.setLong(6, userMessage.getType().getID());
+							preparedStatementMessage.setString(7, userMessage.getRawMessage());
+
+							preparedStatementMessage.execute();
+
+							messageCount++;
+
+							if (userMessage.hasPicture()) {
+
+								int length = userMessage.getPictureLength();
+
+								for (int i = 0; i < length; i++) {
+									String code = userMessage.getPicture(i);
+									CQImage image = CQCode.getInstance().getCQImage(code);
+
+									preparedStatementPicture.setString(1, code);
+									preparedStatementPicture.setString(2, image.getUrl());
+									preparedStatementPicture.setString(3, code.substring(16, 51));
+
+									preparedStatementPicture.execute();
+
+									pictureCount++;
+								}
+							}
+						}
+					}
+				}
+
+				preparedStatementMessage.close();
+				preparedStatementPicture.close();
+
+				return new String[] {
+						"耗时 " + (System.nanoTime() - a) / 1000000 + "ms 添加" + messageCount + "条记录 " + pictureCount + "张图片"
 				};
 
 			// ================================================================================================
