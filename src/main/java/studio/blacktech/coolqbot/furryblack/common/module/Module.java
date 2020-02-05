@@ -90,32 +90,28 @@ public abstract class Module implements Serializable {
 
 	public abstract String[] exec(Message message) throws Exception;
 
-	public abstract String[] generateReport(int mode, Message message, Object... parameters);
+	public abstract String[] generateReport(Message message);
 
 	public abstract void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
 
 	public abstract void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
 
 	public void initAppFolder() throws Exception {
-
 		if (FOLDER_ROOT.exists()) {
 			if (!FOLDER_ROOT.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_ROOT.getAbsolutePath()); }
 		} else {
 			logger.seek("创建目录", FOLDER_ROOT.getAbsolutePath());
 			FOLDER_ROOT.mkdirs();
 		}
-
 	}
 
 	public void initConfFolder() throws Exception {
-
 		if (FOLDER_CONF.exists()) {
 			if (!FOLDER_CONF.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_CONF.getAbsolutePath()); }
 		} else {
 			logger.seek("创建目录", FOLDER_CONF.getAbsolutePath());
 			FOLDER_CONF.mkdirs();
 		}
-
 	}
 
 	public void initDataFolder() throws Exception {
@@ -130,66 +126,48 @@ public abstract class Module implements Serializable {
 	}
 
 	public void initLogsFolder() throws Exception {
-
 		if (FOLDER_LOGS.exists()) {
 			if (!FOLDER_LOGS.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_LOGS.getAbsolutePath()); }
 		} else {
 			logger.seek("创建目录", FOLDER_LOGS.getName());
 			FOLDER_LOGS.mkdirs();
 		}
-
 	}
 
 	public void initPropertiesConfigurtion() throws Exception {
-
 		if (!FILE_CONFIG.exists()) {
 			logger.seek("创建文件", FILE_CONFIG.getAbsolutePath());
 			FILE_CONFIG.createNewFile();
 			NEW_CONFIG = true;
 		}
-
 	}
 
 	protected void loadConfig() throws Exception {
-
 		CONFIG.load(new FileInputStream(FILE_CONFIG));
-
 	}
 
 	protected void saveConfig() throws Exception {
-
 		CONFIG.store(new FileOutputStream(FILE_CONFIG), null);
-
 	}
 
 	public String MODULE_PACKAGENAME() {
-
 		return MODULE_PACKAGENAME;
-
 	}
 
 	public String MODULE_COMMANDNAME() {
-
 		return MODULE_COMMANDNAME;
-
 	}
 
 	public String MODULE_DISPLAYNAME() {
-
 		return MODULE_DISPLAYNAME;
-
 	}
 
 	public String MODULE_DESCRIPTION() {
-
 		return MODULE_DESCRIPTION;
-
 	}
 
 	public String MODULE_FULLHELP() {
-
 		return MODULE_FULLHELP;
-
 	}
 
 	public String genFullHelp() {

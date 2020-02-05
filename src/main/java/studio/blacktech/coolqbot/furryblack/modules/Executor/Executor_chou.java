@@ -212,21 +212,24 @@ public class Executor_chou extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(MessageUser message) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(MessageDisz message) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(MessageGrop message) throws Exception {
+
+		long gropid = message.getGropID();
+		long userid = message.getUserID();
 
 		ArrayList<Long> members = MEMBERS.get(gropid);
 
@@ -244,10 +247,10 @@ public class Executor_chou extends ModuleExecutor {
 
 			QQInfo member = entry.getCQ().getStrangerInfo(chouid);
 
-			if (message.getSection() == 1) {
+			if (message.getParameterSection() == 1) {
 				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")");
 			} else {
-				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getOptions());
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getCommandBody());
 			}
 		}
 
@@ -261,7 +264,7 @@ public class Executor_chou extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
+	public String[] generateReport(Message message) {
 
 		return new String[0];
 

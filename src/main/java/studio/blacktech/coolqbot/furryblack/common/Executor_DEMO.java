@@ -47,7 +47,10 @@ public class Executor_DEMO extends ModuleExecutor {
 	// 命令用法，数组的每个元素应为一个参数组合用法及其说明
 	// 减号左右各一个空格
 	private static String[] MODULE_USAGE = new String[] {
-			"命令1 - 命令用法1", "命令2 - 命令用法2", "命令3 - 命令用法3", "命令4 - 命令用法4",
+			"命令1 - 命令用法1",
+			"命令2 - 命令用法2",
+			"命令3 - 命令用法3",
+			"命令4 - 命令用法4",
 	};
 	// 如果需要将数据存储为文件 则应写明存储的内容及其用途 有效时限
 	public static String[] MODULE_PRIVACY_STORED = new String[] {
@@ -66,14 +69,17 @@ public class Executor_DEMO extends ModuleExecutor {
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	// 非原子量请勿在声明变量的时候赋值
 	// 推荐使用全大写命名
 	// 错误：HashMap<String,String> MAP = new HashMap<>();
 	// 正确：HashMap<String,String> MAP ;
+
 	private HashMap<String, String> MAP;
 	private File FILE_CUSTOM;
 	private Thread thread;
 	private boolean ENABLE_DEMO = false;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -86,76 +92,81 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * @throws Exception 发生任何错误应扔出
 	 */
 	public Executor_DEMO() throws Exception {
-		// @formatter:off
-
-        super(
-                MODULE_PACKAGENAME,
-                MODULE_COMMANDNAME,
-                MODULE_DISPLAYNAME,
-                MODULE_DESCRIPTION,
-                MODULE_VERSION,
-                MODULE_USAGE,
-                MODULE_PRIVACY_STORED,
-                MODULE_PRIVACY_CACHED,
-                MODULE_PRIVACY_OBTAIN
-        );
-
-        // @formatter:on
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
 
 	/**
 	 * 生命周期函数 初始化阶段
-	 * <p>
-	 * 1：初始化配置及数据文件 2：生成所有内存结构 3：读取配置并应用 4：分析 ENABLE_MODE
+	 * 1：初始化配置及数据文件
+	 * 2：生成所有内存结构
+	 * 3：读取配置并应用
+	 * 4：分析 ENABLE_MODE
 	 */
 	@Override
 	public boolean init() throws Exception {
 
 		// ==================================================================================
 		// 1：初始化配置及数据文件
+
 		initAppFolder();
 		initConfFolder();
 		initDataFolder();
 		initLogsFolder();
 		initPropertiesConfigurtion();
+
 		// ==================================================================================
 		// 2：生成所有内存结构
 		// 应在此处实例化成员变量
+
 		MAP = new HashMap<>();
+
 		// 关于文件路径：应使用Paths工具类以及内置的 FOLDER_CONF FOLDER_DATA FOLDER_LOGS来表示文件
 		FILE_CUSTOM = Paths.get(FOLDER_CONF.getAbsolutePath(), "custom.txt").toFile();
-		if (!FILE_CUSTOM.exists()) { FILE_CUSTOM.createNewFile(); }
+
+		if (!FILE_CUSTOM.exists()) FILE_CUSTOM.createNewFile();
+
 		// ==================================================================================
 		// 3：读取配置
+
 		// NEW_CONFIG=true 为初始化过程中发现配置不存在 创建了新的配置
+
 		if (NEW_CONFIG) {
+
 			// CONFIG对象为Java property对象
 			CONFIG.setProperty("enable", "true");
 			CONFIG.setProperty("config1", "none");
 			CONFIG.setProperty("config2", "none");
 			CONFIG.setProperty("config3", "none");
 			CONFIG.setProperty("config4", "none");
+
 			// 不要忘记保存
 			saveConfig();
 		} else {
 			loadConfig();
 		}
+
 		// 按需分析配置文件
 		ENABLE_DEMO = Boolean.parseBoolean(CONFIG.getProperty("enable"));
+
 		// 按需初始化内存结构
 		MAP.put("1", "1");
+
 		// 如果需要包含需要获取所有群成员的功能，不应该在doMessage的时候获取 应通过初始化和增减成员函数来维护一个容器
+
 		// ==================================================================================
 		// 4：分析 ENABLE_MODE
+
 		// ENABLE_MODE = false 时，由systemd注册插件时将不会注册
 		// 此设计的目的是比如模块被配置禁用
 		// 则直接跳注册阶段
 		// 模块不需要每次doMessage时都判断 if ( enable )
+
 		if (ENABLE_DEMO) {
 			ENABLE_USER = true;
 			ENABLE_DISZ = true;
 			ENABLE_GROP = true;
 		}
+
 		return true;
 
 	}
@@ -165,11 +176,9 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public boolean boot() throws Exception {
-
 		thread = new Thread(new Worker());
 		thread.start();
 		return true;
-
 	}
 
 	/**
@@ -177,26 +186,20 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public boolean save() throws Exception {
-
 		return true;
-
 	}
 
 	/**
 	 * 如果有 应在此处打断工作线程 和剩余的关闭逻辑
-	 * <p>
 	 * 正常关闭情况下执行shut之前将会执行save
-	 * <p>
 	 * 有可能会使用 /admin init X 强制执行生命周期函数 但是此命令不属于正常使用范畴 可以不考虑此情况
 	 */
 	@Override
 	public boolean shut() throws Exception {
-
 		// 如果包含子线程 应在此时中断
 		thread.interrupt();
 		thread.join();
 		return true;
-
 	}
 
 	/**
@@ -216,10 +219,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	 */
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-
 		// QQ系统通知为
 		if (userid == 1000000) { entry.adminInfo("系统消息 - （" + gropid + "）"); }
-
 	}
 
 	/**
@@ -234,33 +235,26 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * 用户发送私聊时执行
 	 */
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
-
+	public boolean doUserMessage(MessageUser message) throws Exception {
 		return true;
-
 	}
 
 	/**
 	 * 讨论组消息时执行
 	 */
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
-
+	public boolean doDiszMessage(MessageDisz message) throws Exception {
 		return true;
-
 	}
 
 	/***
 	 * 群聊消息时执行
 	 */
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
+	public boolean doGropMessage(MessageGrop message) throws Exception {
 
 		// 不要使用JcpApp.CQ发送消息
-		entry.gropInfo(gropid, userid, "MESSAGE");
+		entry.gropInfo(message.getGropID(), message.getUserID(), "MESSAGE");
 		return true;
 
 	}
@@ -274,10 +268,8 @@ public class Executor_DEMO extends ModuleExecutor {
 	 * 生成模块报告 数组每个元素就会产生一条消息 避免消息过长
 	 */
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
-
-		return null;
-
+	public String[] generateReport(Message message) {
+		return null; // 并不允许返回null 会导致发送方法异常
 	}
 
 	class Worker implements Runnable {

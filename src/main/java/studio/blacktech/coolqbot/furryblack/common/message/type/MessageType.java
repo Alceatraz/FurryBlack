@@ -22,9 +22,9 @@ public enum MessageType {
 		this.id = id;
 
 		switch (id) {
-			case 0:
-				this.name = "命令";
-				break;
+		case 0:
+			name = "命令";
+			break;
 		}
 	}
 

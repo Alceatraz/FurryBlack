@@ -15,16 +15,12 @@ public class MessageDisz extends Message {
 
 	}
 
-	public long diszid() {
-
+	public long getDiszID() {
 		return diszid;
-
 	}
 
-	public long userid() {
-
+	public long getUserID() {
 		return userid;
-
 	}
 
 	@Override

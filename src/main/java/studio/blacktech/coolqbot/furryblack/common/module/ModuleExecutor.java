@@ -46,67 +46,49 @@ public abstract class ModuleExecutor extends Module {
 	protected boolean ENABLE_DISZ = false;
 	protected boolean ENABLE_GROP = false;
 
-	public abstract boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception;
+	public abstract boolean doUserMessage(MessageUser message) throws Exception;
 
-	public abstract boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception;
+	public abstract boolean doDiszMessage(MessageDisz message) throws Exception;
 
-	public abstract boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception;
+	public abstract boolean doGropMessage(MessageGrop message) throws Exception;
 
-	public boolean executeUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
 
+	public boolean executeUserMessage(MessageUser message) throws Exception {
 		COUNT_USER++;
-		return doUserMessage(typeid, userid, message, messageid, messagefont);
-
+		return doUserMessage(message);
 	}
 
-	public boolean executeDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-
+	public boolean executeDiszMessage(MessageDisz message) throws Exception {
 		COUNT_DISZ++;
-		return doDiszMessage(diszid, userid, message, messageid, messagefont);
-
+		return doDiszMessage(message);
 	}
 
-	public boolean executeGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-
+	public boolean executeGropMessage(MessageGrop message) throws Exception {
 		COUNT_GROP++;
-		return doGropMessage(gropid, userid, message, messageid, messagefont);
-
+		return doGropMessage(message);
 	}
 
 	public int COUNT_USER() {
-
 		return COUNT_USER;
-
 	}
 
 	public int COUNT_DISZ() {
-
 		return COUNT_DISZ;
-
 	}
 
 	public int COUNT_GROP() {
-
 		return COUNT_GROP;
-
 	}
 
 	public boolean ENABLE_USER() {
-
 		return ENABLE_USER;
-
 	}
 
 	public boolean ENABLE_DISZ() {
-
 		return ENABLE_DISZ;
-
 	}
 
 	public boolean ENABLE_GROP() {
-
 		return ENABLE_GROP;
-
 	}
-
 }

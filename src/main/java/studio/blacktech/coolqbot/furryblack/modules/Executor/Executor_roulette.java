@@ -132,37 +132,44 @@ public class Executor_roulette extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(MessageUser message) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(MessageDisz message) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(MessageGrop message) throws Exception {
+
+		long gropid = message.getGropID();
+		long userid = message.getUserID();
+
 
 		// 只有命令 没下注
-		if (message.getSection() == 0) {
+		if (message.getParameterSection() == 0) {
 			entry.gropInfo(gropid, userid, "不下注是8koi的");
 			return true;
 		}
 
+
 		// 对局不存在 创建一个
-		if (!ROULETTE_ROUNDS.containsKey(gropid)) { ROULETTE_ROUNDS.put(gropid, new RouletteRound()); }
+		if (!ROULETTE_ROUNDS.containsKey(gropid)) ROULETTE_ROUNDS.put(gropid, new RouletteRound());
+
 
 		// 获取本群对局
 		RouletteRound round = ROULETTE_ROUNDS.get(gropid);
 		if (round.lock) {
-			// Module.gropInfo(gropid, "你是最佳第七人，你妈妈不爱你，你甚至不配拥有名字。");
+			entry.gropInfo(gropid, userid, "你是最佳第七人，你妈妈不爱你。");
 			return false;
 		}
+
 
 		// 对局超时就新建一个
 		if (round.time.getTime() + 600000 < new Date().getTime()) {
@@ -172,7 +179,8 @@ public class Executor_roulette extends ModuleExecutor {
 			ROULETTE_ROUNDS.put(gropid, round);
 		}
 
-		if (round.join(gropid, userid, message)) {
+
+		if (round.join(message)) {
 
 			entry.gropInfo(gropid, "名单已凑齐 装填子弹中");
 
@@ -215,7 +223,10 @@ public class Executor_roulette extends ModuleExecutor {
 
 		}
 
-		public boolean join(long gropid, long userid, Message message) {
+		public boolean join(MessageGrop message) {
+
+			long gropid = message.getGropID();
+			long userid = message.getUserID();
 
 			if (player.contains(userid)) {
 				entry.gropInfo(gropid, "你8koi离开，不准放过");
@@ -223,7 +234,7 @@ public class Executor_roulette extends ModuleExecutor {
 				time = new Date();
 				players++;
 				player.add(userid);
-				chip.add(message.getOptions());
+				chip.add(message.getCommandBody());
 				StringBuilder buffer = new StringBuilder();
 				buffer.append("俄罗斯轮盘 - 当前人数 (");
 				buffer.append(players);
@@ -252,7 +263,7 @@ public class Executor_roulette extends ModuleExecutor {
 	}
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
+	public String[] generateReport(Message message) {
 
 		if (COUNT_USER + COUNT_DISZ + COUNT_GROP == 0) { return null; }
 		StringBuilder builder = new StringBuilder();

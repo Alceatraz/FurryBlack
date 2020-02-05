@@ -323,7 +323,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public int privateMsg(int typeid, int messageid, long userid, String message, int messagefont) {
 
 		try {
-			SYSTEMD.doUserMessage(typeid, userid, new MessageUser(typeid, userid, message, messageid, messagefont), messageid, messagefont);
+			SYSTEMD.doUserMessage(new MessageUser(typeid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
 			SYSTEMD.adminInfo("[私聊消息异常] 时间序列号 - " + time + " 原因：\r\n" + exception.getMessage());
@@ -346,7 +346,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public int discussMsg(int typeid, int messageid, long diszid, long userid, String message, int messagefont) {
 
 		try {
-			SYSTEMD.doDiszMessage(diszid, userid, new MessageDisz(diszid, userid, message, messageid, messagefont), messageid, messagefont);
+			SYSTEMD.doDiszMessage(new MessageDisz(diszid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
 			SYSTEMD.adminInfo("[组聊消息异常] 序列号 - " + time + " 原因：\r\n" + exception.getMessage());
@@ -371,7 +371,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			int messagefont) {
 
 		try {
-			SYSTEMD.doGropMessage(gropid, userid, new MessageGrop(gropid, userid, message, messageid, messagefont), messageid, messagefont);
+			SYSTEMD.doGropMessage(new MessageGrop(gropid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
 			SYSTEMD.adminInfo("[群聊消息异常] 序列号 - " + time + " 原因：\r\n" + exception.getMessage());

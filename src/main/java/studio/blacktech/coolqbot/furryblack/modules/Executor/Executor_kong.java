@@ -104,25 +104,27 @@ public class Executor_kong extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-
-		entry.userInfo(userid, message.getSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
+	public boolean doUserMessage(MessageUser message) throws Exception {
+		long userid = message.getUserID();
+		entry.userInfo(userid, message.getParameterSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-
-		entry.diszInfo(diszid, userid, message.getSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
+	public boolean doDiszMessage(MessageDisz message) throws Exception {
+		long diszid = message.getDiszID();
+		long userid = message.getUserID();
+		entry.diszInfo(diszid, userid, message.getParameterSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-
-		entry.gropInfo(gropid, userid, message.getSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
+	public boolean doGropMessage(MessageGrop message) throws Exception {
+		long gropid = message.getGropID();
+		long userid = message.getUserID();
+		entry.gropInfo(gropid, userid, message.getParameterSection() == 0 ? "你 想 把 空 气 变 臭 吗" : Executor_kong.kong(message));
 		return true;
 
 	}
@@ -131,7 +133,7 @@ public class Executor_kong extends ModuleExecutor {
 
 		String temp;
 
-		temp = message.getOptions();
+		temp = message.getCommandBody();
 		temp = temp.replaceAll(" ", "");
 		temp = temp.replaceAll("\\[CQ:.+\\]", "");
 		temp = temp.trim();
@@ -155,7 +157,7 @@ public class Executor_kong extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
+	public String[] generateReport(Message message) {
 
 		return new String[0];
 

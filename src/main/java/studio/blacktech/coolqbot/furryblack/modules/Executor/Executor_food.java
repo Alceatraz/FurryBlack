@@ -141,24 +141,26 @@ public class Executor_food extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-
+	public boolean doUserMessage(MessageUser message) throws Exception {
+		long userid = message.getUserID();
 		entry.userInfo(userid, chooseFood(message));
 		return true;
 
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-
+	public boolean doDiszMessage(MessageDisz message) throws Exception {
+		long diszid = message.getDiszID();
+		long userid = message.getUserID();
 		entry.diszInfo(diszid, userid, chooseFood(message));
 		return true;
 
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-
+	public boolean doGropMessage(MessageGrop message) throws Exception {
+		long gropid = message.getGropID();
+		long userid = message.getUserID();
 		entry.gropInfo(gropid, userid, chooseFood(message));
 		return true;
 
@@ -170,7 +172,7 @@ public class Executor_food extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
+	public String[] generateReport(Message message) {
 
 		return new String[0];
 
@@ -181,7 +183,7 @@ public class Executor_food extends ModuleExecutor {
 
 		StringBuilder builder = new StringBuilder();
 
-		if (message.getSection() == 0) {
+		if (message.getParameterSection() == 0) {
 			for (int mode : MENU.keySet()) {
 				TreeMap<Integer, String> temp = MENU.get(mode);
 				builder.append("类别 " + mode + "：" + temp.get(0) + " " + (temp.size() - 1) + "种" + "\r\n");
@@ -190,7 +192,7 @@ public class Executor_food extends ModuleExecutor {
 
 		} else {
 
-			int mode = Integer.parseInt(message.getSegment(0));
+			int mode = Integer.parseInt(message.getParameterSegment(0));
 
 			if (MENU.containsKey(mode)) {
 				TreeMap<Integer, String> temp = MENU.get(mode);

@@ -15,16 +15,12 @@ public class MessageGrop extends Message {
 
 	}
 
-	public long gropid() {
-
+	public long getGropID() {
 		return gropid;
-
 	}
 
-	public long userid() {
-
+	public long getUserID() {
 		return userid;
-
 	}
 
 	@Override

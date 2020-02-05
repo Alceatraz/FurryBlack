@@ -154,32 +154,32 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	@Override
 	public String[] exec(Message message) throws Exception {
 
-		if (message.getSection() < 2) {
+		if (message.getParameterSection() < 2) {
 			return new String[] {
 					"参数不足"
 			};
 		}
-		String command = message.getSegment(1);
+		String command = message.getParameterSegment(1);
 		switch (command) {
-			case "get":
-				return new String[] {
-						getAddress()
-				};
+		case "get":
+			return new String[] {
+					getAddress()
+			};
 
-			case "set":
-				if (message.getSection() == 2) {
-					return new String[] {
-							this.setAddress()
-					};
-				} else {
-					return new String[] {
-							this.setAddress(message.getSegment(2))
-					};
-				}
-			default:
+		case "set":
+			if (message.getParameterSection() == 2) {
 				return new String[] {
-						"此模块无此命令 - " + message.getSegment(1)
+						this.setAddress()
 				};
+			} else {
+				return new String[] {
+						this.setAddress(message.getParameterSegment(2))
+				};
+			}
+		default:
+			return new String[] {
+					"此模块无此命令 - " + message.getParameterSegment(1)
+			};
 		}
 
 	}
@@ -200,7 +200,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
+	public String[] generateReport(Message message) {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("获取地址：");

@@ -213,22 +213,25 @@ public class Executor_zhan extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(MessageUser message) throws Exception {
+		long userid = message.getUserID();
 		entry.userInfo(userid, chooseCard(message));
 		return true;
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-
+	public boolean doDiszMessage(MessageDisz message) throws Exception {
+		long diszid = message.getDiszID();
+		long userid = message.getUserID();
 		entry.diszInfo(diszid, userid, chooseCard(message));
 		return true;
 
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-
+	public boolean doGropMessage(MessageGrop message) throws Exception {
+		long gropid = message.getGropID();
+		long userid = message.getUserID();
 		entry.gropInfo(gropid, userid, chooseCard(message));
 		return true;
 
@@ -236,20 +239,21 @@ public class Executor_zhan extends ModuleExecutor {
 
 	private String chooseCard(Message message) {
 
-		if (message.getSection() == 0) {
+		if (message.getParameterSection() == 0) {
 			return "你不能占卜空气";
 		} else {
 			int random = RandomTool.nextInt(43);
 			FREQ.set(random, FREQ.get(random));
-			return "你因为 " + message.getOptions() + "\r\n抽到了：" + CARD.get(random);
+			return "你因为 " + message.getCommandBody() + "\r\n抽到了：" + CARD.get(random);
 		}
 
 	}
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
+	public String[] generateReport(Message message) {
 
-		if (COUNT_USER + COUNT_DISZ + COUNT_GROP == 0) { return null; }
+		if (COUNT_USER + COUNT_DISZ + COUNT_GROP == 0) return new String[0];
+
 		StringBuilder builder = new StringBuilder();
 		int coverage = 0;
 		for (int i = 0; i < 44; i++) {
@@ -258,7 +262,7 @@ public class Executor_zhan extends ModuleExecutor {
 
 		coverage = 44 - coverage;
 		for (int i = 0; i < 44; i++) {
-			if (FREQ.get(i) == 0) { continue; }
+			if (FREQ.get(i) == 0) continue;
 			builder.append("第");
 			builder.append(i + 1);
 			builder.append("张：");

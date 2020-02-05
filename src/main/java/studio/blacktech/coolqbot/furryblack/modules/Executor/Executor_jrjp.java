@@ -206,22 +206,22 @@ public class Executor_jrjp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(MessageUser message) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(MessageDisz message) throws Exception {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-
+	public boolean doGropMessage(MessageGrop message) throws Exception {
+		long gropid = message.getGropID();
 		long victim = VICTIM.get(gropid);
 		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + AVCODE.get(gropid));
 		return true;
@@ -234,7 +234,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
+	public String[] generateReport(Message message) {
 
 		return new String[0];
 

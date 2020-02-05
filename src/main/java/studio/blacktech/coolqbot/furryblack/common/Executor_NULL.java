@@ -16,6 +16,7 @@ public class Executor_NULL extends ModuleExecutor {
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
 	private static String MODULE_PACKAGENAME = "Executor_NULL";
 	private static String MODULE_COMMANDNAME = "null";
 	private static String MODULE_DISPLAYNAME = "模板模块";
@@ -25,36 +26,24 @@ public class Executor_NULL extends ModuleExecutor {
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
 	//
 	// ==========================================================================================================================================================
-	// @formatter:off
 
-    public Executor_NULL() throws Exception {
 
-        // @formatter:off
-
-        super(
-                MODULE_PACKAGENAME,
-                MODULE_COMMANDNAME,
-                MODULE_DISPLAYNAME,
-                MODULE_DESCRIPTION,
-                MODULE_VERSION,
-                MODULE_USAGE,
-                MODULE_PRIVACY_STORED,
-                MODULE_PRIVACY_CACHED,
-                MODULE_PRIVACY_OBTAIN
-        );
-
-        // @formatter:on
+	public Executor_NULL() throws Exception {
+		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
 	}
+
 
 	@Override
 	public boolean init() throws Exception {
@@ -74,32 +63,24 @@ public class Executor_NULL extends ModuleExecutor {
 
 	@Override
 	public boolean boot() throws Exception {
-
 		return false;
-
 	}
 
 	@Override
 	public boolean save() throws Exception {
-
 		return false;
-
 	}
 
 	@Override
 	public boolean shut() throws Exception {
-
 		return false;
-
 	}
 
 	@Override
 	public String[] exec(Message message) throws Exception {
-
 		return new String[] {
 				"此模块无可用命令"
 		};
-
 	}
 
 	@Override
@@ -109,32 +90,23 @@ public class Executor_NULL extends ModuleExecutor {
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont)
-			throws Exception {
-
+	public boolean doUserMessage(MessageUser message) throws Exception {
 		return true;
-
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont)
-			throws Exception {
-
+	public boolean doDiszMessage(MessageDisz message) throws Exception {
 		return true;
-
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont)
-			throws Exception {
-
+	public boolean doGropMessage(MessageGrop message) throws Exception {
 		return true;
-
 	}
+
 	// ==========================================================================================================================================================
 	//
 	// 工具函数
@@ -142,10 +114,7 @@ public class Executor_NULL extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
-
+	public String[] generateReport(Message message) {
 		return null;
-
 	}
-
 }

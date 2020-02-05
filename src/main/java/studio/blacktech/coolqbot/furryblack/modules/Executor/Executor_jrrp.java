@@ -122,8 +122,8 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
-
+	public boolean doUserMessage(MessageUser message) throws Exception {
+		long userid = message.getUserID();
 		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
 		entry.userInfo(userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
 		return true;
@@ -131,8 +131,9 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
-
+	public boolean doDiszMessage(MessageDisz message) throws Exception {
+		long diszid = message.getDiszID();
+		long userid = message.getUserID();
 		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
 		entry.diszInfo(diszid, userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
 		return true;
@@ -140,8 +141,9 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
-
+	public boolean doGropMessage(MessageGrop message) throws Exception {
+		long gropid = message.getGropID();
+		long userid = message.getUserID();
 		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
 		entry.gropInfo(gropid, userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
 		return true;
@@ -149,7 +151,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
+	public String[] generateReport(Message message) {
 
 		return new String[0];
 

@@ -8,23 +8,17 @@ public class MessageUser extends Message {
 	private long userid = 0;
 
 	public MessageUser(int typeid, long userid, String message, int messageid, int messageFont) {
-
 		super(message, messageid, messageFont);
 		this.typeid = typeid;
 		this.userid = userid;
-
 	}
 
-	public long typeid() {
-
+	public long getTypeID() {
 		return typeid;
-
 	}
 
-	public long userid() {
-
+	public long getUserID() {
 		return userid;
-
 	}
 
 	@Override

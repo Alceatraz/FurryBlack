@@ -2,12 +2,10 @@ package studio.blacktech.coolqbot.furryblack.modules.Trigger;
 
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -59,10 +57,6 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	private TreeMap<Long, HashSet<Long>> DISZ_MEMBER_IGNORE;
 	private TreeMap<Long, HashSet<Long>> GROP_MEMBER_IGNORE;
 
-	private TreeMap<Long, Integer> DENY_USER_COUNT;
-	private TreeMap<Long, TreeMap<Long, Integer>> DENY_DISZ_COUNT;
-	private TreeMap<Long, TreeMap<Long, Integer>> DENY_GROP_COUNT;
-
 	private File FILE_USERIGNORE;
 	private File FILE_DISZIGNORE;
 	private File FILE_GROPIGNORE;
@@ -96,10 +90,6 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 		DISZ_MEMBER_IGNORE = new TreeMap<>();
 		GROP_MEMBER_IGNORE = new TreeMap<>();
-
-		DENY_USER_COUNT = new TreeMap<>();
-		DENY_DISZ_COUNT = new TreeMap<>();
-		DENY_GROP_COUNT = new TreeMap<>();
 
 		if (NEW_CONFIG) {
 
@@ -211,60 +201,29 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		ENABLE_DISZ = ENABLE_USER || ENABLE_DISZ && GLOBAL_DISZ_IGNORE.size() + DISZ_MEMBER_IGNORE.size() > 0;
 		ENABLE_GROP = ENABLE_USER || ENABLE_GROP && GLOBAL_GROP_IGNORE.size() + GROP_MEMBER_IGNORE.size() > 0;
 
-		for (Long tempuserid : GLOBAL_USER_IGNORE) {
-			DENY_USER_COUNT.put(tempuserid, 0);
-		}
-
-		for (Long tempdiszid : DISZ_MEMBER_IGNORE.keySet()) {
-			TreeMap<Long, Integer> tempcount = new TreeMap<>();
-			HashSet<Long> tempdisz = DISZ_MEMBER_IGNORE.get(tempdiszid);
-			for (Long tempuserid : tempdisz) {
-				tempcount.put(tempuserid, 0);
-			}
-			DENY_DISZ_COUNT.put(tempdiszid, tempcount);
-		}
-
-		for (Long tempgropid : GROP_MEMBER_IGNORE.keySet()) {
-			TreeMap<Long, Integer> tempcount = new TreeMap<>();
-			HashSet<Long> tempgrop = GROP_MEMBER_IGNORE.get(tempgropid);
-			for (Long tempuserid : tempgrop) {
-				tempcount.put(tempuserid, 0);
-			}
-			DENY_GROP_COUNT.put(tempgropid, tempcount);
-		}
-
 		return true;
-
 	}
 
 	@Override
 	public boolean boot() throws Exception {
-
 		return true;
-
 	}
 
 	@Override
 	public boolean save() throws Exception {
-
 		return true;
-
 	}
 
 	@Override
 	public boolean shut() throws Exception {
-
 		return true;
-
 	}
 
 	@Override
 	public String[] exec(Message message) throws Exception {
-
 		return new String[] {
 				"此模块无可用命令"
 		};
-
 	}
 
 	@Override
@@ -278,14 +237,14 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public boolean doUserMessage(int typeid, long userid, MessageUser message, int messageid, int messagefont) throws Exception {
+	public boolean doUserMessage(MessageUser message) throws Exception {
+
+		long userid = message.getUserID();
 
 		if (GLOBAL_USER_IGNORE.contains(userid)) {
 
-			DENY_USER_COUNT.put(userid, DENY_USER_COUNT.get(userid) + 1);
-
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_USER_LOGGER, true), StandardCharsets.UTF_8));
-			writer.write("[" + LoggerX.datetime() + "] 某人" + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n");
+			FileWriter writer = new FileWriter(FILE_DENY_USER_LOGGER);
+			writer.append("[" + LoggerX.datetime() + "] 某人" + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
 			writer.flush();
 			writer.close();
 
@@ -298,34 +257,29 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public boolean doDiszMessage(long diszid, long userid, MessageDisz message, int messageid, int messagefont) throws Exception {
+	public boolean doDiszMessage(MessageDisz message) throws Exception {
+
+		long diszid = message.getDiszID();
+		long userid = message.getUserID();
 
 		if (GLOBAL_USER_IGNORE.contains(userid)) {
 
-			DENY_USER_COUNT.put(userid, DENY_USER_COUNT.get(userid) + 1);
-
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_USER_LOGGER, true), StandardCharsets.UTF_8));
-			writer.write("[" + LoggerX.datetime() + "] 某人" + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n");
+			FileWriter writer = new FileWriter(FILE_DENY_USER_LOGGER);
+			writer.append("[" + LoggerX.datetime() + "] 某人" + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
 			writer.flush();
 			writer.close();
 
 		} else if (GLOBAL_DISZ_IGNORE.contains(diszid)) {
 
-			TreeMap<Long, Integer> temp = DENY_DISZ_COUNT.get(diszid);
-			temp.put(userid, temp.get(userid) + 1);
-
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_DISZ_LOGGER, true), StandardCharsets.UTF_8));
-			writer.write("[" + LoggerX.datetime() + "] 整个组 " + diszid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n");
+			FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER);
+			writer.append("[" + LoggerX.datetime() + "] 整个组 " + diszid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
 			writer.flush();
 			writer.close();
 
 		} else if (DISZ_MEMBER_IGNORE.containsKey(diszid) && DISZ_MEMBER_IGNORE.get(diszid).contains(userid)) {
 
-			TreeMap<Long, Integer> temp = DENY_DISZ_COUNT.get(diszid);
-			temp.put(userid, temp.get(userid) + 1);
-
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_DISZ_LOGGER, true), StandardCharsets.UTF_8));
-			writer.write("[" + LoggerX.datetime() + "] 组成员 " + diszid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n");
+			FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER);
+			writer.append("[" + LoggerX.datetime() + "] 组成员 " + diszid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
 			writer.flush();
 			writer.close();
 
@@ -339,34 +293,29 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public boolean doGropMessage(long gropid, long userid, MessageGrop message, int messageid, int messagefont) throws Exception {
+	public boolean doGropMessage(MessageGrop message) throws Exception {
+
+		long gropid = message.getGropID();
+		long userid = message.getUserID();
 
 		if (GLOBAL_USER_IGNORE.contains(userid)) {
 
-			DENY_USER_COUNT.put(userid, DENY_USER_COUNT.get(userid) + 1);
-
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_USER_LOGGER, true), StandardCharsets.UTF_8));
-			writer.write("[" + LoggerX.datetime() + "] 某人" + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n");
+			FileWriter writer = new FileWriter(FILE_DENY_USER_LOGGER);
+			writer.append("[" + LoggerX.datetime() + "] 指定人" + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
 			writer.flush();
 			writer.close();
 
 		} else if (GLOBAL_GROP_IGNORE.contains(gropid)) {
 
-			TreeMap<Long, Integer> temp = DENY_GROP_COUNT.get(gropid);
-			temp.put(userid, temp.get(userid) + 1);
-
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_GROP_LOGGER, true), StandardCharsets.UTF_8));
-			writer.write("[" + LoggerX.datetime() + "] 整个群 " + gropid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n");
+			FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER);
+			writer.append("[" + LoggerX.datetime() + "] 整个群 " + gropid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
 			writer.flush();
 			writer.close();
 
 		} else if (GROP_MEMBER_IGNORE.containsKey(gropid) && GROP_MEMBER_IGNORE.get(gropid).contains(userid)) {
 
-			TreeMap<Long, Integer> temp = DENY_GROP_COUNT.get(gropid);
-			temp.put(userid, temp.get(userid) + 1);
-
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_DENY_GROP_LOGGER, true), StandardCharsets.UTF_8));
-			writer.write("[" + LoggerX.datetime() + "] 群成员 " + gropid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getRawMessage() + "\n");
+			FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER);
+			writer.append("[" + LoggerX.datetime() + "] 群成员 " + gropid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
 			writer.flush();
 			writer.close();
 
@@ -377,112 +326,8 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public String[] generateReport(int mode, Message message, Object... parameters) {
-
-		COUNT_USER = 0;
-		COUNT_DISZ = 0;
-		COUNT_GROP = 0;
-
-		for (long userid : DENY_USER_COUNT.keySet()) {
-			COUNT_USER = COUNT_USER + DENY_USER_COUNT.get(userid);
-		}
-
-		for (long diszid : DENY_DISZ_COUNT.keySet()) {
-			TreeMap<Long, Integer> disz = DENY_DISZ_COUNT.get(diszid);
-			for (long userid : disz.keySet()) {
-				COUNT_DISZ = COUNT_DISZ + disz.get(userid);
-			}
-		}
-
-		for (long gropid : DENY_GROP_COUNT.keySet()) {
-			TreeMap<Long, Integer> grop = DENY_GROP_COUNT.get(gropid);
-			for (long userid : grop.keySet()) {
-				COUNT_GROP = COUNT_GROP + grop.get(userid);
-			}
-		}
-
-		if (COUNT_USER == 0 && COUNT_DISZ == 0 && COUNT_GROP == 0) { return null; }
-
-		StringBuilder builder = new StringBuilder();
-
-		if (COUNT_USER == 0) {
-			builder.append("拦截私聊：0\r\n");
-		} else {
-
-			builder.append("拦截私聊：");
-			builder.append(COUNT_USER);
-			builder.append("\r\n");
-
-			for (long userid : DENY_USER_COUNT.keySet()) {
-				builder.append(entry.getNickname(userid));
-				builder.append(" (");
-				builder.append(userid);
-				builder.append(") \r\n");
-				builder.append(DENY_USER_COUNT.get(userid));
-			}
-
-		}
-
-		if (COUNT_DISZ == 0) {
-			builder.append("拦截组聊：0\r\n");
-		} else {
-
-			builder.append("拦截组聊：");
-			builder.append(COUNT_DISZ);
-			builder.append("\r\n");
-
-			for (long diszid : DENY_DISZ_COUNT.keySet()) {
-
-				TreeMap<Long, Integer> disz = DENY_DISZ_COUNT.get(diszid);
-
-				builder.append("组号：");
-				builder.append(diszid);
-
-				for (long userid : disz.keySet()) {
-					builder.append(entry.getNickname(userid));
-					builder.append(" (");
-					builder.append(userid);
-					builder.append(") \r\n");
-					builder.append(disz.get(userid));
-				}
-			}
-
-		}
-
-		if (COUNT_GROP == 0) {
-			builder.append("拦截群聊：0\r\n");
-		} else {
-
-			builder.append("拦截群聊：");
-			builder.append(COUNT_GROP);
-			builder.append("\r\n");
-
-			for (long gropid : DENY_GROP_COUNT.keySet()) {
-
-				TreeMap<Long, Integer> grop = DENY_GROP_COUNT.get(gropid);
-
-				builder.append(" 群号：");
-				builder.append(gropid);
-
-				for (long userid : grop.keySet()) {
-					builder.append(entry.getNickname(userid));
-					builder.append(" (");
-					builder.append(userid);
-					builder.append(") \r\n");
-					builder.append(grop.get(userid));
-				}
-			}
-
-		}
-
-		builder.setLength(builder.length() - 1);
-
-		String[] res = new String[] {
-				builder.toString()
-		};
-
-		return res;
-
+	public String[] generateReport(Message message) {
+		return new String[0];
 	}
 
 }
