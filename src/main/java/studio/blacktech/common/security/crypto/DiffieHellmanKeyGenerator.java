@@ -1,4 +1,4 @@
-package sutdio.blacktech.common.security.crypto;
+package studio.blacktech.common.security.crypto;
 
 
 import java.nio.charset.StandardCharsets;

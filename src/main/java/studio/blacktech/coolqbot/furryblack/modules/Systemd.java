@@ -17,6 +17,7 @@ import java.util.jar.JarEntry;
 import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
 
+import studio.blacktech.common.security.crypto.HashTool;
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.BufferX;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
@@ -36,7 +37,6 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
-import sutdio.blacktech.common.security.crypto.HashTool;
 
 
 /**
@@ -319,39 +319,24 @@ public class Systemd extends Module {
 
 		StringBuilder builder = new StringBuilder();
 
+
 		logger.full("读取HELP模板消息");
-
-		while ((line = readerHelp.readLine()) != null) {
-			builder.append(line + "\r\n");
-		}
-
+		while ((line = readerHelp.readLine()) != null) builder.append(line + "\r\n");
 		builder.setLength(builder.length() - 2);
-
 		MESSAGE_HELP = builder.toString();
 
-		builder = new StringBuilder();
 
 		logger.full("读取INFO模板消息");
-
-		while ((line = readerInfo.readLine()) != null) {
-			builder.append(line + "\r\n");
-			MESSAGE_INFO = MESSAGE_INFO + line + "\r\n";
-		}
-
+		builder.setLength(0);
+		while ((line = readerInfo.readLine()) != null) builder.append(line + "\r\n");
 		builder.setLength(builder.length() - 2);
-
 		MESSAGE_INFO = builder.toString();
 
-		builder = new StringBuilder();
 
 		logger.full("读取EULA模板消息");
-
-		while ((line = readerEula.readLine()) != null) {
-			builder.append(line + "\r\n");
-		}
-
+		builder.setLength(0);
+		while ((line = readerEula.readLine()) != null) builder.append(line + "\r\n");
 		builder.setLength(builder.length() - 2);
-
 		MESSAGE_EULA = builder.toString();
 
 		MESSAGE_HELP = MESSAGE_HELP.replaceAll("REPLACE_VERSION", entry.VerID);
@@ -361,18 +346,19 @@ public class Systemd extends Module {
 		String hashInfo = logger.seek("INFO散列值", HashTool.SHA256(MESSAGE_INFO));
 		String hashEula = logger.seek("EULA散列值", HashTool.SHA256(MESSAGE_EULA));
 
-		MESSAGE_INFO = MESSAGE_INFO + "\n=======================\nSHA-1: " + hashInfo;
-		MESSAGE_EULA = MESSAGE_EULA + "\n=======================\nSHA-1: " + hashEula;
+		MESSAGE_INFO = MESSAGE_INFO + "\r\n=======================\r\nSHA-1: " + hashInfo;
+		MESSAGE_EULA = MESSAGE_EULA + "\r\n=======================\r\nSHA-1: " + hashEula;
 
 		// =======================================================================================
 		// 读取 静音的群
 
-		logger.full("读取静音群列表");
+		logger.full("读取静音列表");
 
 		while ((line = readerMute.readLine()) != null) {
 
-			if (line.startsWith("#")) { continue; }
-			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+			if (line.startsWith("#")) continue;
+			if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
+
 			MESSAGE_MUTE.add(Long.parseLong(line));
 			logger.seek("关闭发言", line);
 		}
@@ -384,9 +370,9 @@ public class Systemd extends Module {
 
 		while ((line = readerNick.readLine()) != null) {
 
-			if (line.startsWith("#")) { continue; }
-			if (!line.contains(":")) { continue; }
-			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+			if (line.startsWith("#")) continue;
+			if (!line.contains(":")) continue;
+			if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
 			temp = line.split(":");
 
 			if (temp.length != 3) {
@@ -397,7 +383,7 @@ public class Systemd extends Module {
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
 
-			if (!NICKNAME_MAP.containsKey(gropid)) { NICKNAME_MAP.put(gropid, new TreeMap<Long, String>()); }
+			if (!NICKNAME_MAP.containsKey(gropid)) NICKNAME_MAP.put(gropid, new TreeMap<Long, String>());
 
 			NICKNAME_MAP.get(gropid).put(userid, temp[2]);
 
@@ -411,9 +397,8 @@ public class Systemd extends Module {
 
 		logger.seek("群昵称表", NICKNAME_MAP.size() + "个");
 
-		for (long nickmap : NICKNAME_MAP.keySet()) {
-			logger.seek("群" + nickmap, NICKNAME_MAP.get(nickmap).size() + "个");
-		}
+		for (long nickmap : NICKNAME_MAP.keySet()) logger.seek("群" + nickmap, NICKNAME_MAP.get(nickmap).size() + "个");
+
 
 		// =======================================================================================================================
 		// 实例化模块
@@ -747,36 +732,47 @@ public class Systemd extends Module {
 		// =======================================================================================================================
 		// 启动定时器
 
-		for (ModuleScheduler instance : SCHEDULER_ENABLED) {
-			logger.full("启动定时器 ", instance.MODULE_PACKAGENAME());
-			instance.boot();
+		if (ENABLE_SCHEDULER) {
+			for (ModuleScheduler instance : SCHEDULER_ENABLED) {
+				logger.full("启动定时器 ", instance.MODULE_PACKAGENAME());
+				instance.boot();
+			}
 		}
+
 
 		// =======================================================================================================================
 		// 启动触发器
 
-		for (String name : TRIGGER_INSTANCE.keySet()) {
-			logger.full("启动触发器", name);
-			ModuleTrigger instance = TRIGGER_INSTANCE.get(name);
-			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { instance.boot(); }
+		if (ENABLE_TRIGGER_USER || ENABLE_TRIGGER_DISZ || ENABLE_TRIGGER_GROP) {
+			for (String name : TRIGGER_INSTANCE.keySet()) {
+				logger.full("启动触发器", name);
+				ModuleTrigger instance = TRIGGER_INSTANCE.get(name);
+				if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { instance.boot(); }
+			}
 		}
+
 
 		// =======================================================================================================================
 		// 启动 监听器
 
-		for (String name : LISTENER_INSTANCE.keySet()) {
-			logger.full("启动监听器", name);
-			ModuleListener instance = LISTENER_INSTANCE.get(name);
-			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { instance.boot(); }
+		if (ENABLE_LISENTER_USER || ENABLE_LISENTER_DISZ || ENABLE_LISENTER_GROP) {
+			for (String name : LISTENER_INSTANCE.keySet()) {
+				logger.full("启动监听器", name);
+				ModuleListener instance = LISTENER_INSTANCE.get(name);
+				if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { instance.boot(); }
+			}
 		}
+
 
 		// =======================================================================================================================
 		// 启动执行器
 
-		for (String name : EXECUTOR_INSTANCE.keySet()) {
-			logger.full("启动执行器", name);
-			ModuleExecutor instance = EXECUTOR_INSTANCE.get(name);
-			if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { instance.boot(); }
+		if (ENABLE_EXECUTOR_USER || ENABLE_EXECUTOR_DISZ || ENABLE_EXECUTOR_GROP) {
+			for (String name : EXECUTOR_INSTANCE.keySet()) {
+				logger.full("启动执行器", name);
+				ModuleExecutor instance = EXECUTOR_INSTANCE.get(name);
+				if (instance.ENABLE_USER() || instance.ENABLE_DISZ() || instance.ENABLE_GROP()) { instance.boot(); }
+			}
 		}
 
 		return true;

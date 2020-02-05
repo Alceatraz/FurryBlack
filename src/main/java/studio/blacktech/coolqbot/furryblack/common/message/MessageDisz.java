@@ -27,9 +27,8 @@ public class MessageDisz extends Message {
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
-		builder.append("============================================\n");
-		builder.append("组聊ID: " + diszid + "\n");
-		builder.append("用户ID: " + userid + "\n");
+		builder.append(diszid + " ");
+		builder.append(userid + " ");
 		builder.append(super.toString());
 		return builder.toString();
 

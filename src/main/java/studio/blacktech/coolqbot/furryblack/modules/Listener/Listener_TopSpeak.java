@@ -167,13 +167,11 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		reportReader.close();
 
-
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
 		ENABLE_GROP = true;
 
 		return true;
-
 	}
 
 
@@ -194,11 +192,11 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public boolean shut() throws Exception {
-		logger.info("关闭数据库连接");
-		connection.close();
 		logger.info("关闭工作线程");
 		thread.interrupt();
 		thread.join();
+		logger.info("关闭数据库连接");
+		connection.close();
 		return true;
 	}
 
@@ -232,16 +230,23 @@ public class Listener_TopSpeak extends ModuleListener {
 		return false;
 	}
 
+
 	@Override
 	public boolean doDiszMessage(MessageDisz message) throws Exception {
 		return false;
 	}
 
+
 	@Override
 	public boolean doGropMessage(MessageGrop message) throws Exception {
 		if (GROUP_RECORD.contains(message.getGropID())) {
-			queue.add(message);
-			if (queue.size() > 10) queueLock.notifyAll();
+			synchronized (queueLock) {
+				queue.add(message);
+				if (queue.size() > 10) {
+					queueLock.notifyAll();
+					queueLock.wait();
+				}
+			}
 		}
 		return true;
 	}
@@ -275,17 +280,25 @@ public class Listener_TopSpeak extends ModuleListener {
 			this.connection = connection;
 		}
 
+
 		@Override
 		public void run() {
-			do {
-				try {
-					insertStatement = connection.prepareStatement("INSERT INTO chat_record VALUES (?,?,?,?,?,?,?)");
-					while (true) {
-						System.out.println("开始等待");
-						queueLock.wait(5000);
-						System.out.println("等待超时");
-						for (MessageGrop message : queue) {
-							System.out.println("写入" + message);
+
+			// ==========================================================================================================
+
+			try {
+
+				insertStatement = connection.prepareStatement("INSERT INTO chat_record VALUES (?,?,?,?,?,?,?)");
+
+				while (entry.isEnable()) {
+
+					synchronized (queueLock) {
+
+						queueLock.wait(10000);
+
+						while (queue.size() > 0) {
+
+							MessageGrop message = queue.removeFirst();
 							insertStatement.setLong(1, message.getMessageID());
 							insertStatement.setLong(2, message.getMessageFont());
 							insertStatement.setLong(3, message.getSendtime());
@@ -294,18 +307,16 @@ public class Listener_TopSpeak extends ModuleListener {
 							insertStatement.setBoolean(6, message.isCommand());
 							insertStatement.setString(7, message.getMessage());
 							insertStatement.execute();
+
 						}
-					}
-				} catch (Exception exception) {
-					if (entry.isEnable()) {
-						long timeserial = System.currentTimeMillis();
-						entry.adminInfo("[辅助线程发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
-						Listener_TopSpeak.this.logger.exception(timeserial, "辅助线程发生异常", exception);
-					} else {
-						Listener_TopSpeak.this.logger.full("关闭");
+
+						queueLock.notifyAll();
 					}
 				}
-			} while (entry.isEnable());
+			} catch (Exception exception) {
+				exception.printStackTrace();
+			}
+			// ==========================================================================================================
 		}
 	}
 }

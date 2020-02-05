@@ -25,9 +25,8 @@ public class MessageUser extends Message {
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
-		builder.append("============================================\n");
-		builder.append("类型ID: " + typeid + "\n");
-		builder.append("用户ID: " + userid + "\n");
+		builder.append(typeid + " ");
+		builder.append(userid + " ");
 		builder.append(super.toString());
 		return builder.toString();
 

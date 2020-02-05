@@ -52,7 +52,10 @@ public class Message implements Serializable {
 		commandName = matcher.group().substring(1);
 		isCommand = true;
 
-		if (message.indexOf(' ') < 0) section = 0;
+		if (message.indexOf(' ') < 0) {
+			section = 0;
+			return;
+		}
 
 		commandBody = message.substring(commandName.length() + 2);
 

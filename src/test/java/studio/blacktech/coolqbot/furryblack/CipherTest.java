@@ -11,9 +11,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.Test;
 
-import sutdio.blacktech.common.security.crypto.DiffieHellmanKeyGenerator;
-import sutdio.blacktech.common.security.crypto.cipher.AESCipher;
-import sutdio.blacktech.common.security.crypto.cipher.RSACipher;
+import studio.blacktech.common.security.crypto.DiffieHellmanKeyGenerator;
+import studio.blacktech.common.security.crypto.cipher.AESCipher;
+import studio.blacktech.common.security.crypto.cipher.RSACipher;
 
 // 这里范例
 

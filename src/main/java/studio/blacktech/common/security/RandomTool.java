@@ -1,4 +1,4 @@
-package sutdio.blacktech.common.security;
+package studio.blacktech.common.security;
 
 
 import java.security.NoSuchAlgorithmException;
@@ -6,7 +6,7 @@ import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
 
-import sutdio.blacktech.common.security.crypto.HashTool;
+import studio.blacktech.common.security.crypto.HashTool;
 
 
 public class RandomTool {
