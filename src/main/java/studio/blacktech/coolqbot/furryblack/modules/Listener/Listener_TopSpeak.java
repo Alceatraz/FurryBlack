@@ -4,14 +4,21 @@ package studio.blacktech.coolqbot.furryblack.modules.Listener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import org.meowy.cqp.jcq.entity.CQImage;
+import org.meowy.cqp.jcq.message.CQCode;
 
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerComponent;
@@ -65,8 +72,8 @@ public class Listener_TopSpeak extends ModuleListener {
 	private String JDBC_USERNAME;
 	private String JDBC_PASSWORD;
 
-	private Object queueLock;
-	private LinkedList<MessageGrop> queue;
+	private Object lock;
+	private BlockingQueue<MessageGrop> queue;
 
 	private Connection connection;
 
@@ -90,8 +97,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		initDataFolder();
 		initPropertiesConfigurtion();
 
-		queueLock = new Object();
-		queue = new LinkedList<>();
+		lock = new Object();
+		queue = new LinkedBlockingQueue<>();
 
 		if (NEW_CONFIG) {
 			logger.seek("配置文件不存在 - 生成默认配置");
@@ -178,7 +185,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public boolean boot() throws Exception {
 		logger.info("启动工作线程");
-		thread = new Thread(new WriterWorker(queue, queueLock, connection));
+		thread = new Thread(new Worker(queue, lock, connection));
 		thread.start();
 		return true;
 	}
@@ -203,6 +210,36 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public String[] exec(Message message) throws Exception {
+
+		if (message.getParameterSection() == 0) return new String[] {
+				"需要二级参数"
+		};
+
+		switch (message.getParameterSegment(1)) {
+
+
+		case "reload":
+
+			thread.interrupt();
+			thread.join();
+
+			connection.close();
+
+			connection = DriverManager.getConnection(JDBC_HOSTNAME, JDBC_USERNAME, JDBC_PASSWORD);
+
+			thread = new Thread(new Worker(queue, lock, connection));
+			thread.start();
+
+			return new String[] {
+					"工作线程与数据库连接重启完成"
+			};
+
+		case "status":
+
+			break;
+
+		}
+
 		return new String[] {
 				"无可用消息"
 		};
@@ -240,15 +277,13 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public boolean doGropMessage(MessageGrop message) throws Exception {
 		if (GROUP_RECORD.contains(message.getGropID())) {
-			synchronized (queueLock) {
-				queue.add(message);
-				if (queue.size() > 10) {
-					queueLock.notifyAll();
-					queueLock.wait();
-				}
+			queue.put(message);
+			synchronized (lock) {
+				if (queue.size() > 10) lock.notifyAll();
 			}
 		}
 		return true;
+
 	}
 
 
@@ -267,16 +302,28 @@ public class Listener_TopSpeak extends ModuleListener {
 	}
 
 
-	class WriterWorker implements Runnable {
+	class Worker implements Runnable {
 
-		private Object queueLock;
-		private LinkedList<MessageGrop> queue;
+		private Object lock;
+
+		private BlockingQueue<MessageGrop> queue;
+
 		private Connection connection;
-		private PreparedStatement insertStatement;
 
-		public WriterWorker(LinkedList<MessageGrop> queue, Object queueLock, Connection connection) {
+		private PreparedStatement chat_record_Statement;
+		private PreparedStatement record_at_Statement;
+		private PreparedStatement record_rps_Statement;
+		private PreparedStatement record_dice_Statement;
+		private PreparedStatement record_image_Statement;
+		private PreparedStatement record_face_Statement;
+		private PreparedStatement record_sface_Statement;
+		private PreparedStatement record_bface_Statement;
+		private PreparedStatement record_emoji_Statement;
+
+
+		public Worker(BlockingQueue<MessageGrop> queue, Object queueLock, Connection connection) {
 			this.queue = queue;
-			this.queueLock = queueLock;
+			this.lock = queueLock;
 			this.connection = connection;
 		}
 
@@ -284,39 +331,145 @@ public class Listener_TopSpeak extends ModuleListener {
 		@Override
 		public void run() {
 
-			// ==========================================================================================================
+			do {
 
-			try {
+				try {
 
-				insertStatement = connection.prepareStatement("INSERT INTO chat_record VALUES (?,?,?,?,?,?,?)");
+					chat_record_Statement = connection.prepareStatement("INSERT INTO chat_record VALUES (?,?,?,?,?,?,?,?)");
 
-				while (entry.isEnable()) {
+					record_at_Statement = connection.prepareStatement("INSERT INTO record_at VALUES (?,?)");
+					record_rps_Statement = connection.prepareStatement("INSERT INTO record_rps VALUES (?,?)");
+					record_dice_Statement = connection.prepareStatement("INSERT INTO record_dice VALUES (?,?)");
+					record_face_Statement = connection.prepareStatement("INSERT INTO record_face VALUES (?,?)");
+					record_emoji_Statement = connection.prepareStatement("INSERT INTO record_emoji VALUES (?,?)");
+					record_sface_Statement = connection.prepareStatement("INSERT INTO record_sface VALUES (?,?)");
+					record_bface_Statement = connection.prepareStatement("INSERT INTO record_bface VALUES (?,?)");
+					record_image_Statement = connection.prepareStatement("INSERT INTO record_image VALUES (?,?,?)");
 
-					synchronized (queueLock) {
+					while (true) {
+						synchronized (lock) {
+							lock.wait(5000);
+						}
+						flush();
+					}
 
-						queueLock.wait(10000);
-
-						while (queue.size() > 0) {
-
-							MessageGrop message = queue.removeFirst();
-							insertStatement.setLong(1, message.getMessageID());
-							insertStatement.setLong(2, message.getMessageFont());
-							insertStatement.setLong(3, message.getSendtime());
-							insertStatement.setLong(4, message.getGropID());
-							insertStatement.setLong(5, message.getUserID());
-							insertStatement.setBoolean(6, message.isCommand());
-							insertStatement.setString(7, message.getMessage());
-							insertStatement.execute();
+				} catch (Exception exception) {
+					if (entry.isEnable()) {
+						entry.adminInfo("写入线程发生异常 " + exception.toString());
+						logger.exception(exception);
+						exception.printStackTrace();
+					} else {
+						logger.full("写入线程关闭");
+						try {
+							flush();
+						} catch (Exception ignored) {
 
 						}
-
-						queueLock.notifyAll();
 					}
 				}
-			} catch (Exception exception) {
-				exception.printStackTrace();
+
+			} while (entry.isEnable());
+			logger.full("工作线程结束");
+		}
+
+		
+		private void flush() throws InterruptedException, SQLException, IOException {
+
+			while (queue.size() > 0) {
+
+				MessageGrop message = queue.take();
+
+				long message_id = message.getMessageID();
+
+				chat_record_Statement.setLong(1, message_id);
+				chat_record_Statement.setLong(2, message.getMessageFont());
+				chat_record_Statement.setTimestamp(3, new Timestamp(message.getSendtime()));
+				chat_record_Statement.setLong(4, message.getGropID());
+				chat_record_Statement.setLong(5, message.getUserID());
+				chat_record_Statement.setInt(6, message.getType().getID());
+				chat_record_Statement.setString(7, message.getMessage());
+				chat_record_Statement.setString(8, message.getContent());
+
+				chat_record_Statement.execute();
+
+				if (message.hasAt()) {
+					for (String temp : message.getAt()) {
+						record_at_Statement.setLong(1, message_id);
+						record_at_Statement.setLong(2, Long.parseLong(temp));
+						record_at_Statement.execute();
+					}
+				}
+
+				if (message.hasRps()) {
+					for (String temp : message.getRps()) {
+						record_rps_Statement.setLong(1, message_id);
+						record_rps_Statement.setLong(2, Long.parseLong(temp));
+						record_rps_Statement.execute();
+					}
+				}
+
+				if (message.hasDice()) {
+					for (String temp : message.getDice()) {
+						record_dice_Statement.setLong(1, message_id);
+						record_dice_Statement.setLong(2, Long.parseLong(temp));
+						record_dice_Statement.execute();
+					}
+				}
+
+				if (message.hasEmoji()) {
+					for (String temp : message.getEmoji()) {
+						record_emoji_Statement.setLong(1, message_id);
+						record_emoji_Statement.setLong(2, Long.parseLong(temp));
+						record_emoji_Statement.execute();
+					}
+				}
+
+				if (message.hasFace()) {
+					for (String temp : message.getFace()) {
+						record_face_Statement.setLong(1, message_id);
+						record_face_Statement.setLong(2, Long.parseLong(temp));
+						record_face_Statement.execute();
+					}
+				}
+
+				if (message.hasSface()) {
+					for (String temp : message.getSface()) {
+						record_sface_Statement.setLong(1, message_id);
+						record_sface_Statement.setString(2, temp);
+						record_sface_Statement.execute();
+					}
+				}
+
+				if (message.hasBface()) {
+					for (String temp : message.getBface()) {
+						record_bface_Statement.setLong(1, message_id);
+						record_bface_Statement.setString(2, temp);
+						record_bface_Statement.execute();
+					}
+				}
+
+				if (message.hasImage()) {
+
+					for (String temp : message.getImage()) {
+
+						CQImage image = CQCode.getInstance().getCQImage(temp);
+
+						// Jcq BUG -> CQCode.getInstance().getCQImage() 使用的是已废弃的CQImage构造方法 getName()会返回null
+						// String filename = image.getName();
+
+						String filename = temp.substring(15, 51);
+
+						File file = Paths.get(entry.getPictureStorePath(), filename).toFile();
+
+						if (!file.exists()) image.download(file);
+
+						record_image_Statement.setLong(1, message_id);
+						record_image_Statement.setString(2, temp);
+						record_image_Statement.setString(3, image.getUrl());
+						record_image_Statement.execute();
+					}
+				}
 			}
-			// ==========================================================================================================
 		}
 	}
 }

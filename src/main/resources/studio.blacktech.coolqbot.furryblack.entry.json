@@ -1,6 +1,6 @@
 // @formatter:off
+// CoolQ的JSON解析器支持双斜线注释 JcqSDK也支持
 
-// CoolQ的JSON解析器支持双斜线注释JcqSDK也支持
 {
   "ret": 1,
   "apiver": 9,

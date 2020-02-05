@@ -113,12 +113,12 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 	private static String pictureStorePath;
 
-	private File FOLDER_ROOT;
-	private File FOLDER_CONF;
-	private File FOLDER_DATA;
-	private File FOLDER_PICS;
-	private File FOLDER_LOGS;
-	private File FILE_LOGGER;
+	private static File FOLDER_ROOT;
+	private static File FOLDER_CONF;
+	private static File FOLDER_DATA;
+	private static File FOLDER_PICS;
+	private static File FOLDER_LOGS;
+	private static File FILE_LOGGER;
 
 
 	// ==========================================================================================================================================================
@@ -141,10 +141,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param CQ CQ对象
 	 */
 	public entry(CoolQ CQ) {
-
 		super(CQ);
 		entry.CQ = CQ;
-
 	}
 
 	/**
@@ -152,9 +150,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	@Override
 	public int startup() {
-
 		return 0;
-
 	}
 
 	/**
@@ -275,7 +271,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			exception.printStackTrace();
 
 			logger.exception(exception);
-			SYSTEMD.adminInfo("启动异常 " + exception.getMessage());
+			SYSTEMD.adminInfo("启动异常 " + exception.toString());
 
 		}
 
@@ -288,9 +284,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	@Override
 	public int disable() {
-
 		return 0;
-
 	}
 
 	/**
@@ -298,7 +292,6 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	@Override
 	public int exit() {
-
 		logger.info("系统关闭");
 		enable = false;
 		try {
@@ -308,8 +301,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			logger.exception(exception);
 		}
 		return 0;
-
 	}
+	
 	// ==========================================================================================================================================================
 	//
 	// 消息处理函数
@@ -326,7 +319,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			SYSTEMD.doUserMessage(new MessageUser(typeid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
-			SYSTEMD.adminInfo("[私聊消息异常] 时间序列号 - " + time + " 原因：\r\n" + exception.getMessage());
+			SYSTEMD.adminInfo("[私聊消息异常] 时间序列号 - " + time + " 原因：\r\n" + exception.toString());
 			logger.info("时间序列号", time);
 			logger.info("时间", LoggerX.datetime(time));
 			logger.info("用户ID", userid);
@@ -349,7 +342,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			SYSTEMD.doDiszMessage(new MessageDisz(diszid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
-			SYSTEMD.adminInfo("[组聊消息异常] 序列号 - " + time + " 原因：\r\n" + exception.getMessage());
+			SYSTEMD.adminInfo("[组聊消息异常] 序列号 - " + time + " 原因：\r\n" + exception.toString());
 			logger.info("序列号", time);
 			logger.info("时间", LoggerX.datetime(time));
 			logger.info("组聊ID", diszid);
@@ -374,7 +367,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			SYSTEMD.doGropMessage(new MessageGrop(gropid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
-			SYSTEMD.adminInfo("[群聊消息异常] 序列号 - " + time + " 原因：\r\n" + exception.getMessage());
+			SYSTEMD.adminInfo("[群聊消息异常] 序列号 - " + time + " 原因：\r\n" + exception.toString());
 			logger.info("序列号", time);
 			logger.info("时间", LoggerX.datetime(time));
 			logger.info("群聊ID", gropid);
@@ -415,7 +408,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			long time = System.currentTimeMillis();
 
 			logger.exception(time, "成员增加异常", exception);
-			SYSTEMD.adminInfo("[成员增加异常] - 时间序列号" + time + " 原因：\r\n" + exception.getMessage());
+			SYSTEMD.adminInfo("[成员增加异常] - 时间序列号" + time + " 原因：\r\n" + exception.toString());
 		}
 
 		return IMsg.MSG_IGNORE;
@@ -448,7 +441,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			long time = System.currentTimeMillis();
 
 			logger.exception(time, "成员减少异常", exception);
-			SYSTEMD.adminInfo("[成员减少异常] - 时间序列号" + time + " 原因：\r\n" + exception.getMessage());
+			SYSTEMD.adminInfo("[成员减少异常] - 时间序列号" + time + " 原因：\r\n" + exception.toString());
 
 		}
 
@@ -618,6 +611,16 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	public static String getAppDirectory() {
 		return appDirectory;
+	}
+
+
+	/**
+	 * 获取图片存储路径
+	 *
+	 * @return 图片存储路径
+	 */
+	public static File getPictureStore() {
+		return FOLDER_PICS;
 	}
 
 

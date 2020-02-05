@@ -54,6 +54,7 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
+
 	public void exception(Exception exception) {
 
 		StringBuilder builder = new StringBuilder();
@@ -70,6 +71,22 @@ public class LoggerX {
 
 	}
 
+
+	public void exception(String catgory, Exception exception) {
+
+		StringBuilder builder = new StringBuilder();
+		builder.append("异常原因：" + exception.getCause());
+		builder.append("异常消息：" + exception.getMessage());
+		builder.append("异常调用：" + exception.getClass().getName());
+		for (StackTraceElement temp : exception.getStackTrace()) {
+			builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
+		}
+		builder.setLength(builder.length() - 1);
+		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] " + catgory + "\r\n" + builder.toString();
+		LoggerX.PRINT(temp);
+		LoggerX.WRITE(temp);
+	}
+
 	public void exception(long timestamp, Exception exception) {
 
 		StringBuilder builder = new StringBuilder();
@@ -83,8 +100,8 @@ public class LoggerX {
 		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] 发生异常\r\n时间序列号: " + timestamp + builder.toString();
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
-
 	}
+
 
 	public void exception(long timestamp, String catgory, Exception exception) {
 
@@ -99,8 +116,9 @@ public class LoggerX {
 		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] " + catgory + "\r\n时间序列号: " + timestamp + builder.toString();
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
-
 	}
+
+
 	// ==================================================================================================
 	//
 	//

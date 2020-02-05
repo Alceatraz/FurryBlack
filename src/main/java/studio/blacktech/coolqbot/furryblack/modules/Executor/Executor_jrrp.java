@@ -165,7 +165,9 @@ public class Executor_jrrp extends ModuleExecutor {
 
 			long time;
 			Date date;
+
 			do {
+
 				try {
 					while (true) {
 						date = new Date();
@@ -187,9 +189,8 @@ public class Executor_jrrp extends ModuleExecutor {
 					}
 				}
 			} while (entry.isEnable());
-
+			
+			logger.full("工作线程结束");
 		}
-
 	}
-
 }

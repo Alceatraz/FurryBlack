@@ -278,7 +278,7 @@ public class Executor_jrjp extends ModuleExecutor {
 					}
 				}
 			} while (entry.isEnable());
-
+			logger.full("工作线程结束");
 		}
 
 	}

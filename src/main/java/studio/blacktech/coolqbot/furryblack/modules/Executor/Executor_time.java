@@ -48,7 +48,8 @@ public class Executor_time extends ModuleExecutor {
 	private static final TimeZone zone_W4 = TimeZone.getTimeZone("America/New_York");
 	private static final TimeZone zone_00 = TimeZone.getTimeZone("UTC");
 	private static final TimeZone zone_E0 = TimeZone.getTimeZone("Europe/London");
-	// private static final TimeZone zone_E1 = TimeZone.getTimeZone("Europe/Stockholm");
+//	private static final TimeZone zone_E1 = TimeZone.getTimeZone("Europe/Stockholm");
+	private static final TimeZone zone_E1 = TimeZone.getTimeZone("Europe/France");
 	private static final TimeZone zone_E8 = TimeZone.getTimeZone("Asia/Shanghai");
 
 	// ==========================================================================================================================================================
@@ -142,6 +143,7 @@ public class Executor_time extends ModuleExecutor {
             "美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + format(Executor_time.zone_W4) + "\r\n" +
             "欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + format(Executor_time.zone_E0) + "\r\n" +
             //"欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
+            "欧洲法国(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
             "亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
 		;
 
@@ -154,56 +156,52 @@ public class Executor_time extends ModuleExecutor {
 	@SuppressWarnings("deprecation")
 	private String format(TimeZone timezone) {
 
-		// @formatter:off
 
-        boolean isEnableDST = false;
-        boolean isDisableDST = false;
+		boolean isEnableDST = false;
+		boolean isDisableDST = false;
 
-        StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder();
 
-        Calendar today = Calendar.getInstance(timezone);
+		Calendar today = Calendar.getInstance(timezone);
 
-        long current = today.getTimeInMillis();
+		long current = today.getTimeInMillis();
 
-        Date begin = new Date(current);
+		Date begin = new Date(current);
 
-        begin.setMonth(1);
-        begin.setDate(1);
-        begin.setHours(0);
-        begin.setMinutes(0);
-        begin.setSeconds(0);
+		begin.setMonth(1);
+		begin.setDate(1);
+		begin.setHours(0);
+		begin.setMinutes(0);
+		begin.setSeconds(0);
 
-        Calendar temp = Calendar.getInstance(timezone);
+		Calendar temp = Calendar.getInstance(timezone);
 
-        temp.setTime(new Date(begin.getTime() / 1000 * 1000));
+		temp.setTime(new Date(begin.getTime() / 1000 * 1000));
 
-        for (long i = temp.getTimeInMillis(); i < current; i = temp.getTimeInMillis()) {
+		for (long i = temp.getTimeInMillis(); i < current; i = temp.getTimeInMillis()) {
 
-            temp.add(Calendar.DATE, 1);
+			temp.add(Calendar.DATE, 1);
 
-            long t = temp.getTimeInMillis();
+			long t = temp.getTimeInMillis();
 
-            if (t - i < 86400000) {
+			if (t - i < 86400000) {
 				isEnableDST = true;
 			} else if (t - i > 86400000) {
 				isDisableDST = true;
 			}
-        }
-
-        if (isEnableDST ^ isDisableDST) {
-			builder.append(" 夏令时");
 		}
 
-        int TZ_DATE = Integer.parseInt(LoggerX.formatTime("dd", timezone));
-        int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", Executor_time.zone_E8));
+		if (isEnableDST ^ isDisableDST) builder.append(" 夏令时");
 
-        if (E8_DATE - TZ_DATE > 0) {
+
+		int TZ_DATE = Integer.parseInt(LoggerX.formatTime("dd", timezone));
+		int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", Executor_time.zone_E8));
+
+		if (E8_DATE - TZ_DATE > 0) {
 			builder.append(" 昨天," + TZ_DATE + "日");
 		} else if (E8_DATE - TZ_DATE < 0) {
 			builder.append(" 明天," + TZ_DATE + "日");
 		}
-
-        // @formatter:on
 
 		return builder.toString();
 
