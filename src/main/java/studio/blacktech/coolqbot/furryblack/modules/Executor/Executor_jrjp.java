@@ -40,7 +40,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "jrjp";
 	private static String MODULE_DISPLAYNAME = "祭祀";
 	private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
-	private static String MODULE_VERSION = "1.3";
+	private static String MODULE_VERSION = "1.3.0";
 	private static String[] MODULE_USAGE = new String[] {
 			"/jrjp - 查看今日祭品"
 	};
@@ -144,7 +144,7 @@ public class Executor_jrjp extends ModuleExecutor {
 			int random = RandomTool.nextInt(tempMembers.size());
 
 			VICTIM.put(tempGroupID, tempMembers.get(random));
-			AVCODE.put(tempGroupID, RandomTool.nextLong() % 70000000);
+			AVCODE.put(tempGroupID, RandomTool.nextLong() % 100000000);
 
 			MEMBERS.put(tempGroupID, tempMembers);
 

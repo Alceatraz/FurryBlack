@@ -32,7 +32,7 @@ public class Executor_roulette extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "roulette";
 	private static String MODULE_DISPLAYNAME = "俄罗斯轮盘赌";
 	private static String MODULE_DESCRIPTION = "你看这子弹又尖又长，这名单又大又宽";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "1.0.12";
 	private static String[] MODULE_USAGE = new String[] {
 			"/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌，十分钟仍未满员则自动解散对局"
 	};

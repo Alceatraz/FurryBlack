@@ -25,7 +25,7 @@ public class Executor_kong extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "kong";
 	private static String MODULE_DISPLAYNAME = "变臭";
 	private static String MODULE_DESCRIPTION = "给文字添加空格";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "1.0.0";
 	private static String[] MODULE_USAGE = new String[] {
 			"/kong 原句 - 给原句添加空格"
 	};

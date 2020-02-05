@@ -28,7 +28,7 @@ public class Executor_acon extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "acon";
 	private static String MODULE_DISPLAYNAME = "空调";
 	private static String MODULE_DESCRIPTION = "本群冷气开放";
-	private static String MODULE_VERSION = "3.1";
+	private static String MODULE_VERSION = "1.0.3";
 	private static String[] MODULE_USAGE = new String[] {
 			"/acon cost - 耗电量",
 			"/acon off - 关机",

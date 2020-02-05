@@ -54,10 +54,10 @@ public class Message implements Serializable {
 
 	public Message(String rawMessage, int messageId, int messageFont) {
 
-		this.sendTime = System.currentTimeMillis();
+		sendTime = System.currentTimeMillis();
 		this.messageId = messageId;
 		this.messageFont = messageFont;
-		this.message = rawMessage;
+		message = rawMessage;
 
 		Matcher matcher = pattern.matcher(message);
 
@@ -405,8 +405,8 @@ public class Message implements Serializable {
 	public String debug() {
 
 		// @formatter:off
-		
-		return  
+
+		return
 				"RAW " + message + "\n" +
 				"RES " + content + "\n" +
 				"TYPE " + type.getID() + " = " + type.getName() + "\n" +

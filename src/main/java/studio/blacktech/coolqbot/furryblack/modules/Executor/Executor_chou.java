@@ -40,7 +40,7 @@ public class Executor_chou extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "chou";
 	private static String MODULE_DISPLAYNAME = "随机抽人";
 	private static String MODULE_DESCRIPTION = "从当前群随机选择一个成员";
-	private static String MODULE_VERSION = "6.3";
+	private static String MODULE_VERSION = "1.2.1";
 	private static String[] MODULE_USAGE = new String[] {
 			"/chou - 随机抽一个人", "/chou 理由 - 以某个理由抽一个人"
 	};

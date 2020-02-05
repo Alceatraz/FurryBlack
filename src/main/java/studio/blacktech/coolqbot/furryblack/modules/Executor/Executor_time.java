@@ -30,7 +30,7 @@ public class Executor_time extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "time";
 	private static String MODULE_DISPLAYNAME = "环球时间";
 	private static String MODULE_DESCRIPTION = "那谁睡觉了吗";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "1.0.3";
 	private static String[] MODULE_USAGE = new String[] {
 			"/time 看看谁该睡觉了"
 	};
@@ -143,7 +143,7 @@ public class Executor_time extends ModuleExecutor {
             "美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + format(Executor_time.zone_W4) + "\r\n" +
             "欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + format(Executor_time.zone_E0) + "\r\n" +
             //"欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
-            "欧洲法国(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
+            "欧洲法国(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + format(zone_E1) + "\r\n" +
             "亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
 		;
 

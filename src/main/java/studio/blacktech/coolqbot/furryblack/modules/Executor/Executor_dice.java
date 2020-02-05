@@ -27,7 +27,7 @@ public class Executor_dice extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "dice";
 	private static String MODULE_DISPLAYNAME = "掷骰子";
 	private static String MODULE_DESCRIPTION = "发送一个骰子";
-	private static String MODULE_VERSION = "1.1";
+	private static String MODULE_VERSION = "1.1.0";
 	private static String[] MODULE_USAGE = new String[] {
 			"/dice - 发送一个骰子", "/dice 理由 - 为某事投掷一枚骰子"
 	};

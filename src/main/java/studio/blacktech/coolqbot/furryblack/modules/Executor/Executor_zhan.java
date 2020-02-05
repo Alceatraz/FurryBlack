@@ -29,7 +29,7 @@ public class Executor_zhan extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "zhan";
 	private static String MODULE_DISPLAYNAME = "占卜";
 	private static String MODULE_DESCRIPTION = "大阿卡那塔罗牌占卜";
-	private static String MODULE_VERSION = "1.0";
+	private static String MODULE_VERSION = "1.0.0";
 	private static String[] MODULE_USAGE = new String[] {
 			"/zhan 理由 - 为某事占卜"
 	};

@@ -37,7 +37,7 @@ public class Executor_food extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "food";
 	private static String MODULE_DISPLAYNAME = "今天吃什么";
 	private static String MODULE_DESCRIPTION = "随机生成看起来可以吃的东西";
-	private static String MODULE_VERSION = "1.1";
+	private static String MODULE_VERSION = "1.1.3";
 	private static String[] MODULE_USAGE = new String[] {};
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};

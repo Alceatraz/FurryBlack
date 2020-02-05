@@ -29,7 +29,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "jrrp";
 	private static String MODULE_DISPLAYNAME = "今日运气";
 	private static String MODULE_DESCRIPTION = "查看今天的运气值";
-	private static String MODULE_VERSION = "1.3";
+	private static String MODULE_VERSION = "1.3.0";
 	private static String[] MODULE_USAGE = new String[] {
 			"/jrrp - 查看今日运气"
 	};
@@ -189,7 +189,7 @@ public class Executor_jrrp extends ModuleExecutor {
 					}
 				}
 			} while (entry.isEnable());
-			
+
 			logger.full("工作线程结束");
 		}
 	}

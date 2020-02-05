@@ -72,7 +72,7 @@ public class Systemd extends Module {
 	private static String MODULE_COMMANDNAME = "systemd";
 	private static String MODULE_DISPLAYNAME = "核心模块";
 	private static String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
-	private static String MODULE_VERSION = "28.0";
+	private static String MODULE_VERSION = "3.0.1";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};

@@ -45,7 +45,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群分析";
 	private static String MODULE_DESCRIPTION = "水群分析";
-	private static String MODULE_VERSION = "34.0";
+	private static String MODULE_VERSION = "2.0.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {
 			"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
@@ -323,7 +323,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		public Worker(BlockingQueue<MessageGrop> queue, Object queueLock, Connection connection) {
 			this.queue = queue;
-			this.lock = queueLock;
+			lock = queueLock;
 			this.connection = connection;
 		}
 
@@ -372,7 +372,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			logger.full("工作线程结束");
 		}
 
-		
+
 		private void flush() throws InterruptedException, SQLException, IOException {
 
 			while (queue.size() > 0) {
@@ -458,6 +458,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						// String filename = image.getName();
 
 						String filename = temp.substring(15, 51);
+						// entry.getCQ().getImage(file);
 
 						File file = Paths.get(entry.getPictureStorePath(), filename).toFile();
 
