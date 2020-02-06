@@ -12,19 +12,19 @@ public class BufferX {
 	private StringBuilder builder;
 	private LinkedList<StringBuilder> builders = new LinkedList<>();
 
-	
+
 	public BufferX() {
 		warp();
 	}
 
-	
+
 	public void warp() {
 		StringBuilder temp = new StringBuilder();
 		builders.add(temp);
 		builder = temp;
 	}
 
-	
+
 	public String[] make() {
 		String[] message = new String[builders.size()];
 		int length = builders.size();

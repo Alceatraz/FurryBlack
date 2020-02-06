@@ -48,17 +48,16 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群分析";
 	private static String MODULE_DESCRIPTION = "水群分析";
-	private static String MODULE_VERSION = "2.0.0";
+	private static String MODULE_VERSION = "2.1.0";
 	private static String[] MODULE_USAGE = new String[] {
-			"重启线程 重连数据库 /admin exec --module=shui reload",
-			"执行语句/admin exec --module=shui execute --explain `SQL`",
-			"确认执行 /admin exec --module=shui execute --analyze `SQL`",
-			"取消执行 /admin exec --module=shui decline",
-			"执行命令 浮动结果集 /admin exec --module=shui confirm",
-			"执行命令 单向结果集 /admin exec --module=shui confirm --no-size",
-			"保存结果集 /admin exec --module=shui save",
-			"显示结果集 /admin exec --module=shui show",
-			"关闭结果集 /admin exec --module=shui done"
+			"重启辅助线程 /admin exec --module=shui reload",
+			"执行命令 暂不打印 /admin exec --module=shui execute `SQL`",
+			"执行命令 直接保存 /admin exec --module=shui execute `SQL` --save",
+			"执行命令 直接打印 /admin exec --module=shui execute `SQL` --show",
+			"执行命令 有限打印 /admin exec --module=shui execute `SQL` --show --limit=XXX",
+			"打印结果 全部打印 /admin exec --module=shui show",
+			"打印结果 有限打印 /admin exec --module=shui show --limit=XXX",
+			"保存结果 /admin exec --module=shui save"
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {
 			"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
@@ -89,10 +88,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	private BlockingQueue<MessageGrop> queue;
 
 	private Connection connection;
-	private String pendingCommand;
-	private ResultSet lastResult;
-	private int lastColSize;
-	private int lastRowSize;
+	private ResultSet resultSet;
+	private int colSize;
+	private int rowSize;
 
 	// ==========================================================================================================================================================
 	//
@@ -229,11 +227,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		if (message.getParameterSection() < 1) return MODULE_USAGE;
 
-		int count = 0;
-		int limit = Integer.MAX_VALUE; // 0x7FFFFFFF -> 我有理由相信java是小端型
-
 		switch (message.getParameterSegment(1)) {
-
 		case "reload":
 			thread.interrupt();
 			thread.join();
@@ -250,96 +244,47 @@ public class Listener_TopSpeak extends ModuleListener {
 			if (message.getParameterSection() < 3) return new String[] {
 					"execute: 需要语句"
 			};
+
 			boolean explain = message.hasSwitch("explain");
 			boolean analyze = message.hasSwitch("analyze");
+
 			String prefix = null;
 			if (explain) {
 				prefix = "EXPLAIN ";
 			} else if (analyze) {
 				prefix = "EXPLAIN ANALYZE ";
 			}
-			pendingCommand = (prefix == null ? "" : prefix) + message.getParameterSegment(2);
-			return new String[] {
-					"命令已暂存\r\n" + pendingCommand + "\r\n/admin exec --module=shui confirm\r\n/admin exec --module=shui decline"
-			};
+			String command = (prefix == null ? "" : prefix) + message.getParameterSegment(2);
 
+			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
-		case "confirm":
-			if (pendingCommand == null) return new String[] {
-					"暂存区没有命令"
-			};
+			boolean result = statement.execute(command);
 
-			if (message.hasSwitch("no-size")) {
-				Statement statement = connection.createStatement();
-				boolean result = statement.execute(pendingCommand);
+			resultSet = statement.getResultSet();
+
+			resultSet.last();
+			colSize = resultSet.getMetaData().getColumnCount();
+			rowSize = resultSet.getRow();
+			resultSet.beforeFirst();
+
+			if (message.hasSwitch("save")) {
 				return new String[] {
-						"命令执行" + (result ? "成功" : "失败") + "\r\n/admin exec --module=shui save\r\n/admin exec --module=shui show"
+						"结果保存至" + dumpResultSetToCSVFile(message)
 				};
+			} else if (message.hasSwitch("show")) {
+				return dumpResultSetToString(message);
 			} else {
-				Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-				boolean result = statement.execute(pendingCommand);
-				lastResult = statement.getResultSet();
-				lastResult.last();
-				lastColSize = lastResult.getMetaData().getColumnCount();
-				lastRowSize = lastResult.getRow();
-				lastResult.beforeFirst();
 				return new String[] {
-						"命令执行" + (result ? "成功" : "失败") + "\r\n结果集 " + lastColSize + "列 × " + lastRowSize + "行\r\n共" + lastColSize * lastRowSize + "项\r\n/admin exec --module=shui save\r\n/admin exec --module=shui show"
+						"命令执行" + (result ? "成功" : "失败") + "\r\n结果集 " + colSize + "列 × " + rowSize + "行\r\n共" + colSize * rowSize + "项"
 				};
 			}
-
-
-		case "decline":
-			pendingCommand = null;
-			return new String[] {
-					"暂存区命令已清空"
-			};
-
 
 		case "show":
-			if (message.hasSwitch("limit")) limit = Integer.parseInt(message.getSwitch("limit"));
-			StringBuilder builder = new StringBuilder();
-			while (lastResult.next() && count++ < limit) {
-				builder.append("# Row - " + count);
-				for (int i = 1; i <= lastColSize; i++) {
-					builder.append("Col " + i + "=");
-					builder.append(lastResult.getString(i));
-					builder.append("\r\n");
-				}
-			}
-
-			builder.setLength(builder.length() - 2);
-			return new String[] {
-					builder.toString()
-			};
-
-
-		case "done":
-			pendingCommand = null;
-			lastResult.close();
-			return new String[] {
-					"结果集已关闭"
-			};
-
+			return dumpResultSetToString(message);
 
 		case "save":
-			File file = Paths.get(FOLDER_LOGS.getAbsolutePath(), "SQL_result_" + System.currentTimeMillis() + ".csv").toFile();
-
-			FileWriter writer = new FileWriter(file);
-
-			while (lastResult.next()) {
-				for (int i = 1; i <= lastColSize; i++) {
-					writer.append("\"");
-					writer.append(lastResult.getString(i).replaceAll("\"", "\"\""));
-					writer.append("\",");
-				}
-				writer.append("\n");
-			}
-			writer.flush();
-			writer.close();
-			lastResult.close();
 			return new String[] {
-					"结果集已保存 " + file.getAbsolutePath()
+					"结果保存至" + dumpResultSetToCSVFile(message)
 			};
 		}
 
@@ -406,6 +351,45 @@ public class Listener_TopSpeak extends ModuleListener {
 		};
 	}
 
+
+	private String[] dumpResultSetToString(Message message) throws SQLException {
+		int count = 0;
+		int limit = Integer.MAX_VALUE;
+		if (message.hasSwitch("limit")) limit = Integer.parseInt(message.getSwitch("limit"));
+		StringBuilder builder = new StringBuilder();
+		while (resultSet.next() && count++ < limit) {
+			builder.append("{Row " + count + "}");
+			for (int i = 1; i <= colSize; i++) builder.append("[" + resultSet.getString(i) + "]");
+			builder.append("\r\n");
+		}
+		builder.setLength(builder.length() - 2);
+		return new String[] {
+				builder.toString()
+		};
+	}
+
+	private File dumpResultSetToCSVFile(Message message) throws SQLException, IOException {
+		File file = Paths.get(FOLDER_LOGS.getAbsolutePath(), "SQL_result_" + System.currentTimeMillis() + ".csv").toFile();
+		FileWriter writer = new FileWriter(file);
+		for (int i = 1; i <= colSize; i++) {
+			writer.append("\"");
+			writer.append(resultSet.getMetaData().getColumnName(i).replaceAll("\"", "\"\""));
+			writer.append("\",");
+		}
+		writer.append("\n");
+		while (resultSet.next()) {
+			for (int i = 1; i <= colSize; i++) {
+				writer.append("\"");
+				writer.append(resultSet.getString(i).replaceAll("\"", "\"\""));
+				writer.append("\",");
+			}
+			writer.append("\n");
+		}
+		writer.flush();
+		writer.close();
+		resultSet.close();
+		return file;
+	}
 
 	class Worker implements Runnable {
 
