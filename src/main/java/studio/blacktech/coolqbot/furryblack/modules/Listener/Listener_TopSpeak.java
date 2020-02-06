@@ -4,6 +4,7 @@ package studio.blacktech.coolqbot.furryblack.modules.Listener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -11,7 +12,9 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -46,7 +49,17 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_DISPLAYNAME = "水群分析";
 	private static String MODULE_DESCRIPTION = "水群分析";
 	private static String MODULE_VERSION = "2.0.0";
-	private static String[] MODULE_USAGE = new String[] {};
+	private static String[] MODULE_USAGE = new String[] {
+			"重启线程 重连数据库 /admin exec --module=shui reload",
+			"执行语句/admin exec --module=shui execute --explain `SQL`",
+			"确认执行 /admin exec --module=shui execute --analyze `SQL`",
+			"取消执行 /admin exec --module=shui decline",
+			"执行命令 浮动结果集 /admin exec --module=shui confirm",
+			"执行命令 单向结果集 /admin exec --module=shui confirm --no-size",
+			"保存结果集 /admin exec --module=shui save",
+			"显示结果集 /admin exec --module=shui show",
+			"关闭结果集 /admin exec --module=shui done"
+	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {
 			"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
 	};
@@ -76,7 +89,10 @@ public class Listener_TopSpeak extends ModuleListener {
 	private BlockingQueue<MessageGrop> queue;
 
 	private Connection connection;
-
+	private String pendingCommand;
+	private ResultSet lastResult;
+	private int lastColSize;
+	private int lastRowSize;
 
 	// ==========================================================================================================================================================
 	//
@@ -211,33 +227,120 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public String[] exec(Message message) throws Exception {
 
-		if (message.getParameterSection() == 0) return new String[] {
-				"需要二级参数"
-		};
+		if (message.getParameterSection() < 1) return MODULE_USAGE;
+
+		int count = 0;
+		int limit = Integer.MAX_VALUE; // 0x7FFFFFFF -> 我有理由相信java是小端型
 
 		switch (message.getParameterSegment(1)) {
 
-
 		case "reload":
-
 			thread.interrupt();
 			thread.join();
-
 			connection.close();
-
 			connection = DriverManager.getConnection(JDBC_HOSTNAME, JDBC_USERNAME, JDBC_PASSWORD);
-
 			thread = new Thread(new Worker(queue, lock, connection));
 			thread.start();
-
 			return new String[] {
 					"工作线程与数据库连接重启完成"
 			};
 
-		case "status":
 
-			break;
+		case "execute":
+			if (message.getParameterSection() < 3) return new String[] {
+					"execute: 需要语句"
+			};
+			boolean explain = message.hasSwitch("explain");
+			boolean analyze = message.hasSwitch("analyze");
+			String prefix = null;
+			if (explain) {
+				prefix = "EXPLAIN ";
+			} else if (analyze) {
+				prefix = "EXPLAIN ANALYZE ";
+			}
+			pendingCommand = (prefix == null ? "" : prefix) + message.getParameterSegment(2);
+			return new String[] {
+					"命令已暂存\r\n" + pendingCommand + "\r\n/admin exec --module=shui confirm\r\n/admin exec --module=shui decline"
+			};
 
+
+		case "confirm":
+			if (pendingCommand == null) return new String[] {
+					"暂存区没有命令"
+			};
+
+			if (message.hasSwitch("no-size")) {
+				Statement statement = connection.createStatement();
+				boolean result = statement.execute(pendingCommand);
+				return new String[] {
+						"命令执行" + (result ? "成功" : "失败") + "\r\n/admin exec --module=shui save\r\n/admin exec --module=shui show"
+				};
+			} else {
+				Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+				boolean result = statement.execute(pendingCommand);
+				lastResult = statement.getResultSet();
+				lastResult.last();
+				lastColSize = lastResult.getMetaData().getColumnCount();
+				lastRowSize = lastResult.getRow();
+				lastResult.beforeFirst();
+				return new String[] {
+						"命令执行" + (result ? "成功" : "失败") + "\r\n结果集 " + lastColSize + "列 × " + lastRowSize + "行\r\n共" + lastColSize * lastRowSize + "项\r\n/admin exec --module=shui save\r\n/admin exec --module=shui show"
+				};
+			}
+
+
+		case "decline":
+			pendingCommand = null;
+			return new String[] {
+					"暂存区命令已清空"
+			};
+
+
+		case "show":
+			if (message.hasSwitch("limit")) limit = Integer.parseInt(message.getSwitch("limit"));
+			StringBuilder builder = new StringBuilder();
+			while (lastResult.next() && count++ < limit) {
+				builder.append("# Row - " + count);
+				for (int i = 1; i <= lastColSize; i++) {
+					builder.append("Col " + i + "=");
+					builder.append(lastResult.getString(i));
+					builder.append("\r\n");
+				}
+			}
+
+			builder.setLength(builder.length() - 2);
+			return new String[] {
+					builder.toString()
+			};
+
+
+		case "done":
+			pendingCommand = null;
+			lastResult.close();
+			return new String[] {
+					"结果集已关闭"
+			};
+
+
+		case "save":
+			File file = Paths.get(FOLDER_LOGS.getAbsolutePath(), "SQL_result_" + System.currentTimeMillis() + ".csv").toFile();
+
+			FileWriter writer = new FileWriter(file);
+
+			while (lastResult.next()) {
+				for (int i = 1; i <= lastColSize; i++) {
+					writer.append("\"");
+					writer.append(lastResult.getString(i).replaceAll("\"", "\"\""));
+					writer.append("\",");
+				}
+				writer.append("\n");
+			}
+			writer.flush();
+			writer.close();
+			lastResult.close();
+			return new String[] {
+					"结果集已保存 " + file.getAbsolutePath()
+			};
 		}
 
 		return new String[] {
@@ -278,8 +381,10 @@ public class Listener_TopSpeak extends ModuleListener {
 	public boolean doGropMessage(MessageGrop message) throws Exception {
 		if (GROUP_RECORD.contains(message.getGropID())) {
 			queue.put(message);
-			synchronized (lock) {
-				if (queue.size() > 10) lock.notifyAll();
+			if (queue.size() > 10) {
+				synchronized (lock) {
+					lock.notifyAll();
+				}
 			}
 		}
 		return true;
@@ -336,7 +441,6 @@ public class Listener_TopSpeak extends ModuleListener {
 				try {
 
 					chat_record_Statement = connection.prepareStatement("INSERT INTO chat_record VALUES (?,?,?,?,?,?,?,?)");
-
 					record_at_Statement = connection.prepareStatement("INSERT INTO record_at VALUES (?,?)");
 					record_rps_Statement = connection.prepareStatement("INSERT INTO record_rps VALUES (?,?)");
 					record_dice_Statement = connection.prepareStatement("INSERT INTO record_dice VALUES (?,?)");

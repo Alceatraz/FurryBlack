@@ -2,7 +2,6 @@ package studio.blacktech.coolqbot.furryblack.common.message;
 
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
@@ -71,7 +70,7 @@ public class Message implements Serializable {
 				return;
 			}
 
-			commandBody = message.substring(commandName.length() + 2);
+			commandBody = message.substring(commandName.length() + 1);
 
 			boolean isFeild = false;
 			boolean isEscape = false;
@@ -79,7 +78,7 @@ public class Message implements Serializable {
 			StringBuilder builder = new StringBuilder();
 			LinkedList<String> temp = new LinkedList<>();
 
-			int length = message.length();
+			int length = commandBody.length();
 
 			/*
 			 * /admin exec --module=shui eval --mode=sql --command=`SELECT * FROM \`chat_record\` LIMIT 10`
@@ -89,7 +88,7 @@ public class Message implements Serializable {
 
 			loop: for (int pointer = 1; pointer < length; pointer++) {
 
-				char chat = message.charAt(pointer);
+				char chat = commandBody.charAt(pointer);
 
 				switch (chat) {
 
@@ -293,16 +292,19 @@ public class Message implements Serializable {
 
 
 	public String[] getParameterSegment() {
+		if (parameter == null) return null;
 		return parameter;
 	}
 
 
 	public String getParameterSegment(int i) {
+		if (parameter == null) return null;
 		return parameter[i];
 	}
 
 
 	public boolean hasSwitch(String name) {
+		if (switchs == null) return false;
 		return switchs.containsKey(name);
 	}
 
@@ -316,7 +318,16 @@ public class Message implements Serializable {
 
 	@Override
 	public String toString() {
-		return message;
+		StringBuilder builder = new StringBuilder();
+		if (isCommand()) {
+			builder.append(type.getName()).append("|").append(section).append("=").append(message).append("\n");
+			for (int i = 0; i < section; i++) builder.append(i).append(":").append(parameter[i]).append("\n");
+			if (switchs != null) switchs.forEach((key, value) -> builder.append(key).append("=").append(value).append("\n"));
+			builder.setLength(builder.length() - 1);
+		} else {
+			builder.append(type.getName()).append(" - ").append(message);
+		}
+		return builder.toString();
 	}
 
 
@@ -399,24 +410,5 @@ public class Message implements Serializable {
 
 	public boolean hasEmoji() {
 		return emoji != null;
-	}
-
-
-	public String debug() {
-
-		// @formatter:off
-
-		return
-				"RAW " + message + "\n" +
-				"RES " + content + "\n" +
-				"TYPE " + type.getID() + " = " + type.getName() + "\n" +
-				"  IMG " + Arrays.toString(image) + "\n" +
-				"  AT " + Arrays.toString(at) + "\n" +
-				"  RPS " + Arrays.toString(rps) + "\n" +
-				"  DICE " + Arrays.toString(dice) + "\n" +
-				"  FACE " + Arrays.toString(face) + "\n" +
-				"  SFACE " + Arrays.toString(sface) + "\n" +
-				"  BFACE " + Arrays.toString(bface) + "\n" +
-				"  EMOJI " + Arrays.toString(emoji);
 	}
 }

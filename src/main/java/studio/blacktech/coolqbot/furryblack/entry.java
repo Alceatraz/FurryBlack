@@ -79,7 +79,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	// ==========================================================================================================================================================
 
 	// 版本ID
-	public final static String VerID = "2.0.0 2020-02-06 (00:00)";
+	public final static String VerID = "2.0.0 2020-02-06 (22:00)";
 
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();
@@ -698,7 +698,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 是 / 否
 	 */
 	public static boolean isMyself(long userid) {
-		return SYSTEMD.isMyself(userid);
+		return Systemd.isMyself(userid);
 	}
 
 	/**
@@ -708,7 +708,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 是 / 否
 	 */
 	public static boolean isAdmin(long userid) {
-		return SYSTEMD.isAdmin(userid);
+		return Systemd.isAdmin(userid);
 	}
 
 	/**

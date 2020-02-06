@@ -76,11 +76,9 @@ public class Executor_admin extends ModuleExecutor {
 
 	@Override
 	public String[] exec(Message message) throws Exception {
-
 		return new String[] {
 				"此模块无可用命令"
 		};
-
 	}
 
 
