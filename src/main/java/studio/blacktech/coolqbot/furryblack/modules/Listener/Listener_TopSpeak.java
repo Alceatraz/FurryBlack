@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.net.ssl.SSLException;
+
 import org.meowy.cqp.jcq.entity.CQImage;
 import org.meowy.cqp.jcq.message.CQCode;
 
@@ -409,6 +411,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		private PreparedStatement record_bface_Statement;
 		private PreparedStatement record_emoji_Statement;
 
+		private int count = 0;
 
 		public Worker(BlockingQueue<MessageGrop> queue, Object queueLock, Connection connection) {
 			this.queue = queue;
@@ -420,7 +423,10 @@ public class Listener_TopSpeak extends ModuleListener {
 		@Override
 		public void run() {
 
+
 			do {
+
+				logger.full("写入线程启动 第" + count++ + "次");
 
 				try {
 
@@ -550,12 +556,19 @@ public class Listener_TopSpeak extends ModuleListener {
 
 						File file = Paths.get(entry.getPictureStorePath(), filename).toFile();
 
-						if (!file.exists()) image.download(file);
-
 						record_image_Statement.setLong(1, message_id);
 						record_image_Statement.setString(2, temp);
 						record_image_Statement.setString(3, image.getUrl());
 						record_image_Statement.execute();
+
+						try {
+							if (!file.exists()) image.download(file);
+						} catch (SSLException exception) {
+							// CoolQ BUG 不管什么SDK都会发生这个错误
+							// RReceived fatal alert - bad_record_mac
+
+						}
+
 					}
 				}
 			}
