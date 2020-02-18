@@ -30,7 +30,7 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	private static String MODULE_COMMANDNAME = "dynamic";
 	private static String MODULE_DISPLAYNAME = "动态域名";
 	private static String MODULE_DESCRIPTION = "动态域名";
-	private static String MODULE_VERSION = "4.0";
+	private static String MODULE_VERSION = "1.0.0";
 	private static String[] MODULE_USAGE = new String[] {};
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};

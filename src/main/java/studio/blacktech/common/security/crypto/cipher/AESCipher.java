@@ -57,10 +57,8 @@ public class AESCipher {
 	 */
 	@Deprecated
 	public AESCipher(String secretKey) {
-
 		this(AESCipher.generateSecretKeySpec(secretKey), AESCipher.generateIvParameterSpec("0123456789ABCDEF"));
 		System.err.println("Warning! Using fix IV is RISK! Only test purpose!");
-
 	}
 
 	/**
@@ -83,9 +81,7 @@ public class AESCipher {
 	 * @param initialVector 初始向量种子，MD5后用于生成初始向量
 	 */
 	public AESCipher(String secretKey, String initialVector) {
-
 		this(AESCipher.generateSecretKeySpec(secretKey), AESCipher.generateIvParameterSpec(initialVector));
-
 	}
 
 	/**
@@ -95,9 +91,7 @@ public class AESCipher {
 	 * @param initialVector 初始向量种子，MD5后用于生成初始向量
 	 */
 	public AESCipher(SecretKeySpec secretKeySpec, String initialVector) {
-
 		this(secretKeySpec, AESCipher.generateIvParameterSpec(initialVector));
-
 	}
 
 	/**
@@ -107,9 +101,7 @@ public class AESCipher {
 	 * @param initialVector 初始向量
 	 */
 	public AESCipher(String secretKey, IvParameterSpec initialVector) {
-
 		this(AESCipher.generateSecretKeySpec(secretKey), initialVector);
-
 	}
 
 	/**

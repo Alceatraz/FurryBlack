@@ -63,7 +63,13 @@ public class Message implements Serializable {
 		if (matcher.find()) {
 
 			commandName = matcher.group().substring(1);
+
 			type = MessageType.Command;
+
+			// CoolQ 会把 [] 替换成 &#91; &#93;
+
+			message = message.replaceAll("&#91;", "\\[");
+			message = message.replaceAll("&#93;", "\\]");
 
 			if (message.indexOf(' ') < 0) {
 				section = 0;
@@ -71,6 +77,7 @@ public class Message implements Serializable {
 			}
 
 			commandBody = message.substring(commandName.length() + 1);
+
 
 			boolean isFeild = false;
 			boolean isEscape = false;

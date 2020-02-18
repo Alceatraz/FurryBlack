@@ -40,79 +40,86 @@ GitEE的组织名字居然会过长不能写，蛋疼，请记住这个群组名
 
 ## 部署
 
-shui 水群统计模块 使用了PostgreSQL
+shui水群统计模块使用了PostgreSQL，共创建了10个表，分别记录按照时间线保存的聊天记录和8种CQCode，以及WEB模块的注册用户。    
 
 ```
-create user furryblack with password 'furryblack';
-create database furryblack owner furryblack;
-grant all privileges on database furryblack to furryblack;
+CREATE USERR furryblack WITH PASSWORD 'furryblack';
+CREATE DATABASE furryblack OWNER furryblack;
+GRANT ALL PRIVILEGES ON DATABASE furryblack TO furryblack;
+ 
+CREATE TABLE "public"."web_user" (
+  "username" varchar COLLATE "pg_catalog"."default",
+  "password" varchar(255) COLLATE "pg_catalog"."default",
+  "user_id" int8
+);
+ 
+CREATE TABLE "public"."chat_record" (
+  "message_id" int8 NOT NULL,
+  "message_font" int8 NOT NULL,
+  "message_time" timestamp(6) NOT NULL,
+  "grop_id" int8 NOT NULL,
+  "user_id" int8 NOT NULL,
+  "type_id" int4 NOT NULL,
+  "message" text COLLATE "pg_catalog"."default" NOT NULL,
+  "content" text COLLATE "pg_catalog"."default"
+);
 
-CREATE SEQUENCE serial_chat_history
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
+CREATE TABLE "public"."record_at" (
+  "mesage_id" int8 NOT NULL,
+  "receive_id" int8 NOT NULL
+);
 
-CREATE TABLE "public"."chat_history" (
-  "id" int8 NOT NULL DEFAULT nextval('serial_chat_history'::regclass),
+CREATE TABLE "public"."record_face" (
+  "message_id" int8 NOT NULL,
+  "face_id" int8 NOT NULL
+);
+
+CREATE TABLE "public"."record_sface" (
   "message_id" int8,
-  "message_font" int8,
-  "message_time" int8,
-  "grop_id" int8,
-  "user_id" int8,
-  "type_id" int4,
-  "message" text COLLATE "pg_catalog"."default"
+  "face_id" varchar(64) COLLATE "pg_catalog"."default"
 );
 
-CREATE TABLE "public"."chat_pictures" (
-  "image_code" varchar(255) COLLATE "pg_catalog"."default",
-  "file_url" varchar(4096) COLLATE "pg_catalog"."default",
-  "file_name" varchar(4096) COLLATE "pg_catalog"."default"
+CREATE TABLE "public"."record_bface" (
+  "message_id" int8 NOT NULL,
+  "face_id" varchar(64) COLLATE "pg_catalog"."default" NOT NULL
 );
-ALTER TABLE "public"."chat_pictures" ADD CONSTRAINT "chat_pictures_pkey" PRIMARY KEY ("image_code");
+
+CREATE TABLE "public"."record_emoji" (
+  "message_id" int8 NOT NULL,
+  "face_id" int8 NOT NULL
+);
+
+CREATE TABLE "public"."record_dice" (
+  "message_id" int8 NOT NULL,
+  "dice_id" int8 NOT NULL
+);
+
+CREATE TABLE "public"."record_rps" (
+  "message_id" int8 NOT NULL,
+  "rps_id" int8
+);
+
+CREATE TABLE "public"."record_image" (
+  "message_id" int8 NOT NULL,
+  "picture_code" varchar(53) COLLATE "pg_catalog"."default" NOT NULL,
+  "image_url" varchar(4096) COLLATE "pg_catalog"."default" NOT NULL,
+  "image_path" varchar(4096) COLLATE "pg_catalog"."default"
+);
+
 ```
 
-统计某用户的发图频率 (这个玩意套了五层 习惯就好)
+一些常用的SQL语句
 
 ```
-SELECT 
-	temp_table_4."count",
-	temp_table_4.code,
-	chat_picture.image_code
-FROM (
-	SELECT 
-		counts as "count",result AS code
-	FROM (
-		SELECT 
-			*,count(*) AS counts
-		FROM (
-			SELECT 
-				match[1] AS result
-			FROM (
-				SELECT 
-					chat_history.message 
-				FROM 
-					chat_history
-				WHERE
-					chat_history.grop_id = 123123123 AND
-					chat_history.user_id = 123123123 AND
-					chat_history.message_time BETWEEN 1577808000000 AND 1580400000000
-			) AS temp_table_1
-			CROSS JOIN LATERAL 
-				regexp_matches(temp_table_1.message, '\[CQ:image,file=\w{32}\.\w{3,4}\]','g') 
-				AS match
-		) AS temp_table_2
-		GROUP BY 1
-		ORDER BY 2 DESC
-	) AS temp_table_3
-	WHERE
-		temp_table_3.counts > 1
-) AS temp_table_4
-LEFT JOIN 
-	chat_picture
-ON
-	temp_table_4.code = chat_picture.image_code
+
+提取所有图片
+
+SELECT match[1] AS result
+FROM ( SELECT message FROM chat_record ) AS temp_1
+CROSS JOIN LATERAL regexp_matches(message, '\[CQ:image,file=\w{32}\.\w{3,4}\]','g') AS match
+
+ 
+
 ```
 
 ## 开发
@@ -151,12 +158,12 @@ JcqSDK会为jar（即插件）生成同名的文件夹
 
 ### 模块  
 
-除去主类和其他构造类，一切功能类皆为模块，继承自`Module`。模块提供了一些基础工具，如初始化配置及数据目录，提供一个Properties对象，用于快速配置。模块有四种既定功能的子类分为：  
+除去主类和其他构造类，一切功能类皆为模块，继承自`Module`。模块提供了一些基础工具，如初始化配置及数据目录，提供一个`Properties`对象，用于快速配置。模块有四种既定功能的子类分为：  
 
-- 触发器 `extends ModuleTrigger`  
-- 监听器 `extends ModuleListener`  
-- 执行器 `extends ModuleExecutor`  
-- 定时器 `extends ModuleScheduler`  
+- 触发器 `extends ModuleTrigger` 需要标记 `@ModuleTriggerComponent` 注解  
+- 监听器 `extends ModuleListener` 需要标记 `@ModuleListenerComponent` 注解  
+- 执行器 `extends ModuleExecutor` 需要标记 `@ModuleExecutorComponent` 注解  
+- 定时器 `extends ModuleScheduler` 需要标记 `@ModuleSchedulerComponent` 注解  
 
 当收到消息时，将会按照 触发器 → 监听器 → 执行器 的顺序执行  
 
@@ -170,13 +177,9 @@ JcqSDK会为jar（即插件）生成同名的文件夹
 `Executor_NULL`为模板，复制重命名后修改其内容  
 `Executor_DEMO`含完整注释，应按照注释说明的方法开发模块  
 
-为了缩减体积，项目不包含doc文件，可使用使用javadoc自行编译文档  
-
 ### 工具
 
 - `entry`  是整个机器人的本体，包含一系列重要方法，开发者不应该调用Systemd中的原始方法，而是使用entry中包装的方法。  
 - `Systemd` 是整个系统的核心，负责了包括消息路由、消息发送、模块管理、模块生命周期管理等所有框架功能。  
-- `LoggerX` 一个假的精简版LoggerX，本质是加了格式的StringBuffer而且不带任何保存和特殊功能。  
+- `LoggerX` 一个为了性能进行取舍的日志工具类，包含了大量的实用方法。  
 - `Message` `MessageUser` `MessageDisz` `MessageGrop` 所有传入消息都会被包装成Message对象，并根据消息来源包装成对应的子类。  
-- `Executor_admin` 这是一个特殊的命令模块，所有管理员命令均因在此处执行（执行时会判断isAdmin，只有管理员可执行）。  
-- `Listener_TopSpeak` 是一个特殊的监听模块，所有消息都将在此保存，但是本质是为了统计，所以不支持查询某一条具体消息。  

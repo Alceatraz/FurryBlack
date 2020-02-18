@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.test;
+package studio.blacktech.coolqbot.furryblack;
 
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 
 
-public class PostgresTest {
+public class Postgres {
 
 	Connection connection;
 

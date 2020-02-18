@@ -316,9 +316,7 @@ public class Executor_acon extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(Message message) {
-
 		return new String[0];
-
 	}
 
 }

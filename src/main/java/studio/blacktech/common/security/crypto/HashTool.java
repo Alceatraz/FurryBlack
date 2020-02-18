@@ -18,8 +18,8 @@ public class HashTool {
 			sha256Digest = MessageDigest.getInstance("SHA-256");
 			sha384Digest = MessageDigest.getInstance("SHA-384");
 			sha512Digest = MessageDigest.getInstance("SHA-512");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+		} catch (NoSuchAlgorithmException execption) {
+			execption.printStackTrace();
 		}
 	}
 

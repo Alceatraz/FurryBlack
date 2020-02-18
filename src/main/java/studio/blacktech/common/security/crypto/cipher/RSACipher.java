@@ -62,9 +62,7 @@ public class RSACipher {
 	 * @throws InvalidKeyException 错误的密钥
 	 */
 	public RSACipher(String secretKey, int keyLength) throws InvalidKeyException {
-
 		this(Objects.requireNonNull(RSACipher.generateKeyPair(secretKey, keyLength)));
-
 	}
 
 	/**
@@ -73,9 +71,7 @@ public class RSACipher {
 	 * @param keyPair 密钥对
 	 */
 	public RSACipher(KeyPair keyPair) {
-
 		this((RSAPublicKey) keyPair.getPublic(), (RSAPrivateKey) keyPair.getPrivate());
-
 	}
 
 	/**
@@ -85,9 +81,7 @@ public class RSACipher {
 	 * @throws InvalidPublicKeyException 公钥格式错误
 	 */
 	public RSACipher(String publicKey) throws InvalidPublicKeyException {
-
 		this(RSACipher.getRSAPublicKeyFromString(publicKey));
-
 	}
 
 	/**
@@ -99,9 +93,7 @@ public class RSACipher {
 	 * @throws InvalidPrivateKeyException 私钥格式错误
 	 */
 	public RSACipher(String publicKey, String privateKey) throws InvalidPublicKeyException, InvalidPrivateKeyException {
-
 		this(RSACipher.getRSAPublicKeyFromString(publicKey), RSACipher.getRSAPrivateKeyFromString(privateKey));
-
 	}
 
 	/**

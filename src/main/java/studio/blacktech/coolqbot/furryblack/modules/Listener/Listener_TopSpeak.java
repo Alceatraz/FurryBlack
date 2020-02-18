@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.net.ssl.SSLException;
-
 import org.meowy.cqp.jcq.entity.CQImage;
+import org.meowy.cqp.jcq.entity.Friend;
+import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
 import org.meowy.cqp.jcq.message.CQCode;
 
 import studio.blacktech.coolqbot.furryblack.entry;
@@ -180,7 +181,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		recordReader.close();
 
-
 		while ((line = reportReader.readLine()) != null) {
 			if (line.startsWith("#")) continue;
 			if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
@@ -193,6 +193,48 @@ public class Listener_TopSpeak extends ModuleListener {
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
 		ENABLE_GROP = true;
+
+		// 写入用户昵称
+
+
+		Statement statement = connection.createStatement();
+		statement.execute("TRUNCATE TABLE grop_info");
+		statement.execute("TRUNCATE TABLE user_nick");
+		statement.execute("TRUNCATE TABLE user_card");
+		statement.close();
+
+
+		PreparedStatement userNickStatement = connection.prepareStatement("INSERT INTO user_nick VALUES (?,?)");
+		for (Friend friend : entry.getCQ().getFriendList()) {
+			userNickStatement.setLong(1, friend.getQQId());
+			userNickStatement.setString(2, friend.getNick());
+			userNickStatement.execute();
+		}
+		userNickStatement.close();
+
+
+		PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
+		PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
+
+		for (Group group : entry.getCQ().getGroupList()) {
+			long gropid = group.getId();
+
+			gropInfoStatement.setLong(1, gropid);
+			gropInfoStatement.setString(2, group.getName());
+			gropInfoStatement.execute();
+
+			for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
+				long userid = member.getQQId();
+				String card = member.getCard().length() == 0 ? member.getNick() : entry.getGropnick(gropid, userid);
+				userCardStatement.setLong(1, gropid);
+				userCardStatement.setLong(2, userid);
+				userCardStatement.setString(3, card);
+				userCardStatement.execute();
+			}
+		}
+
+		gropInfoStatement.close();
+		userCardStatement.close();
 
 		return true;
 	}
@@ -393,6 +435,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		return file;
 	}
 
+
 	class Worker implements Runnable {
 
 		private Object lock;
@@ -563,15 +606,14 @@ public class Listener_TopSpeak extends ModuleListener {
 
 						try {
 							if (!file.exists()) image.download(file);
-						} catch (SSLException exception) {
+						} catch (Exception exception) {
 							// CoolQ BUG 不管什么SDK都会发生这个错误
 							// RReceived fatal alert - bad_record_mac
-
 						}
-
 					}
 				}
 			}
 		}
 	}
 }
+

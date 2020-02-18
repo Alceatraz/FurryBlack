@@ -50,9 +50,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 	@Override
 	public String appInfo() {
-
 		return ICQVer.CQAPIVER + "," + AppID;
-
 	}
 
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
