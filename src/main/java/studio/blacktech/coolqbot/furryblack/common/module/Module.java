@@ -115,14 +115,12 @@ public abstract class Module implements Serializable {
 	}
 
 	public void initDataFolder() throws Exception {
-
 		if (FOLDER_DATA.exists()) {
 			if (!FOLDER_DATA.isDirectory()) { throw new NotAFolderException("文件夹被文件占位：" + FOLDER_DATA.getAbsolutePath()); }
 		} else {
 			logger.seek("创建目录", FOLDER_DATA.getAbsolutePath());
 			FOLDER_DATA.mkdirs();
 		}
-
 	}
 
 	public void initLogsFolder() throws Exception {
