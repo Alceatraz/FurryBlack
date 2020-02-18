@@ -177,62 +177,58 @@ public class LoggerX {
 	//
 	// ==================================================================================================
 
-	public String warn(String catgory, String message) {
 
+	public String warn(String catgory, String message) {
 		String temp = "[" + LoggerX.datetime() + "][WARN][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
-
 	}
 
-	public String info(String catgory, String message) {
 
+	public String info(String catgory, String message) {
 		String temp = "[" + LoggerX.datetime() + "][INFO][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
-
 	}
 
-	public String seek(String catgory, String message) {
 
+	public String seek(String catgory, String message) {
 		String temp = "[" + LoggerX.datetime() + "][SEEK][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
-
 	}
 
-	public String full(String catgory, String message) {
 
+	public String full(String catgory, String message) {
 		String temp = "[" + LoggerX.datetime() + "][FULL][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
-
 	}
+
+
 	// ==================================================================================================
 	//
 	//
 	// ==================================================================================================
+
 
 	public long warn(String catgory, long message) {
-
 		String temp = "[" + LoggerX.datetime() + "][WARN][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
-
 	}
 
-	public long info(String catgory, long message) {
 
+	public long info(String catgory, long message) {
 		String temp = "[" + LoggerX.datetime() + "][INFO][" + name + "]" + catgory + ": " + message;
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 		return message;
-
 	}
 
 	public long seek(String catgory, long message) {
@@ -306,9 +302,7 @@ public class LoggerX {
 	// ==================================================================================================
 
 	private static void PRINT(String message) {
-
 		System.out.println(message);
-
 	}
 
 	private static void WRITE(String message) {

@@ -4,11 +4,10 @@
 
 "2019-09-20" 联通毫无预兆的屏蔽了443端口，非标准端口的网站怎么看都像是钓鱼网站，所以以添加了GitEE。  
 "2019-10-21" 你敢信吗 Gitee被阿里云取消解析了 国内真不是搞技术的地方 再添加一个GitHub的remote。  
+"2020-02-15" 钓鱼网站实在是太烂了，取消。
 
-`https://git.blacktech.studio:8888/blacktechstudio/furryblack`  
 `https://gitee.com/BlackTechStudio/FurryBlackBot`  
 `https://github.com/Alceatraz/FurryBlack`
-
 
 GitEE的组织名字居然会过长不能写，蛋疼，请记住这个群组名应该叫做**BlackTechStudio - Offical**  
 
@@ -40,13 +39,29 @@ GitEE的组织名字居然会过长不能写，蛋疼，请记住这个群组名
 
 ## 部署
 
-shui水群统计模块使用了PostgreSQL，共创建了10个表，分别记录按照时间线保存的聊天记录和8种CQCode，以及WEB模块的注册用户。    
+shui水群统计模块使用了PostgreSQL，共创建了13个表，分别记录群信息、用户信息、群昵称、按照时间线保存的聊天记录和8种CQCode，以及WEB模块的注册用户。    
 
 ```
 CREATE USERR furryblack WITH PASSWORD 'furryblack';
 CREATE DATABASE furryblack OWNER furryblack;
 GRANT ALL PRIVILEGES ON DATABASE furryblack TO furryblack;
- 
+
+CREATE TABLE "public"."grop_info" (
+  "grop_id" int8 NOT NULL,
+  "grop_name" varchar(255) COLLATE "pg_catalog"."default"
+);
+
+CREATE TABLE "public"."user_card" (
+  "grop_id" int8,
+  "user_id" int8,
+  "user_nick" varchar(255) COLLATE "pg_catalog"."default"
+);
+
+CREATE TABLE "public"."user_nick" (
+  "user_id" int8,
+  "nickname" varchar(255) COLLATE "pg_catalog"."default"
+);
+
 CREATE TABLE "public"."web_user" (
   "username" varchar COLLATE "pg_catalog"."default",
   "password" varchar(255) COLLATE "pg_catalog"."default",

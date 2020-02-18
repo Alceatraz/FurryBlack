@@ -183,12 +183,7 @@ public class Scheduler_SocketAPI extends ModuleScheduler {
 
 					do {
 
-						System.out.println("API-等待连接");
-
 						Socket socket = server.accept();
-
-						System.out.println("API-收到连接");
-
 						String temp;
 
 						DataInputStream read = new DataInputStream(socket.getInputStream());
@@ -196,13 +191,8 @@ public class Scheduler_SocketAPI extends ModuleScheduler {
 
 						temp = read.readUTF();
 
-						System.out.println("API-读取消息");
-
 						String command = temp.substring(0, 2);
 						String content = temp.substring(2);
-
-						System.out.println("API-命令 " + command);
-						System.out.println("API-内容 " + content);
 
 						switch (command) {
 
@@ -233,12 +223,7 @@ public class Scheduler_SocketAPI extends ModuleScheduler {
 						}
 
 						send.flush();
-
-						System.out.println("API-发送完成");
-
 						socket.close();
-
-						System.out.println("API-连接关闭");
 
 					} while (true);
 
@@ -320,6 +305,5 @@ public class Scheduler_SocketAPI extends ModuleScheduler {
 			builder.append("]");
 			return builder.toString();
 		}
-
 	}
 }

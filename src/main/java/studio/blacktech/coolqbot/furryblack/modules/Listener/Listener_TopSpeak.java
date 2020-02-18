@@ -206,6 +206,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		PreparedStatement userNickStatement = connection.prepareStatement("INSERT INTO user_nick VALUES (?,?)");
 		for (Friend friend : entry.getCQ().getFriendList()) {
+			if (entry.isMyself(friend.getQQId())) continue;
 			userNickStatement.setLong(1, friend.getQQId());
 			userNickStatement.setString(2, friend.getNick());
 			userNickStatement.execute();
@@ -218,13 +219,12 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		for (Group group : entry.getCQ().getGroupList()) {
 			long gropid = group.getId();
-
 			gropInfoStatement.setLong(1, gropid);
 			gropInfoStatement.setString(2, group.getName());
 			gropInfoStatement.execute();
-
 			for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
 				long userid = member.getQQId();
+				if (entry.isMyself(userid)) continue;
 				String card = member.getCard().length() == 0 ? member.getNick() : entry.getGropnick(gropid, userid);
 				userCardStatement.setLong(1, gropid);
 				userCardStatement.setLong(2, userid);
