@@ -400,38 +400,53 @@ public class Listener_TopSpeak extends ModuleListener {
 
 
 	public void updateSchemaInfo() throws SQLException {
+
 		Statement statement = connection.createStatement();
+
 		statement.execute("TRUNCATE TABLE grop_info");
 		statement.execute("TRUNCATE TABLE user_nick");
 		statement.execute("TRUNCATE TABLE user_card");
 		statement.close();
+
 		PreparedStatement userNickStatement = connection.prepareStatement("INSERT INTO user_nick VALUES (?,?)");
+
 		for (Friend friend : entry.getCQ().getFriendList()) {
+
 			if (entry.isMyself(friend.getQQId())) continue;
 			userNickStatement.setLong(1, friend.getQQId());
 			userNickStatement.setString(2, friend.getNick());
 			userNickStatement.execute();
 		}
+
 		userNickStatement.close();
+
 		PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
 		PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
+
 		for (Group group : entry.getCQ().getGroupList()) {
+
 			long gropid = group.getId();
 			String name = group.getName();
-			System.out.println(name);
+
 			gropInfoStatement.setLong(1, gropid);
 			gropInfoStatement.setString(2, name);
 			gropInfoStatement.execute();
+
 			for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
+
 				long userid = member.getQQId();
 				if (entry.isMyself(userid)) continue;
+
 				String card = member.getCard().length() == 0 ? member.getNick() : entry.getGropnick(gropid, userid);
+
 				userCardStatement.setLong(1, gropid);
 				userCardStatement.setLong(2, userid);
 				userCardStatement.setString(3, card);
 				userCardStatement.execute();
+
 			}
 		}
+
 		gropInfoStatement.close();
 		userCardStatement.close();
 	}
