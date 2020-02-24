@@ -8,7 +8,7 @@ import java.util.TimeZone;
 
 
 public class BufferX {
-	
+
 
 	private StringBuilder builder;
 	private LinkedList<StringBuilder> builders = new LinkedList<>();

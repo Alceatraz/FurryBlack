@@ -199,29 +199,22 @@ public class Message implements Serializable {
 
 
 	private String[] extract(String regex) {
-
 		LinkedList<String> temp = new LinkedList<>();
-
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(message);
-
 		while (matcher.find()) temp.add(matcher.group());
-
 		return temp.toArray(new String[] {});
 	}
 
 
 	private String[] extract(String regex, int group) {
-
 		LinkedList<String> temp = new LinkedList<>();
-
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(message);
-
 		while (matcher.find()) temp.add(matcher.group(group));
-
 		return temp.toArray(new String[] {});
 	}
+
 
 	// ===================================================================================
 

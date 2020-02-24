@@ -6,18 +6,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 
-import org.meowy.cqp.jcq.entity.Group;
-import org.meowy.cqp.jcq.entity.Member;
-import org.meowy.cqp.jcq.entity.QQInfo;
-
-import studio.blacktech.common.security.Base64;
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
+import studio.blacktech.coolqbot.furryblack.modules.Listener.Listener_TopSpeak;
 
 
 @ModuleSchedulerComponent
@@ -201,24 +197,16 @@ public class Scheduler_SocketAPI extends ModuleScheduler {
 							send.writeUTF("00");
 							break;
 
-						// User Info
-						case "11":
-							send.writeUTF(getUserInfo(Long.parseLong(content)));
+						case "A0":
+							Listener_TopSpeak listener = (Listener_TopSpeak) entry.getListener("shui");
+							listener.updateSchemaInfo();
 							break;
 
-						// Group Info
-						case "21":
-							send.writeUTF(getGroupInfo(Long.parseLong(content)));
-							break;
-
-						// Groups Info
-						case "22":
-							send.writeUTF(getGroupInfo(Long.parseLong(content)));
-							break;
-
-						// List Group User
-						case "32":
-							send.writeUTF(listGroupMembers(Long.parseLong(content)));
+						case "10":
+							int point = content.indexOf('-');
+							long userid = Long.parseLong(content.substring(0, point));
+							String message = content.substring(0, point);
+							entry.userInfo(userid, message);
 							break;
 						}
 
@@ -227,7 +215,7 @@ public class Scheduler_SocketAPI extends ModuleScheduler {
 
 					} while (true);
 
-				} catch (IOException exception) {
+				} catch (IOException | SQLException exception) {
 
 					if (entry.isEnable()) {
 						entry.adminInfo("接口线程异常 " + exception.toString());
@@ -259,51 +247,6 @@ public class Scheduler_SocketAPI extends ModuleScheduler {
 				exception.printStackTrace();
 				entry.adminInfo("端口关闭失败 " + exception.toString());
 			}
-		}
-
-		private QQInfo getUser(long userid) {
-			return entry.getCQ().getStrangerInfo(userid);
-		}
-
-
-		private String getUserInfo(long userid) {
-			QQInfo user = getUser(userid);
-			return "{\"id\":" + userid + ",\"name\":\"" + Base64.encode(user.getNick()) + "\"}";
-		}
-
-
-		private Group getGroup(long gropid) {
-			return entry.getCQ().getGroupInfo(gropid);
-		}
-
-
-		private String getGroupInfo(long gropid) {
-			Group group = getGroup(gropid);
-			if (group == null) return "{\"id\":" + gropid + ",\"name\":\"已解散\"}";
-			return "{\"id\":" + gropid + ",\"name\":\"" + group.getName().replaceAll("\"", "\\\"") + "\",\"size\":" + group.getCount() + ",\"capacity\":" + group.getCountMax() + "}";
-		}
-
-
-		private List<Member> listMember(long gropid) {
-			return entry.getCQ().getGroupMemberList(gropid);
-		}
-
-		private String listGroupMembers(long gropid) {
-			List<Member> members = listMember(gropid);
-			StringBuilder builder = new StringBuilder();
-			builder.append("[");
-			for (Member member : members) {
-				if (entry.isMyself(member.getQQId())) continue;
-				builder.append("{\"id\":").append(member.getQQId()).append(",");
-				if (member.getCard() == "") {
-					builder.append("\"name\":\"").append(member.getCard().replaceAll("\"", "\\\"")).append("\"},");
-				} else {
-					builder.append("\"name\":\"").append(member.getNick().replaceAll("\"", "\\\"")).append("\"},");
-				}
-			}
-			builder.setLength(builder.length() - 1);
-			builder.append("]");
-			return builder.toString();
 		}
 	}
 }

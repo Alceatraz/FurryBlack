@@ -82,7 +82,6 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	private Thread thread;
 
-	private boolean JDBC_ENABLE;
 	private String JDBC_HOSTNAME;
 	private String JDBC_USERNAME;
 	private String JDBC_PASSWORD;
@@ -128,14 +127,9 @@ public class Listener_TopSpeak extends ModuleListener {
 			loadConfig();
 		}
 
-		JDBC_ENABLE = Boolean.parseBoolean(CONFIG.getProperty("postgresql.enable"));
+		ENABLE_GROP = Boolean.parseBoolean(CONFIG.getProperty("postgresql.enable"));
 
-		if (!JDBC_ENABLE) {
-			ENABLE_USER = false;
-			ENABLE_DISZ = false;
-			ENABLE_GROP = false;
-			return true;
-		}
+		if (!ENABLE_GROP) return true;
 
 		JDBC_HOSTNAME = CONFIG.getProperty("postgresql.hostname");
 		JDBC_USERNAME = CONFIG.getProperty("postgresql.username");
@@ -196,45 +190,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		// 写入用户昵称
 
-
-		Statement statement = connection.createStatement();
-		statement.execute("TRUNCATE TABLE grop_info");
-		statement.execute("TRUNCATE TABLE user_nick");
-		statement.execute("TRUNCATE TABLE user_card");
-		statement.close();
-
-
-		PreparedStatement userNickStatement = connection.prepareStatement("INSERT INTO user_nick VALUES (?,?)");
-		for (Friend friend : entry.getCQ().getFriendList()) {
-			if (entry.isMyself(friend.getQQId())) continue;
-			userNickStatement.setLong(1, friend.getQQId());
-			userNickStatement.setString(2, friend.getNick());
-			userNickStatement.execute();
-		}
-		userNickStatement.close();
-
-
-		PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
-		PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
-
-		for (Group group : entry.getCQ().getGroupList()) {
-			long gropid = group.getId();
-			gropInfoStatement.setLong(1, gropid);
-			gropInfoStatement.setString(2, group.getName());
-			gropInfoStatement.execute();
-			for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
-				long userid = member.getQQId();
-				if (entry.isMyself(userid)) continue;
-				String card = member.getCard().length() == 0 ? member.getNick() : entry.getGropnick(gropid, userid);
-				userCardStatement.setLong(1, gropid);
-				userCardStatement.setLong(2, userid);
-				userCardStatement.setString(3, card);
-				userCardStatement.execute();
-			}
-		}
-
-		gropInfoStatement.close();
-		userCardStatement.close();
+		updateSchemaInfo();
 
 		return true;
 	}
@@ -272,6 +228,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		if (message.getParameterSection() < 1) return MODULE_USAGE;
 
 		switch (message.getParameterSegment(1)) {
+
+
 		case "reload":
 			thread.interrupt();
 			thread.join();
@@ -283,6 +241,11 @@ public class Listener_TopSpeak extends ModuleListener {
 					"工作线程与数据库连接重启完成"
 			};
 
+		case "update":
+			updateSchemaInfo();
+			return new String[] {
+					"用户和群成员已更新"
+			};
 
 		case "execute":
 			if (message.getParameterSection() < 3) return new String[] {
@@ -338,13 +301,13 @@ public class Listener_TopSpeak extends ModuleListener {
 	}
 
 	@Override
-	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws SQLException {
+		updateSchemaInfo(); // 添加用户涉及到可能的冲突 比如关闭一段时间导致不一致故直接更新所有数据
 	}
 
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws SQLException {
+		updateSchemaInfo();
 	}
 
 
@@ -368,16 +331,16 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public boolean doGropMessage(MessageGrop message) throws Exception {
-		if (GROUP_RECORD.contains(message.getGropID())) {
-			queue.put(message);
-			if (queue.size() > 10) {
-				synchronized (lock) {
-					lock.notifyAll();
-				}
-			}
-		}
-		return true;
 
+		if (!GROUP_RECORD.contains(message.getGropID())) return true;
+
+		queue.put(message);
+
+		if (queue.size() > 10) synchronized (lock) {
+			lock.notifyAll();
+		}
+
+		return true;
 	}
 
 
@@ -433,6 +396,44 @@ public class Listener_TopSpeak extends ModuleListener {
 		writer.close();
 		resultSet.close();
 		return file;
+	}
+
+
+	public void updateSchemaInfo() throws SQLException {
+		Statement statement = connection.createStatement();
+		statement.execute("TRUNCATE TABLE grop_info");
+		statement.execute("TRUNCATE TABLE user_nick");
+		statement.execute("TRUNCATE TABLE user_card");
+		statement.close();
+		PreparedStatement userNickStatement = connection.prepareStatement("INSERT INTO user_nick VALUES (?,?)");
+		for (Friend friend : entry.getCQ().getFriendList()) {
+			if (entry.isMyself(friend.getQQId())) continue;
+			userNickStatement.setLong(1, friend.getQQId());
+			userNickStatement.setString(2, friend.getNick());
+			userNickStatement.execute();
+		}
+		userNickStatement.close();
+		PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
+		PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
+		for (Group group : entry.getCQ().getGroupList()) {
+			long gropid = group.getId();
+			String name = group.getName();
+			System.out.println(name);
+			gropInfoStatement.setLong(1, gropid);
+			gropInfoStatement.setString(2, name);
+			gropInfoStatement.execute();
+			for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
+				long userid = member.getQQId();
+				if (entry.isMyself(userid)) continue;
+				String card = member.getCard().length() == 0 ? member.getNick() : entry.getGropnick(gropid, userid);
+				userCardStatement.setLong(1, gropid);
+				userCardStatement.setLong(2, userid);
+				userCardStatement.setString(3, card);
+				userCardStatement.execute();
+			}
+		}
+		gropInfoStatement.close();
+		userCardStatement.close();
 	}
 
 
