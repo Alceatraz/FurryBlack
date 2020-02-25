@@ -21,9 +21,9 @@ import org.meowy.cqp.jcq.event.JcqAppAbstract;
  * 帖子：https://cqp.cc/t/37318 <br>
  * 辅助开发变量: {@link JcqAppAbstract#CQ CQ}({@link org.meowy.cqp.jcq.entity.CoolQ 酷Q核心操作类}), {@link JcqAppAbstract#CC CC}({@link org.meowy.cqp.jcq.message.CQCode 酷Q码操作类}), 具体功能可以查看文档
  */
-@SuppressWarnings({
-		"deprecation", "unused"
-})
+
+@SuppressWarnings("deprecation")
+
 public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
 	/**

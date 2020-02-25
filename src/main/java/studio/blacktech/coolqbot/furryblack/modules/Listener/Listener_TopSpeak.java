@@ -34,6 +34,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
+import studio.blacktech.coolqbot.furryblack.modules.Trigger.Trigger_UserDeny;
 
 
 @ModuleListenerComponent
@@ -51,7 +52,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static String MODULE_COMMANDNAME = "shui";
 	private static String MODULE_DISPLAYNAME = "水群分析";
 	private static String MODULE_DESCRIPTION = "水群分析";
-	private static String MODULE_VERSION = "2.1.0";
+	private static String MODULE_VERSION = "2.2.0";
 	private static String[] MODULE_USAGE = new String[] {
 			"重启辅助线程 /admin exec --module=shui reload",
 			"执行命令 暂不打印 /admin exec --module=shui execute `SQL`",
@@ -432,10 +433,15 @@ public class Listener_TopSpeak extends ModuleListener {
 			gropInfoStatement.setString(2, name);
 			gropInfoStatement.execute();
 
+			Trigger_UserDeny userDenyInstance = (Trigger_UserDeny) entry.getTrigger("userdeny");
+
 			for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
 
 				long userid = member.getQQId();
+
 				if (entry.isMyself(userid)) continue;
+				if (userDenyInstance.isUserIgnore(userid)) continue;
+				if (userDenyInstance.isGropUserIgnore(gropid, userid)) continue;
 
 				String card = member.getCard().length() == 0 ? member.getNick() : entry.getGropnick(gropid, userid);
 

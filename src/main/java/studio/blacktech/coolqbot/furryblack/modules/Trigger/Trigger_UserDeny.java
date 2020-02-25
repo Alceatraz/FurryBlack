@@ -325,9 +325,35 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		return true;
 	}
 
+
+	// ==========================================================================================================================================================
+	//
+	// 工具函数
+	//
+	// ==========================================================================================================================================================
+
+
 	@Override
 	public String[] generateReport(Message message) {
 		return new String[0];
 	}
+
+
+	// 对外API 不内部使用
+	public boolean isUserIgnore(long userid) {
+		if (!ENABLE_USER) return true;
+		return GLOBAL_USER_IGNORE.contains(userid);
+	}
+
+	public boolean isDiszUserIgnore(long diszid, long userid) {
+		if (!ENABLE_DISZ) return true;
+		return DISZ_MEMBER_IGNORE.containsKey(diszid) && DISZ_MEMBER_IGNORE.get(diszid).contains(userid);
+	}
+
+	public boolean isGropUserIgnore(long gropid, long userid) {
+		if (!ENABLE_GROP) return true;
+		return GROP_MEMBER_IGNORE.containsKey(gropid) && GROP_MEMBER_IGNORE.get(gropid).contains(userid);
+	}
+
 
 }
