@@ -286,10 +286,7 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		} else {
 			return false;
 		}
-
 		return true;
-
-
 	}
 
 	@Override
@@ -341,19 +338,30 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 	// 对外API 不内部使用
 	public boolean isUserIgnore(long userid) {
-		if (!ENABLE_USER) return true;
-		return GLOBAL_USER_IGNORE.contains(userid);
+		return ENABLE_USER && GLOBAL_USER_IGNORE.contains(userid);
 	}
 
 	public boolean isDiszUserIgnore(long diszid, long userid) {
-		if (!ENABLE_DISZ) return true;
-		return DISZ_MEMBER_IGNORE.containsKey(diszid) && DISZ_MEMBER_IGNORE.get(diszid).contains(userid);
+		if (!ENABLE_DISZ) {
+			return false;
+		} else if (GLOBAL_USER_IGNORE.contains(userid)) {
+		} else if (GLOBAL_DISZ_IGNORE.contains(diszid)) {
+		} else if (DISZ_MEMBER_IGNORE.containsKey(diszid) && DISZ_MEMBER_IGNORE.get(diszid).contains(userid)) {
+		} else {
+			return false;
+		}
+		return true;
 	}
 
 	public boolean isGropUserIgnore(long gropid, long userid) {
-		if (!ENABLE_GROP) return true;
-		return GROP_MEMBER_IGNORE.containsKey(gropid) && GROP_MEMBER_IGNORE.get(gropid).contains(userid);
+		if (!ENABLE_GROP) {
+			return false;
+		} else if (GLOBAL_USER_IGNORE.contains(userid)) {
+		} else if (GLOBAL_GROP_IGNORE.contains(gropid)) {
+		} else if (GROP_MEMBER_IGNORE.containsKey(gropid) && GROP_MEMBER_IGNORE.get(gropid).contains(userid)) {
+		} else {
+			return false;
+		}
+		return true;
 	}
-
-
 }

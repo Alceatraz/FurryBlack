@@ -1774,10 +1774,17 @@ public class Systemd extends Module {
 
 		if (NICKNAME_MAP.containsKey(gropid)) {
 			TreeMap<Long, String> temp = NICKNAME_MAP.get(gropid);
-			if (temp.containsKey(userid)) { return temp.get(userid); }
+			if (temp.containsKey(userid)) return temp.get(userid);
 		}
-		return entry.getCQ().getStrangerInfo(userid).getNick();
 
+		Member info = entry.getCQ().getGroupMemberInfo(gropid, userid);
+		String card = info.getCard();
+
+		if (card == null || card == "" || card.length() < 1 || card.matches("\\s+")) {
+			return entry.getCQ().getStrangerInfo(userid).getNick();
+		} else {
+			return card;
+		}
 	}
 
 

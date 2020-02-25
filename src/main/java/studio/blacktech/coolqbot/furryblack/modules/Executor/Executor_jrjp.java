@@ -223,7 +223,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	public boolean doGropMessage(MessageGrop message) throws Exception {
 		long gropid = message.getGropID();
 		long victim = VICTIM.get(gropid);
-		entry.gropInfo(gropid, entry.getGropnick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + AVCODE.get(gropid));
+		entry.gropInfo(gropid, entry.getGropNick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + AVCODE.get(gropid));
 		return true;
 
 	}

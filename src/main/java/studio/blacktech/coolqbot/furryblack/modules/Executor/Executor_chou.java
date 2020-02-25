@@ -248,9 +248,9 @@ public class Executor_chou extends ModuleExecutor {
 			QQInfo member = entry.getCQ().getStrangerInfo(chouid);
 
 			if (message.getParameterSection() == 1) {
-				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")");
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropNick(gropid, member.getQQId()) + "(" + chouid + ")");
 			} else {
-				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropnick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getCommandBody());
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropNick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getCommandBody());
 			}
 		}
 

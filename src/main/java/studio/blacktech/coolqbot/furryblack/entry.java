@@ -911,7 +911,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param userid 用户ID
 	 * @return 昵称
 	 */
-	public static String getGropnick(long gropid, long userid) {
+	public static String getGropNick(long gropid, long userid) {
 		return SYSTEMD.getGropNick(gropid, userid);
 	}
 

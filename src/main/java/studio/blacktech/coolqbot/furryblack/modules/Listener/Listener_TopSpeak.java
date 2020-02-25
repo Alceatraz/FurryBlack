@@ -185,13 +185,11 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		reportReader.close();
 
+		updateSchemaInfo();
+
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
 		ENABLE_GROP = true;
-
-		// 写入用户昵称
-
-		updateSchemaInfo();
 
 		return true;
 	}
@@ -409,6 +407,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		statement.execute("TRUNCATE TABLE user_card");
 		statement.close();
 
+
 		PreparedStatement userNickStatement = connection.prepareStatement("INSERT INTO user_nick VALUES (?,?)");
 
 		for (Friend friend : entry.getCQ().getFriendList()) {
@@ -420,6 +419,9 @@ public class Listener_TopSpeak extends ModuleListener {
 		}
 
 		userNickStatement.close();
+
+
+		logger.info("写入群组列表");
 
 		PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
 		PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
@@ -443,7 +445,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				if (userDenyInstance.isUserIgnore(userid)) continue;
 				if (userDenyInstance.isGropUserIgnore(gropid, userid)) continue;
 
-				String card = member.getCard().length() == 0 ? member.getNick() : entry.getGropnick(gropid, userid);
+				String card = entry.getGropNick(gropid, userid);
 
 				userCardStatement.setLong(1, gropid);
 				userCardStatement.setLong(2, userid);

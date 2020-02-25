@@ -192,9 +192,9 @@ public class Executor_roulette extends ModuleExecutor {
 				member = entry.getCQ().getGroupMemberInfo(gropid, round.player.get(i));
 				if (i == bullet) {
 					ROULETTE_FREQ.set(i, ROULETTE_FREQ.get(i) + 1);
-					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=10060]");
+					entry.gropInfo(gropid, entry.getGropNick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=10060]");
 				} else {
-					entry.gropInfo(gropid, entry.getGropnick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=11093]");
+					entry.gropInfo(gropid, entry.getGropNick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=11093]");
 				}
 			}
 
