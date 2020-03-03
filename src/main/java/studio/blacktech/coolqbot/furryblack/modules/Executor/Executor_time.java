@@ -30,7 +30,7 @@ public class Executor_time extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "time";
 	private static String MODULE_DISPLAYNAME = "环球时间";
 	private static String MODULE_DESCRIPTION = "那谁睡觉了吗";
-	private static String MODULE_VERSION = "1.0.3";
+	private static String MODULE_VERSION = "1.0.4";
 	private static String[] MODULE_USAGE = new String[] {
 			"/time 看看谁该睡觉了"
 	};
@@ -44,13 +44,16 @@ public class Executor_time extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static final TimeZone zone_W8 = TimeZone.getTimeZone("America/Los_Angeles");
-	private static final TimeZone zone_W4 = TimeZone.getTimeZone("America/New_York");
+	private static final TimeZone zone_USW = TimeZone.getTimeZone("America/Los_Angeles");
+	private static final TimeZone zone_USE = TimeZone.getTimeZone("America/New_York");
 	private static final TimeZone zone_00 = TimeZone.getTimeZone("UTC");
-	private static final TimeZone zone_E0 = TimeZone.getTimeZone("Europe/London");
-//	private static final TimeZone zone_E1 = TimeZone.getTimeZone("Europe/Stockholm");
-	private static final TimeZone zone_E1 = TimeZone.getTimeZone("Europe/France");
-	private static final TimeZone zone_E8 = TimeZone.getTimeZone("Asia/Shanghai");
+	private static final TimeZone zone_UK = TimeZone.getTimeZone("Europe/London");
+	private static final TimeZone zone_SE = TimeZone.getTimeZone("Europe/Stockholm");
+	private static final TimeZone zone_FR = TimeZone.getTimeZone("Europe/Paris");
+	private static final TimeZone zone_CN = TimeZone.getTimeZone("Asia/Shanghai");
+
+	private long cachets;
+	private String cache;
 
 	// ==========================================================================================================================================================
 	//
@@ -65,6 +68,10 @@ public class Executor_time extends ModuleExecutor {
 
 	@Override
 	public boolean init() throws Exception {
+
+		cachets = 0;
+		cache = getTime();
+
 		ENABLE_USER = true;
 		ENABLE_DISZ = true;
 		ENABLE_GROP = true;
@@ -134,21 +141,26 @@ public class Executor_time extends ModuleExecutor {
 
 	private String getTime() {
 
-		// @formatter:off
+		long now = System.currentTimeMillis();
 
-		return
+		if (now - cachets > 3600000) {
 
-            "世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", Executor_time.zone_00) + "\r\n" +
-            "美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W8) + format(Executor_time.zone_W8) + "\r\n" +
-            "美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", Executor_time.zone_W4) + format(Executor_time.zone_W4) + "\r\n" +
-            "欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E0) + format(Executor_time.zone_E0) + "\r\n" +
-            //"欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + this.format(zone_E1) + "\r\n" +
-            "欧洲法国(UTC+1) " + LoggerX.formatTime("HH:mm", zone_E1) + format(zone_E1) + "\r\n" +
-            "亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", Executor_time.zone_E8)
-		;
+			cachets = now;
 
-		// @formatter:on
+			cache = "世界协调时(UTC) " + LoggerX.formatTime("yyyy-MM-dd HH:mm", zone_00) + "\r\n" +
+					"美国西部(UTC-8) " + LoggerX.formatTime("HH:mm", zone_USW) + format(zone_USW) + "\r\n" +
+					"美国东部(UTC-4) " + LoggerX.formatTime("HH:mm", zone_USE) + format(zone_USE) + "\r\n" +
+					"欧洲英国(UTC+0) " + LoggerX.formatTime("HH:mm", zone_UK) + format(zone_UK) + "\r\n" +
+					"欧洲瑞典(UTC+1) " + LoggerX.formatTime("HH:mm", zone_SE) + format(zone_SE) + "\r\n" +
+					"欧洲法国(UTC+1) " + LoggerX.formatTime("HH:mm", zone_FR) + format(zone_FR) + "\r\n" +
+					"亚洲中国(UTC+8) " + LoggerX.formatTime("HH:mm", zone_CN);
+
+		}
+
+		return cache;
+
 	}
+
 
 	/**
 	 * 这个算法非常牛逼 而且我不打算解释
@@ -193,9 +205,8 @@ public class Executor_time extends ModuleExecutor {
 
 		if (isEnableDST ^ isDisableDST) builder.append(" 夏令时");
 
-
 		int TZ_DATE = Integer.parseInt(LoggerX.formatTime("dd", timezone));
-		int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", Executor_time.zone_E8));
+		int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", Executor_time.zone_CN));
 
 		if (E8_DATE - TZ_DATE > 0) {
 			builder.append(" 昨天," + TZ_DATE + "日");

@@ -1,8 +1,7 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
-import java.security.SecureRandom;
-
+import studio.blacktech.common.security.RandomTool;
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -27,7 +26,7 @@ public class Executor_dice extends ModuleExecutor {
 	private static String MODULE_COMMANDNAME = "dice";
 	private static String MODULE_DISPLAYNAME = "掷骰子";
 	private static String MODULE_DESCRIPTION = "发送一个骰子";
-	private static String MODULE_VERSION = "1.1.0";
+	private static String MODULE_VERSION = "1.1.1";
 	private static String[] MODULE_USAGE = new String[] {
 			"/dice - 发送一个骰子", "/dice 理由 - 为某事投掷一枚骰子"
 	};
@@ -105,10 +104,8 @@ public class Executor_dice extends ModuleExecutor {
 
 		long userid = message.getUserID();
 
-		// entry.userInfo(userid, message.getOptions() + "[CQ:dice]");
-		entry.userInfo(userid, message.getCommandBody() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
+		entry.userInfo(userid, rollDice(message));
 		return true;
-
 	}
 
 
@@ -118,10 +115,8 @@ public class Executor_dice extends ModuleExecutor {
 		long diszid = message.getDiszID();
 		long userid = message.getUserID();
 
-		// entry.diszInfo(diszid, userid, message.getOptions() + "[CQ:dice]");
-		entry.diszInfo(diszid, userid, message.getCommandBody() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
+		entry.diszInfo(diszid, userid, rollDice(message));
 		return true;
-
 	}
 
 
@@ -131,9 +126,17 @@ public class Executor_dice extends ModuleExecutor {
 		long gropid = message.getGropID();
 		long userid = message.getUserID();
 
-		// entry.gropInfo(gropid, userid, message.getOptions() + "[CQ:dice]");
-		entry.gropInfo(gropid, userid, message.getCommandBody() + "[CQ:emoji,id=100000" + (new SecureRandom().nextInt(5) + 49) + "]");
+		entry.gropInfo(gropid, userid, rollDice(message));
 		return true;
+	}
+
+	private String rollDice(Message message) {
+		int faceID = RandomTool.nextInt(5) + 49;
+		if (message.hasCommandBody()) {
+			return message.getCommandBody() + " [CQ:emoji,id=100000" + faceID + "]";
+		} else {
+			return "[CQ:emoji,id=100000" + faceID + "]";
+		}
 
 	}
 

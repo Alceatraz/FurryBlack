@@ -65,9 +65,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @param parameters 命令行参数
 	 */
 	public static void main(String[] parameters) {
-
 		System.out.println("This is a JCQ plugin, Not a executable jar file!");
-
 	}
 
 	// ==========================================================================================================================================================
@@ -76,8 +74,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	//
 	// ==========================================================================================================================================================
 
+
 	// 版本ID
-	public final static String VerID = "2.0.0 2020-02-06 (22:00)";
+	public final static String VerID = "2.0.0";
 
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();

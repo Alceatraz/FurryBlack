@@ -193,7 +193,7 @@ public class Systemd extends Module {
 	@Override
 	public boolean init() throws Exception {
 
-		if (LOCK_INIT) { throw new CantReinitializationException(); }
+		if (LOCK_INIT) throw new CantReinitializationException();
 
 		LOCK_INIT = true;
 
@@ -406,9 +406,9 @@ public class Systemd extends Module {
 
 			String entryName = jarEntry.getName();
 
-			if (!entryName.endsWith(".class")) { continue; }
+			if (!entryName.endsWith(".class"))  continue; 
 
-			if (entryName.charAt(0) == '/') { entryName = entryName.substring(1); } // 理论上来说 entries 不带 / 开头
+			if (entryName.charAt(0) == '/')  entryName = entryName.substring(1);  // 理论上来说 entries 不带 / 开头
 
 			entryName = entryName.substring(0, entryName.length() - 6);
 

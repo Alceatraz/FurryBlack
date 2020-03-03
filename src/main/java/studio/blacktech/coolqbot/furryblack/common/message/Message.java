@@ -285,6 +285,9 @@ public class Message implements Serializable {
 		return commandBody;
 	}
 
+	public boolean hasCommandBody() {
+		return section > 0;
+	}
 
 	public int getParameterSection() {
 		return section;
