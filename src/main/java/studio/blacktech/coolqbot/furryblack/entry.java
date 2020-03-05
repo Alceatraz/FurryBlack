@@ -501,11 +501,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		String nick = SYSTEMD.getNickname(userid);
 		if (typeid == 1) {
-			logger.full("收到加群申请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息" + message + " 标志" + flag);
-			SYSTEMD.adminInfo("[收到加群申请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息" + message + "\r\n标志" + flag);
+			logger.full("收到加群申请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息：" + message + " 标志：" + flag);
+			SYSTEMD.adminInfo("[收到加群申请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message + "\r\n标志：" + flag);
 		} else {
-			logger.full("收到入群邀请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息" + message + " 标志" + flag);
-			SYSTEMD.adminInfo("[收到入群邀请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息" + message + "\r\n标志" + flag);
+			logger.full("收到入群邀请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息：" + message + " 标志：" + flag);
+			SYSTEMD.adminInfo("[收到入群邀请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message + "\r\n标志：" + flag);
 			SYSTEMD.adminInfo("/admin group accept " + flag);
 			SYSTEMD.adminInfo("/admin group refuse " + flag);
 		}

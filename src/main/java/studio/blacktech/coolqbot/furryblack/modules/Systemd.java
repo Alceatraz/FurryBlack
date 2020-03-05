@@ -64,7 +64,7 @@ public class Systemd extends Module {
 	private static String MODULE_COMMANDNAME = "systemd";
 	private static String MODULE_DISPLAYNAME = "核心模块";
 	private static String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
-	private static String MODULE_VERSION = "3.0.1";
+	private static String MODULE_VERSION = "3.0.2";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -406,9 +406,9 @@ public class Systemd extends Module {
 
 			String entryName = jarEntry.getName();
 
-			if (!entryName.endsWith(".class"))  continue; 
+			if (!entryName.endsWith(".class")) continue;
 
-			if (entryName.charAt(0) == '/')  entryName = entryName.substring(1);  // 理论上来说 entries 不带 / 开头
+			if (entryName.charAt(0) == '/') entryName = entryName.substring(1); // 理论上来说 entries 不带 / 开头
 
 			entryName = entryName.substring(0, entryName.length() - 6);
 
@@ -1772,18 +1772,16 @@ public class Systemd extends Module {
 	 */
 	public String getGropNick(long gropid, long userid) {
 
-		if (NICKNAME_MAP.containsKey(gropid)) {
-			TreeMap<Long, String> temp = NICKNAME_MAP.get(gropid);
-			if (temp.containsKey(userid)) return temp.get(userid);
-		}
-
-		Member info = entry.getCQ().getGroupMemberInfo(gropid, userid);
-		String card = info.getCard();
-
-		if (card == null || card == "" || card.length() < 1 || card.matches("\\s+")) {
-			return entry.getCQ().getStrangerInfo(userid).getNick();
+		if (NICKNAME_MAP.containsKey(gropid) && NICKNAME_MAP.get(gropid).containsKey(userid)) {
+			return NICKNAME_MAP.get(gropid).get(userid);
 		} else {
-			return card;
+			Member info = entry.getCQ().getGroupMemberInfo(gropid, userid);
+			String card = info.getCard();
+			if (card == null || card == "" || card.length() < 1 || card.matches("\\s+")) {
+				return entry.getCQ().getStrangerInfo(userid).getNick();
+			} else {
+				return card;
+			}
 		}
 	}
 

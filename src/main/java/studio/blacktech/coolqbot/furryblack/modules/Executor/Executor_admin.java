@@ -109,7 +109,9 @@ public class Executor_admin extends ModuleExecutor {
 			return true;
 		}
 
+
 		switch (message.getParameterSegment(0)) {
+
 
 		case "report":
 			entry.adminInfo(entry.getSystemd().reportSpecifiedModule(message));
