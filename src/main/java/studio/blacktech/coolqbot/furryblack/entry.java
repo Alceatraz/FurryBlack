@@ -276,6 +276,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 	}
 
+
 	/**
 	 * 生命周期函数：JcqApp卸载
 	 */
@@ -283,6 +284,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public int disable() {
 		return 0;
 	}
+
 
 	/**
 	 * 生命周期函数：CoolQ关闭
@@ -300,11 +302,13 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		return 0;
 	}
 
+
 	// ==========================================================================================================================================================
 	//
 	// 消息处理函数
 	//
 	// ==========================================================================================================================================================
+
 
 	/**
 	 * 私聊消息处理方法 不应该在此处修改任何内容
@@ -316,18 +320,13 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			SYSTEMD.doUserMessage(new MessageUser(typeid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
-			SYSTEMD.adminInfo("[私聊消息异常] 时间序列号 - " + time + " 原因：\r\n" + exception.toString());
-			logger.info("时间序列号", time);
-			logger.info("时间", LoggerX.datetime(time));
-			logger.info("用户ID", userid);
-			logger.info("消息ID", messageid);
-			logger.info("消息内容", message);
-			logger.info("消息转储", LoggerX.unicode(message));
+			SYSTEMD.adminInfo("[私聊消息异常] 异常序号 - " + time + "\r\n" + message + "\r\n" + exception.toString());
 			logger.exception(exception);
 		}
 		return IMsg.MSG_IGNORE;
 
 	}
+
 
 	/**
 	 * 组聊消息处理方法 不应该在此处修改任何内容
@@ -339,49 +338,38 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			SYSTEMD.doDiszMessage(new MessageDisz(diszid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
-			SYSTEMD.adminInfo("[组聊消息异常] 序列号 - " + time + " 原因：\r\n" + exception.toString());
-			logger.info("序列号", time);
-			logger.info("时间", LoggerX.datetime(time));
-			logger.info("组聊ID", diszid);
-			logger.info("用户ID", userid);
-			logger.info("消息ID", messageid);
-			logger.info("消息内容", message);
-			logger.info("消息转储", LoggerX.unicode(message));
+			SYSTEMD.adminInfo("[组聊消息异常] 异常序号 - " + time + "\r\n" + message + "\r\n" + exception.toString());
 			logger.exception(exception);
 		}
 		return IMsg.MSG_IGNORE;
 
 	}
+
 
 	/**
 	 * 群聊消息处理方法 不应该在此处修改任何内容
 	 */
 	@Override
-	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message,
-			int messagefont) {
+	public int groupMsg(int typeid, int messageid, long gropid, long userid, String anonymous, String message, int messagefont) {
 
 		try {
 			SYSTEMD.doGropMessage(new MessageGrop(gropid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
 			long time = System.currentTimeMillis();
-			SYSTEMD.adminInfo("[群聊消息异常] 序列号 - " + time + " 原因：\r\n" + exception.toString());
-			logger.info("序列号", time);
-			logger.info("时间", LoggerX.datetime(time));
-			logger.info("群聊ID", gropid);
-			logger.info("用户ID", userid);
-			logger.info("消息ID", messageid);
-			logger.info("消息内容", message);
-			logger.info("消息转储", LoggerX.unicode(message));
+			SYSTEMD.adminInfo("[群聊消息异常] 异常序号 - " + time + "\r\n" + message + "\r\n" + exception.toString());
 			logger.exception(exception);
 		}
 		return IMsg.MSG_IGNORE;
 
 	}
+
+
 	// ==========================================================================================================================================================
 	//
 	// 群成员变动函数
 	//
 	// ==========================================================================================================================================================
+
 
 	/**
 	 * 成员加群处理方法 不应该在此处修改任何内容
@@ -390,8 +378,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public int groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 		String typeName = typeid == 1 ? "主动申请" : "受邀加群";
-		String operNick = SYSTEMD.getNickname(operid) + "(" + operid + ")";
-		String userNick = SYSTEMD.getNickname(userid) + "(" + userid + ")";
+		String operNick = SYSTEMD.getNickname(gropid, operid) + "(" + operid + ")";
+		String userNick = SYSTEMD.getNickname(gropid, userid) + "(" + userid + ")";
 
 		try {
 
@@ -405,7 +393,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			long time = System.currentTimeMillis();
 
 			logger.exception(time, "成员增加异常", exception);
-			SYSTEMD.adminInfo("[成员增加异常] - 时间序列号" + time + " 原因：\r\n" + exception.toString());
+			SYSTEMD.adminInfo("[成员增加异常] - 异常序号" + time + " 原因：\r\n" + exception.toString() + "类型：" + typeName + " 群聊：" + gropid + " 管理：" + operid + " 用户：" + userid);
 		}
 
 		return IMsg.MSG_IGNORE;
@@ -418,7 +406,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
-		String userNick = SYSTEMD.getNickname(userid) + "(" + userid + ")";
+		String userNick = SYSTEMD.getNickname(gropid, userid) + "(" + userid + ")";
 
 		try {
 
@@ -438,7 +426,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			long time = System.currentTimeMillis();
 
 			logger.exception(time, "成员减少异常", exception);
-			SYSTEMD.adminInfo("[成员减少异常] - 时间序列号" + time + " 原因：\r\n" + exception.toString());
+			if (typeid == 1) {
+				SYSTEMD.adminInfo("[成员减少异常] - 异常序号" + time + " 原因：\r\n" + exception.toString() + "\r\n类型：主动离开\r\n群聊：" + gropid + "\r\n用户：" + userid);
+			} else {
+				SYSTEMD.adminInfo("[成员减少异常] - 异常序号" + time + " 原因：\r\n" + exception.toString() + "\r\n类型：管理踢出\r\n群聊：" + gropid + "\r\n管理：" + operid + "\r\n用户：" + userid);
+			}
 
 		}
 
@@ -466,12 +458,15 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		try {
 			Thread.sleep(10000L);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		} catch (InterruptedException ignore) {
+
 		}
+
 		SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。只有BTS官方运行的FurryBlackBot才是“白熊”，由其他人使用本SDK开发运营的帐号与BTS无关。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
+
 		SYSTEMD.sendEula(userid);
 		SYSTEMD.sendHelp(userid);
+
 		SYSTEMD.sendListUser(userid);
 		SYSTEMD.sendListDisz(userid);
 		SYSTEMD.sendListGrop(userid);
@@ -486,9 +481,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		String nick = SYSTEMD.getNickname(userid);
 		logger.full("添加好友", "时间" + sendtime + " 用户：" + nick + "(" + userid + ")" + " 信息：" + message + " 标志：" + flag);
-		SYSTEMD.adminInfo("[收到好友请求] - " + sendtime + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message + "\r\n标志：" + flag);
-		SYSTEMD.adminInfo("/admin friend accept " + flag);
-		SYSTEMD.adminInfo("/admin friend refuse " + flag);
+		SYSTEMD.adminInfo("[收到好友请求] - " + sendtime + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message + "\r\n/admin friend accept " + flag + "\r\n/admin friend refuse " + flag);
 		return 0;
 
 	}
@@ -499,15 +492,14 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int requestAddGroup(int typeid, int sendtime, long gropid, long userid, String message, String flag) {
 
-		String nick = SYSTEMD.getNickname(userid);
+		String nick = SYSTEMD.getNickname(gropid, userid);
+
 		if (typeid == 1) {
 			logger.full("收到加群申请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息：" + message + " 标志：" + flag);
 			SYSTEMD.adminInfo("[收到加群申请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message + "\r\n标志：" + flag);
 		} else {
 			logger.full("收到入群邀请", "时间" + sendtime + " 群聊：" + gropid + " 用户: " + nick + "(" + userid + ")" + " 信息：" + message + " 标志：" + flag);
-			SYSTEMD.adminInfo("[收到入群邀请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message + "\r\n标志：" + flag);
-			SYSTEMD.adminInfo("/admin group accept " + flag);
-			SYSTEMD.adminInfo("/admin group refuse " + flag);
+			SYSTEMD.adminInfo("[收到入群邀请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message + "\r\n/admin group accept " + flag + "\r\n/admin group refuse " + flag);
 		}
 		return 0;
 
@@ -519,7 +511,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int groupBan(int typeid, int sendtime, long gropid, long operid, long userid, long duration) {
 
-		String operNick = SYSTEMD.getNickname(operid) + "(" + operid + ")";
+		String operNick = SYSTEMD.getNickname(gropid, operid) + "(" + operid + ")";
 
 		if (userid == 0) {
 
@@ -558,7 +550,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public int groupAdmin(int typeid, int sendtime, long gropid, long userid) {
 
 		String type = typeid == 1 ? "解除" : "任命";
-		String nick = SYSTEMD.getNickname(userid);
+		String nick = SYSTEMD.getNickname(gropid, userid);
 		logger.full("管理员变动", "群" + gropid + " " + type + " " + nick + "(" + userid + ")");
 		SYSTEMD.adminInfo("[管理员变动] - " + sendtime + "\r\n群聊：" + gropid + "\r\n类型：" + type + "\r\n用户：" + nick + "(" + userid + ")");
 		return 0;
@@ -911,7 +903,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 * @return 昵称
 	 */
 	public static String getGropNick(long gropid, long userid) {
-		return SYSTEMD.getGropNick(gropid, userid);
+		return SYSTEMD.getNickname(gropid, userid);
 	}
 
 

@@ -64,7 +64,7 @@ public class Systemd extends Module {
 	private static String MODULE_COMMANDNAME = "systemd";
 	private static String MODULE_DISPLAYNAME = "核心模块";
 	private static String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
-	private static String MODULE_VERSION = "3.0.2";
+	private static String MODULE_VERSION = "3.0.3";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -1770,17 +1770,21 @@ public class Systemd extends Module {
 	 * @param userid 用户ID
 	 * @return 昵称
 	 */
-	public String getGropNick(long gropid, long userid) {
+	public String getNickname(long gropid, long userid) {
 
 		if (NICKNAME_MAP.containsKey(gropid) && NICKNAME_MAP.get(gropid).containsKey(userid)) {
 			return NICKNAME_MAP.get(gropid).get(userid);
 		} else {
-			Member info = entry.getCQ().getGroupMemberInfo(gropid, userid);
-			String card = info.getCard();
-			if (card == null || card == "" || card.length() < 1 || card.matches("\\s+")) {
+			Member member = entry.getCQ().getGroupMemberInfo(gropid, userid);
+			if (member == null) {
 				return entry.getCQ().getStrangerInfo(userid).getNick();
 			} else {
-				return card;
+				String card = member.getCard();
+				if (card == null || card == "" || card.length() < 1 || card.matches("\\s+")) { // CoolQ和Jcq没有对这个问题处理
+					return entry.getCQ().getStrangerInfo(userid).getNick();
+				} else {
+					return card;
+				}
 			}
 		}
 	}

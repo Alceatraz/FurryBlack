@@ -80,7 +80,7 @@ public class LoggerX {
 		builder.append("异常调用：" + exception.getClass().getName() + "\r\n");
 		for (StackTraceElement temp : exception.getStackTrace()) builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 		builder.setLength(builder.length() - 1);
-		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] 发生异常\r\n时间序列号: " + timestamp + builder.toString();
+		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] 发生异常\r\n时间序号: " + timestamp + builder.toString();
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 	}
@@ -93,7 +93,7 @@ public class LoggerX {
 		builder.append("异常调用：" + exception.getClass().getName() + "\r\n");
 		for (StackTraceElement temp : exception.getStackTrace()) builder.append("    at " + temp.getClassName() + "(" + temp.getMethodName() + ":" + temp.getLineNumber() + ")\r\n");
 		builder.setLength(builder.length() - 1);
-		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] " + catgory + "\r\n时间序列号: " + timestamp + builder.toString();
+		String temp = "[" + LoggerX.datetime() + "][EXCEPTION][" + name + "] " + catgory + "\r\n时间序号: " + timestamp + builder.toString();
 		LoggerX.PRINT(temp);
 		LoggerX.WRITE(temp);
 	}
