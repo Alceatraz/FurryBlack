@@ -445,7 +445,7 @@ public class Listener_TopSpeak extends ModuleListener {
 				if (userDenyInstance.isUserIgnore(userid)) continue;
 				if (userDenyInstance.isGropUserIgnore(gropid, userid)) continue;
 
-				String card = entry.getGropNick(gropid, userid);
+				String card = entry.getNickname(gropid, userid);
 
 				userCardStatement.setLong(1, gropid);
 				userCardStatement.setLong(2, userid);

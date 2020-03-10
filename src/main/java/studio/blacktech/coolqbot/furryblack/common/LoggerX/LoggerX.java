@@ -421,7 +421,7 @@ public class LoggerX {
 		ss = ss % 3600;
 		long mm = ss / 60;
 		ss = ss % 60;
-		return dd + " - " + hh + ":" + mm + ":" + ss;
+		return dd + " - " + String.format("%02d", hh) + ":" + String.format("%02d", mm) + ":" + String.format("%02d", ss);
 	}
 
 

@@ -84,9 +84,9 @@ public class Executor_chou extends ModuleExecutor {
 
 		FILE_IGNORE_USER = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
-		if (!FILE_IGNORE_USER.exists()) { FILE_IGNORE_USER.createNewFile(); }
+		if (!FILE_IGNORE_USER.exists()) FILE_IGNORE_USER.createNewFile();
 
-		List<Group> groups = entry.getCQ().getGroupList();
+		List<Group> groups = entry.listGroups();
 
 		for (Group group : groups) {
 			MEMBERS.put(group.getId(), new ArrayList<Long>());
@@ -103,9 +103,9 @@ public class Executor_chou extends ModuleExecutor {
 
 		while ((line = reader.readLine()) != null) {
 
-			if (line.startsWith("#")) { continue; }
-			if (!line.contains(":")) { continue; }
-			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+			if (line.startsWith("#")) continue;
+			if (!line.contains(":")) continue;
+			if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
 
 			temp = line.split(":");
 
@@ -132,11 +132,15 @@ public class Executor_chou extends ModuleExecutor {
 		ArrayList<Long> tempIgnores;
 
 		for (Group group : groups) {
+
 			tempMembers = MEMBERS.get(group.getId());
 			tempIgnores = IGNORES.get(group.getId());
+
 			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
-				if (entry.isMyself(member.getQQId())) { continue; }
-				if (tempIgnores.contains(member.getQQId())) { continue; }
+
+				if (entry.isMyself(member.getQQId())) continue;
+				if (tempIgnores.contains(member.getQQId())) continue;
+
 				tempMembers.add(member.getQQId());
 			}
 		}
@@ -248,9 +252,9 @@ public class Executor_chou extends ModuleExecutor {
 			QQInfo member = entry.getCQ().getStrangerInfo(chouid);
 
 			if (message.getParameterSection() == 1) {
-				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropNick(gropid, member.getQQId()) + "(" + chouid + ")");
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getNickname(gropid, member.getQQId()) + "(" + chouid + ")");
 			} else {
-				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getGropNick(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getCommandBody());
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getNickname(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getCommandBody());
 			}
 		}
 

@@ -46,7 +46,8 @@ public class Executor_jrjp extends ModuleExecutor {
 	};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {
-			"群号-QQ号对应表 - 每日UTC+8 00:00 清空", "群号-AV号对应表 - 每日UTC+8 00:00 清空"
+			"群号-QQ号对应表 - 每日UTC+8 00:00 清空",
+			"群号-AV号对应表 - 每日UTC+8 00:00 清空"
 	};
 	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人", "被抽到成员的昵称和群昵称"
@@ -61,10 +62,10 @@ public class Executor_jrjp extends ModuleExecutor {
 	private HashMap<Long, Long> AVCODE;
 	private HashMap<Long, Long> VICTIM;
 
-	private HashMap<Long, ArrayList<Long>> MEMBERS;
 	private HashMap<Long, ArrayList<Long>> IGNORES;
 
 	private File USER_IGNORE;
+
 	private Thread thread;
 
 	// ==========================================================================================================================================================
@@ -85,78 +86,61 @@ public class Executor_jrjp extends ModuleExecutor {
 		initAppFolder();
 		initConfFolder();
 
+		IGNORES = new HashMap<>();
+
 		AVCODE = new HashMap<>();
 		VICTIM = new HashMap<>();
 
-		MEMBERS = new HashMap<>();
-		IGNORES = new HashMap<>();
+		long gropid;
+		long userid;
+
 
 		USER_IGNORE = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
-		if (!USER_IGNORE.exists()) { USER_IGNORE.createNewFile(); }
+		if (!USER_IGNORE.exists()) USER_IGNORE.createNewFile();
 
-		long gropid;
-		long userid;
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
 
 		String line;
 		String[] temp;
 
+
 		while ((line = reader.readLine()) != null) {
-			if (line.startsWith("#")) { continue; }
-			if (!line.contains(":")) { continue; }
-			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+
+			if (line.startsWith("#")) continue;
+			if (!line.contains(":")) continue;
+			if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
 			temp = line.split(":");
+
 			if (temp.length != 2) {
 				logger.warn("配置错误", line);
 				continue;
 			}
+
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
-			if (!IGNORES.containsKey(gropid)) { IGNORES.put(gropid, new ArrayList<>()); }
+
+			if (!IGNORES.containsKey(gropid)) IGNORES.put(gropid, new ArrayList<>());
+
 			IGNORES.get(gropid).add(userid);
+
 			logger.seek("排除用户", gropid + " > " + userid);
 		}
 
 		reader.close();
 
-		// 读取忽略列表到IGNORE 结合IGNORE生成可用成员到MEMBER 由MEMBER生成VICTIM和AVCODE
 
-		List<Group> groups = entry.getCQ().getGroupList();
+		for (Group group : entry.listGroups()) initGroupData(group.getId());
 
-		groups.forEach((group) -> {
-
-			long tempGroupID = group.getId();
-
-			ArrayList<Long> tempIgnores = IGNORES.containsKey(tempGroupID) ? IGNORES.get(tempGroupID) : new ArrayList<>();
-			ArrayList<Long> tempMembers = new ArrayList<>();
-
-			List<Member> members = entry.getCQ().getGroupMemberList(tempGroupID);
-
-			for (Member member : members) {
-				long tempUserID = member.getQQId();
-				if (entry.isMyself(tempUserID)) { continue; }
-				if (tempIgnores.contains(tempUserID)) { continue; }
-				tempMembers.add(tempUserID);
-			}
-
-			int random = RandomTool.nextInt(tempMembers.size());
-
-			VICTIM.put(tempGroupID, tempMembers.get(random));
-			AVCODE.put(tempGroupID, RandomTool.nextLong() % 100000000);
-
-			MEMBERS.put(tempGroupID, tempMembers);
-
-		});
 
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
 		ENABLE_GROP = true;
 
 		return true;
-
 	}
+
 
 	@Override
 	public boolean boot() throws Exception {
@@ -195,38 +179,47 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-
+		initGroupData(gropid);
 	}
+
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-
+		AVCODE.remove(gropid);
+		VICTIM.remove(gropid);
 	}
+
 
 	@Override
 	public boolean doUserMessage(MessageUser message) throws Exception {
-
 		return true;
-
 	}
+
 
 	@Override
 	public boolean doDiszMessage(MessageDisz message) throws Exception {
-
 		return true;
-
 	}
+
 
 	@Override
 	public boolean doGropMessage(MessageGrop message) throws Exception {
-		long gropid = message.getGropID();
-		long victim = VICTIM.get(gropid);
-		entry.gropInfo(gropid, entry.getGropNick(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + AVCODE.get(gropid));
-		return true;
 
+		long gropid = message.getGropID();
+		long userid = message.getUserID();
+
+		long victim = VICTIM.get(gropid);
+		long avcode = AVCODE.get(gropid);
+
+		entry.gropInfo(gropid, userid, entry.getNickname(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + avcode);
+
+		return true;
 	}
+
+
 	// ==========================================================================================================================================================
 	//
 	// 工具函数
@@ -235,10 +228,41 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(Message message) {
-
 		return new String[0];
+	}
+
+
+	private void initGroupData(long gropid) {
+
+		ArrayList<Long> range = new ArrayList<>();
+
+		List<Member> members = entry.getCQ().getGroupMemberList(gropid);
+
+		boolean hasIgnore = IGNORES.containsKey(gropid);
+
+		ArrayList<Long> ignore = hasIgnore ? IGNORES.get(gropid) : null;
+
+		for (Member member : members) {
+
+			long userid = member.getQQId();
+
+			if (entry.isMyself(userid)) continue;
+			if (hasIgnore && ignore.contains(userid)) continue;
+
+			range.add(userid);
+		}
+
+		// 不加Cast也能编译但是报错 实际上已经使用Class<T>写法了
+		long victim = (Long) RandomTool.random(range);
+		long avcode = RandomTool.nextLong() % 100000000;
+
+		VICTIM.put(gropid, victim);
+		AVCODE.put(gropid, avcode);
+
+		logger.seek("随机献祭", gropid + "-" + victim + " av" + avcode);
 
 	}
+
 
 	@SuppressWarnings("deprecation")
 	class Worker implements Runnable {
@@ -251,30 +275,27 @@ public class Executor_jrjp extends ModuleExecutor {
 			do {
 				try {
 					while (true) {
+
 						date = new Date();
 						time = 86400L;
 						time = time - date.getSeconds();
 						time = time - date.getMinutes() * 60;
 						time = time - date.getHours() * 3600;
 						time = time * 1000;
+
 						Thread.sleep(time);
-						AVCODE.clear();
-						VICTIM.clear();
-						MEMBERS.entrySet().forEach((element) -> {
-							long tempGroupID = element.getKey();
-							ArrayList<Long> tempMembers = element.getValue();
-							int random = RandomTool.nextInt(tempMembers.size());
-							VICTIM.put(tempGroupID, tempMembers.get(random));
-							AVCODE.put(tempGroupID, RandomTool.nextLong() % 70000000);
-						});
+
+						for (Group group : entry.listGroups()) initGroupData(group.getId());
+
 					}
+
 				} catch (InterruptedException exception) {
 					if (entry.isEnable()) {
 						long timeserial = System.currentTimeMillis();
 						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
-						Executor_jrjp.this.logger.exception(timeserial, exception);
+						logger.exception(timeserial, exception);
 					} else {
-						Executor_jrjp.this.logger.full("关闭");
+						logger.full("关闭");
 					}
 				}
 			} while (entry.isEnable());

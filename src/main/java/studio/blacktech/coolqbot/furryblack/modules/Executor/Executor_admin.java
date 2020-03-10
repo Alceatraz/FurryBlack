@@ -1,6 +1,10 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
+import java.util.List;
+
+import org.meowy.cqp.jcq.entity.Group;
+
 import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -151,6 +155,23 @@ public class Executor_admin extends ModuleExecutor {
 				return false;
 			}
 			switch (message.getParameterSegment(1)) {
+			case "list":
+				StringBuilder builder = new StringBuilder();
+				List<Group> groups = entry.listGroups();
+				if (groups.size() == 0) {
+					builder.append("无可用群");
+				} else {
+					for (Group group : groups) {
+						builder.append(group.getName());
+						builder.append(" (");
+						builder.append(group.getId());
+						builder.append(")\r\n");
+					}
+					builder.setLength(builder.length() - 1);
+				}
+				entry.adminInfo(builder.toString());
+				break;
+
 			case "accept":
 				entry.adminInfo("Exit code → " + entry.getCQ().setGroupAddRequest(message.getParameterSegment(2), 2, 1, null));
 				break;
@@ -164,7 +185,12 @@ public class Executor_admin extends ModuleExecutor {
 				break;
 			}
 			break;
+
+		default:
+			entry.adminInfo("No such sub command");
+			break;
 		}
+
 		return true;
 
 	}
@@ -193,7 +219,7 @@ public class Executor_admin extends ModuleExecutor {
 		long userid = message.getUserID();
 
 		if (!entry.isAdmin(userid)) {
-			entry.gropInfo(gropid, "你不是我的Master");
+			entry.gropInfo(gropid, userid, "你不是我的Master");
 			return false;
 		}
 
@@ -203,18 +229,16 @@ public class Executor_admin extends ModuleExecutor {
 		}
 
 		switch (message.getParameterSegment(0)) {
-		case "report":
-			entry.gropInfo(gropid, entry.getSystemd().reportSpecifiedModule(message));
-			break;
-
-		case "reportall":
-			entry.gropInfo(gropid, entry.getSystemd().reportAllModules(message));
-			break;
 
 		case "exec":
 			entry.gropInfo(gropid, entry.getSystemd().exec(message));
 			break;
+
+		default:
+			entry.adminInfo("No such sub command");
+			break;
 		}
+
 
 		return true;
 

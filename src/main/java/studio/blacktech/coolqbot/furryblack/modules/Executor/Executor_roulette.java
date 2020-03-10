@@ -52,10 +52,6 @@ public class Executor_roulette extends ModuleExecutor {
 
 	private HashMap<Long, RouletteRound> ROULETTE_ROUNDS;
 
-	private ArrayList<Integer> ROULETTE_FREQ;
-
-	private int ROUND_EXPIRED = 0;
-	private int ROUND_SUCCESS = 0;
 
 	// ==========================================================================================================================================================
 	//
@@ -64,24 +60,14 @@ public class Executor_roulette extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	public Executor_roulette() throws Exception {
-
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
-
 	}
+
 
 	@Override
 	public boolean init() throws Exception {
 
 		ROULETTE_ROUNDS = new HashMap<>();
-
-		ROULETTE_FREQ = new ArrayList<>();
-
-		ROULETTE_FREQ.add(0);
-		ROULETTE_FREQ.add(0);
-		ROULETTE_FREQ.add(0);
-		ROULETTE_FREQ.add(0);
-		ROULETTE_FREQ.add(0);
-		ROULETTE_FREQ.add(0);
 
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
@@ -91,59 +77,56 @@ public class Executor_roulette extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean boot() throws Exception {
-
 		return true;
-
 	}
+
 
 	@Override
 	public boolean save() throws Exception {
-
 		return true;
-
 	}
+
 
 	@Override
 	public boolean shut() throws Exception {
-
 		return true;
-
 	}
+
 
 	@Override
 	public String[] exec(Message message) throws Exception {
-
 		return new String[] {
 				"此模块无可用命令"
 		};
-
 	}
+
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
+
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
+
 	@Override
 	public boolean doUserMessage(MessageUser message) throws Exception {
-
 		return true;
-
 	}
+
 
 	@Override
 	public boolean doDiszMessage(MessageDisz message) throws Exception {
-
 		return true;
-
 	}
+
 
 	@Override
 	public boolean doGropMessage(MessageGrop message) throws Exception {
@@ -173,7 +156,6 @@ public class Executor_roulette extends ModuleExecutor {
 
 		// 对局超时就新建一个
 		if (round.time.getTime() + 600000 < new Date().getTime()) {
-			ROUND_EXPIRED++;
 			round = new RouletteRound();
 			ROULETTE_ROUNDS.remove(gropid);
 			ROULETTE_ROUNDS.put(gropid, round);
@@ -191,18 +173,15 @@ public class Executor_roulette extends ModuleExecutor {
 			for (int i = 0; i < 6; i++) {
 				member = entry.getCQ().getGroupMemberInfo(gropid, round.player.get(i));
 				if (i == bullet) {
-					ROULETTE_FREQ.set(i, ROULETTE_FREQ.get(i) + 1);
-					entry.gropInfo(gropid, entry.getGropNick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=10060]");
+					entry.gropInfo(gropid, entry.getNickname(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=10060]");
 				} else {
-					entry.gropInfo(gropid, entry.getGropNick(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=11093]");
+					entry.gropInfo(gropid, entry.getNickname(gropid, member.getQQId()) + " (" + round.player.get(i) + "): [CQ:face," + "id=169][CQ:emoji,id=11093]");
 				}
 			}
 
 			entry.gropInfo(gropid, "@平安俄罗斯 目标已击毙:  [CQ:at,qq=" + round.player.get(bullet) + "]\r\n" + round.chip.get(bullet));
 
 			ROULETTE_ROUNDS.remove(gropid);
-
-			ROUND_SUCCESS++;
 		}
 
 		return true;
@@ -218,9 +197,7 @@ public class Executor_roulette extends ModuleExecutor {
 		boolean lock = false;
 
 		RouletteRound() {
-
 			time = new Date();
-
 		}
 
 		public boolean join(MessageGrop message) {
@@ -264,45 +241,7 @@ public class Executor_roulette extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(Message message) {
-
-		if (COUNT_USER + COUNT_DISZ + COUNT_GROP == 0) { return null; }
-		StringBuilder builder = new StringBuilder();
-		builder.append("成功回合 : ");
-		builder.append(ROUND_SUCCESS);
-		builder.append("\r\n失败回合 : ");
-		builder.append(ROUND_EXPIRED);
-		if (ROUND_SUCCESS > 0) {
-			builder.append("\r\n第一发 : ");
-			builder.append(ROULETTE_FREQ.get(0));
-			builder.append(" - ");
-			builder.append(ROULETTE_FREQ.get(0) * 100 / ROUND_SUCCESS);
-			builder.append("%\r\n第二发 : ");
-			builder.append(ROULETTE_FREQ.get(1));
-			builder.append(" - ");
-			builder.append(ROULETTE_FREQ.get(1) * 100 / ROUND_SUCCESS);
-			builder.append("%\r\n第三发 : ");
-			builder.append(ROULETTE_FREQ.get(2));
-			builder.append(" - ");
-			builder.append(ROULETTE_FREQ.get(2) * 100 / ROUND_SUCCESS);
-			builder.append("%\r\n第四发 : ");
-			builder.append(ROULETTE_FREQ.get(3));
-			builder.append(" - ");
-			builder.append(ROULETTE_FREQ.get(3) * 100 / ROUND_SUCCESS);
-			builder.append("%\r\n第五发 : ");
-			builder.append(ROULETTE_FREQ.get(4));
-			builder.append(" - ");
-			builder.append(ROULETTE_FREQ.get(4) * 100 / ROUND_SUCCESS);
-			builder.append("%\r\n第六发 : ");
-			builder.append(ROULETTE_FREQ.get(5));
-			builder.append(" - ");
-			builder.append(ROULETTE_FREQ.get(5) * 100 / ROUND_SUCCESS);
-			builder.append("%");
-		}
-		String[] res = new String[] {
-				builder.toString()
-		};
-		return res;
-
+		return null;
 	}
 
 }
