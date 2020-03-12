@@ -38,6 +38,10 @@ public abstract class Module implements Serializable {
 	protected File FOLDER_LOGS;
 	protected File FILE_CONFIG;
 
+	protected boolean ENABLE_USER = false;
+	protected boolean ENABLE_DISZ = false;
+	protected boolean ENABLE_GROP = false;
+
 	protected boolean NEW_CONFIG = false;
 
 	protected LoggerX logger;
@@ -91,6 +95,16 @@ public abstract class Module implements Serializable {
 	public abstract String[] exec(Message message) throws Exception;
 
 	public abstract String[] generateReport(Message message);
+
+
+	public void doGroupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
+		if (ENABLE_USER || ENABLE_DISZ || ENABLE_GROP) groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
+	}
+
+	public void doGroupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
+		if (ENABLE_USER || ENABLE_DISZ || ENABLE_GROP) groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
+	}
+
 
 	public abstract void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception;
 

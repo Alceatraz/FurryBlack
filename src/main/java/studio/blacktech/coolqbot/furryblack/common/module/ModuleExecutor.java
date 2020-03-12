@@ -42,9 +42,6 @@ public abstract class ModuleExecutor extends Module {
 	protected int COUNT_DISZ = 0;
 	protected int COUNT_GROP = 0;
 
-	protected boolean ENABLE_USER = false;
-	protected boolean ENABLE_DISZ = false;
-	protected boolean ENABLE_GROP = false;
 
 	public abstract boolean doUserMessage(MessageUser message) throws Exception;
 

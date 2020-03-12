@@ -920,9 +920,9 @@ public class Systemd extends Module {
 		}
 		writer.flush();
 		writer.close();
-		for (String name : TRIGGER_INSTANCE.keySet()) TRIGGER_INSTANCE.get(name).groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
-		for (String name : LISTENER_INSTANCE.keySet()) LISTENER_INSTANCE.get(name).groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
-		for (String name : EXECUTOR_INSTANCE.keySet()) EXECUTOR_INSTANCE.get(name).groupMemberIncrease(typeid, sendtime, gropid, operid, userid);
+		for (String name : TRIGGER_INSTANCE.keySet()) TRIGGER_INSTANCE.get(name).doGroupMemberIncrease(typeid, sendtime, gropid, operid, userid);
+		for (String name : LISTENER_INSTANCE.keySet()) LISTENER_INSTANCE.get(name).doGroupMemberIncrease(typeid, sendtime, gropid, operid, userid);
+		for (String name : EXECUTOR_INSTANCE.keySet()) EXECUTOR_INSTANCE.get(name).doGroupMemberIncrease(typeid, sendtime, gropid, operid, userid);
 
 	}
 
@@ -931,9 +931,9 @@ public class Systemd extends Module {
 	 */
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
-		for (String name : TRIGGER_INSTANCE.keySet()) TRIGGER_INSTANCE.get(name).groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
-		for (String name : LISTENER_INSTANCE.keySet()) LISTENER_INSTANCE.get(name).groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
-		for (String name : EXECUTOR_INSTANCE.keySet()) EXECUTOR_INSTANCE.get(name).groupMemberDecrease(typeid, sendtime, gropid, operid, userid);
+		for (String name : TRIGGER_INSTANCE.keySet()) TRIGGER_INSTANCE.get(name).doGroupMemberDecrease(typeid, sendtime, gropid, operid, userid);
+		for (String name : LISTENER_INSTANCE.keySet()) LISTENER_INSTANCE.get(name).doGroupMemberDecrease(typeid, sendtime, gropid, operid, userid);
+		for (String name : EXECUTOR_INSTANCE.keySet()) EXECUTOR_INSTANCE.get(name).doGroupMemberDecrease(typeid, sendtime, gropid, operid, userid);
 	}
 
 
