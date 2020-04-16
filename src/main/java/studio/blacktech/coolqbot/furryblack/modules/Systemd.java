@@ -64,7 +64,7 @@ public class Systemd extends Module {
 	private static String MODULE_COMMANDNAME = "systemd";
 	private static String MODULE_DISPLAYNAME = "核心模块";
 	private static String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
-	private static String MODULE_VERSION = "3.0.3";
+	private static String MODULE_VERSION = "3.0.4";
 	private static String[] MODULE_USAGE = new String[] {};
 	private static String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -987,13 +987,7 @@ public class Systemd extends Module {
 				break;
 
 			default:
-				if (ENABLE_EXECUTOR_USER && EXECUTOR_USER.containsKey(commandName)) {
-					EXECUTOR_USER.get(commandName).executeUserMessage(message);
-				} else {
-					this.userInfo(userid, "没有此插件，可用插件如下");
-					sendListUser(userid);
-				}
-				break;
+				if (ENABLE_EXECUTOR_USER && EXECUTOR_USER.containsKey(commandName)) EXECUTOR_USER.get(commandName).executeUserMessage(message);
 			}
 		} else {
 			this.userInfo(userid, "未识别的内容，本BOT没有聊天功能，请使用/help查看帮助。");
@@ -1054,13 +1048,7 @@ public class Systemd extends Module {
 				break;
 
 			default:
-				if (ENABLE_EXECUTOR_DISZ && EXECUTOR_DISZ.containsKey(message.getCommandName())) {
-					EXECUTOR_DISZ.get(message.getCommandName()).executeDiszMessage(message);
-				} else {
-					this.diszInfo(diszid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
-					sendListDisz(userid);
-				}
-				break;
+				if (ENABLE_EXECUTOR_DISZ && EXECUTOR_DISZ.containsKey(message.getCommandName())) EXECUTOR_DISZ.get(message.getCommandName()).executeDiszMessage(message);
 			}
 		}
 	}
@@ -1120,13 +1108,7 @@ public class Systemd extends Module {
 				break;
 
 			default:
-				if (ENABLE_EXECUTOR_GROP && EXECUTOR_GROP.containsKey(message.getCommandName())) {
-					EXECUTOR_GROP.get(message.getCommandName()).executeGropMessage(message);
-				} else {
-					this.gropInfo(gropid, userid, "没有此插件，可用插件已发送至私聊，如未收到请允许临时会话或添加好友");
-					sendListGrop(userid);
-				}
-				break;
+				if (ENABLE_EXECUTOR_GROP && EXECUTOR_GROP.containsKey(message.getCommandName())) EXECUTOR_GROP.get(message.getCommandName()).executeGropMessage(message);
 			}
 		}
 

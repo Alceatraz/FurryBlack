@@ -60,7 +60,7 @@ public class Message implements Serializable {
 
 		Matcher matcher = pattern.matcher(message);
 
-		if (matcher.find()) {
+		if (matcher.find() && !message.startsWith("/emm")) {
 
 			commandName = matcher.group().substring(1);
 
