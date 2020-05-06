@@ -1,6 +1,11 @@
 package studio.blacktech.coolqbot.furryblack.common.module;
 
 
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.entry;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,25 +13,20 @@ import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-
 
 public abstract class Module implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String MODULE_PACKAGENAME;
-	private String MODULE_COMMANDNAME;
-	private String MODULE_DISPLAYNAME;
-	private String MODULE_DESCRIPTION;
-	private String MODULE_VERSION;
-	private String[] MODULE_USAGE;
-	private String[] MODULE_PRIVACY_STORED;
-	private String[] MODULE_PRIVACY_CACHED;
-	private String[] MODULE_PRIVACY_OBTAIN;
+	private final String MODULE_PACKAGENAME;
+	private final String MODULE_COMMANDNAME;
+	private final String MODULE_DISPLAYNAME;
+	private final String MODULE_DESCRIPTION;
+	private final String MODULE_VERSION;
+	private final String[] MODULE_USAGE;
+	private final String[] MODULE_PRIVACY_STORED;
+	private final String[] MODULE_PRIVACY_CACHED;
+	private final String[] MODULE_PRIVACY_OBTAIN;
 
 	public String MODULE_FULLHELP;
 

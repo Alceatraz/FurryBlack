@@ -1,32 +1,11 @@
 package studio.blacktech.coolqbot.furryblack.modules.Listener;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import org.meowy.cqp.jcq.entity.CQImage;
 import org.meowy.cqp.jcq.entity.Friend;
 import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
 import org.meowy.cqp.jcq.message.CQCode;
-
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerComponent;
 import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -34,7 +13,16 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.modules.Trigger.Trigger_UserDeny;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 @ModuleListenerComponent
@@ -48,12 +36,12 @@ public class Listener_TopSpeak extends ModuleListener {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Listener_TopSpeak";
-	private static String MODULE_COMMANDNAME = "shui";
-	private static String MODULE_DISPLAYNAME = "水群分析";
-	private static String MODULE_DESCRIPTION = "水群分析";
-	private static String MODULE_VERSION = "2.2.0";
-	private static String[] MODULE_USAGE = new String[] {
+	private static final String MODULE_PACKAGENAME = "Listener_TopSpeak";
+	private static final String MODULE_COMMANDNAME = "shui";
+	private static final String MODULE_DISPLAYNAME = "水群分析";
+	private static final String MODULE_DESCRIPTION = "水群分析";
+	private static final String MODULE_VERSION = "2.2.0";
+	private static final String[] MODULE_USAGE = new String[] {
 			"重启辅助线程 /admin exec --module=shui reload",
 			"执行命令 暂不打印 /admin exec --module=shui execute `SQL`",
 			"执行命令 直接保存 /admin exec --module=shui execute `SQL` --save",
@@ -63,11 +51,11 @@ public class Listener_TopSpeak extends ModuleListener {
 			"打印结果 有限打印 /admin exec --module=shui show --limit=XXX",
 			"保存结果 /admin exec --module=shui save"
 	};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {
 			"按照\"群-成员-消息\"的层级关系保存所有聊天内容"
 	};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//
@@ -301,12 +289,16 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws SQLException {
-		updateSchemaInfo(); // 添加用户涉及到可能的冲突 比如关闭一段时间导致不一致故直接更新所有数据
+		if (entry.isMyself(userid)) {
+			insertGroupInfo(gropid);
+		} else {
+			insertMemberInfo(gropid, userid);
+		}
 	}
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws SQLException {
-		updateSchemaInfo();
+
 	}
 
 
@@ -364,7 +356,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		if (message.hasSwitch("limit")) limit = Integer.parseInt(message.getSwitch("limit"));
 		StringBuilder builder = new StringBuilder();
 		while (resultSet.next() && count++ < limit) {
-			builder.append("{Row " + count + "}");
+			builder.append("{" + count + "}");
 			for (int i = 1; i <= colSize; i++) builder.append("[" + resultSet.getString(i) + "]");
 			builder.append("\r\n");
 		}
@@ -397,6 +389,49 @@ public class Listener_TopSpeak extends ModuleListener {
 		return file;
 	}
 
+
+	public void insertGroupInfo(long gropid) throws SQLException {
+
+		PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
+
+		Group group = entry.getCQ().getGroupInfo(gropid);
+
+		gropInfoStatement.setLong(1, gropid);
+		gropInfoStatement.setString(2, group.getName());
+
+		gropInfoStatement.execute();
+		gropInfoStatement.close();
+
+		PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
+
+		Trigger_UserDeny userDenyInstance = (Trigger_UserDeny) entry.getTrigger("userdeny");
+
+		for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
+
+			long userid = member.getQQId();
+
+			if (entry.isMyself(userid)) continue;
+			if (userDenyInstance.isUserIgnore(userid)) continue;
+			if (userDenyInstance.isGropUserIgnore(gropid, userid)) continue;
+
+			String card = entry.getNickname(gropid, userid);
+
+			userCardStatement.setLong(1, gropid);
+			userCardStatement.setLong(2, userid);
+			userCardStatement.setString(3, card);
+			userCardStatement.execute();
+
+		}
+	}
+
+	public void insertMemberInfo(Long gropid, long userid) throws SQLException {
+		PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
+		userCardStatement.setLong(1, gropid);
+		userCardStatement.setLong(2, userid);
+		userCardStatement.setString(3, entry.getNickname(gropid, userid));
+		userCardStatement.execute();
+		userCardStatement.close();
+	}
 
 	public void updateSchemaInfo() throws SQLException {
 
@@ -462,11 +497,11 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	class Worker implements Runnable {
 
-		private Object lock;
+		private final Object lock;
 
-		private BlockingQueue<MessageGrop> queue;
+		private final BlockingQueue<MessageGrop> queue;
 
-		private Connection connection;
+		private final Connection connection;
 
 		private PreparedStatement chat_record_Statement;
 		private PreparedStatement record_at_Statement;

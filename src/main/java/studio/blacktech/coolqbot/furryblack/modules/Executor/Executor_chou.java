@@ -1,6 +1,18 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
+import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
+import org.meowy.cqp.jcq.entity.QQInfo;
+import studio.blacktech.common.security.RandomTool;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,20 +23,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.meowy.cqp.jcq.entity.Group;
-import org.meowy.cqp.jcq.entity.Member;
-import org.meowy.cqp.jcq.entity.QQInfo;
 
-import studio.blacktech.common.security.RandomTool;
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-
-
+/**
+ * CoolQ在Enable阶段无法获取成员列表
+ * 非常麻烦
+ *
+ * @author netuser
+ */
 @ModuleExecutorComponent
 public class Executor_chou extends ModuleExecutor {
 
@@ -36,17 +41,17 @@ public class Executor_chou extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Executor_Chou";
-	private static String MODULE_COMMANDNAME = "chou";
-	private static String MODULE_DISPLAYNAME = "随机抽人";
-	private static String MODULE_DESCRIPTION = "从当前群随机选择一个成员";
-	private static String MODULE_VERSION = "1.2.1";
-	private static String[] MODULE_USAGE = new String[] {
+	private static final String MODULE_PACKAGENAME = "Executor_Chou";
+	private static final String MODULE_COMMANDNAME = "chou";
+	private static final String MODULE_DISPLAYNAME = "随机抽人";
+	private static final String MODULE_DESCRIPTION = "从当前群随机选择一个成员";
+	private static final String MODULE_VERSION = "1.2.1";
+	private static final String[] MODULE_USAGE = new String[] {
 			"/chou - 随机抽一个人", "/chou 理由 - 以某个理由抽一个人"
 	};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人", "获取群成员列表"
 	};
 

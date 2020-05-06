@@ -1,69 +1,81 @@
 package studio.blacktech.coolqbot.furryblack.common;
 
 
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashMap;
-
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.HashMap;
 
 
 public class Executor_DEMO extends ModuleExecutor {
 
+
 	private static final long serialVersionUID = 1L;
+
 	// ==========================================================================================================================================================
 	//
 	// 此模块为模板模块
 	// 用于教学示例用
 	//
 	// ==========================================================================================================================================================
+
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
+
+
 	// PACKAGENAME 名称为完整名称
 	// 命名规则应为 类型_名称
-	private static String MODULE_PACKAGENAME = "Executor_Demo";
+	private static final String MODULE_PACKAGENAME = "Executor_Demo";
+
 	// COMMANDNAME 名称为命令调用的名称
 	// 应和PACKAGE名称一致
-	private static String MODULE_COMMANDNAME = "demo";
+	private static final String MODULE_COMMANDNAME = "demo";
+
 	// DISPLAYNAME 名称为人类可读的友好名称 应该在8个字以内
-	private static String MODULE_DISPLAYNAME = "示范模块";
+	private static final String MODULE_DISPLAYNAME = "示范模块";
+
 	// DESCRIPTON 为模块功能简介
-	private static String MODULE_DESCRIPTION = "示范如何编写模块";
+	private static final String MODULE_DESCRIPTION = "示范如何编写模块";
+
 	// 版本号
-	// 推荐两段式版本
-	// bug修复加个位
-	// 任何功能更新都加十位
-	// 仅为后个位归零
-	private static String MODULE_VERSION = "1.0";
+	// 推荐三段式版本
+	private static final String MODULE_VERSION = "1.0.0";
+
 	// 命令用法，数组的每个元素应为一个参数组合用法及其说明
 	// 减号左右各一个空格
-	private static String[] MODULE_USAGE = new String[] {
+	private static final String[] MODULE_USAGE = new String[] {
 			"命令1 - 命令用法1",
 			"命令2 - 命令用法2",
 			"命令3 - 命令用法3",
 			"命令4 - 命令用法4",
 	};
+
 	// 如果需要将数据存储为文件 则应写明存储的内容及其用途 有效时限
 	public static String[] MODULE_PRIVACY_STORED = new String[] {
 			"隐私级别 - 用途"
 	};
+
 	// 如果需要将数据存储在内存 则应写明存储的内容及其用途 有效时限
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {
 			"隐私级别 - 用途"
 	};
+
 	// 如果需要获取用户相关的信息 则应写明内容及其用途 且获取的信息不应该储存 如果需要存储则将此功能写入MODULE_PRIVACY_CACHED
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"隐私级别 - 用途"
 	};
+
 	// ==========================================================================================================================================================
 	//
 	// 成员变量

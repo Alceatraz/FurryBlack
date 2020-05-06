@@ -32,7 +32,7 @@
 		</dependency>
 
 
-		<!-- PostgreSQL -->
+		<!-- Postgres -->
 		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -89,7 +89,7 @@
 			</plugin>
 
 
-			<!-- 生成NMANIFEST 可运行jar -->
+			<!-- 生成MANIFEST -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>

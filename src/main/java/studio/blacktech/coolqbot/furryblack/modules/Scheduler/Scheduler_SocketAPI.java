@@ -1,6 +1,12 @@
 package studio.blacktech.coolqbot.furryblack.modules.Scheduler;
 
 
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.modules.Listener.Listener_TopSpeak;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,12 +14,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.HashMap;
-
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
-import studio.blacktech.coolqbot.furryblack.modules.Listener.Listener_TopSpeak;
 
 
 @ModuleSchedulerComponent
@@ -27,12 +27,12 @@ public class Scheduler_SocketAPI extends ModuleScheduler {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Scheduler_SocketAPI";
-	private static String MODULE_COMMANDNAME = "socketapi";
-	private static String MODULE_DISPLAYNAME = "网络接口";
-	private static String MODULE_DESCRIPTION = "网络接口";
-	private static String MODULE_VERSION = "1.0.0";
-	private static String[] MODULE_USAGE = new String[] {};
+	private static final String MODULE_PACKAGENAME = "Scheduler_SocketAPI";
+	private static final String MODULE_COMMANDNAME = "socketapi";
+	private static final String MODULE_DISPLAYNAME = "网络接口";
+	private static final String MODULE_DESCRIPTION = "网络接口";
+	private static final String MODULE_VERSION = "1.0.0";
+	private static final String[] MODULE_USAGE = new String[] {};
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
@@ -162,7 +162,8 @@ public class Scheduler_SocketAPI extends ModuleScheduler {
 
 			int count = 0;
 
-			loop: do {
+			loop:
+			do {
 
 				logger.full("接口线程启动 第" + count++ + "次");
 

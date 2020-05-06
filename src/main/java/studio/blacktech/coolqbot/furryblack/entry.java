@@ -151,6 +151,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	@Override
 	public int startup() {
+		CQ.logInfo("FurryBlack", "启动");
 		return 0;
 	}
 
@@ -159,6 +160,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	@Override
 	public int enable() {
+
+		CQ.logInfo("FurryBlack", "启用");
 
 		try {
 
@@ -509,7 +512,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			SYSTEMD.adminInfo("[收到入群邀请] - " + sendtime + "\r\n群聊：" + gropid + "\r\n用户: " + nick + "(" + userid + ")" + "\r\n信息：" + message + "\r\n/admin group accept " + flag + "\r\n/admin group refuse " + flag);
 		}
 		return 0;
-
+		m
 	}
 
 	/**
@@ -810,6 +813,40 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	 */
 	public static void gropInfo(long gropid, long userid, String message) {
 		SYSTEMD.gropInfo(gropid, userid, message);
+	}
+
+
+	/**
+	 * 无视群Mute 在群聊发消息 并at某人
+	 *
+	 * @param gropid  群组ID
+	 * @param userid  用户ID
+	 * @param message 消息
+	 */
+	public static void gropInfoForce(long gropid, long userid, String message) {
+		SYSTEMD.gropInfoForce(gropid, userid, message);
+	}
+
+
+	/**
+	 * 无视群Mute 在群聊发消息
+	 *
+	 * @param gropid  群组ID
+	 * @param message 消息
+	 */
+	public static void gropInfoForce(long gropid, String message) {
+		SYSTEMD.gropInfoForce(gropid, message);
+	}
+
+
+	/**
+	 * 无视群Mute 在群聊发消息
+	 *
+	 * @param gropid  群组ID
+	 * @param message 消息
+	 */
+	public static void gropInfoForce(long gropid, String... message) {
+		SYSTEMD.gropInfoForce(gropid, message);
 	}
 
 

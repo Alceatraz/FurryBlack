@@ -2,7 +2,6 @@ package studio.blacktech.coolqbot.furryblack.test;
 
 
 import org.junit.jupiter.api.Test;
-
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 
 

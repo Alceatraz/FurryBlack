@@ -1,10 +1,10 @@
 package studio.blacktech.common.security.crypto;
 
 
+import studio.blacktech.common.security.RandomTool;
+
 import java.util.Calendar;
 import java.util.TimeZone;
-
-import studio.blacktech.common.security.RandomTool;
 
 
 public class ChallengeResponseVerifyer {
@@ -16,7 +16,7 @@ public class ChallengeResponseVerifyer {
 	String challenge = RandomTool.randomStringBASE64(64);
 	String answer = HashTool.sha256(timeBase + challenge);
 
-	private String secret;
+	private final String secret;
 
 	public ChallengeResponseVerifyer(String secret) {
 		this.secret = secret;

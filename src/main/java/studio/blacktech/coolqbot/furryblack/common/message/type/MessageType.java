@@ -13,10 +13,10 @@ public enum MessageType {
 	SnapShot(25), // 闪照 垃圾消息
 	SyncMusic(26); // 一起听 垃圾消息
 
-	private int id;
+	private final int id;
 	private String name;
 
-	private MessageType(int id) {
+	MessageType(int id) {
 
 		this.id = id;
 

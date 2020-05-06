@@ -1,13 +1,13 @@
 package studio.blacktech.common.security;
 
 
+import studio.blacktech.common.security.crypto.HashTool;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.util.List;
-
-import studio.blacktech.common.security.crypto.HashTool;
 
 
 public class RandomTool {
@@ -23,7 +23,7 @@ public class RandomTool {
 	private static final String DEC = "0123456789";
 	private static final String HEX = "0123456789ABCDEF";
 
-	private static Provider provider = Security.getProvider("SUN");
+	private static final Provider provider = Security.getProvider("SUN");
 	private static SecureRandom secureRandom;
 
 

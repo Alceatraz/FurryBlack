@@ -11,7 +11,7 @@ public class BufferX {
 
 
 	private StringBuilder builder;
-	private LinkedList<StringBuilder> builders = new LinkedList<>();
+	private final LinkedList<StringBuilder> builders = new LinkedList<>();
 
 
 	public BufferX() {

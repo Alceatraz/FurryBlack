@@ -1,16 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Trigger;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -18,6 +8,12 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 
 @ModuleTriggerComponent
@@ -31,17 +27,17 @@ public class Trigger_WordDeny extends ModuleTrigger {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Trigger_WordDeny";
-	private static String MODULE_COMMANDNAME = "worddeny";
-	private static String MODULE_DISPLAYNAME = "过滤器";
-	private static String MODULE_DESCRIPTION = "正则过滤器";
-	private static String MODULE_VERSION = "2.0";
-	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {
+	private static final String MODULE_PACKAGENAME = "Trigger_WordDeny";
+	private static final String MODULE_COMMANDNAME = "worddeny";
+	private static final String MODULE_DISPLAYNAME = "过滤器";
+	private static final String MODULE_DESCRIPTION = "正则过滤器";
+	private static final String MODULE_VERSION = "2.0";
+	private static final String[] MODULE_USAGE = new String[] {};
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {
 			"按照\"成员-消息\"的层级关系记录违反ELUA的行为"
 	};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//

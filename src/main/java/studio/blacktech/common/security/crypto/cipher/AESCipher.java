@@ -1,29 +1,16 @@
 package studio.blacktech.common.security.crypto.cipher;
 
 
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
-import java.security.SecureRandom;
-import java.security.Security;
+import java.security.*;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
 
 /***
@@ -35,14 +22,12 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class AESCipher {
 
-	private SecretKeySpec sk;
-	private IvParameterSpec iv;
 	private Cipher encrypter;
 	private Cipher decrypter;
 	private MessageDigest staticDigester;
 	private MessageDigest oneoffDigester;
-	private static Encoder encoder = Base64.getEncoder();
-	private static Decoder decoder = Base64.getDecoder();
+	private static final Encoder encoder = Base64.getEncoder();
+	private static final Decoder decoder = Base64.getDecoder();
 
 	// ==========================================================================================================================================================
 	//
@@ -114,14 +99,11 @@ public class AESCipher {
 
 		try {
 
-			sk = secretKeySpec;
-			iv = initialVector;
-
 			encrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			decrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
 
-			encrypter.init(Cipher.ENCRYPT_MODE, sk, iv);
-			decrypter.init(Cipher.DECRYPT_MODE, sk, iv);
+			encrypter.init(Cipher.ENCRYPT_MODE, secretKeySpec, initialVector);
+			decrypter.init(Cipher.DECRYPT_MODE, secretKeySpec, initialVector);
 
 			staticDigester = MessageDigest.getInstance("SHA-384");
 			oneoffDigester = MessageDigest.getInstance("SHA-384");
@@ -283,8 +265,7 @@ public class AESCipher {
 	 * @throws MessageSizeCheckFailedException 消息长度验证不通过
 	 * @throws MessageHashCheckFailedException 消息哈希验证不通过
 	 */
-	public String decryptHash(String content)
-			throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
+	public String decryptHash(String content) throws IOException, MessageSizeCheckFailedException, MessageHashCheckFailedException {
 
 		try {
 

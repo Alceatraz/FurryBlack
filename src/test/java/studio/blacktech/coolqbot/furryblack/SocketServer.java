@@ -1,13 +1,13 @@
 package studio.blacktech.coolqbot.furryblack;
 
 
+import org.junit.jupiter.api.Test;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import org.junit.jupiter.api.Test;
 
 
 public class SocketServer {

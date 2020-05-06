@@ -9,8 +9,12 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
 
@@ -60,15 +64,15 @@ public class Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Core_Systemd";
-	private static String MODULE_COMMANDNAME = "systemd";
-	private static String MODULE_DISPLAYNAME = "核心模块";
-	private static String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
-	private static String MODULE_VERSION = "3.0.4";
-	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+	private static final String MODULE_PACKAGENAME = "Core_Systemd";
+	private static final String MODULE_COMMANDNAME = "systemd";
+	private static final String MODULE_DISPLAYNAME = "核心模块";
+	private static final String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
+	private static final String MODULE_VERSION = "3.0.4";
+	private static final String[] MODULE_USAGE = new String[] {};
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//
@@ -111,41 +115,41 @@ public class Systemd extends Module {
 	private String CONFIG_EXECUTOR_DISZ;
 	private String CONFIG_EXECUTOR_GROP;
 
-	private String[] LIST_SCHEDULER = {};
+	private List<String> LIST_SCHEDULER;
 
-	private String[] LIST_TRIGGER_USER = {};
-	private String[] LIST_TRIGGER_DISZ = {};
-	private String[] LIST_TRIGGER_GROP = {};
+	private List<String> LIST_TRIGGER_USER;
+	private List<String> LIST_TRIGGER_DISZ;
+	private List<String> LIST_TRIGGER_GROP;
 
-	private String[] LIST_LISENTER_USER = {};
-	private String[] LIST_LISENTER_DISZ = {};
-	private String[] LIST_LISENTER_GROP = {};
+	private List<String> LIST_LISENTER_USER;
+	private List<String> LIST_LISENTER_DISZ;
+	private List<String> LIST_LISENTER_GROP;
 
-	private String[] LIST_EXECUTOR_USER = {};
-	private String[] LIST_EXECUTOR_DISZ = {};
-	private String[] LIST_EXECUTOR_GROP = {};
+	private List<String> LIST_EXECUTOR_USER;
+	private List<String> LIST_EXECUTOR_DISZ;
+	private List<String> LIST_EXECUTOR_GROP;
 
-	private TreeMap<String, ModuleScheduler> SCHEDULER_INSTANCE;
+	private Map<String, ModuleScheduler> SCHEDULER_INSTANCE;
 
-	private ArrayList<ModuleScheduler> SCHEDULER_ENABLED;
+	private List<ModuleScheduler> SCHEDULER_ENABLED;
 
-	private TreeMap<String, ModuleTrigger> TRIGGER_INSTANCE;
+	private Map<String, ModuleTrigger> TRIGGER_INSTANCE;
 
-	private ArrayList<ModuleTrigger> TRIGGER_USER;
-	private ArrayList<ModuleTrigger> TRIGGER_DISZ;
-	private ArrayList<ModuleTrigger> TRIGGER_GROP;
+	private List<ModuleTrigger> TRIGGER_USER;
+	private List<ModuleTrigger> TRIGGER_DISZ;
+	private List<ModuleTrigger> TRIGGER_GROP;
 
-	private TreeMap<String, ModuleListener> LISTENER_INSTANCE;
+	private Map<String, ModuleListener> LISTENER_INSTANCE;
 
-	private ArrayList<ModuleListener> LISTENER_USER;
-	private ArrayList<ModuleListener> LISTENER_DISZ;
-	private ArrayList<ModuleListener> LISTENER_GROP;
+	private List<ModuleListener> LISTENER_USER;
+	private List<ModuleListener> LISTENER_DISZ;
+	private List<ModuleListener> LISTENER_GROP;
 
-	private TreeMap<String, ModuleExecutor> EXECUTOR_INSTANCE;
+	private Map<String, ModuleExecutor> EXECUTOR_INSTANCE;
 
-	private TreeMap<String, ModuleExecutor> EXECUTOR_USER;
-	private TreeMap<String, ModuleExecutor> EXECUTOR_DISZ;
-	private TreeMap<String, ModuleExecutor> EXECUTOR_GROP;
+	private Map<String, ModuleExecutor> EXECUTOR_USER;
+	private Map<String, ModuleExecutor> EXECUTOR_DISZ;
+	private Map<String, ModuleExecutor> EXECUTOR_GROP;
 
 	private File FILE_NICKNAME_MAP;
 	private File FILE_MESSAGE_HELP;
@@ -162,8 +166,8 @@ public class Systemd extends Module {
 	private String MESSAGE_LIST_DISZ = "";
 	private String MESSAGE_LIST_GROP = "";
 
-	private TreeMap<Long, TreeMap<Long, String>> NICKNAME_MAP;
-	private HashSet<Long> MESSAGE_MUTE;
+	private Map<Long, Map<Long, String>> NICKNAME_MAP;
+	private Set<Long> MESSAGE_MUTE;
 
 	private boolean LOCK_INIT = false;
 
@@ -208,6 +212,20 @@ public class Systemd extends Module {
 		// =======================================================================================================================
 		// 初始化内存结构
 		// =======================================================================================================================
+
+		LIST_SCHEDULER = new ArrayList<>();
+
+		LIST_TRIGGER_USER = new ArrayList<>();
+		LIST_TRIGGER_DISZ = new ArrayList<>();
+		LIST_TRIGGER_GROP = new ArrayList<>();
+
+		LIST_LISENTER_USER = new ArrayList<>();
+		LIST_LISENTER_DISZ = new ArrayList<>();
+		LIST_LISENTER_GROP = new ArrayList<>();
+
+		LIST_EXECUTOR_USER = new ArrayList<>();
+		LIST_EXECUTOR_DISZ = new ArrayList<>();
+		LIST_EXECUTOR_GROP = new ArrayList<>();
 
 		SCHEDULER_INSTANCE = new TreeMap<>();
 		SCHEDULER_ENABLED = new ArrayList<>();
@@ -393,6 +411,76 @@ public class Systemd extends Module {
 
 
 		// =======================================================================================================================
+		// 读取模块配置
+		// =======================================================================================================================
+
+
+		Set<String> ENABLE_TRIGGER = new HashSet<>();
+		Set<String> ENABLE_LISTENER = new HashSet<>();
+		Set<String> ENABLE_EXECUTOR = new HashSet<>();
+
+		logger.full("读取模块配置列表");
+
+		// =======================================================================================================================
+		// 读取定时器配置
+
+		CONFIG_SCHEDULER = CONFIG.getProperty("scheduler", "none");
+		logger.seek("定时器配置 全局", CONFIG_SCHEDULER);
+
+		if (!CONFIG_SCHEDULER.equals("none")) LIST_SCHEDULER.addAll(Arrays.asList(CONFIG_SCHEDULER.split(",")));
+
+
+		// =======================================================================================================================
+		// 读取触发器配置
+
+		CONFIG_TRIGGER_USER = CONFIG.getProperty("trigger_user", "none");
+		CONFIG_TRIGGER_DISZ = CONFIG.getProperty("trigger_disz", "none");
+		CONFIG_TRIGGER_GROP = CONFIG.getProperty("trigger_grop", "none");
+
+		logger.seek("触发器配置 私聊", CONFIG_TRIGGER_USER);
+		logger.seek("触发器配置 组聊", CONFIG_TRIGGER_DISZ);
+		logger.seek("触发器配置 群聊", CONFIG_TRIGGER_GROP);
+
+
+		if (!CONFIG_TRIGGER_USER.equals("none")) LIST_TRIGGER_USER.addAll(Arrays.asList(CONFIG_TRIGGER_USER.split(",")));
+		if (!CONFIG_TRIGGER_DISZ.equals("none")) LIST_TRIGGER_DISZ.addAll(Arrays.asList(CONFIG_TRIGGER_DISZ.split(",")));
+		if (!CONFIG_TRIGGER_GROP.equals("none")) LIST_TRIGGER_GROP.addAll(Arrays.asList(CONFIG_TRIGGER_GROP.split(",")));
+
+
+		// =======================================================================================================================
+		// 读取监听器配置
+
+		CONFIG_LISENTER_USER = CONFIG.getProperty("listener_user", "none");
+		CONFIG_LISENTER_DISZ = CONFIG.getProperty("listener_disz", "none");
+		CONFIG_LISENTER_GROP = CONFIG.getProperty("listener_grop", "none");
+
+		logger.seek("监听器配置 私聊", CONFIG_LISENTER_USER);
+		logger.seek("监听器配置 组聊", CONFIG_LISENTER_DISZ);
+		logger.seek("监听器配置 群聊", CONFIG_LISENTER_GROP);
+
+		if (!CONFIG_LISENTER_USER.equals("none")) LIST_LISENTER_USER.addAll(Arrays.asList(CONFIG_LISENTER_USER.split(",")));
+		if (!CONFIG_LISENTER_DISZ.equals("none")) LIST_LISENTER_DISZ.addAll(Arrays.asList(CONFIG_LISENTER_DISZ.split(",")));
+		if (!CONFIG_LISENTER_GROP.equals("none")) LIST_LISENTER_GROP.addAll(Arrays.asList(CONFIG_LISENTER_GROP.split(",")));
+
+
+		// =======================================================================================================================
+		// 读取执行器配置
+
+		CONFIG_EXECUTOR_USER = CONFIG.getProperty("executor_user", "none");
+		CONFIG_EXECUTOR_DISZ = CONFIG.getProperty("executor_disz", "none");
+		CONFIG_EXECUTOR_GROP = CONFIG.getProperty("executor_grop", "none");
+
+		logger.seek("执行器配置 私聊", CONFIG_EXECUTOR_USER);
+		logger.seek("执行器配置 组聊", CONFIG_EXECUTOR_DISZ);
+		logger.seek("执行器配置 群聊", CONFIG_EXECUTOR_GROP);
+
+
+		if (!CONFIG_EXECUTOR_USER.equals("none")) LIST_EXECUTOR_USER.addAll(Arrays.asList(CONFIG_EXECUTOR_USER.split(",")));
+		if (!CONFIG_EXECUTOR_DISZ.equals("none")) LIST_EXECUTOR_DISZ.addAll(Arrays.asList(CONFIG_EXECUTOR_DISZ.split(",")));
+		if (!CONFIG_EXECUTOR_GROP.equals("none")) LIST_EXECUTOR_GROP.addAll(Arrays.asList(CONFIG_EXECUTOR_GROP.split(",")));
+
+
+		// =======================================================================================================================
 		// 实例化模块
 		// =======================================================================================================================
 
@@ -416,25 +504,50 @@ public class Systemd extends Module {
 
 			Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(entryName);
 
-			if (clazz.isAnnotationPresent(ModuleComponent.class)) {
-				logger.full("发现核心模块", entryName);
+
+			if (clazz.isAnnotationPresent(ModuleSchedulerComponent.class)) {
+
+				ModuleScheduler instance = (ModuleScheduler) clazz.newInstance();
+
+				if (LIST_SCHEDULER.contains(instance.MODULE_COMMANDNAME())) {
+					instantiationScheduler(instance);
+					logger.full("注册定时器", clazz.getName());
+				}
+
 			} else if (clazz.isAnnotationPresent(ModuleTriggerComponent.class)) {
-				logger.full("注册触发器", clazz.getName());
-				instantiationTrigger((ModuleTrigger) clazz.newInstance());
+
+				ModuleTrigger instance = (ModuleTrigger) clazz.newInstance();
+
+				if (LIST_TRIGGER_USER.contains(instance.MODULE_COMMANDNAME()) || LIST_TRIGGER_DISZ.contains(instance.MODULE_COMMANDNAME()) || LIST_TRIGGER_GROP.contains(instance.MODULE_COMMANDNAME())) {
+					instantiationTrigger((ModuleTrigger) clazz.newInstance());
+					logger.full("注册触发器", clazz.getName());
+				}
+
 			} else if (clazz.isAnnotationPresent(ModuleListenerComponent.class)) {
-				logger.full("注册监听器", clazz.getName());
-				instantiationListener((ModuleListener) clazz.newInstance());
+
+				ModuleListener instance = (ModuleListener) clazz.newInstance();
+
+				if (LIST_LISENTER_USER.contains(instance.MODULE_COMMANDNAME()) || LIST_LISENTER_DISZ.contains(instance.MODULE_COMMANDNAME()) || LIST_LISENTER_GROP.contains(instance.MODULE_COMMANDNAME())) {
+					instantiationListener(instance);
+					logger.full("注册监听器", clazz.getName());
+				}
+
 			} else if (clazz.isAnnotationPresent(ModuleExecutorComponent.class)) {
-				logger.full("注册执行器", clazz.getName());
-				instantiationExecutor((ModuleExecutor) clazz.newInstance());
-			} else if (clazz.isAnnotationPresent(ModuleSchedulerComponent.class)) {
-				logger.full("注册定时器", clazz.getName());
-				instantiationScheduler((ModuleScheduler) clazz.newInstance());
-			} else {
+
+				ModuleExecutor instance = (ModuleExecutor) clazz.newInstance();
+
+				if (LIST_EXECUTOR_USER.contains(instance.MODULE_COMMANDNAME()) || LIST_EXECUTOR_DISZ.contains(instance.MODULE_COMMANDNAME()) || LIST_EXECUTOR_GROP.contains(instance.MODULE_COMMANDNAME())) {
+					instantiationExecutor(instance);
+					logger.full("注册执行器", clazz.getName());
+				}
+
+			} else if (clazz.isAnnotationPresent(ModuleComponent.class)) {
+
+				logger.full("发现核心模块", entryName);
 
 			}
-		}
 
+		}
 
 		// =======================================================================================================================
 		// 初始化模块
@@ -473,64 +586,6 @@ public class Systemd extends Module {
 			logger.full("初始化执行器", name);
 			EXECUTOR_INSTANCE.get(name).init();
 		}
-
-		// =======================================================================================================================
-		// 读取模块配置
-		// =======================================================================================================================
-
-		logger.full("读取模块配置列表");
-
-		// =======================================================================================================================
-		// 读取定时器配置
-
-		CONFIG_SCHEDULER = CONFIG.getProperty("scheduler", "none");
-		logger.seek("定时器配置 全局", CONFIG_SCHEDULER);
-		LIST_SCHEDULER = CONFIG_SCHEDULER.equals("none") ? new String[0] : CONFIG_SCHEDULER.split(",");
-
-		// =======================================================================================================================
-		// 读取触发器配置
-
-		CONFIG_TRIGGER_USER = CONFIG.getProperty("trigger_user", "none");
-		CONFIG_TRIGGER_DISZ = CONFIG.getProperty("trigger_disz", "none");
-		CONFIG_TRIGGER_GROP = CONFIG.getProperty("trigger_grop", "none");
-
-		logger.seek("触发器配置 私聊", CONFIG_TRIGGER_USER);
-		logger.seek("触发器配置 组聊", CONFIG_TRIGGER_DISZ);
-		logger.seek("触发器配置 群聊", CONFIG_TRIGGER_GROP);
-
-		LIST_TRIGGER_USER = CONFIG_TRIGGER_USER.equals("none") ? new String[0] : CONFIG_TRIGGER_USER.split(",");
-		LIST_TRIGGER_DISZ = CONFIG_TRIGGER_DISZ.equals("none") ? new String[0] : CONFIG_TRIGGER_DISZ.split(",");
-		LIST_TRIGGER_GROP = CONFIG_TRIGGER_GROP.equals("none") ? new String[0] : CONFIG_TRIGGER_GROP.split(",");
-
-		// =======================================================================================================================
-		// 读取监听器配置
-
-		CONFIG_LISENTER_USER = CONFIG.getProperty("listener_user", "none");
-		CONFIG_LISENTER_DISZ = CONFIG.getProperty("listener_disz", "none");
-		CONFIG_LISENTER_GROP = CONFIG.getProperty("listener_grop", "none");
-
-		logger.seek("监听器配置 私聊", CONFIG_LISENTER_USER);
-		logger.seek("监听器配置 组聊", CONFIG_LISENTER_DISZ);
-		logger.seek("监听器配置 群聊", CONFIG_LISENTER_GROP);
-
-		LIST_LISENTER_USER = CONFIG_LISENTER_USER.equals("none") ? new String[0] : CONFIG_LISENTER_USER.split(",");
-		LIST_LISENTER_DISZ = CONFIG_LISENTER_DISZ.equals("none") ? new String[0] : CONFIG_LISENTER_DISZ.split(",");
-		LIST_LISENTER_GROP = CONFIG_LISENTER_GROP.equals("none") ? new String[0] : CONFIG_LISENTER_GROP.split(",");
-
-		// =======================================================================================================================
-		// 读取执行器配置
-
-		CONFIG_EXECUTOR_USER = CONFIG.getProperty("executor_user", "none");
-		CONFIG_EXECUTOR_DISZ = CONFIG.getProperty("executor_disz", "none");
-		CONFIG_EXECUTOR_GROP = CONFIG.getProperty("executor_grop", "none");
-
-		logger.seek("执行器配置 私聊", CONFIG_EXECUTOR_USER);
-		logger.seek("执行器配置 组聊", CONFIG_EXECUTOR_DISZ);
-		logger.seek("执行器配置 群聊", CONFIG_EXECUTOR_GROP);
-
-		LIST_EXECUTOR_USER = CONFIG_EXECUTOR_USER.equals("none") ? new String[0] : CONFIG_EXECUTOR_USER.split(",");
-		LIST_EXECUTOR_DISZ = CONFIG_EXECUTOR_DISZ.equals("none") ? new String[0] : CONFIG_EXECUTOR_DISZ.split(",");
-		LIST_EXECUTOR_GROP = CONFIG_EXECUTOR_GROP.equals("none") ? new String[0] : CONFIG_EXECUTOR_GROP.split(",");
 
 		// =======================================================================================================================
 		// 注册模块
@@ -999,11 +1054,7 @@ public class Systemd extends Module {
 	/**
 	 * 你永远不应该执行这个方法
 	 *
-	 * @param diszid      你永远不应该执行这个方法
-	 * @param userid      你永远不应该执行这个方法
-	 * @param message     你永远不应该执行这个方法
-	 * @param messageid   你永远不应该执行这个方法
-	 * @param messagefont 你永远不应该执行这个方法
+	 * @param message 你永远不应该执行这个方法
 	 * @throws Exception 你永远不应该执行这个方法
 	 */
 	public void doDiszMessage(MessageDisz message) throws Exception {
@@ -1143,6 +1194,7 @@ public class Systemd extends Module {
 	// 工具函数
 	//
 	// ==========================================================================================================================================================
+
 
 	/**
 	 * 生成报告的方法 你永远不应该执行这个方法
@@ -1444,7 +1496,7 @@ public class Systemd extends Module {
 	 * @param executors 执行器列表
 	 * @return 生成好的/list
 	 */
-	private String generateListMessage(String flagname, ArrayList<ModuleTrigger> triggers, ArrayList<ModuleListener> listeners, TreeMap<String, ModuleExecutor> executors) {
+	private String generateListMessage(String flagname, List<ModuleTrigger> triggers, List<ModuleListener> listeners, Map<String, ModuleExecutor> executors) {
 
 		StringBuilder builder = new StringBuilder();
 
@@ -1536,9 +1588,7 @@ public class Systemd extends Module {
 	 */
 	public void adminInfo(String... message) {
 		if (message == null) return;
-		for (String temp : message) {
-			entry.getCQ().sendPrivateMsg(USERID_ADMIN, temp);
-		}
+		for (String temp : message) entry.getCQ().sendPrivateMsg(USERID_ADMIN, temp);
 	}
 
 
@@ -1561,9 +1611,7 @@ public class Systemd extends Module {
 	 */
 	public void userInfo(long userid, String... message) {
 		if (message == null) return;
-		for (String temp : message) {
-			entry.getCQ().sendPrivateMsg(userid, temp);
-		}
+		for (String temp : message) entry.getCQ().sendPrivateMsg(userid, temp);
 	}
 
 
@@ -1586,9 +1634,7 @@ public class Systemd extends Module {
 	 */
 	public void diszInfo(long diszid, String... message) {
 		if (message == null) return;
-		for (String temp : message) {
-			entry.getCQ().sendDiscussMsg(diszid, temp);
-		}
+		for (String temp : message) entry.getCQ().sendDiscussMsg(diszid, temp);
 	}
 
 
@@ -1610,11 +1656,8 @@ public class Systemd extends Module {
 	 * @param message 消息
 	 */
 	public void gropInfo(long gropid, String message) {
-		if (MESSAGE_MUTE.contains(gropid)) {
-			logger.full("关闭发言", gropid + " - " + message);
-		} else {
-			entry.getCQ().sendGroupMsg(gropid, message);
-		}
+		if (MESSAGE_MUTE.contains(gropid)) return;
+		entry.getCQ().sendGroupMsg(gropid, message);
 	}
 
 
@@ -1626,13 +1669,42 @@ public class Systemd extends Module {
 	 */
 	public void gropInfo(long gropid, String... message) {
 		if (message == null) return;
-		if (MESSAGE_MUTE.contains(gropid)) {
-			logger.full("关闭发言", gropid + " - " + message);
-		} else {
-			for (String temp : message) {
-				entry.getCQ().sendGroupMsg(gropid, temp);
-			}
-		}
+		if (MESSAGE_MUTE.contains(gropid)) return;
+		for (String temp : message) entry.getCQ().sendGroupMsg(gropid, temp);
+	}
+
+
+	/**
+	 * 在群聊发消息 并at某人 entry对此方法进行了转发请勿在此执行
+	 *
+	 * @param gropid  群组ID
+	 * @param userid  用户ID
+	 * @param message 消息
+	 */
+	public void gropInfoForce(long gropid, long userid, String message) {
+		entry.getCQ().sendGroupMsg(gropid, "[CQ:at,qq=" + userid + "] " + message);
+	}
+
+
+	/**
+	 * 在群聊发消息 entry对此方法进行了转发请勿在此执行
+	 *
+	 * @param gropid  群组ID
+	 * @param message 消息
+	 */
+	public void gropInfoForce(long gropid, String message) {
+		entry.getCQ().sendGroupMsg(gropid, message);
+	}
+
+
+	/**
+	 * 在群聊发消息 entry对此方法进行了转发请勿在此执行
+	 *
+	 * @param gropid  群组ID
+	 * @param message 消息
+	 */
+	public void gropInfoForce(long gropid, String... message) {
+		for (String temp : message) entry.getCQ().sendGroupMsg(gropid, temp);
 	}
 
 
@@ -1650,7 +1722,6 @@ public class Systemd extends Module {
 			entry.getCQ().sendGroupMsg(gropid, "[CQ:at,qq=" + userid + "] " + message);
 		}
 	}
-
 
 	/**
 	 * 私聊某人 /info entry对此方法进行了转发请勿在此执行

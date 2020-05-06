@@ -1,16 +1,16 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
-import java.math.BigInteger;
-import java.util.HashMap;
-
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.math.BigInteger;
+import java.util.HashMap;
 
 
 @ModuleExecutorComponent
@@ -24,12 +24,12 @@ public class Executor_acon extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Executor_Acon";
-	private static String MODULE_COMMANDNAME = "acon";
-	private static String MODULE_DISPLAYNAME = "空调";
-	private static String MODULE_DESCRIPTION = "本群冷气开放";
-	private static String MODULE_VERSION = "1.0.3";
-	private static String[] MODULE_USAGE = new String[] {
+	private static final String MODULE_PACKAGENAME = "Executor_Acon";
+	private static final String MODULE_COMMANDNAME = "acon";
+	private static final String MODULE_DISPLAYNAME = "空调";
+	private static final String MODULE_DESCRIPTION = "本群冷气开放";
+	private static final String MODULE_VERSION = "1.0.3";
+	private static final String[] MODULE_USAGE = new String[] {
 			"/acon cost - 耗电量",
 			"/acon off - 关机",
 			"/acon wet - 加湿",
@@ -54,8 +54,8 @@ public class Executor_acon extends ModuleExecutor {
 			"/acon ~!C??? - Fy:????",
 			"/acon ~!R[?? - FT//s??"
 	};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {
 			"按群存储耗电量 - JCQ停止时释放",
 			"按群存储耗工作模式 - JCQ停止时释放",
 			"按群存储上次更改模式的时间戳 - JCQ停止时释放"

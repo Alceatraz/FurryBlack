@@ -1,20 +1,19 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
 import org.meowy.cqp.jcq.entity.Member;
-
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 
 @ModuleExecutorComponent
@@ -28,19 +27,19 @@ public class Executor_roulette extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Executor_Roulette";
-	private static String MODULE_COMMANDNAME = "roulette";
-	private static String MODULE_DISPLAYNAME = "俄罗斯轮盘赌";
-	private static String MODULE_DESCRIPTION = "你看这子弹又尖又长，这名单又大又宽";
-	private static String MODULE_VERSION = "1.0.12";
-	private static String[] MODULE_USAGE = new String[] {
+	private static final String MODULE_PACKAGENAME = "Executor_Roulette";
+	private static final String MODULE_COMMANDNAME = "roulette";
+	private static final String MODULE_DISPLAYNAME = "俄罗斯轮盘赌";
+	private static final String MODULE_DESCRIPTION = "你看这子弹又尖又长，这名单又大又宽";
+	private static final String MODULE_VERSION = "1.0.12";
+	private static final String[] MODULE_USAGE = new String[] {
 			"/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌，十分钟仍未满员则自动解散对局"
 	};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {
 			"按照\"群-成员-回合\"的层级关系存储 - 回合结束或超时后下一次第一名玩家加入时释放"
 	};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人"
 	};
 

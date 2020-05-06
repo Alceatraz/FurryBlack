@@ -1,13 +1,13 @@
 package studio.blacktech.coolqbot.furryblack.common.message;
 
 
+import studio.blacktech.coolqbot.furryblack.common.message.type.MessageType;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import studio.blacktech.coolqbot.furryblack.common.message.type.MessageType;
 
 
 public class Message implements Serializable {
@@ -88,23 +88,25 @@ public class Message implements Serializable {
 			int length = commandBody.length();
 
 			/*
-			 * /admin exec --module=shui eval --mode=sql --command=`SELECT * FROM \`chat_record\` LIMIT 10`
+			 * /admin exec --module=shui execute `SELECT * FROM \`chat_record\` LIMIT 10` --show
 			 * 将`作为包裹符号其中的空格不进行拆分 对\进行查询\`是转义
 			 * 注：PgSQL并不用 `
+			 * 如果需要\ 则需要输入\\
 			 */
 
-			loop: for (int pointer = 1; pointer < length; pointer++) {
+			loop:
+			for (int pointer = 1; pointer < length; pointer++) {
 
 				char chat = commandBody.charAt(pointer);
 
 				switch (chat) {
 
-				case '\\': // 启动对下一个字符的转义
-					if (isEscape) {
-						builder.append("\\" + chat);
+				case '\\':
+					if (isEscape) { // 连续两个\\则视为\
+						builder.append("\\");
 						isEscape = false;
 					} else {
-						isEscape = true;
+						isEscape = true;// 启动对下一个字符的转义
 					}
 					break;
 
@@ -193,7 +195,10 @@ public class Message implements Serializable {
 			content = content.replaceAll("\\s+", " ");
 
 			// 最终剩下一堆空格\s按照纯码处理
-			if (content.length() == 0 || content.matches("\\s+")) type = MessageType.PureCode;
+			if (content.length() == 0 || content.matches("\\s+")) {
+				type = MessageType.PureCode;
+				content = null;
+			}
 		}
 	}
 

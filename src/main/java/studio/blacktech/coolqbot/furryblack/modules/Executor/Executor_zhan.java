@@ -1,17 +1,17 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
-import java.util.ArrayList;
-import java.util.TreeMap;
-
 import studio.blacktech.common.security.RandomTool;
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 
 @ModuleExecutorComponent
@@ -25,17 +25,17 @@ public class Executor_zhan extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Executor_Zhan";
-	private static String MODULE_COMMANDNAME = "zhan";
-	private static String MODULE_DISPLAYNAME = "占卜";
-	private static String MODULE_DESCRIPTION = "大阿卡那塔罗牌占卜";
-	private static String MODULE_VERSION = "1.0.0";
-	private static String[] MODULE_USAGE = new String[] {
+	private static final String MODULE_PACKAGENAME = "Executor_Zhan";
+	private static final String MODULE_COMMANDNAME = "zhan";
+	private static final String MODULE_DISPLAYNAME = "占卜";
+	private static final String MODULE_DESCRIPTION = "大阿卡那塔罗牌占卜";
+	private static final String MODULE_VERSION = "1.0.0";
+	private static final String[] MODULE_USAGE = new String[] {
 			"/zhan 理由 - 为某事占卜"
 	};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人"
 	};
 

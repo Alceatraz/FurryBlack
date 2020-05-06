@@ -1,17 +1,17 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
-import java.util.Date;
-import java.util.HashMap;
-
 import studio.blacktech.common.security.RandomTool;
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.util.Date;
+import java.util.HashMap;
 
 
 @ModuleExecutorComponent
@@ -25,19 +25,19 @@ public class Executor_jrrp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Executor_JRRP";
-	private static String MODULE_COMMANDNAME = "jrrp";
-	private static String MODULE_DISPLAYNAME = "今日运气";
-	private static String MODULE_DESCRIPTION = "查看今天的运气值";
-	private static String MODULE_VERSION = "1.3.0";
-	private static String[] MODULE_USAGE = new String[] {
+	private static final String MODULE_PACKAGENAME = "Executor_JRRP";
+	private static final String MODULE_COMMANDNAME = "jrrp";
+	private static final String MODULE_DISPLAYNAME = "今日运气";
+	private static final String MODULE_DESCRIPTION = "查看今天的运气值";
+	private static final String MODULE_VERSION = "1.3.0";
+	private static final String[] MODULE_USAGE = new String[] {
 			"/jrrp - 查看今日运气"
 	};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {
 			"用户与运气对应表 - 每日UTC+8 00:00 清空"
 	};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人"
 	};
 

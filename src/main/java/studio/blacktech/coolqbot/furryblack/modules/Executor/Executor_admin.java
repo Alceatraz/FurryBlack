@@ -1,17 +1,16 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
-import java.util.List;
-
 import org.meowy.cqp.jcq.entity.Group;
-
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.util.List;
 
 
 @ModuleExecutorComponent
@@ -25,15 +24,15 @@ public class Executor_admin extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Executor_Admin";
-	private static String MODULE_COMMANDNAME = "admin";
-	private static String MODULE_DISPLAYNAME = "管理工具";
-	private static String MODULE_DESCRIPTION = "管理员控制台";
-	private static String MODULE_VERSION = "1.3.0";
-	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+	private static final String MODULE_PACKAGENAME = "Executor_Admin";
+	private static final String MODULE_COMMANDNAME = "admin";
+	private static final String MODULE_DISPLAYNAME = "管理工具";
+	private static final String MODULE_DESCRIPTION = "管理员控制台";
+	private static final String MODULE_VERSION = "1.3.0";
+	private static final String[] MODULE_USAGE = new String[] {};
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//
@@ -104,7 +103,7 @@ public class Executor_admin extends ModuleExecutor {
 		long userid = message.getUserID();
 
 		if (!entry.isAdmin(userid)) {
-			entry.userInfo(userid, "你不是我的Master");
+			entry.userInfo(userid, "ACCESS DENY - Privileges level 4");
 			return false;
 		}
 
@@ -135,7 +134,7 @@ public class Executor_admin extends ModuleExecutor {
 
 		case "friend":
 			if (message.getParameterSection() < 2) {
-				entry.adminInfo("Exit code → 1 缺少参数");
+				entry.adminInfo("Exit code → 1 lack of parameter");
 				return false;
 			}
 			switch (message.getParameterSegment(1)) {
@@ -151,7 +150,7 @@ public class Executor_admin extends ModuleExecutor {
 
 		case "group":
 			if (message.getParameterSection() < 2) {
-				entry.adminInfo("Exit code → 1 缺少参数");
+				entry.adminInfo("Exit code → 1 lack of parameter");
 				return false;
 			}
 			switch (message.getParameterSegment(1)) {
@@ -159,7 +158,7 @@ public class Executor_admin extends ModuleExecutor {
 				StringBuilder builder = new StringBuilder();
 				List<Group> groups = entry.listGroups();
 				if (groups.size() == 0) {
-					builder.append("无可用群");
+					builder.append("No group available");
 				} else {
 					for (Group group : groups) {
 						builder.append(group.getName());
@@ -181,9 +180,11 @@ public class Executor_admin extends ModuleExecutor {
 				break;
 
 			case "leave":
-				entry.adminInfo("Exit code → " + entry.getCQ().setGroupLeave(Long.parseLong(message.getParameterSegment(2)), message.getParameterSegment(3) == "true" ? true : false));
+				entry.adminInfo("Exit code → " + entry.getCQ().setGroupLeave(Long.parseLong(message.getParameterSegment(2)), message.getParameterSegment(3) == "true"));
 				break;
+
 			}
+
 			break;
 
 		default:
@@ -197,13 +198,13 @@ public class Executor_admin extends ModuleExecutor {
 
 
 	@Override
-	public boolean doDiszMessage(MessageDisz message) throws Exception {
+	public boolean doDiszMessage(MessageDisz message) {
 
 		long diszid = message.getDiszID();
 		long userid = message.getUserID();
 
 		if (!entry.isAdmin(userid)) {
-			entry.diszInfo(diszid, "你不是我的Master");
+			entry.diszInfo(diszid, "ACCESS DENY - Privileges level 4");
 			return false;
 		}
 
@@ -219,23 +220,27 @@ public class Executor_admin extends ModuleExecutor {
 		long userid = message.getUserID();
 
 		if (!entry.isAdmin(userid)) {
-			entry.gropInfo(gropid, userid, "你不是我的Master");
+			entry.gropInfoForce(gropid, userid, "ACCESS DENY - Privileges level 4");
 			return false;
 		}
 
 		if (message.getParameterSection() == 0) {
-			entry.adminInfo(entry.getSystemd().generateReport(message));
+			entry.gropInfoForce(gropid, entry.getSystemd().generateReport(message));
 			return true;
 		}
 
 		switch (message.getParameterSegment(0)) {
 
 		case "exec":
-			entry.gropInfo(gropid, entry.getSystemd().exec(message));
+			entry.gropInfoForce(gropid, entry.getSystemd().exec(message));
+			break;
+
+		case "debug":
+			entry.gropInfoForce(gropid, entry.switchDEBUG() ? "DEBUG → Enable" : "DEBUG → Disable");
 			break;
 
 		default:
-			entry.adminInfo("No such sub command");
+			entry.gropInfoForce(gropid, "No such sub command");
 			break;
 		}
 

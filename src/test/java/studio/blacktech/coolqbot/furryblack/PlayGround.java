@@ -1,11 +1,11 @@
 package studio.blacktech.coolqbot.furryblack;
 
 
+import org.junit.jupiter.api.Test;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-
-import org.junit.jupiter.api.Test;
 
 
 public class PlayGround {
@@ -20,7 +20,7 @@ public class PlayGround {
 
 		formater.setTimeZone(zone_0);
 		System.out.println(formater.format(new Date()));
-		
+
 		formater.setTimeZone(zone_1);
 		System.out.println(formater.format(new Date()));
 

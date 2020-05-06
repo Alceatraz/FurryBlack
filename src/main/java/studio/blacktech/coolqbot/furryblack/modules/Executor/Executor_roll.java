@@ -1,15 +1,15 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
-import java.security.SecureRandom;
-
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.security.SecureRandom;
 
 
 @ModuleExecutorComponent
@@ -23,17 +23,17 @@ public class Executor_roll extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Executor_Roll";
-	private static String MODULE_COMMANDNAME = "roll";
-	private static String MODULE_DISPLAYNAME = "生成随机数";
-	private static String MODULE_DESCRIPTION = "生成随机数";
-	private static String MODULE_VERSION = "1.1.0";
-	private static String[] MODULE_USAGE = new String[] {
+	private static final String MODULE_PACKAGENAME = "Executor_Roll";
+	private static final String MODULE_COMMANDNAME = "roll";
+	private static final String MODULE_DISPLAYNAME = "生成随机数";
+	private static final String MODULE_DESCRIPTION = "生成随机数";
+	private static final String MODULE_VERSION = "1.1.0";
+	private static final String[] MODULE_USAGE = new String[] {
 			"/roll - 抽取真假", "/roll 数字 - 从零到给定数字任选一个数字", "/roll 数字 数字 - 从给定两个数字中间抽取一个"
 	};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人"
 	};
 

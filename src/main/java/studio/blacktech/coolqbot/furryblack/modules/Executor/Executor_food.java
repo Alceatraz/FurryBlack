@@ -1,27 +1,24 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
-import java.security.SecureRandom;
-import java.util.TreeMap;
-
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.security.SecureRandom;
+import java.util.TreeMap;
 
 
 /**
  * 这个模块是应邀添加的
- * <p>
  * “那你不怕随机出来鸡蛋壳炒西瓜皮？”
- * <p>
  * “草”
- *
- * @author netuser
  */
+
 @ModuleExecutorComponent
 public class Executor_food extends ModuleExecutor {
 
@@ -33,12 +30,12 @@ public class Executor_food extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Executor_Food";
-	private static String MODULE_COMMANDNAME = "food";
-	private static String MODULE_DISPLAYNAME = "今天吃什么";
-	private static String MODULE_DESCRIPTION = "随机生成看起来可以吃的东西";
-	private static String MODULE_VERSION = "1.1.3";
-	private static String[] MODULE_USAGE = new String[] {};
+	private static final String MODULE_PACKAGENAME = "Executor_Food";
+	private static final String MODULE_COMMANDNAME = "food";
+	private static final String MODULE_DISPLAYNAME = "今天吃什么";
+	private static final String MODULE_DESCRIPTION = "随机生成说不定可以吃的东西";
+	private static final String MODULE_VERSION = "1.1.4";
+	private static final String[] MODULE_USAGE = new String[] {};
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
@@ -173,9 +170,7 @@ public class Executor_food extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(Message message) {
-
 		return new String[0];
-
 	}
 
 	public String chooseFood(Message message) {
@@ -183,16 +178,26 @@ public class Executor_food extends ModuleExecutor {
 
 		StringBuilder builder = new StringBuilder();
 
+
 		if (message.getParameterSection() == 0) {
+
 			for (int mode : MENU.keySet()) {
 				TreeMap<Integer, String> temp = MENU.get(mode);
 				builder.append("类别 " + mode + "：" + temp.get(0) + " " + (temp.size() - 1) + "种" + "\r\n");
 			}
+
 			builder.setLength(builder.length() - 2);
 
 		} else {
 
-			int mode = Integer.parseInt(message.getParameterSegment(0));
+			int mode = 0;
+
+			try {
+				mode = Integer.parseInt(message.getParameterSegment(0));
+			} catch (Exception exception) {
+				builder.append("没有这个种类，你在想Peach。");
+				return builder.toString();
+			}
 
 			if (MENU.containsKey(mode)) {
 				TreeMap<Integer, String> temp = MENU.get(mode);
@@ -202,6 +207,7 @@ public class Executor_food extends ModuleExecutor {
 			} else {
 				builder.append("没有这个种类，你在想Peach。");
 			}
+
 		}
 
 		return builder.toString();

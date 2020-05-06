@@ -1,15 +1,10 @@
 package studio.blacktech.coolqbot.furryblack;
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
-
 import org.junit.jupiter.api.Test;
-
 import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
+
+import java.sql.*;
 
 
 public class Postgres {

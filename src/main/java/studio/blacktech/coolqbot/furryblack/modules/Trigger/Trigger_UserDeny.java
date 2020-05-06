@@ -1,17 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Trigger;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.TreeMap;
-
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -19,6 +8,13 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.TreeMap;
 
 
 @ModuleTriggerComponent
@@ -32,17 +28,17 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Trigger_UserDeny";
-	private static String MODULE_COMMANDNAME = "userdeny";
-	private static String MODULE_DISPLAYNAME = "过滤器";
-	private static String MODULE_DESCRIPTION = "用户过滤器";
-	private static String MODULE_VERSION = "2.0";
-	private static String[] MODULE_USAGE = new String[] {};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {
+	private static final String MODULE_PACKAGENAME = "Trigger_UserDeny";
+	private static final String MODULE_COMMANDNAME = "userdeny";
+	private static final String MODULE_DISPLAYNAME = "过滤器";
+	private static final String MODULE_DESCRIPTION = "用户过滤器";
+	private static final String MODULE_VERSION = "2.0";
+	private static final String[] MODULE_USAGE = new String[] {};
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {
 			"按照\"群-成员\"的层级关系手动配置被阻止的用户"
 	};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
 	//

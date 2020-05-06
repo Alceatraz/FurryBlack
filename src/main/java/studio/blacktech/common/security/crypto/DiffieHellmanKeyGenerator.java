@@ -1,26 +1,17 @@
 package studio.blacktech.common.security.crypto;
 
 
+import javax.crypto.KeyAgreement;
+import javax.crypto.interfaces.DHPublicKey;
+import javax.crypto.spec.DHParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
-import java.security.SecureRandom;
-import java.security.Security;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
-
-import javax.crypto.KeyAgreement;
-import javax.crypto.interfaces.DHPublicKey;
-import javax.crypto.spec.DHParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
 
 /***
@@ -35,8 +26,8 @@ public class DiffieHellmanKeyGenerator {
 	private KeyFactory factory;
 	private KeyAgreement agreement;
 	private KeyPair keyPair;
-	private static Encoder encoder = Base64.getEncoder();
-	private static Decoder decoder = Base64.getDecoder();
+	private static final Encoder encoder = Base64.getEncoder();
+	private static final Decoder decoder = Base64.getDecoder();
 
 	/**
 	 * 双方都使用此构造函数

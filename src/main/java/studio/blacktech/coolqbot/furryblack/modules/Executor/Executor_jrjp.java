@@ -1,6 +1,17 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
+import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
+import studio.blacktech.common.security.RandomTool;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,18 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import org.meowy.cqp.jcq.entity.Group;
-import org.meowy.cqp.jcq.entity.Member;
-
-import studio.blacktech.common.security.RandomTool;
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 
 @ModuleExecutorComponent
@@ -36,20 +35,20 @@ public class Executor_jrjp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Executor_JRJP";
-	private static String MODULE_COMMANDNAME = "jrjp";
-	private static String MODULE_DISPLAYNAME = "祭祀";
-	private static String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
-	private static String MODULE_VERSION = "1.3.0";
-	private static String[] MODULE_USAGE = new String[] {
+	private static final String MODULE_PACKAGENAME = "Executor_JRJP";
+	private static final String MODULE_COMMANDNAME = "jrjp";
+	private static final String MODULE_DISPLAYNAME = "祭祀";
+	private static final String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
+	private static final String MODULE_VERSION = "1.3.0";
+	private static final String[] MODULE_USAGE = new String[] {
 			"/jrjp - 查看今日祭品"
 	};
-	private static String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static String[] MODULE_PRIVACY_CACHED = new String[] {
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {
 			"群号-QQ号对应表 - 每日UTC+8 00:00 清空",
 			"群号-AV号对应表 - 每日UTC+8 00:00 清空"
 	};
-	private static String[] MODULE_PRIVACY_OBTAIN = new String[] {
+	private static final String[] MODULE_PRIVACY_OBTAIN = new String[] {
 			"获取命令发送人", "被抽到成员的昵称和群昵称"
 	};
 

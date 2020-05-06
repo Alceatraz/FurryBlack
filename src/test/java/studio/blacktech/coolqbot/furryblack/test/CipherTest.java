@@ -1,19 +1,18 @@
 package studio.blacktech.coolqbot.furryblack.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Test;
+import studio.blacktech.common.security.crypto.DiffieHellmanKeyGenerator;
+import studio.blacktech.common.security.crypto.cipher.AESCipher;
+import studio.blacktech.common.security.crypto.cipher.RSACipher;
+
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
-import javax.crypto.spec.SecretKeySpec;
-
-import org.junit.jupiter.api.Test;
-
-import studio.blacktech.common.security.crypto.DiffieHellmanKeyGenerator;
-import studio.blacktech.common.security.crypto.cipher.AESCipher;
-import studio.blacktech.common.security.crypto.cipher.RSACipher;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // 这里范例
 

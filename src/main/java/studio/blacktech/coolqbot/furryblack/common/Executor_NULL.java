@@ -10,28 +10,34 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 public class Executor_NULL extends ModuleExecutor {
 
+
 	private static final long serialVersionUID = 1L;
+
+
 	// ==========================================================================================================================================================
 	//
 	// 模块基本配置
 	//
 	// ==========================================================================================================================================================
 
-	private static String MODULE_PACKAGENAME = "Executor_NULL";
-	private static String MODULE_COMMANDNAME = "null";
-	private static String MODULE_DISPLAYNAME = "模板模块";
-	private static String MODULE_DESCRIPTION = "模板模块";
-	private static String MODULE_VERSION = "1.0";
-	private static String[] MODULE_USAGE = new String[] {};
+
+	private static final String MODULE_PACKAGENAME = "Executor_NULL";
+	private static final String MODULE_COMMANDNAME = "null";
+	private static final String MODULE_DISPLAYNAME = "模板模块";
+	private static final String MODULE_DESCRIPTION = "模板模块";
+	private static final String MODULE_VERSION = "1.0";
+	private static final String[] MODULE_USAGE = new String[] {};
 	public static String[] MODULE_PRIVACY_STORED = new String[] {};
 	public static String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
+
 
 	// ==========================================================================================================================================================
 	//
 	// 成员变量
 	//
 	// ==========================================================================================================================================================
+
 
 	// ==========================================================================================================================================================
 	//
