@@ -68,7 +68,7 @@ public class Systemd extends Module {
 	private static final String MODULE_COMMANDNAME = "systemd";
 	private static final String MODULE_DISPLAYNAME = "核心模块";
 	private static final String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
-	private static final String MODULE_VERSION = "3.0.4";
+	private static final String MODULE_VERSION = "3.0.5";
 	private static final String[] MODULE_USAGE = new String[] {};
 	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -414,10 +414,6 @@ public class Systemd extends Module {
 		// 读取模块配置
 		// =======================================================================================================================
 
-
-		Set<String> ENABLE_TRIGGER = new HashSet<>();
-		Set<String> ENABLE_LISTENER = new HashSet<>();
-		Set<String> ENABLE_EXECUTOR = new HashSet<>();
 
 		logger.full("读取模块配置列表");
 
@@ -1128,7 +1124,10 @@ public class Systemd extends Module {
 		long gropid = message.getGropID();
 		long userid = message.getUserID();
 
-		if (MESSAGE_MUTE.contains(gropid)) return;
+
+		// 为admin命令开一个特例
+		if (MESSAGE_MUTE.contains(gropid) && !message.getMessage().startsWith("/admin")) return;
+
 
 		if (message.isCommand()) {
 

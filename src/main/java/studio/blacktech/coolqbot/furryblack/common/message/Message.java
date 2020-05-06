@@ -1,13 +1,13 @@
 package studio.blacktech.coolqbot.furryblack.common.message;
 
 
-import studio.blacktech.coolqbot.furryblack.common.message.type.MessageType;
-
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import studio.blacktech.coolqbot.furryblack.common.message.type.MessageType;
 
 
 public class Message implements Serializable {
@@ -94,8 +94,7 @@ public class Message implements Serializable {
 			 * 如果需要\ 则需要输入\\
 			 */
 
-			loop:
-			for (int pointer = 1; pointer < length; pointer++) {
+			loop: for (int pointer = 1; pointer < length; pointer++) {
 
 				char chat = commandBody.charAt(pointer);
 

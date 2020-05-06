@@ -1,17 +1,17 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
+import java.util.ArrayList;
+import java.util.TreeMap;
+
 import studio.blacktech.common.security.RandomTool;
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.entry;
-
-import java.util.ArrayList;
-import java.util.TreeMap;
 
 
 @ModuleExecutorComponent
@@ -249,18 +249,23 @@ public class Executor_zhan extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public String[] generateReport(Message message) {
 
 		if (COUNT_USER + COUNT_DISZ + COUNT_GROP == 0) return new String[0];
 
 		StringBuilder builder = new StringBuilder();
+
 		int coverage = 0;
 		for (int i = 0; i < 44; i++) {
-			if (FREQ.get(i) == 0) { coverage++; }
+			if (FREQ.get(i) == 0) {
+				coverage++;
+			}
 		}
 
 		coverage = 44 - coverage;
+
 		for (int i = 0; i < 44; i++) {
 			if (FREQ.get(i) == 0) continue;
 			builder.append("第");
@@ -271,10 +276,13 @@ public class Executor_zhan extends ModuleExecutor {
 			builder.append(FREQ.get(i) * 100 / coverage);
 			builder.append("%\r\n");
 		}
+
 		builder.append("出现了" + coverage + "张");
+
 		String[] res = new String[] {
 				builder.toString()
 		};
+
 		return res;
 
 	}

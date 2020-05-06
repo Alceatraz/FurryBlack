@@ -1,17 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
-import org.meowy.cqp.jcq.entity.Group;
-import org.meowy.cqp.jcq.entity.Member;
-import studio.blacktech.common.security.RandomTool;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.entry;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,13 +10,25 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 
 @ModuleExecutorComponent
 public class Executor_jrjp extends ModuleExecutor {
 
+
 	private static final long serialVersionUID = 1L;
+
+
+	// 见证历史 2020-3-23 BiliBili变更AV为BV
+
 
 	// ==========================================================================================================================================================
 	//
@@ -39,7 +40,7 @@ public class Executor_jrjp extends ModuleExecutor {
 	private static final String MODULE_COMMANDNAME = "jrjp";
 	private static final String MODULE_DISPLAYNAME = "祭祀";
 	private static final String MODULE_DESCRIPTION = "献祭一个成员 召唤一个视频";
-	private static final String MODULE_VERSION = "1.3.0";
+	private static final String MODULE_VERSION = "2.0.0";
 	private static final String[] MODULE_USAGE = new String[] {
 			"/jrjp - 查看今日祭品"
 	};
@@ -90,19 +91,19 @@ public class Executor_jrjp extends ModuleExecutor {
 		AVCODE = new HashMap<>();
 		VICTIM = new HashMap<>();
 
-		long gropid;
-		long userid;
-
 
 		USER_IGNORE = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
 		if (!USER_IGNORE.exists()) USER_IGNORE.createNewFile();
 
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
+		long gropid;
+		long userid;
 
 		String line;
 		String[] temp;
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(USER_IGNORE), StandardCharsets.UTF_8));
 
 
 		while ((line = reader.readLine()) != null) {
@@ -128,9 +129,6 @@ public class Executor_jrjp extends ModuleExecutor {
 		}
 
 		reader.close();
-
-
-		for (Group group : entry.listGroups()) initGroupData(group.getId());
 
 
 		ENABLE_USER = false;
@@ -181,7 +179,7 @@ public class Executor_jrjp extends ModuleExecutor {
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-		initGroupData(gropid);
+
 	}
 
 
@@ -210,10 +208,12 @@ public class Executor_jrjp extends ModuleExecutor {
 		long gropid = message.getGropID();
 		long userid = message.getUserID();
 
-		long victim = VICTIM.get(gropid);
-		long avcode = AVCODE.get(gropid);
+		// long victim = VICTIM.get(gropid);
+		// long avcode = AVCODE.get(gropid);
 
-		entry.gropInfo(gropid, userid, entry.getNickname(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + avcode);
+		// entry.gropInfo(gropid, userid, entry.getNickname(gropid, victim) + " (" + victim + ") 被作为祭品献祭掉了，召唤出一个神秘视频 https://www.bilibili.com/video/av" + avcode);
+
+		entry.gropInfo(gropid, userid, "有奖征集！\nBiliBili使用新的BV号系统以后，如何随机抽取视频？");
 
 		return true;
 	}
@@ -231,46 +231,18 @@ public class Executor_jrjp extends ModuleExecutor {
 	}
 
 
-	private void initGroupData(long gropid) {
-
-		ArrayList<Long> range = new ArrayList<>();
-
-		List<Member> members = entry.getCQ().getGroupMemberList(gropid);
-
-		boolean hasIgnore = IGNORES.containsKey(gropid);
-
-		ArrayList<Long> ignore = hasIgnore ? IGNORES.get(gropid) : null;
-
-		for (Member member : members) {
-
-			long userid = member.getQQId();
-
-			if (entry.isMyself(userid)) continue;
-			if (hasIgnore && ignore.contains(userid)) continue;
-
-			range.add(userid);
-		}
-
-		// 不加Cast也能编译但是报错 实际上已经使用Class<T>写法了
-		long victim = (Long) RandomTool.random(range);
-		long avcode = RandomTool.nextLong() % 100000000;
-
-		VICTIM.put(gropid, victim);
-		AVCODE.put(gropid, avcode);
-
-		logger.seek("随机献祭", gropid + "-" + victim + " av" + avcode);
-
-	}
-
-
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings("unused")
 	class Worker implements Runnable {
 
 		@Override
+		@SuppressWarnings("deprecation")
 		public void run() {
+
+			if (true) return;
 
 			long time;
 			Date date;
+
 			do {
 				try {
 					while (true) {
@@ -284,7 +256,7 @@ public class Executor_jrjp extends ModuleExecutor {
 
 						Thread.sleep(time);
 
-						for (Group group : entry.listGroups()) initGroupData(group.getId());
+						VICTIM.clear();
 
 					}
 

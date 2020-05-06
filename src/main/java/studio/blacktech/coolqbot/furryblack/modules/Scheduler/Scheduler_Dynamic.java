@@ -1,11 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Scheduler;
 
 
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
-import studio.blacktech.coolqbot.furryblack.entry;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -13,6 +8,11 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.regex.Pattern;
+
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 
 
 @ModuleSchedulerComponent
@@ -263,25 +263,25 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 								failcount++;
 								COUNT_FAILED++;
 							} else // 成功的话
-								// 利用正则判断是否是正常的ip地址
-								if (Pattern.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}", address)) {
-									// 成功的话 设置地址
-									respons = Scheduler_Dynamic.this.setAddress(address);
-									// 是否设置成功
-									if (respons == null) {
-										// 失败的话 增加失败计数
-										failcount++;
-										COUNT_FAILED++;
-									} else {
-										// 成功的话 重置失败计数
-										failcount = 0;
-										if (respons.startsWith("good")) { COUNT_CHANGE++; }
-									}
-								} else {
-									// 不是正常地址 增加失败计数
+									// 利用正则判断是否是正常的ip地址
+							if (Pattern.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}", address)) {
+								// 成功的话 设置地址
+								respons = Scheduler_Dynamic.this.setAddress(address);
+								// 是否设置成功
+								if (respons == null) {
+									// 失败的话 增加失败计数
 									failcount++;
 									COUNT_FAILED++;
+								} else {
+									// 成功的话 重置失败计数
+									failcount = 0;
+									if (respons.startsWith("good")) { COUNT_CHANGE++; }
 								}
+							} else {
+								// 不是正常地址 增加失败计数
+								failcount++;
+								COUNT_FAILED++;
+							}
 						} else {
 							// 成功的话 重置失败计数
 							failcount = 0;

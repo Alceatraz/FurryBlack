@@ -1,12 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Scheduler;
 
 
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.modules.Listener.Listener_TopSpeak;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,6 +8,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.HashMap;
+
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
+import studio.blacktech.coolqbot.furryblack.modules.Listener.Listener_TopSpeak;
 
 
 @ModuleSchedulerComponent
@@ -162,8 +162,7 @@ public class Scheduler_SocketAPI extends ModuleScheduler {
 
 			int count = 0;
 
-			loop:
-			do {
+			loop: do {
 
 				logger.full("接口线程启动 第" + count++ + "次");
 

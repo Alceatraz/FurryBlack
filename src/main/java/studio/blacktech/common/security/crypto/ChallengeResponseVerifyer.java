@@ -1,10 +1,10 @@
 package studio.blacktech.common.security.crypto;
 
 
-import studio.blacktech.common.security.RandomTool;
-
 import java.util.Calendar;
 import java.util.TimeZone;
+
+import studio.blacktech.common.security.RandomTool;
 
 
 public class ChallengeResponseVerifyer {

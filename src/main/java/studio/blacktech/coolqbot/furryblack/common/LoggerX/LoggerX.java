@@ -1,9 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.common.LoggerX;
 
 
-import studio.blacktech.coolqbot.furryblack.common.exception.CantReinitializationException;
-import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.TimeZone;
+
+import studio.blacktech.coolqbot.furryblack.common.exception.CantReinitializationException;
+import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 
 
 public class LoggerX {

@@ -1,17 +1,17 @@
 package studio.blacktech.coolqbot.furryblack.common.module;
 
 
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.entry;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.Properties;
+
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
 
 
 public abstract class Module implements Serializable {

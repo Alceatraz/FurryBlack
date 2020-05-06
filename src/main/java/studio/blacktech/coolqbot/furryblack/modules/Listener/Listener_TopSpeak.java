@@ -1,11 +1,32 @@
 package studio.blacktech.coolqbot.furryblack.modules.Listener;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.meowy.cqp.jcq.entity.CQImage;
 import org.meowy.cqp.jcq.entity.Friend;
 import org.meowy.cqp.jcq.entity.Group;
 import org.meowy.cqp.jcq.entity.Member;
 import org.meowy.cqp.jcq.message.CQCode;
+
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerComponent;
 import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
@@ -13,16 +34,7 @@ import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.modules.Trigger.Trigger_UserDeny;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 
 @ModuleListenerComponent
@@ -83,6 +95,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	private int colSize;
 	private int rowSize;
 
+	private long FLUSH_DURATION = 60;
+	private long FLUSH_SENTENSE = 10;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -111,6 +126,8 @@ public class Listener_TopSpeak extends ModuleListener {
 			CONFIG.setProperty("postgresql.hostname", "jdbc:postgresql://localhost:5432/furryblack");
 			CONFIG.setProperty("postgresql.username", "furryblack");
 			CONFIG.setProperty("postgresql.password", "furryblack");
+			CONFIG.setProperty("flush.duration", "60");
+			CONFIG.setProperty("flush.sentense", "10");
 			saveConfig();
 		} else {
 			loadConfig();
@@ -124,9 +141,13 @@ public class Listener_TopSpeak extends ModuleListener {
 		JDBC_USERNAME = CONFIG.getProperty("postgresql.username");
 		JDBC_PASSWORD = CONFIG.getProperty("postgresql.password");
 
+
 		logger.seek("数据库", JDBC_HOSTNAME);
 		logger.seek("帐号", JDBC_USERNAME);
 		logger.seek("密码", JDBC_PASSWORD);
+
+		FLUSH_DURATION = Long.parseLong(CONFIG.getProperty("flush.duration"));
+		FLUSH_SENTENSE = Long.parseLong(CONFIG.getProperty("flush.sentense"));
 
 		// =================================================================
 		// 测试数据库
@@ -327,7 +348,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		queue.put(message);
 
-		if (queue.size() > 10) synchronized (lock) {
+		if (queue.size() > FLUSH_SENTENSE) synchronized (lock) {
 			lock.notifyAll();
 		}
 
@@ -356,8 +377,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		if (message.hasSwitch("limit")) limit = Integer.parseInt(message.getSwitch("limit"));
 		StringBuilder builder = new StringBuilder();
 		while (resultSet.next() && count++ < limit) {
-			builder.append("{" + count + "}");
-			for (int i = 1; i <= colSize; i++) builder.append("[" + resultSet.getString(i) + "]");
+			builder.append("|" + count + "|");
+			for (int i = 1; i <= colSize; i++) builder.append(resultSet.getString(i) + "|");
 			builder.append("\r\n");
 		}
 		builder.setLength(builder.length() - 2);
@@ -544,7 +565,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 					while (true) {
 						synchronized (lock) {
-							lock.wait(5000);
+							lock.wait(FLUSH_DURATION * 1000);
 						}
 						flush();
 					}
@@ -666,8 +687,9 @@ public class Listener_TopSpeak extends ModuleListener {
 						try {
 							if (!file.exists()) image.download(file);
 						} catch (Exception exception) {
+							entry.getCQ().logError("CoolQ BUG", "图片下载失败 " + image.getUrl());
 							// CoolQ BUG 不管什么SDK都会发生这个错误
-							// RReceived fatal alert - bad_record_mac
+							// Received fatal alert - bad_record_mac
 						}
 					}
 				}

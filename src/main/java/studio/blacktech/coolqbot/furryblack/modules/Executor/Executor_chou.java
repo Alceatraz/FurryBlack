@@ -1,18 +1,6 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
-import org.meowy.cqp.jcq.entity.Group;
-import org.meowy.cqp.jcq.entity.Member;
-import org.meowy.cqp.jcq.entity.QQInfo;
-import studio.blacktech.common.security.RandomTool;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.entry;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +10,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.meowy.cqp.jcq.entity.Member;
+
+import studio.blacktech.common.security.RandomTool;
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 
 /**
@@ -61,10 +61,11 @@ public class Executor_chou extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
-	private HashMap<Long, ArrayList<Long>> MEMBERS;
-	private HashMap<Long, ArrayList<Long>> IGNORES;
 
 	private File FILE_IGNORE_USER;
+
+	private Map<Long, List<Long>> IGNORES;
+
 
 	// ==========================================================================================================================================================
 	//
@@ -84,19 +85,13 @@ public class Executor_chou extends ModuleExecutor {
 		initAppFolder();
 		initConfFolder();
 
-		MEMBERS = new HashMap<>();
 		IGNORES = new HashMap<>();
+
 
 		FILE_IGNORE_USER = Paths.get(FOLDER_CONF.getAbsolutePath(), "ignore_user.txt").toFile();
 
 		if (!FILE_IGNORE_USER.exists()) FILE_IGNORE_USER.createNewFile();
 
-		List<Group> groups = entry.listGroups();
-
-		for (Group group : groups) {
-			MEMBERS.put(group.getId(), new ArrayList<Long>());
-			IGNORES.put(group.getId(), new ArrayList<Long>());
-		}
 
 		long gropid;
 		long userid;
@@ -105,6 +100,7 @@ public class Executor_chou extends ModuleExecutor {
 		String[] temp;
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_IGNORE_USER), StandardCharsets.UTF_8));
+
 
 		while ((line = reader.readLine()) != null) {
 
@@ -122,33 +118,16 @@ public class Executor_chou extends ModuleExecutor {
 			gropid = Long.parseLong(temp[0]);
 			userid = Long.parseLong(temp[1]);
 
-			if (IGNORES.containsKey(gropid)) {
-				IGNORES.get(gropid).add(userid);
-				logger.seek("排除用户", gropid + " > " + userid);
-			} else {
-				logger.seek("排除用户", "群不存在 " + gropid);
-			}
+			if (!IGNORES.containsKey(gropid)) IGNORES.put(gropid, new ArrayList<>());
+
+			IGNORES.get(gropid).add(userid);
+
+			logger.seek("排除用户", gropid + " > " + userid);
 
 		}
 
 		reader.close();
 
-		ArrayList<Long> tempMembers;
-		ArrayList<Long> tempIgnores;
-
-		for (Group group : groups) {
-
-			tempMembers = MEMBERS.get(group.getId());
-			tempIgnores = IGNORES.get(group.getId());
-
-			for (Member member : entry.getCQ().getGroupMemberList(group.getId())) {
-
-				if (entry.isMyself(member.getQQId())) continue;
-				if (tempIgnores.contains(member.getQQId())) continue;
-
-				tempMembers.add(member.getQQId());
-			}
-		}
 
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
@@ -188,32 +167,17 @@ public class Executor_chou extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
-
-		ArrayList<Long> tempMembers = new ArrayList<>();
-
-		if (IGNORES.containsKey(gropid)) {
-			ArrayList<Long> tempIgnores = IGNORES.get(gropid);
-			for (Member tempUserid : entry.getCQ().getGroupMemberList(gropid)) {
-				if (!tempIgnores.contains(tempUserid.getQQId())) { tempMembers.add(tempUserid.getQQId()); }
-			}
-		} else {
-			for (Member tempUserid : entry.getCQ().getGroupMemberList(gropid)) {
-				tempMembers.add(tempUserid.getQQId());
-			}
-		}
-		MEMBERS.put(gropid, tempMembers);
 
 	}
 
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
-		ArrayList<Long> tempMembers = MEMBERS.get(gropid);
-		tempMembers.remove(userid);
-
 	}
+
 	// ==========================================================================================================================================================
 	//
 	// 工作函数
@@ -240,26 +204,26 @@ public class Executor_chou extends ModuleExecutor {
 		long gropid = message.getGropID();
 		long userid = message.getUserID();
 
-		ArrayList<Long> members = MEMBERS.get(gropid);
+		List<Member> members = entry.listMembers(gropid);
 
 		int size = members.size();
 
 		if (size < 3) {
 			entry.gropInfo(gropid, userid, "至少需要三个成员");
+
 		} else {
 
-			long chouid = 0;
+			long choudid;
 
 			do {
-				chouid = members.get(RandomTool.nextInt(size));
-			} while (chouid == userid);
+				choudid = members.get(RandomTool.nextInt(size)).getQQId();
+			} while (choudid == userid || entry.isMyself(choudid));
 
-			QQInfo member = entry.getCQ().getStrangerInfo(chouid);
 
 			if (message.getParameterSection() == 1) {
-				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getNickname(gropid, member.getQQId()) + "(" + chouid + ")");
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getNickname(gropid, choudid) + "(" + choudid + ")");
 			} else {
-				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getNickname(gropid, member.getQQId()) + "(" + chouid + ")： " + message.getCommandBody());
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getNickname(gropid, choudid) + "(" + choudid + ")： " + message.getCommandBody());
 			}
 		}
 
@@ -274,9 +238,7 @@ public class Executor_chou extends ModuleExecutor {
 
 	@Override
 	public String[] generateReport(Message message) {
-
 		return new String[0];
-
 	}
 
 }

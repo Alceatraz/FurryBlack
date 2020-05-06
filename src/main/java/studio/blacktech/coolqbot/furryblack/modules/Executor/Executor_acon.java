@@ -1,16 +1,16 @@
 package studio.blacktech.coolqbot.furryblack.modules.Executor;
 
 
+import java.math.BigInteger;
+import java.util.HashMap;
+
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.entry;
-
-import java.math.BigInteger;
-import java.util.HashMap;
 
 
 @ModuleExecutorComponent
@@ -285,11 +285,16 @@ public class Executor_acon extends ModuleExecutor {
 				isChangeMode = false;
 
 				// @formatter:off
-				entry.gropInfo(gropid, String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元",
-						powerConsumption.divide(BigInteger.valueOf(1000)).toString(),
-						powerConsumption.divide(BigInteger.valueOf(3600000L)).toString(),
-						powerConsumption.divide(BigInteger.valueOf(1936800L)).toString()
-						));
+
+				entry.gropInfo(gropid,
+
+					String.format("累计共耗电：%skW(%s)度\r\n群主须支付：%s元",
+
+					powerConsumption.divide(BigInteger.valueOf(1000)).toString(),
+					powerConsumption.divide(BigInteger.valueOf(3600000L)).toString(),
+					powerConsumption.divide(BigInteger.valueOf(1936800L)).toString()
+
+				));
 
 				// @formatter:on
 				break;
@@ -308,6 +313,8 @@ public class Executor_acon extends ModuleExecutor {
 		return true;
 
 	}
+
+
 	// ==========================================================================================================================================================
 	//
 	// 工具函数

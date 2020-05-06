@@ -1,13 +1,13 @@
 package studio.blacktech.common.security;
 
 
-import studio.blacktech.common.security.crypto.HashTool;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.util.List;
+
+import studio.blacktech.common.security.crypto.HashTool;
 
 
 public class RandomTool {

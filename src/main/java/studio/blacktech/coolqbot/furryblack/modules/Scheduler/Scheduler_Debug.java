@@ -1,12 +1,12 @@
 package studio.blacktech.coolqbot.furryblack.modules.Scheduler;
 
 
+import java.net.ServerSocket;
+
+import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
-import studio.blacktech.coolqbot.furryblack.entry;
-
-import java.net.ServerSocket;
 
 
 @ModuleSchedulerComponent
