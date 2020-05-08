@@ -1,20 +1,24 @@
 package studio.blacktech.coolqbot.furryblack.test;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.util.Arrays;
+
+import javax.crypto.spec.SecretKeySpec;
+
 import org.junit.jupiter.api.Test;
+
 import studio.blacktech.common.security.crypto.DiffieHellmanKeyGenerator;
 import studio.blacktech.common.security.crypto.cipher.AESCipher;
 import studio.blacktech.common.security.crypto.cipher.RSACipher;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 // 这里范例
+
 
 public class CipherTest {
 
@@ -137,21 +141,43 @@ public class CipherTest {
 			System.err.println(exception.getMessage());
 		}
 
-		// RSACipher 支持单边加密，即只有公钥，只能加密
+		// RSACipher还支持单臂模式 结合一些静态方法 实现单边操作
 
-		RSACipher aliceCipher = new RSACipher("0123456789", 512);
+		KeyPair keyPair = RSACipher.generateRSAKeyPair("0123456789", 512);
 
-		RSACipher bobCipher = new RSACipher(aliceCipher.getEncodedPublicKey());
+		String encryptPublicKey = RSACipher.toEncodedRSAPublicKey(keyPair);
+		String decryptPrivateKey = RSACipher.toEncodedRSAPrivateKey(keyPair);
+
+
+		RSACipher aliceCipher = RSACipher.getEncryptInstance(encryptPublicKey);
+
+		RSACipher bobCipher = RSACipher.getDecryptInstance(decryptPrivateKey);
+
 
 		// 普通加密模式
-		tmp = bobCipher.encrypt(raw);
-		res = aliceCipher.decrypt(tmp);
+		tmp = aliceCipher.encrypt(raw);
+		res = bobCipher.decrypt(tmp);
 		assertEquals(raw, res);
 
 		// 增加hash验证的加密模式
-		tmp = bobCipher.encryptHash(raw);
-		res = aliceCipher.decryptHash(tmp);
+		tmp = aliceCipher.encryptHash(raw);
+		res = bobCipher.decryptHash(tmp);
 		assertEquals(raw, res);
+
+
+		// 单边模式注意不要尝试进行相对方向的操作
+		try {
+			aliceCipher.decrypt("123");
+		} catch (Exception exception) {
+			System.err.println("Null Decrypt cipher cause Exception!");
+		}
+		
+		try {
+			bobCipher.encrypt("123");
+		} catch (Exception exception) {
+			System.err.println("Null Encrypt cipher cause Exception!");
+		}
+
 	}
 
 	@Test
