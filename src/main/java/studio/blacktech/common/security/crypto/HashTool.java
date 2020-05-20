@@ -45,7 +45,7 @@ public class HashTool {
 		byte[] digested = md5Digest.digest(message);
 		StringBuilder builder = new StringBuilder();
 		for (byte element : digested) {
-			builder.append(Integer.toHexString((0x000000FF & element) | 0xFFFFFF00).substring(6));
+			builder.append(Integer.toHexString(0x000000FF & element | 0xFFFFFF00).substring(6));
 		}
 		return builder.toString();
 	}
@@ -65,7 +65,7 @@ public class HashTool {
 		StringBuilder builder = new StringBuilder();
 		for (byte element : digested) {
 			temp = Integer.toHexString(element & 0xFF);
-			builder.append(temp.length() == 2 ? temp : ("0" + temp));
+			builder.append(temp.length() == 2 ? temp : "0" + temp);
 		}
 		return builder.toString();
 	}
@@ -95,7 +95,7 @@ public class HashTool {
 		StringBuilder builder = new StringBuilder();
 		for (byte element : digested) {
 			temp = Integer.toHexString(element & 0xFF);
-			builder.append(temp.length() == 2 ? temp : ("0" + temp));
+			builder.append(temp.length() == 2 ? temp : "0" + temp);
 		}
 		return builder.toString();
 	}
@@ -125,7 +125,7 @@ public class HashTool {
 		StringBuilder builder = new StringBuilder();
 		for (byte element : digested) {
 			temp = Integer.toHexString(element & 0xFF);
-			builder.append(temp.length() == 2 ? temp : ("0" + temp));
+			builder.append(temp.length() == 2 ? temp : "0" + temp);
 		}
 		return builder.toString();
 	}

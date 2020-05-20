@@ -28,7 +28,7 @@ public class Executor_acon extends ModuleExecutor {
 	private static final String MODULE_COMMANDNAME = "acon";
 	private static final String MODULE_DISPLAYNAME = "空调";
 	private static final String MODULE_DESCRIPTION = "本群冷气开放";
-	private static final String MODULE_VERSION = "1.0.3";
+	private static final String MODULE_VERSION = "1.1.0";
 	private static final String[] MODULE_USAGE = new String[] {
 			"/acon cost - 耗电量",
 			"/acon off - 关机",
@@ -54,12 +54,12 @@ public class Executor_acon extends ModuleExecutor {
 			"/acon ~!C??? - Fy:????",
 			"/acon ~!R[?? - FT//s??"
 	};
-	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
-	private static final String[] MODULE_PRIVACY_CACHED = new String[] {
-			"按群存储耗电量 - JCQ停止时释放",
-			"按群存储耗工作模式 - JCQ停止时释放",
-			"按群存储上次更改模式的时间戳 - JCQ停止时释放"
+	private static final String[] MODULE_PRIVACY_STORED = new String[] {
+			"按群存储耗电量",
+			"按群存储耗工作模式",
+			"按群存储上次更改模式的时间戳"
 	};
+	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
 	public static String[] MODULE_PRIVACY_OBTAIN = new String[] {};
 
 	// ==========================================================================================================================================================
@@ -68,9 +68,11 @@ public class Executor_acon extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+
 	private HashMap<Long, BigInteger> CONSUMPTION;
 	private HashMap<Long, Long> LASTCHANGED;
 	private HashMap<Long, Long> WORKINGMODE;
+
 
 	// ==========================================================================================================================================================
 	//

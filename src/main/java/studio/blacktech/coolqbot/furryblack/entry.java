@@ -38,7 +38,9 @@ import studio.blacktech.coolqbot.furryblack.modules.Systemd;
  * @author Alceatraz Warprays
  */
 
+
 public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener {
+
 
 	// ==========================================================================================================================================================
 	//
@@ -46,9 +48,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	//
 	// ==========================================================================================================================================================
 
+
 	// 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 	// 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 	// 绝对不能修改 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
 
 	public final static String AppID = "studio.blacktech.coolqbot.furryblack.entry";
 
@@ -57,9 +61,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		return ICQVer.CQAPIVER + "," + AppID;
 	}
 
+
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 	// 绝对不能修改 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
 
 	/**
 	 * Java通常的入口方法，JCQ并不使用这个方法，JCQ使用以下生命周期函数
@@ -71,6 +77,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	public static void main(String[] parameters) {
 		System.out.println("This is a JCQ plugin, Not a executable jar file!");
 	}
+
 
 	// ==========================================================================================================================================================
 	//

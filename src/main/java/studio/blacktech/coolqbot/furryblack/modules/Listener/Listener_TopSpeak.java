@@ -52,7 +52,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	private static final String MODULE_COMMANDNAME = "shui";
 	private static final String MODULE_DISPLAYNAME = "水群分析";
 	private static final String MODULE_DESCRIPTION = "水群分析";
-	private static final String MODULE_VERSION = "2.2.0";
+	private static final String MODULE_VERSION = "2.2.1";
 	private static final String[] MODULE_USAGE = new String[] {
 			"重启辅助线程 /admin exec --module=shui reload",
 			"执行命令 暂不打印 /admin exec --module=shui execute `SQL`",
@@ -98,6 +98,9 @@ public class Listener_TopSpeak extends ModuleListener {
 	private long FLUSH_DURATION = 60;
 	private long FLUSH_SENTENSE = 10;
 
+	private boolean ENABLE_GROUP_RECORD_LIST = false;
+	private boolean ENABLE_GROUP_REPORT_LIST = false;
+
 	// ==========================================================================================================================================================
 	//
 	// 生命周期函数
@@ -126,6 +129,8 @@ public class Listener_TopSpeak extends ModuleListener {
 			CONFIG.setProperty("postgresql.hostname", "jdbc:postgresql://localhost:5432/furryblack");
 			CONFIG.setProperty("postgresql.username", "furryblack");
 			CONFIG.setProperty("postgresql.password", "furryblack");
+			CONFIG.setProperty("list.record", "false");
+			CONFIG.setProperty("list.report", "false");
 			CONFIG.setProperty("flush.duration", "60");
 			CONFIG.setProperty("flush.sentense", "10");
 			saveConfig();
@@ -149,6 +154,10 @@ public class Listener_TopSpeak extends ModuleListener {
 		FLUSH_DURATION = Long.parseLong(CONFIG.getProperty("flush.duration"));
 		FLUSH_SENTENSE = Long.parseLong(CONFIG.getProperty("flush.sentense"));
 
+		ENABLE_GROUP_RECORD_LIST = Boolean.parseBoolean(CONFIG.getProperty("list.record"));
+		ENABLE_GROUP_REPORT_LIST = Boolean.parseBoolean(CONFIG.getProperty("list.report"));
+
+
 		// =================================================================
 		// 测试数据库
 
@@ -171,34 +180,51 @@ public class Listener_TopSpeak extends ModuleListener {
 		// =================================================================
 		// 读取配置文件
 
-		String line;
 
-		BufferedReader recordReader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_RECORD), StandardCharsets.UTF_8));
-		BufferedReader reportReader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8));
-
-		while ((line = recordReader.readLine()) != null) {
-			if (line.startsWith("#")) continue;
-			if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
-			GROUP_RECORD.add(Long.parseLong(line));
-			logger.seek("记录群聊", line);
+		if (ENABLE_GROUP_RECORD_LIST) {
+			String line;
+			BufferedReader recordReader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_RECORD), StandardCharsets.UTF_8));
+			while ((line = recordReader.readLine()) != null) {
+				if (line.startsWith("#")) continue;
+				if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
+				GROUP_RECORD.add(Long.parseLong(line));
+				logger.seek("记录群聊", line);
+			}
+			recordReader.close();
+		} else {
+			logger.seek("记录群聊", "已在所有群开启");
 		}
 
-		recordReader.close();
 
-		while ((line = reportReader.readLine()) != null) {
-			if (line.startsWith("#")) continue;
-			if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
-			GROUP_REPORT.add(Long.parseLong(line));
-			logger.seek("每日汇报", line);
+		if (ENABLE_GROUP_REPORT_LIST) {
+			String line;
+			BufferedReader reportReader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8));
+			while ((line = reportReader.readLine()) != null) {
+				if (line.startsWith("#")) continue;
+				if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
+				GROUP_REPORT.add(Long.parseLong(line));
+				logger.seek("每日汇报", line);
+			}
+			reportReader.close();
+		} else {
+			logger.seek("每日汇报", "已在所有群开启");
 		}
 
-		reportReader.close();
 
-		updateSchemaInfo();
+		new Thread(() -> {
+			try {
+				updateSchemaInfo();
+				logger.info("启动更新群与成员", "已完成");
+			} catch (SQLException exception) {
+				logger.exception("更新群与成员异常", exception);
+			}
+		}).start();
+
 
 		ENABLE_USER = false;
 		ENABLE_DISZ = false;
 		ENABLE_GROP = true;
+
 
 		return true;
 	}
@@ -311,9 +337,23 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws SQLException {
 		if (entry.isMyself(userid)) {
-			insertGroupInfo(gropid);
+			new Thread(() -> {
+				try {
+					insertGroupInfo(gropid);
+				} catch (SQLException exception) {
+					logger.exception("更新群与成员异常", exception);
+				}
+			}).start();
+
 		} else {
-			insertMemberInfo(gropid, userid);
+			new Thread(() -> {
+				try {
+					insertMemberInfo(gropid, userid);
+				} catch (SQLException exception) {
+					logger.exception("更新群与成员异常", exception);
+				}
+			}).start();
+
 		}
 	}
 
@@ -344,7 +384,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	@Override
 	public boolean doGropMessage(MessageGrop message) throws Exception {
 
-		if (!GROUP_RECORD.contains(message.getGropID())) return true;
+		if (ENABLE_GROUP_RECORD_LIST && !GROUP_RECORD.contains(message.getGropID())) return true;
 
 		queue.put(message);
 

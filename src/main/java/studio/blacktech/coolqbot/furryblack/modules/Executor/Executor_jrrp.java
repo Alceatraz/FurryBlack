@@ -84,6 +84,7 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean save() throws Exception {
 
@@ -91,25 +92,23 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean shut() throws Exception {
-
 		logger.info("终止工作线程");
 		thread.interrupt();
 		thread.join();
 		logger.info("工作线程已终止");
 		return true;
-
 	}
 
 	@Override
 	public String[] exec(Message message) throws Exception {
-
 		return new String[] {
 				"此模块无可用命令"
 		};
-
 	}
+
 
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
@@ -121,41 +120,54 @@ public class Executor_jrrp extends ModuleExecutor {
 
 	}
 
+
 	@Override
 	public boolean doUserMessage(MessageUser message) throws Exception {
-		long userid = message.getUserID();
-		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
-		entry.userInfo(userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
-		return true;
 
+		long userid = message.getUserID();
+
+
+		entry.userInfo(userid, "今天的运气是 " + getUserJRRP(userid) + "% !!!");
+
+		return true;
 	}
+
 
 	@Override
 	public boolean doDiszMessage(MessageDisz message) throws Exception {
+
 		long diszid = message.getDiszID();
 		long userid = message.getUserID();
-		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
-		entry.diszInfo(diszid, userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
-		return true;
 
+		entry.diszInfo(diszid, userid, "今天的运气是 " + getUserJRRP(userid) + "% !!!");
+
+		return true;
 	}
+
 
 	@Override
 	public boolean doGropMessage(MessageGrop message) throws Exception {
+
 		long gropid = message.getGropID();
 		long userid = message.getUserID();
-		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
-		entry.gropInfo(gropid, userid, "今天的运气是 " + JRRP.get(userid) + "% !!!");
-		return true;
 
+		entry.gropInfo(gropid, userid, "今天的运气是 " + getUserJRRP(userid) + "% !!!");
+
+		return true;
 	}
+
+
+	private int getUserJRRP(long userid) {
+		if (!JRRP.containsKey(userid)) { JRRP.put(userid, RandomTool.nextInt(100)); }
+		return JRRP.get(userid);
+	}
+
 
 	@Override
 	public String[] generateReport(Message message) {
-
 		return new String[0];
-
 	}
+
 
 	@SuppressWarnings("deprecation")
 	class Worker implements Runnable {

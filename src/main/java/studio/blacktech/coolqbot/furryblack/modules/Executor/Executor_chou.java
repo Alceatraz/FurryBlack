@@ -213,17 +213,17 @@ public class Executor_chou extends ModuleExecutor {
 
 		} else {
 
-			long choudid;
+			long chouid;
 
 			do {
-				choudid = members.get(RandomTool.nextInt(size)).getQQId();
-			} while (choudid == userid || entry.isMyself(choudid));
+				chouid = members.get(RandomTool.nextInt(size)).getQQId();
+			} while (chouid == userid || entry.isMyself(chouid) || IGNORES.containsKey(gropid) && IGNORES.get(gropid).contains(chouid));
 
 
 			if (message.getParameterSection() == 1) {
-				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getNickname(gropid, choudid) + "(" + choudid + ")");
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getNickname(gropid, chouid) + "(" + chouid + ")");
 			} else {
-				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getNickname(gropid, choudid) + "(" + choudid + ")： " + message.getCommandBody());
+				entry.gropInfo(gropid, userid, "随机抽到 " + entry.getNickname(gropid, chouid) + "(" + chouid + ")： " + message.getCommandBody());
 			}
 		}
 

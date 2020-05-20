@@ -130,6 +130,7 @@ public class Executor_dice extends ModuleExecutor {
 		return true;
 	}
 
+
 	private String rollDice(Message message) {
 		int faceID = RandomTool.nextInt(5) + 49;
 		if (message.hasCommandBody()) {

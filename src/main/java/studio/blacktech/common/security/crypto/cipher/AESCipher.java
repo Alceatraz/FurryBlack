@@ -1,14 +1,6 @@
 package studio.blacktech.common.security.crypto.cipher;
 
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
@@ -22,6 +14,15 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 
 /**
@@ -122,12 +123,12 @@ public class AESCipher {
 	 */
 	public AESCipher(SecretKeySpec secretKeySpec, IvParameterSpec initialVector) {
 		try {
-			this.encrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			this.decrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			this.encrypter.init(Cipher.ENCRYPT_MODE, secretKeySpec, initialVector);
-			this.decrypter.init(Cipher.DECRYPT_MODE, secretKeySpec, initialVector);
-			this.staticDigester = MessageDigest.getInstance("SHA-384");
-			this.oneoffDigester = MessageDigest.getInstance("SHA-384");
+			encrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			decrypter = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			encrypter.init(Cipher.ENCRYPT_MODE, secretKeySpec, initialVector);
+			decrypter.init(Cipher.DECRYPT_MODE, secretKeySpec, initialVector);
+			staticDigester = MessageDigest.getInstance("SHA-384");
+			oneoffDigester = MessageDigest.getInstance("SHA-384");
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException exception) {
 			exception.printStackTrace();
 			// 这些异常不可能发生
@@ -200,7 +201,7 @@ public class AESCipher {
 	public String encrypt(String content) {
 		try {
 			byte[] tmp1 = content.getBytes(StandardCharsets.UTF_8);
-			byte[] tmp2 = this.encrypter.doFinal(tmp1);
+			byte[] tmp2 = encrypter.doFinal(tmp1);
 			byte[] tmp3 = encoder.encode(tmp2);
 			return new String(tmp3, StandardCharsets.UTF_8);
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
@@ -221,7 +222,7 @@ public class AESCipher {
 	public String decrypt(String content) {
 		try {
 			byte[] tmp1 = decoder.decode(content);
-			byte[] tmp2 = this.decrypter.doFinal(tmp1);
+			byte[] tmp2 = decrypter.doFinal(tmp1);
 			return new String(tmp2, StandardCharsets.UTF_8);
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
 			return null;
@@ -251,11 +252,11 @@ public class AESCipher {
 			sizePart = Integer.toHexString(rawMessageLength).getBytes(StandardCharsets.UTF_8);
 			int sizePartLength = sizePart.length;
 			System.arraycopy(sizePart, 0, result, 8 - sizePartLength, sizePartLength);
-			this.oneoffDigester.update(rawMessage);
-			hashPart = this.oneoffDigester.digest();
+			oneoffDigester.update(rawMessage);
+			hashPart = oneoffDigester.digest();
 			System.arraycopy(hashPart, 0, result, 8, 8);
 			System.arraycopy(rawMessage, 0, result, 16, rawMessageLength);
-			byte[] tmp1 = this.encrypter.doFinal(result);
+			byte[] tmp1 = encrypter.doFinal(result);
 			byte[] tmp2 = encoder.encode(tmp1);
 			return new String(tmp2, StandardCharsets.UTF_8);
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
@@ -277,7 +278,7 @@ public class AESCipher {
 	 */
 	public String decryptHash(String content) throws MessageSizeCheckFailedException, MessageHashCheckFailedException {
 		try {
-			byte[] rawMessage = this.decrypter.doFinal(decoder.decode(content));
+			byte[] rawMessage = decrypter.doFinal(decoder.decode(content));
 			byte[] sizePart = new byte[8];
 			byte[] hashPart = new byte[8];
 			int actualMessageLength = rawMessage.length - 16;
@@ -287,8 +288,8 @@ public class AESCipher {
 			System.arraycopy(rawMessage, 8, hashPart, 0, 8);
 			byte[] messagePart = new byte[claimMessageLength];
 			System.arraycopy(rawMessage, 16, messagePart, 0, claimMessageLength);
-			this.oneoffDigester.update(messagePart);
-			byte[] digest = this.oneoffDigester.digest();
+			oneoffDigester.update(messagePart);
+			byte[] digest = oneoffDigester.digest();
 			if (!AESCipher.isDigestValidate(hashPart, digest)) throw new MessageHashCheckFailedException(hashPart, digest);
 			return new String(messagePart, StandardCharsets.UTF_8);
 		} catch (IllegalBlockSizeException | BadPaddingException exception) {
@@ -319,11 +320,11 @@ public class AESCipher {
 			sizePart = Integer.toHexString(rawMessageLength).getBytes(StandardCharsets.UTF_8);
 			int sizePartLength = sizePart.length;
 			System.arraycopy(sizePart, 0, result, 8 - sizePartLength, sizePartLength);
-			this.staticDigester.update(rawMessage);
-			hashPart = ((MessageDigest) this.staticDigester.clone()).digest();
+			staticDigester.update(rawMessage);
+			hashPart = ((MessageDigest) staticDigester.clone()).digest();
 			System.arraycopy(hashPart, 0, result, 8, 8);
 			System.arraycopy(rawMessage, 0, result, 16, rawMessageLength);
-			byte[] tmp1 = this.encrypter.doFinal(result);
+			byte[] tmp1 = encrypter.doFinal(result);
 			byte[] tmp2 = encoder.encode(tmp1);
 			return new String(tmp2, StandardCharsets.UTF_8);
 		} catch (IllegalBlockSizeException | BadPaddingException | CloneNotSupportedException exception) {
@@ -346,7 +347,7 @@ public class AESCipher {
 	 */
 	public String decryptPhaseHash(String content) throws MessageSizeCheckFailedException, MessageHashCheckFailedException {
 		try {
-			byte[] rawMessage = this.decrypter.doFinal(decoder.decode(content));
+			byte[] rawMessage = decrypter.doFinal(decoder.decode(content));
 			byte[] sizePart = new byte[8];
 			byte[] hashPart = new byte[8];
 			int actualMessageLength = rawMessage.length - 16;
@@ -356,8 +357,8 @@ public class AESCipher {
 			System.arraycopy(rawMessage, 8, hashPart, 0, 8);
 			byte[] messagePart = new byte[claimMessageLength];
 			System.arraycopy(rawMessage, 16, messagePart, 0, claimMessageLength);
-			this.staticDigester.update(messagePart);
-			byte[] digest = ((MessageDigest) this.staticDigester.clone()).digest();
+			staticDigester.update(messagePart);
+			byte[] digest = ((MessageDigest) staticDigester.clone()).digest();
 			if (!AESCipher.isDigestValidate(hashPart, digest)) throw new MessageHashCheckFailedException(hashPart, digest);
 			return new String(messagePart, StandardCharsets.UTF_8);
 		} catch (IllegalBlockSizeException | BadPaddingException | CloneNotSupportedException exception) {
