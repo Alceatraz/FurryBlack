@@ -126,15 +126,31 @@ CREATE TABLE "public"."record_image" (
 一些常用的SQL语句
 
 ```
-
 提取所有图片
 
 SELECT match[1] AS result
 FROM ( SELECT message FROM chat_record ) AS temp_1
 CROSS JOIN LATERAL regexp_matches(message, '\[CQ:image,file=\w{32}\.\w{3,4}\]','g') AS match
 
- 
 
+统计某个群最常说的20句话
+ 
+SELECT "count", "content" FROM (
+	SELECT COUNT( "content" ) AS "count", "content" FROM ( 
+		SELECT COALESCE ( "content", message ) AS "content" FROM chat_record 
+		WHERE grop_id = #{groupID} AND type_id = 10
+	) AS temp1
+	GROUP BY temp1."content" 
+) AS temp2 
+ORDER BY temp2."count" DESC LIMIT 20
+
+统计某个群最能说的20个人
+SELECT user_id AS user, COUNT ( user_id ) AS "count" 
+FROM chat_record 
+WHERE grop_id = #{groupID} 
+GROUP BY user_id 
+ORDER BY "count" DESC 
+LIMIT 20
 ```
 
 ## 开发
