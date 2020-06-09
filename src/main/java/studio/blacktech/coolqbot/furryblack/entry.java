@@ -1,11 +1,6 @@
 package studio.blacktech.coolqbot.furryblack;
 
 
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.jar.JarFile;
-
 import org.meowy.cqp.jcq.entity.CoolQ;
 import org.meowy.cqp.jcq.entity.Friend;
 import org.meowy.cqp.jcq.entity.Group;
@@ -15,9 +10,8 @@ import org.meowy.cqp.jcq.entity.IRequest;
 import org.meowy.cqp.jcq.entity.Member;
 import org.meowy.cqp.jcq.event.JcqApp;
 import org.meowy.cqp.jcq.event.JcqListener;
-
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.exception.NotAFolderException;
+import studio.blacktech.coolqbot.furryblack.common.loggerx.LoggerX;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
@@ -26,6 +20,11 @@ import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 import studio.blacktech.coolqbot.furryblack.modules.Systemd;
+
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.jar.JarFile;
 
 
 /**
@@ -87,7 +86,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 
 	// 版本ID
-	public final static String VerID = "2.0.0";
+	public final static String VerID = "2.0.1";
 
 	// 启动时间戳
 	public final static long BOOTTIME = System.currentTimeMillis();
@@ -120,6 +119,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	private static String appDirectory;
 
 	private static String pictureStorePath;
+
 
 	private static File FOLDER_ROOT;
 	private static File FOLDER_CONF;
@@ -417,6 +417,7 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 	}
 
+
 	/**
 	 * 成员退群处理方法 不应该在此处修改任何内容
 	 */
@@ -454,6 +455,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		return IMsg.MSG_IGNORE;
 
 	}
+
+
 	// ==========================================================================================================================================================
 	//
 	// 事件函数
@@ -466,28 +469,34 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 	@Override
 	public int friendAdd(int typeid, int sendtime, long userid) {
 
-		new Thread(() -> sendFriendAddMessage(userid)).start();
-		return 0;
+		new Thread(() -> {
+			try {
+				sendFriendAddMessage(userid);
+			} catch (InterruptedException ignored) {
 
+			}
+		}).start();
+		return 0;
 	}
 
-	private void sendFriendAddMessage(long userid) {
+	private void sendFriendAddMessage(long userid) throws InterruptedException {
 
 		try {
 			Thread.sleep(10000L);
-		} catch (InterruptedException ignore) {
 
+			SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。只有BTS官方运行的FurryBlackBot才是“白熊”，由其他人使用本SDK开发运营的帐号与BTS无关。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
+
+			SYSTEMD.sendEula(userid);
+			SYSTEMD.sendHelp(userid);
+
+			SYSTEMD.sendListUser(userid);
+			SYSTEMD.sendListDisz(userid);
+			SYSTEMD.sendListGrop(userid);
+
+		} catch (InterruptedException exception) {
+			logger.warn("添加好友 延时异常");
+			throw exception;
 		}
-
-		SYSTEMD.userInfo(userid, "你好，在下人工智障。为了礼貌和避免打扰，本BOT不接入AI聊天功能也不支持AT。只有BTS官方运行的FurryBlackBot才是“白熊”，由其他人使用本SDK开发运营的帐号与BTS无关。使用即表示同意最终用户许可，可由/eula查看。\r\n发送/help获取通用帮助\r\n发送/list获取可用命令列表\r\n私聊、讨论组、群聊可用的命令有所不同");
-
-		SYSTEMD.sendEula(userid);
-		SYSTEMD.sendHelp(userid);
-
-		SYSTEMD.sendListUser(userid);
-		SYSTEMD.sendListDisz(userid);
-		SYSTEMD.sendListGrop(userid);
-
 	}
 
 	/**

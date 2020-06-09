@@ -6,8 +6,6 @@ import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
 
-import studio.blacktech.common.security.crypto.HashTool;
-
 
 /**
  * 随机工具类
@@ -32,11 +30,23 @@ public class RandomTool {
 	private static final Provider provider = Security.getProvider("SUN");
 	private static SecureRandom secureRandom;
 
+
+	private RandomTool() {
+		throw new IllegalStateException("Static utility class");
+	}
+
+
+	// ==========================================================================================================================================================
+
+
 	static {
 		try {
-			secureRandom = SecureRandom.getInstance("SHA1PRNG", provider);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			secureRandom = SecureRandom.getInstance("NativePRNG", provider);
+		} catch (NoSuchAlgorithmException exception) {
+			System.err.println("此系统不支持 NativePRNG");
+			// 这是不可能的
+			// Linux使用/dev/random或/dev/urandom
+			// Windows使用NT Security API
 		}
 	}
 

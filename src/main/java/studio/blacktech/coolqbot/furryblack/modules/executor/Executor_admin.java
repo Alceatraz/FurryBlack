@@ -1,17 +1,16 @@
-package studio.blacktech.coolqbot.furryblack.modules.Executor;
+package studio.blacktech.coolqbot.furryblack.modules.executor;
 
-
-import java.util.List;
 
 import org.meowy.cqp.jcq.entity.Group;
-
-import studio.blacktech.coolqbot.furryblack.entry;
 import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
 import studio.blacktech.coolqbot.furryblack.common.message.Message;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
 import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
 import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
+
+import java.util.List;
 
 
 @ModuleExecutorComponent
@@ -181,7 +180,7 @@ public class Executor_admin extends ModuleExecutor {
 				break;
 
 			case "leave":
-				entry.adminInfo("Exit code → " + entry.getCQ().setGroupLeave(Long.parseLong(message.getParameterSegment(2)), message.getParameterSegment(3) == "true"));
+				entry.adminInfo("Exit code → " + entry.getCQ().setGroupLeave(Long.parseLong(message.getParameterSegment(2)), message.getParameterSegment(3).equals("true")));
 				break;
 
 			}

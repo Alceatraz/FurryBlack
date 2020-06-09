@@ -1,6 +1,29 @@
 package studio.blacktech.coolqbot.furryblack.modules;
 
 
+import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
+import studio.blacktech.common.security.HashTool;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleComponent;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerComponent;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
+import studio.blacktech.coolqbot.furryblack.common.exception.CantReinitializationException;
+import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
+import studio.blacktech.coolqbot.furryblack.common.loggerx.BufferX;
+import studio.blacktech.coolqbot.furryblack.common.loggerx.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.Module;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
+import studio.blacktech.coolqbot.furryblack.entry;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,30 +40,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
-
-import org.meowy.cqp.jcq.entity.Group;
-import org.meowy.cqp.jcq.entity.Member;
-
-import studio.blacktech.common.security.crypto.HashTool;
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.BufferX;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleComponent;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerComponent;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
-import studio.blacktech.coolqbot.furryblack.common.exception.CantReinitializationException;
-import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.Module;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 
 
 /**
@@ -177,11 +176,11 @@ public class Systemd extends Module {
 	//
 	// ==========================================================================================================================================================
 
+
 	public Systemd() throws Exception {
-
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
-
 	}
+
 
 	// ==========================================================================================================================================================
 	//
@@ -192,7 +191,7 @@ public class Systemd extends Module {
 	/**
 	 * 你永远不应该执行这个方法
 	 *
-	 * @return
+	 * @return 你永远不应该执行这个方法
 	 */
 	@Override
 	public boolean init() throws Exception {
@@ -962,15 +961,19 @@ public class Systemd extends Module {
 	@Override
 	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
 
-		FileWriter writer = new FileWriter(FILE_MEMBERCHANGE, true);
-		if (isMyself(userid)) {
-			writer.append("# Bot Join Group " + LoggerX.datetime() + "\n");
-			for (Member memeber : entry.getCQ().getGroupMemberList(gropid)) writer.append(gropid + ":" + memeber.getQQId() + ":" + entry.getCQ().getStrangerInfo(memeber.getQQId()).getNick() + "\n");
-		} else {
-			writer.append("# Member Increase " + LoggerX.datetime() + "\n" + gropid + ":" + userid + ":" + entry.getCQ().getStrangerInfo(userid).getNick() + "\n\n");
+
+		try (FileWriter writer = new FileWriter(FILE_MEMBERCHANGE, true)) {
+			if (isMyself(userid)) {
+				writer.append("# Bot Join Group ").append(LoggerX.datetime()).append("\n");
+				for (Member member : entry.getCQ().getGroupMemberList(gropid)) writer.append(String.valueOf(gropid)).append(":").append(String.valueOf(member.getQQId())).append(":").append(entry.getCQ().getStrangerInfo(member.getQQId()).getNick()).append("\n");
+			} else {
+				writer.append("# Member Increase ").append(LoggerX.datetime()).append("\n").append(String.valueOf(gropid)).append(":").append(String.valueOf(userid)).append(":").append(entry.getCQ().getStrangerInfo(userid).getNick()).append("\n\n");
+			}
+			writer.flush();
+		} catch (Exception ignored) {
+
 		}
-		writer.flush();
-		writer.close();
+
 		for (String name : TRIGGER_INSTANCE.keySet()) TRIGGER_INSTANCE.get(name).doGroupMemberIncrease(typeid, sendtime, gropid, operid, userid);
 		for (String name : LISTENER_INSTANCE.keySet()) LISTENER_INSTANCE.get(name).doGroupMemberIncrease(typeid, sendtime, gropid, operid, userid);
 		for (String name : EXECUTOR_INSTANCE.keySet()) EXECUTOR_INSTANCE.get(name).doGroupMemberIncrease(typeid, sendtime, gropid, operid, userid);
@@ -1832,7 +1835,7 @@ public class Systemd extends Module {
 				return entry.getCQ().getStrangerInfo(userid).getNick();
 			} else {
 				String card = member.getCard();
-				if (card == null || card == "" || card.length() < 1 || card.matches("\\s+")) { // CoolQ和Jcq没有对这个问题处理
+				if (card == null || card.equals("") || card.length() < 1 || card.matches("\\s+")) { // CoolQ和Jcq没有对这个问题处理
 					return entry.getCQ().getStrangerInfo(userid).getNick();
 				} else {
 					return card;

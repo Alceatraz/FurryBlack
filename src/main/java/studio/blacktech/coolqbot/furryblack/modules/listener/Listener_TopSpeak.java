@@ -1,5 +1,20 @@
-package studio.blacktech.coolqbot.furryblack.modules.Listener;
+package studio.blacktech.coolqbot.furryblack.modules.listener;
 
+
+import org.meowy.cqp.jcq.entity.CQImage;
+import org.meowy.cqp.jcq.entity.Friend;
+import org.meowy.cqp.jcq.entity.Group;
+import org.meowy.cqp.jcq.entity.Member;
+import org.meowy.cqp.jcq.message.CQCode;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerComponent;
+import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
+import studio.blacktech.coolqbot.furryblack.entry;
+import studio.blacktech.coolqbot.furryblack.modules.trigger.Trigger_UserDeny;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,22 +34,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import org.meowy.cqp.jcq.entity.CQImage;
-import org.meowy.cqp.jcq.entity.Friend;
-import org.meowy.cqp.jcq.entity.Group;
-import org.meowy.cqp.jcq.entity.Member;
-import org.meowy.cqp.jcq.message.CQCode;
-
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleListenerComponent;
-import studio.blacktech.coolqbot.furryblack.common.exception.InitializationException;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleListener;
-import studio.blacktech.coolqbot.furryblack.modules.Trigger.Trigger_UserDeny;
 
 
 @ModuleListenerComponent
@@ -163,7 +162,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		Class.forName("org.postgresql.Driver");
 		connection = DriverManager.getConnection(JDBC_HOSTNAME, JDBC_USERNAME, JDBC_PASSWORD);
-		if (connection == null) throw new InitializationException("数据库连接失败");
+
 
 		// =================================================================
 		// 初始化内存
@@ -183,14 +182,16 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		if (ENABLE_GROUP_RECORD_LIST) {
 			String line;
-			BufferedReader recordReader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_RECORD), StandardCharsets.UTF_8));
-			while ((line = recordReader.readLine()) != null) {
-				if (line.startsWith("#")) continue;
-				if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
-				GROUP_RECORD.add(Long.parseLong(line));
-				logger.seek("记录群聊", line);
+			try (BufferedReader recordReader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_RECORD), StandardCharsets.UTF_8))) {
+				while ((line = recordReader.readLine()) != null) {
+					if (line.startsWith("#")) continue;
+					if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
+					GROUP_RECORD.add(Long.parseLong(line));
+					logger.seek("记录群聊", line);
+				}
+			} catch (Exception exception) {
+				return false;
 			}
-			recordReader.close();
 		} else {
 			logger.seek("记录群聊", "已在所有群开启");
 		}
@@ -198,14 +199,16 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		if (ENABLE_GROUP_REPORT_LIST) {
 			String line;
-			BufferedReader reportReader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8));
-			while ((line = reportReader.readLine()) != null) {
-				if (line.startsWith("#")) continue;
-				if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
-				GROUP_REPORT.add(Long.parseLong(line));
-				logger.seek("每日汇报", line);
+			try (BufferedReader reportReader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_ENABLE_REPORT), StandardCharsets.UTF_8))) {
+				while ((line = reportReader.readLine()) != null) {
+					if (line.startsWith("#")) continue;
+					if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
+					GROUP_REPORT.add(Long.parseLong(line));
+					logger.seek("每日汇报", line);
+				}
+			} catch (Exception exception) {
+				return false;
 			}
-			reportReader.close();
 		} else {
 			logger.seek("每日汇报", "已在所有群开启");
 		}
@@ -297,16 +300,18 @@ public class Listener_TopSpeak extends ModuleListener {
 			}
 			String command = (prefix == null ? "" : prefix) + message.getParameterSegment(2);
 
-			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			boolean result;
 
-			boolean result = statement.execute(command);
-
-			resultSet = statement.getResultSet();
-
-			resultSet.last();
-			colSize = resultSet.getMetaData().getColumnCount();
-			rowSize = resultSet.getRow();
-			resultSet.beforeFirst();
+			try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+				result = statement.execute(command);
+				resultSet = statement.getResultSet();
+				resultSet.last();
+				colSize = resultSet.getMetaData().getColumnCount();
+				rowSize = resultSet.getRow();
+				resultSet.beforeFirst();
+			} catch (Exception exception) {
+				result = false;
+			}
 
 			if (message.hasSwitch("save")) {
 				return new String[] {
@@ -319,6 +324,7 @@ public class Listener_TopSpeak extends ModuleListener {
 						"命令执行" + (result ? "成功" : "失败") + "\r\n结果集 " + colSize + "列 × " + rowSize + "行\r\n共" + colSize * rowSize + "项"
 				};
 			}
+
 
 		case "show":
 			return dumpResultSetToString(message);
@@ -417,8 +423,8 @@ public class Listener_TopSpeak extends ModuleListener {
 		if (message.hasSwitch("limit")) limit = Integer.parseInt(message.getSwitch("limit"));
 		StringBuilder builder = new StringBuilder();
 		while (resultSet.next() && count++ < limit) {
-			builder.append("|" + count + "|");
-			for (int i = 1; i <= colSize; i++) builder.append(resultSet.getString(i) + "|");
+			builder.append("|").append(count).append("|");
+			for (int i = 1; i <= colSize; i++) builder.append(resultSet.getString(i)).append("|");
 			builder.append("\r\n");
 		}
 		builder.setLength(builder.length() - 2);
@@ -429,107 +435,45 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	private File dumpResultSetToCSVFile(Message message) throws SQLException, IOException {
 		File file = Paths.get(FOLDER_LOGS.getAbsolutePath(), "SQL_result_" + System.currentTimeMillis() + ".csv").toFile();
-		FileWriter writer = new FileWriter(file);
-		for (int i = 1; i <= colSize; i++) {
-			writer.append("\"");
-			writer.append(resultSet.getMetaData().getColumnName(i).replaceAll("\"", "\"\""));
-			writer.append("\",");
-		}
-		writer.append("\n");
-		while (resultSet.next()) {
+		try (FileWriter writer = new FileWriter(file)) {
 			for (int i = 1; i <= colSize; i++) {
 				writer.append("\"");
-				writer.append(resultSet.getString(i).replaceAll("\"", "\"\""));
+				writer.append(resultSet.getMetaData().getColumnName(i).replaceAll("\"", "\"\""));
 				writer.append("\",");
 			}
 			writer.append("\n");
+			while (resultSet.next()) {
+				for (int i = 1; i <= colSize; i++) {
+					writer.append("\"");
+					writer.append(resultSet.getString(i).replaceAll("\"", "\"\""));
+					writer.append("\",");
+				}
+				writer.append("\n");
+			}
+			writer.flush();
+			resultSet.close();
+		} catch (Exception exception) {
+			return null;
 		}
-		writer.flush();
-		writer.close();
-		resultSet.close();
 		return file;
 	}
 
 
 	public void insertGroupInfo(long gropid) throws SQLException {
 
-		PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
+		try (
+				PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
+				PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)")
+		) {
 
-		Group group = entry.getCQ().getGroupInfo(gropid);
-
-		gropInfoStatement.setLong(1, gropid);
-		gropInfoStatement.setString(2, group.getName());
-
-		gropInfoStatement.execute();
-		gropInfoStatement.close();
-
-		PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
-
-		Trigger_UserDeny userDenyInstance = (Trigger_UserDeny) entry.getTrigger("userdeny");
-
-		for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
-
-			long userid = member.getQQId();
-
-			if (entry.isMyself(userid)) continue;
-			if (userDenyInstance.isUserIgnore(userid)) continue;
-			if (userDenyInstance.isGropUserIgnore(gropid, userid)) continue;
-
-			String card = entry.getNickname(gropid, userid);
-
-			userCardStatement.setLong(1, gropid);
-			userCardStatement.setLong(2, userid);
-			userCardStatement.setString(3, card);
-			userCardStatement.execute();
-
-		}
-	}
-
-	public void insertMemberInfo(Long gropid, long userid) throws SQLException {
-		PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
-		userCardStatement.setLong(1, gropid);
-		userCardStatement.setLong(2, userid);
-		userCardStatement.setString(3, entry.getNickname(gropid, userid));
-		userCardStatement.execute();
-		userCardStatement.close();
-	}
-
-	public void updateSchemaInfo() throws SQLException {
-
-		Statement statement = connection.createStatement();
-
-		statement.execute("TRUNCATE TABLE grop_info");
-		statement.execute("TRUNCATE TABLE user_nick");
-		statement.execute("TRUNCATE TABLE user_card");
-		statement.close();
-
-
-		PreparedStatement userNickStatement = connection.prepareStatement("INSERT INTO user_nick VALUES (?,?)");
-
-		for (Friend friend : entry.getCQ().getFriendList()) {
-
-			if (entry.isMyself(friend.getQQId())) continue;
-			userNickStatement.setLong(1, friend.getQQId());
-			userNickStatement.setString(2, friend.getNick());
-			userNickStatement.execute();
-		}
-
-		userNickStatement.close();
-
-
-		logger.info("写入群组列表");
-
-		PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
-		PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
-
-		for (Group group : entry.getCQ().getGroupList()) {
-
-			long gropid = group.getId();
-			String name = group.getName();
+			Group group = entry.getCQ().getGroupInfo(gropid);
 
 			gropInfoStatement.setLong(1, gropid);
-			gropInfoStatement.setString(2, name);
+			gropInfoStatement.setString(2, group.getName());
+
 			gropInfoStatement.execute();
+			gropInfoStatement.close();
+
 
 			Trigger_UserDeny userDenyInstance = (Trigger_UserDeny) entry.getTrigger("userdeny");
 
@@ -547,12 +491,72 @@ public class Listener_TopSpeak extends ModuleListener {
 				userCardStatement.setLong(2, userid);
 				userCardStatement.setString(3, card);
 				userCardStatement.execute();
+			}
 
+		}
+
+	}
+
+	public void insertMemberInfo(Long gropid, long userid) throws SQLException {
+		try (PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)")) {
+			userCardStatement.setLong(1, gropid);
+			userCardStatement.setLong(2, userid);
+			userCardStatement.setString(3, entry.getNickname(gropid, userid));
+			userCardStatement.execute();
+		}
+	}
+
+	public void updateSchemaInfo() throws SQLException {
+
+		try (Statement statement = connection.createStatement()) {
+			statement.execute("TRUNCATE TABLE grop_info");
+			statement.execute("TRUNCATE TABLE user_nick");
+			statement.execute("TRUNCATE TABLE user_card");
+		}
+
+		try (PreparedStatement userNickStatement = connection.prepareStatement("INSERT INTO user_nick VALUES (?,?)")) {
+			for (Friend friend : entry.getCQ().getFriendList()) {
+				if (entry.isMyself(friend.getQQId())) continue;
+				userNickStatement.setLong(1, friend.getQQId());
+				userNickStatement.setString(2, friend.getNick());
+				userNickStatement.execute();
 			}
 		}
 
-		gropInfoStatement.close();
-		userCardStatement.close();
+		logger.info("写入群组列表");
+
+		try (
+				PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
+				PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)")
+		) {
+			for (Group group : entry.getCQ().getGroupList()) {
+
+				long gropid = group.getId();
+				String name = group.getName();
+
+				gropInfoStatement.setLong(1, gropid);
+				gropInfoStatement.setString(2, name);
+				gropInfoStatement.execute();
+
+				Trigger_UserDeny userDenyInstance = (Trigger_UserDeny) entry.getTrigger("userdeny");
+
+				for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
+
+					long userid = member.getQQId();
+
+					if (entry.isMyself(userid)) continue;
+					if (userDenyInstance.isUserIgnore(userid)) continue;
+					if (userDenyInstance.isGropUserIgnore(gropid, userid)) continue;
+
+					String card = entry.getNickname(gropid, userid);
+
+					userCardStatement.setLong(1, gropid);
+					userCardStatement.setLong(2, userid);
+					userCardStatement.setString(3, card);
+					userCardStatement.execute();
+				}
+			}
+		}
 	}
 
 
@@ -604,10 +608,13 @@ public class Listener_TopSpeak extends ModuleListener {
 					record_image_Statement = connection.prepareStatement("INSERT INTO record_image VALUES (?,?,?)");
 
 					while (true) {
+
 						synchronized (lock) {
 							lock.wait(FLUSH_DURATION * 1000);
 						}
+
 						flush();
+
 					}
 
 				} catch (Exception exception) {

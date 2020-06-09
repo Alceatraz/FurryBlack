@@ -1,5 +1,14 @@
-package studio.blacktech.coolqbot.furryblack.modules.Trigger;
+package studio.blacktech.coolqbot.furryblack.modules.trigger;
 
+
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
+import studio.blacktech.coolqbot.furryblack.common.loggerx.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
+import studio.blacktech.coolqbot.furryblack.entry;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,15 +18,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 
 
 @ModuleTriggerComponent
@@ -105,18 +105,20 @@ public class Trigger_WordDeny extends ModuleTrigger {
 		if (!FILE_DENY_DISZ.exists()) { FILE_DENY_DISZ.createNewFile(); }
 		if (!FILE_DENY_GROP.exists()) { FILE_DENY_GROP.createNewFile(); }
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_BLACKLIST), StandardCharsets.UTF_8));
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_BLACKLIST), StandardCharsets.UTF_8))) {
 
-		String line;
+			String line;
 
-		while ((line = reader.readLine()) != null) {
-			if (line.startsWith("#")) continue;
-			if (line.contains("#")) line = line.substring(0, line.indexOf("#"));
-			BLACKLIST.add(line.trim());
-			logger.seek("过滤规则", line);
+			while ((line = reader.readLine()) != null) {
+				if (line.startsWith("#")) continue;
+				if (line.contains("#")) line = line.substring(0, line.indexOf("#"));
+				BLACKLIST.add(line.trim());
+				logger.seek("过滤规则", line);
+			}
+
+		} catch (Exception exception) {
+			return false;
 		}
-
-		reader.close();
 
 		boolean temp = BLACKLIST.size() > 0;
 
@@ -172,10 +174,10 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 			if (message.getMessage().matches(temp)) {
 
-				FileWriter writer = new FileWriter(FILE_DENY_USER);
-				writer.append("[" + LoggerX.datetime(message.getSendtime()) + "] " + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
-				writer.flush();
-				writer.close();
+				try (FileWriter writer = new FileWriter(FILE_DENY_USER)) {
+					writer.append("[").append(LoggerX.datetime(message.getSendtime())).append("] ").append(entry.getNickname(userid)).append("(").append(String.valueOf(userid)).append(") ").append(message.getMessage()).append("\n");
+					writer.flush();
+				}
 
 				return true;
 			}
@@ -193,10 +195,10 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 			if (message.getMessage().matches(temp)) {
 
-				FileWriter writer = new FileWriter(FILE_DENY_DISZ, true);
-				writer.append("[" + LoggerX.datetime(message.getSendtime()) + "][" + diszid + "]" + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
-				writer.flush();
-				writer.close();
+				try (FileWriter writer = new FileWriter(FILE_DENY_DISZ, true)) {
+					writer.append("[").append(LoggerX.datetime(message.getSendtime())).append("][").append(String.valueOf(diszid)).append("]").append(entry.getNickname(userid)).append("(").append(String.valueOf(userid)).append(") ").append(message.getMessage()).append("\n");
+					writer.flush();
+				}
 				return true;
 			}
 		}
@@ -213,10 +215,10 @@ public class Trigger_WordDeny extends ModuleTrigger {
 
 			if (message.getMessage().matches(temp)) {
 
-				FileWriter writer = new FileWriter(FILE_DENY_DISZ, true);
-				writer.append("[" + LoggerX.datetime(message.getSendtime()) + "][" + gropid + "]" + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
-				writer.flush();
-				writer.close();
+				try (FileWriter writer = new FileWriter(FILE_DENY_DISZ, true)) {
+					writer.append("[").append(LoggerX.datetime(message.getSendtime())).append("][").append(String.valueOf(gropid)).append("]").append(entry.getNickname(userid)).append("(").append(String.valueOf(userid)).append(") ").append(message.getMessage()).append("\n");
+					writer.flush();
+				}
 				return true;
 			}
 		}

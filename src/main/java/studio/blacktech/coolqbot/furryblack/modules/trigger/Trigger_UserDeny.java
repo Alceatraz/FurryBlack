@@ -1,5 +1,14 @@
-package studio.blacktech.coolqbot.furryblack.modules.Trigger;
+package studio.blacktech.coolqbot.furryblack.modules.trigger;
 
+
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
+import studio.blacktech.coolqbot.furryblack.common.loggerx.LoggerX;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
+import studio.blacktech.coolqbot.furryblack.entry;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,15 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.TreeMap;
-
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.LoggerX.LoggerX;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleTriggerComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleTrigger;
 
 
 @ModuleTriggerComponent
@@ -124,78 +124,79 @@ public class Trigger_UserDeny extends ModuleTrigger {
 		ENABLE_DISZ = Boolean.parseBoolean(CONFIG.getProperty("enable_disz", "false"));
 		ENABLE_GROP = Boolean.parseBoolean(CONFIG.getProperty("enable_grop", "false"));
 
-		BufferedReader readerUser = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_USERIGNORE), StandardCharsets.UTF_8));
-		BufferedReader readerDisz = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_DISZIGNORE), StandardCharsets.UTF_8));
-		BufferedReader readerGrop = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_GROPIGNORE), StandardCharsets.UTF_8));
+		try (
+				BufferedReader readerUser = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_USERIGNORE), StandardCharsets.UTF_8));
+				BufferedReader readerDisz = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_DISZIGNORE), StandardCharsets.UTF_8));
+				BufferedReader readerGrop = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_GROPIGNORE), StandardCharsets.UTF_8))
+		) {
+			long userid;
+			long diszid;
+			long gropid;
 
-		long userid;
-		long diszid;
-		long gropid;
+			String line;
+			String[] temp;
 
-		String line;
-		String[] temp;
+			while ((line = readerUser.readLine()) != null) {
 
-		while ((line = readerUser.readLine()) != null) {
+				if (line.startsWith("#")) { continue; }
+				if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
 
-			if (line.startsWith("#")) { continue; }
-			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
-
-			GLOBAL_USER_IGNORE.add(Long.parseLong(line));
-			logger.seek("全局屏蔽", line);
-		}
-
-		while ((line = readerDisz.readLine()) != null) {
-
-			if (line.startsWith("#")) { continue; }
-			if (!line.contains(":")) { continue; }
-			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
-
-			temp = line.split(":");
-
-			diszid = Long.parseLong(temp[0]);
-			userid = Long.parseLong(temp[1]);
-
-			if (userid == 0) {
-				GLOBAL_DISZ_IGNORE.add(diszid);
-			} else {
-				if (!DISZ_MEMBER_IGNORE.containsKey(diszid)) {
-					HashSet<Long> tempSet = new HashSet<>();
-					DISZ_MEMBER_IGNORE.put(diszid, tempSet);
-				}
-				DISZ_MEMBER_IGNORE.get(diszid).add(userid);
+				GLOBAL_USER_IGNORE.add(Long.parseLong(line));
+				logger.seek("全局屏蔽", line);
 			}
 
-			logger.seek("指定组聊", line);
-		}
+			while ((line = readerDisz.readLine()) != null) {
 
-		while ((line = readerGrop.readLine()) != null) {
+				if (line.startsWith("#")) { continue; }
+				if (!line.contains(":")) { continue; }
+				if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
 
-			if (line.startsWith("#")) { continue; }
-			if (!line.contains(":")) { continue; }
-			if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+				temp = line.split(":");
 
-			temp = line.split(":");
-			temp = line.split(":");
+				diszid = Long.parseLong(temp[0]);
+				userid = Long.parseLong(temp[1]);
 
-			gropid = Long.parseLong(temp[0]);
-			userid = Long.parseLong(temp[1]);
-
-			if (userid == 0) {
-				GLOBAL_GROP_IGNORE.add(gropid);
-			} else {
-				if (!GROP_MEMBER_IGNORE.containsKey(gropid)) {
-					HashSet<Long> tempSet = new HashSet<>();
-					GROP_MEMBER_IGNORE.put(gropid, tempSet);
+				if (userid == 0) {
+					GLOBAL_DISZ_IGNORE.add(diszid);
+				} else {
+					if (!DISZ_MEMBER_IGNORE.containsKey(diszid)) {
+						HashSet<Long> tempSet = new HashSet<>();
+						DISZ_MEMBER_IGNORE.put(diszid, tempSet);
+					}
+					DISZ_MEMBER_IGNORE.get(diszid).add(userid);
 				}
-				GROP_MEMBER_IGNORE.get(gropid).add(userid);
+
+				logger.seek("指定组聊", line);
 			}
 
-			logger.seek("指定群聊", line);
+			while ((line = readerGrop.readLine()) != null) {
 
+				if (line.startsWith("#")) { continue; }
+				if (!line.contains(":")) { continue; }
+				if (line.contains("#")) { line = line.substring(0, line.indexOf("#")).trim(); }
+
+				temp = line.split(":");
+
+				gropid = Long.parseLong(temp[0]);
+				userid = Long.parseLong(temp[1]);
+
+				if (userid == 0) {
+					GLOBAL_GROP_IGNORE.add(gropid);
+				} else {
+					if (!GROP_MEMBER_IGNORE.containsKey(gropid)) {
+						HashSet<Long> tempSet = new HashSet<>();
+						GROP_MEMBER_IGNORE.put(gropid, tempSet);
+					}
+					GROP_MEMBER_IGNORE.get(gropid).add(userid);
+				}
+
+				logger.seek("指定群聊", line);
+
+			}
+
+		} catch (Exception exception) {
+			return false;
 		}
-		readerUser.close();
-		readerDisz.close();
-		readerGrop.close();
 
 		ENABLE_USER = ENABLE_USER && GLOBAL_USER_IGNORE.size() > 0;
 		ENABLE_DISZ = ENABLE_USER || ENABLE_DISZ && GLOBAL_DISZ_IGNORE.size() + DISZ_MEMBER_IGNORE.size() > 0;
@@ -205,22 +206,22 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	}
 
 	@Override
-	public boolean boot() throws Exception {
+	public boolean boot() {
 		return true;
 	}
 
 	@Override
-	public boolean save() throws Exception {
+	public boolean save() {
 		return true;
 	}
 
 	@Override
-	public boolean shut() throws Exception {
+	public boolean shut() {
 		return true;
 	}
 
 	@Override
-	public String[] exec(Message message) throws Exception {
+	public String[] exec(Message message) {
 		return new String[] {
 				"此模块无可用命令"
 		};
@@ -243,11 +244,10 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 		if (GLOBAL_USER_IGNORE.contains(userid)) {
 
-			FileWriter writer = new FileWriter(FILE_DENY_USER_LOGGER);
-			writer.append("[" + LoggerX.datetime() + "] 某人" + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
-			writer.flush();
-			writer.close();
-
+			try (FileWriter writer = new FileWriter(FILE_DENY_USER_LOGGER)) {
+				writer.append("[").append(LoggerX.datetime()).append("] 某人").append(entry.getNickname(userid)).append("(").append(String.valueOf(userid)).append(") ").append(message.getMessage()).append("\n");
+				writer.flush();
+			}
 		} else {
 			return false;
 		}
@@ -264,24 +264,24 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 		if (GLOBAL_USER_IGNORE.contains(userid)) {
 
-			FileWriter writer = new FileWriter(FILE_DENY_USER_LOGGER);
-			writer.append("[" + LoggerX.datetime() + "] 某人" + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
-			writer.flush();
-			writer.close();
+			try (FileWriter writer = new FileWriter(FILE_DENY_USER_LOGGER)) {
+				writer.append("[").append(LoggerX.datetime()).append("] 某人").append(entry.getNickname(userid)).append("(").append(String.valueOf(userid)).append(") ").append(message.getMessage()).append("\n");
+				writer.flush();
+			}
 
 		} else if (GLOBAL_DISZ_IGNORE.contains(diszid)) {
 
-			FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER);
-			writer.append("[" + LoggerX.datetime() + "] 整个组 " + diszid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
-			writer.flush();
-			writer.close();
+			try (FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER)) {
+				writer.append("[").append(LoggerX.datetime()).append("] 整个组 ").append(String.valueOf(diszid)).append(" - ").append(entry.getNickname(userid)).append("(").append(String.valueOf(userid)).append(") ").append(message.getMessage()).append("\n");
+				writer.flush();
+			}
 
 		} else if (DISZ_MEMBER_IGNORE.containsKey(diszid) && DISZ_MEMBER_IGNORE.get(diszid).contains(userid)) {
 
-			FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER);
-			writer.append("[" + LoggerX.datetime() + "] 组成员 " + diszid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
-			writer.flush();
-			writer.close();
+			try (FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER)) {
+				writer.append("[").append(LoggerX.datetime()).append("] 组成员 ").append(String.valueOf(diszid)).append(" - ").append(entry.getNickname(userid)).append("(").append(String.valueOf(userid)).append(") ").append(message.getMessage()).append("\n");
+				writer.flush();
+			}
 
 		} else {
 			return false;
@@ -297,24 +297,24 @@ public class Trigger_UserDeny extends ModuleTrigger {
 
 		if (GLOBAL_USER_IGNORE.contains(userid)) {
 
-			FileWriter writer = new FileWriter(FILE_DENY_USER_LOGGER);
-			writer.append("[" + LoggerX.datetime() + "] 指定人" + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
-			writer.flush();
-			writer.close();
+			try (FileWriter writer = new FileWriter(FILE_DENY_USER_LOGGER)) {
+				writer.append("[").append(LoggerX.datetime()).append("] 指定人").append(entry.getNickname(userid)).append("(").append(String.valueOf(userid)).append(") ").append(message.getMessage()).append("\n");
+				writer.flush();
+			}
 
 		} else if (GLOBAL_GROP_IGNORE.contains(gropid)) {
 
-			FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER);
-			writer.append("[" + LoggerX.datetime() + "] 整个群 " + gropid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
-			writer.flush();
-			writer.close();
+			try (FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER)) {
+				writer.append("[").append(LoggerX.datetime()).append("] 整个群 ").append(String.valueOf(gropid)).append(" - ").append(entry.getNickname(userid)).append("(").append(String.valueOf(userid)).append(") ").append(message.getMessage()).append("\n");
+				writer.flush();
+			}
 
 		} else if (GROP_MEMBER_IGNORE.containsKey(gropid) && GROP_MEMBER_IGNORE.get(gropid).contains(userid)) {
 
-			FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER);
-			writer.append("[" + LoggerX.datetime() + "] 群成员 " + gropid + " - " + entry.getNickname(userid) + "(" + userid + ") " + message.getMessage() + "\n");
-			writer.flush();
-			writer.close();
+			try (FileWriter writer = new FileWriter(FILE_DENY_GROP_LOGGER)) {
+				writer.append("[").append(LoggerX.datetime()).append("] 群成员 ").append(String.valueOf(gropid)).append(" - ").append(entry.getNickname(userid)).append("(").append(String.valueOf(userid)).append(") ").append(message.getMessage()).append("\n");
+				writer.flush();
+			}
 
 		} else {
 			return false;

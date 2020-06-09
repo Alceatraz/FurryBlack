@@ -1,5 +1,10 @@
-package studio.blacktech.coolqbot.furryblack.modules.Scheduler;
+package studio.blacktech.coolqbot.furryblack.modules.scheduler;
 
+
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
+import studio.blacktech.coolqbot.furryblack.entry;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,11 +13,6 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.regex.Pattern;
-
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleSchedulerComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleScheduler;
 
 
 @ModuleSchedulerComponent
@@ -202,31 +202,19 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 	@Override
 	public String[] generateReport(Message message) {
 
-		StringBuilder builder = new StringBuilder();
-		builder.append("获取地址：");
-		builder.append(COUNT_GETIP);
-		builder.append("/");
-		builder.append(COUNT_GETIP_FAILED);
-		builder.append("\r\n设置地址：");
-		builder.append(COUNT_SETIP);
-		builder.append("/");
-		builder.append(COUNT_SETIP_FAILED);
-		builder.append("\r\n更新地址：");
-		builder.append(COUNT_FRESH);
-		builder.append("/");
-		builder.append(COUNT_FRESH_FAILED);
-		builder.append("\r\n地址变更：");
-		builder.append(COUNT_CHANGE);
-		builder.append("\r\n访问失败：");
-		builder.append(COUNT_FAILED);
-		String[] res = new String[] {
-				builder.toString()
+		String builder = "获取地址：" + COUNT_GETIP + "/" + COUNT_GETIP_FAILED + "\r\n" +
+				"设置地址：" + COUNT_SETIP + "/" + COUNT_SETIP_FAILED + "\r\n" +
+				"更新地址：" + COUNT_FRESH + "/" + COUNT_FRESH_FAILED + "\r\n" +
+				"地址变更：" + COUNT_CHANGE + "\r\n" +
+				"访问失败：" + COUNT_FAILED;
+
+		return new String[] {
+				builder
 		};
-		return res;
 
 	}
 
-	@SuppressWarnings("deprecation")
+
 	class Worker implements Runnable {
 
 		@Override
@@ -263,25 +251,25 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 								failcount++;
 								COUNT_FAILED++;
 							} else // 成功的话
-									// 利用正则判断是否是正常的ip地址
-							if (Pattern.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}", address)) {
-								// 成功的话 设置地址
-								respons = Scheduler_Dynamic.this.setAddress(address);
-								// 是否设置成功
-								if (respons == null) {
-									// 失败的话 增加失败计数
+								// 利用正则判断是否是正常的ip地址
+								if (Pattern.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}", address)) {
+									// 成功的话 设置地址
+									respons = Scheduler_Dynamic.this.setAddress(address);
+									// 是否设置成功
+									if (respons == null) {
+										// 失败的话 增加失败计数
+										failcount++;
+										COUNT_FAILED++;
+									} else {
+										// 成功的话 重置失败计数
+										failcount = 0;
+										if (respons.startsWith("good")) { COUNT_CHANGE++; }
+									}
+								} else {
+									// 不是正常地址 增加失败计数
 									failcount++;
 									COUNT_FAILED++;
-								} else {
-									// 成功的话 重置失败计数
-									failcount = 0;
-									if (respons.startsWith("good")) { COUNT_CHANGE++; }
 								}
-							} else {
-								// 不是正常地址 增加失败计数
-								failcount++;
-								COUNT_FAILED++;
-							}
 						} else {
 							// 成功的话 重置失败计数
 							failcount = 0;
@@ -321,7 +309,8 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			connection.getContent();
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
-			rx.read(buffer);
+			int length = rx.read(buffer);
+			if (length < 0) throw new IOException("读取失败");
 			COUNT_GETIP++;
 			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {
@@ -346,7 +335,8 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			connection.getContent();
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
-			rx.read(buffer);
+			int length = rx.read(buffer);
+			if (length < 0) throw new IOException("读取失败");
 			COUNT_SETIP++;
 			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {
@@ -371,7 +361,8 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 			connection.getContent();
 			byte[] buffer = new byte[32];
 			InputStream rx = connection.getInputStream();
-			rx.read(buffer);
+			int length = rx.read(buffer);
+			if (length < 0) throw new IOException("读取失败");
 			COUNT_FRESH++;
 			return new String(buffer, StandardCharsets.UTF_8).trim();
 		} catch (IOException exception) {

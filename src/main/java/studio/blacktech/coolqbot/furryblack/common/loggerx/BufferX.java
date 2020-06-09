@@ -1,4 +1,4 @@
-package studio.blacktech.coolqbot.furryblack.common.LoggerX;
+package studio.blacktech.coolqbot.furryblack.common.loggerx;
 
 
 import java.text.SimpleDateFormat;
@@ -150,36 +150,36 @@ public class BufferX {
 	// ==================================================================================================
 
 
-	public String[] warn(String catgory, String... message) {
+	public String[] warn(String category, String... message) {
 		for (String line : message) {
-			String temp = "[" + LoggerX.time() + "][WARN]" + catgory + ": " + line + "\r\n";
+			String temp = "[" + LoggerX.time() + "][WARN]" + category + ": " + line + "\r\n";
 			builder.append(temp);
 		}
 		return message;
 	}
 
 
-	public String[] info(String catgory, String... message) {
+	public String[] info(String category, String... message) {
 		for (String line : message) {
-			String temp = "[" + LoggerX.time() + "][INFO]" + catgory + ": " + line + "\r\n";
+			String temp = "[" + LoggerX.time() + "][INFO]" + category + ": " + line + "\r\n";
 			builder.append(temp);
 		}
 		return message;
 	}
 
 
-	public String[] seek(String catgory, String... message) {
+	public String[] seek(String category, String... message) {
 		for (String line : message) {
-			String temp = "[" + LoggerX.time() + "][SEEK]" + catgory + ": " + line + "\r\n";
+			String temp = "[" + LoggerX.time() + "][SEEK]" + category + ": " + line + "\r\n";
 			builder.append(temp);
 		}
 		return message;
 	}
 
 
-	public String[] full(String catgory, String... message) {
+	public String[] full(String category, String... message) {
 		for (String line : message) {
-			String temp = "[" + LoggerX.time() + "][FULL]" + catgory + ": " + line + "\r\n";
+			String temp = "[" + LoggerX.time() + "][FULL]" + category + ": " + line + "\r\n";
 			builder.append(temp);
 		}
 		return message;
@@ -190,57 +190,50 @@ public class BufferX {
 	//
 	//
 	// ==================================================================================================
-
-	private final static SimpleDateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
-	private final static SimpleDateFormat formater_time = new SimpleDateFormat("HH:mm:ss");
-	private final static SimpleDateFormat formater_full = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-
-	// ================================================================
 
 
 	public static String date() {
-		return BufferX.formater_date.format(new Date());
+		return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 	}
 
 
 	public static String date(Date date) {
-		return BufferX.formater_date.format(date);
+		return new SimpleDateFormat("yyyy-MM-dd").format(date);
 	}
 
 
 	public static String date(long timestamp) {
-		return BufferX.formater_date.format(new Date(timestamp));
+		return new SimpleDateFormat("yyyy-MM-dd").format(new Date(timestamp));
 	}
 
 
 	public static String time() {
-		return BufferX.formater_time.format(new Date());
+		return new SimpleDateFormat("HH:mm:ss").format(new Date());
 	}
 
 
 	public static String time(Date date) {
-		return BufferX.formater_time.format(date);
+		return new SimpleDateFormat("HH:mm:ss").format(date);
 	}
 
 
 	public static String time(long timestamp) {
-		return BufferX.formater_time.format(new Date(timestamp));
+		return new SimpleDateFormat("HH:mm:ss").format(new Date(timestamp));
 	}
 
 
 	public static String datetime() {
-		return BufferX.formater_full.format(new Date());
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 	}
 
 
 	public static String datetime(Date date) {
-		return BufferX.formater_full.format(date);
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
 	}
 
 
 	public static String datetime(long timestamp) {
-		return BufferX.formater_full.format(new Date(timestamp));
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(timestamp));
 	}
 
 
@@ -263,23 +256,23 @@ public class BufferX {
 
 
 	public static String formatTime(String format, TimeZone timezone) {
-		SimpleDateFormat formater = new SimpleDateFormat(format);
-		formater.setTimeZone(timezone);
-		return formater.format(new Date());
+		SimpleDateFormat formatter = new SimpleDateFormat(format);
+		formatter.setTimeZone(timezone);
+		return formatter.format(new Date());
 	}
 
 
 	public static String formatTime(String format, TimeZone timezone, Date date) {
-		SimpleDateFormat formater = new SimpleDateFormat(format);
-		formater.setTimeZone(timezone);
-		return formater.format(date);
+		SimpleDateFormat formatter = new SimpleDateFormat(format);
+		formatter.setTimeZone(timezone);
+		return formatter.format(date);
 	}
 
 
 	public static String formatTime(String format, TimeZone timezone, long timestamp) {
-		SimpleDateFormat formater = new SimpleDateFormat(format);
-		formater.setTimeZone(timezone);
-		return formater.format(new Date(timestamp));
+		SimpleDateFormat formatter = new SimpleDateFormat(format);
+		formatter.setTimeZone(timezone);
+		return formatter.format(new Date(timestamp));
 	}
 
 

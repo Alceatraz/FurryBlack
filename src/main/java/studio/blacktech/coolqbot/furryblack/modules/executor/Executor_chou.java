@@ -1,5 +1,15 @@
-package studio.blacktech.coolqbot.furryblack.modules.Executor;
+package studio.blacktech.coolqbot.furryblack.modules.executor;
 
+
+import org.meowy.cqp.jcq.entity.Member;
+import studio.blacktech.common.security.RandomTool;
+import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
+import studio.blacktech.coolqbot.furryblack.common.message.Message;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
+import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
+import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
+import studio.blacktech.coolqbot.furryblack.entry;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,17 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.meowy.cqp.jcq.entity.Member;
-
-import studio.blacktech.common.security.RandomTool;
-import studio.blacktech.coolqbot.furryblack.entry;
-import studio.blacktech.coolqbot.furryblack.common.annotation.ModuleExecutorComponent;
-import studio.blacktech.coolqbot.furryblack.common.message.Message;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageDisz;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageGrop;
-import studio.blacktech.coolqbot.furryblack.common.message.MessageUser;
-import studio.blacktech.coolqbot.furryblack.common.module.ModuleExecutor;
 
 
 /**
@@ -99,34 +98,36 @@ public class Executor_chou extends ModuleExecutor {
 		String line;
 		String[] temp;
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_IGNORE_USER), StandardCharsets.UTF_8));
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_IGNORE_USER), StandardCharsets.UTF_8))) {
 
 
-		while ((line = reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null) {
 
-			if (line.startsWith("#")) continue;
-			if (!line.contains(":")) continue;
-			if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
+				if (line.startsWith("#")) continue;
+				if (!line.contains(":")) continue;
+				if (line.contains("#")) line = line.substring(0, line.indexOf("#")).trim();
 
-			temp = line.split(":");
+				temp = line.split(":");
 
-			if (temp.length != 2) {
-				logger.warn("配置无效", line);
-				continue;
+				if (temp.length != 2) {
+					logger.warn("配置无效", line);
+					continue;
+				}
+
+				gropid = Long.parseLong(temp[0]);
+				userid = Long.parseLong(temp[1]);
+
+				if (!IGNORES.containsKey(gropid)) IGNORES.put(gropid, new ArrayList<>());
+
+				IGNORES.get(gropid).add(userid);
+
+				logger.seek("排除用户", gropid + " > " + userid);
+
 			}
 
-			gropid = Long.parseLong(temp[0]);
-			userid = Long.parseLong(temp[1]);
-
-			if (!IGNORES.containsKey(gropid)) IGNORES.put(gropid, new ArrayList<>());
-
-			IGNORES.get(gropid).add(userid);
-
-			logger.seek("排除用户", gropid + " > " + userid);
-
+		} catch (Exception exception) {
+			return false;
 		}
-
-		reader.close();
 
 
 		ENABLE_USER = false;
@@ -136,6 +137,7 @@ public class Executor_chou extends ModuleExecutor {
 		return true;
 
 	}
+
 
 	@Override
 	public boolean boot() throws Exception {
@@ -185,21 +187,21 @@ public class Executor_chou extends ModuleExecutor {
 	// ==========================================================================================================================================================
 
 	@Override
-	public boolean doUserMessage(MessageUser message) throws Exception {
+	public boolean doUserMessage(MessageUser message) {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doDiszMessage(MessageDisz message) throws Exception {
+	public boolean doDiszMessage(MessageDisz message) {
 
 		return true;
 
 	}
 
 	@Override
-	public boolean doGropMessage(MessageGrop message) throws Exception {
+	public boolean doGropMessage(MessageGrop message) {
 
 		long gropid = message.getGropID();
 		long userid = message.getUserID();

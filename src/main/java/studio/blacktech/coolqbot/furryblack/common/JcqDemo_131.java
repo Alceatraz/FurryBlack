@@ -1,14 +1,14 @@
 package studio.blacktech.coolqbot.furryblack.common;
 
 
-import javax.swing.JOptionPane;
-
 import org.meowy.cqp.jcq.entity.CoolQ;
 import org.meowy.cqp.jcq.entity.GroupFile;
 import org.meowy.cqp.jcq.entity.ICQVer;
 import org.meowy.cqp.jcq.entity.IMsg;
 import org.meowy.cqp.jcq.entity.IRequest;
 import org.meowy.cqp.jcq.event.JcqAppAbstract;
+
+import javax.swing.*;
 
 
 /**
@@ -22,13 +22,16 @@ import org.meowy.cqp.jcq.event.JcqAppAbstract;
  * 辅助开发变量: {@link JcqAppAbstract#CQ CQ}({@link org.meowy.cqp.jcq.entity.CoolQ 酷Q核心操作类}), {@link JcqAppAbstract#CC CC}({@link org.meowy.cqp.jcq.message.CQCode 酷Q码操作类}), 具体功能可以查看文档
  */
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings("*")
 
 public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
-	/**
-	 * 关于新版：本版本只是为了测试下新做的插件能不能正常运行，并不包含任何 “新” 内容 新：指代 打包，调试运行 新版改了整体架构，内部改动非常大，使用上除了包名改动别无区别 关于包名：可以通过批量替换将老程序里的[com.sobte]全部替换成[org.meowy]即可
+	/*
+	  关于新版：本版本只是为了测试下新做的插件能不能正常运行，并不包含任何 “新” 内容
+	  新：指代 打包，调试运行 新版改了整体架构，内部改动非常大，使用上除了包名改动别无区别
+	  关于包名：可以通过批量替换将老程序里的[com.sobte]全部替换成[org.meowy]即可
 	 */
+
 	/**
 	 * 老的方式依然支持，也就是不强行定构造方法也行
 	 */
@@ -179,9 +182,9 @@ public class JcqDemo_131 extends JcqAppAbstract implements ICQVer, IMsg, IReques
 	 * @param msg     消息内容
 	 * @param font    字体
 	 * @return 返回值*不能*直接返回文本 如果要回复消息，请调用api发送<br>
-	 *         这里 返回 {@link IMsg#MSG_INTERCEPT MSG_INTERCEPT} - 截断本条消息，不再继续处理<br>
-	 *         注意：应用优先级设置为"最高"(10000)时，不得使用本返回值<br>
-	 *         如果不回复消息，交由之后的应用/过滤器处理，这里 返回 {@link IMsg#MSG_IGNORE MSG_IGNORE} - 忽略本条消息
+	 * 这里 返回 {@link IMsg#MSG_INTERCEPT MSG_INTERCEPT} - 截断本条消息，不再继续处理<br>
+	 * 注意：应用优先级设置为"最高"(10000)时，不得使用本返回值<br>
+	 * 如果不回复消息，交由之后的应用/过滤器处理，这里 返回 {@link IMsg#MSG_IGNORE MSG_IGNORE} - 忽略本条消息
 	 */
 	@Override
 	public int privateMsg(int subType, int msgId, long fromQQ, String msg, int font) {
