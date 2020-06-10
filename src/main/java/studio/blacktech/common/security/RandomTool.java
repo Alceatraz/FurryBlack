@@ -2,9 +2,8 @@ package studio.blacktech.common.security;
 
 
 import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
-import java.security.Security;
 
 
 /**
@@ -13,6 +12,9 @@ import java.security.Security;
  * @author BTS - Alceatraz Warprays alceatraz@blacktech.studio
  */
 public class RandomTool {
+
+
+	// ==========================================================================================================================================================
 
 
 	private static final String LOWER_CHAR = "abcdefghijklmnopqrstuvwxyz";
@@ -27,27 +29,39 @@ public class RandomTool {
 	private static final String DEC = "0123456789";
 	private static final String HEX = "0123456789ABCDEF";
 
-	private static final Provider provider = Security.getProvider("SUN");
+
+	// ==========================================================================================================================================================
+
+
 	private static SecureRandom secureRandom;
-
-
-	private RandomTool() {
-		throw new IllegalStateException("Static utility class");
-	}
 
 
 	// ==========================================================================================================================================================
 
 
-	static {
+	private static final RandomTool instance = new RandomTool();
+
+
+	private RandomTool() {
+
 		try {
-			secureRandom = SecureRandom.getInstance("NativePRNG", provider);
-		} catch (NoSuchAlgorithmException exception) {
-			System.err.println("此系统不支持 NativePRNG");
-			// 这是不可能的
-			// Linux使用/dev/random或/dev/urandom
-			// Windows使用NT Security API
+			// Linux使用/dev/random熵池
+			secureRandom = SecureRandom.getInstance("NativePRNG", "SUN");
+		} catch (NoSuchAlgorithmException | NoSuchProviderException ignored1) {
+			try {
+				// Windows使用CryptGenRandom
+				secureRandom = SecureRandom.getInstance("SHA1PRNG", "SUN");
+			} catch (NoSuchAlgorithmException | NoSuchProviderException ignored2) {
+				// 都不行就用默认的
+				secureRandom = new SecureRandom();
+			}
 		}
+
+	}
+
+
+	public RandomTool getInstance() {
+		return instance;
 	}
 
 

@@ -47,9 +47,11 @@ public class Executor_jrrp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+
 	private HashMap<Long, Integer> JRRP;
 
 	private Thread thread;
+
 
 	// ==========================================================================================================================================================
 	//
@@ -57,14 +59,14 @@ public class Executor_jrrp extends ModuleExecutor {
 	//
 	// ==========================================================================================================================================================
 
+
 	public Executor_jrrp() throws Exception {
-
 		super(MODULE_PACKAGENAME, MODULE_COMMANDNAME, MODULE_DISPLAYNAME, MODULE_DESCRIPTION, MODULE_VERSION, MODULE_USAGE, MODULE_PRIVACY_STORED, MODULE_PRIVACY_CACHED, MODULE_PRIVACY_OBTAIN);
-
 	}
 
+
 	@Override
-	public boolean init() throws Exception {
+	public boolean init() {
 
 		JRRP = new HashMap<>();
 		ENABLE_USER = true;
@@ -75,7 +77,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public boolean boot() throws Exception {
+	public boolean boot() {
 
 		logger.info("启动工作线程");
 		thread = new Thread(new Worker());
@@ -86,7 +88,7 @@ public class Executor_jrrp extends ModuleExecutor {
 
 
 	@Override
-	public boolean save() throws Exception {
+	public boolean save() {
 
 		return true;
 
@@ -103,7 +105,7 @@ public class Executor_jrrp extends ModuleExecutor {
 	}
 
 	@Override
-	public String[] exec(Message message) throws Exception {
+	public String[] exec(Message message) {
 		return new String[] {
 				"此模块无可用命令"
 		};
@@ -122,7 +124,7 @@ public class Executor_jrrp extends ModuleExecutor {
 
 
 	@Override
-	public boolean doUserMessage(MessageUser message) throws Exception {
+	public boolean doUserMessage(MessageUser message) {
 
 		long userid = message.getUserID();
 
@@ -134,7 +136,7 @@ public class Executor_jrrp extends ModuleExecutor {
 
 
 	@Override
-	public boolean doDiszMessage(MessageDisz message) throws Exception {
+	public boolean doDiszMessage(MessageDisz message) {
 
 		long diszid = message.getDiszID();
 		long userid = message.getUserID();
@@ -146,7 +148,7 @@ public class Executor_jrrp extends ModuleExecutor {
 
 
 	@Override
-	public boolean doGropMessage(MessageGrop message) throws Exception {
+	public boolean doGropMessage(MessageGrop message) {
 
 		long gropid = message.getGropID();
 		long userid = message.getUserID();
@@ -195,7 +197,7 @@ public class Executor_jrrp extends ModuleExecutor {
 					if (entry.isEnable()) {
 						long timeserial = System.currentTimeMillis();
 						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
-						Executor_jrrp.this.logger.exception(timeserial, exception);
+						Executor_jrrp.this.logger.exception(exception);
 					} else {
 						Executor_jrrp.this.logger.full("关闭");
 					}

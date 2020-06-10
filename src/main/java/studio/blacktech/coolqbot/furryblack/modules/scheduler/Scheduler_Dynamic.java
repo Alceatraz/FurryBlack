@@ -284,9 +284,9 @@ public class Scheduler_Dynamic extends ModuleScheduler {
 					}
 				} catch (InterruptedException exception) {
 					if (entry.isEnable()) {
-						long timeserial = System.currentTimeMillis();
-						entry.adminInfo("[发生异常] 时间序列号 - " + timeserial + " " + exception.getMessage());
-						Scheduler_Dynamic.this.logger.exception(timeserial, exception);
+						long serial = Scheduler_Dynamic.this.logger.exception(exception);
+						entry.adminInfo("[发生异常] 时间序列号 - " + serial + " " + exception.getMessage());
+
 					} else {
 						Scheduler_Dynamic.this.logger.full("关闭");
 					}

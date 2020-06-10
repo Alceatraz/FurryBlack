@@ -4,41 +4,31 @@ package studio.blacktech.common.security;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 
 
 /**
  * HASH工具类
  * 密码学中md5和MD5是不一样的 注意严谨性 即使这么命名会破坏JAVA命名规范
- *
- * @author BTS - Alceatraz Warprays alceatraz@blacktech.studio
  */
 
 
 public class HashTool {
 
 
-	private static MessageDigest md5Digest;
-	private static MessageDigest sha256Digest;
-	private static MessageDigest sha384Digest;
-	private static MessageDigest sha512Digest;
-
-	private HashTool() {
-		throw new IllegalStateException("Static utility class");
-	}
-
-
 	// ==========================================================================================================================================================
 
 
-	static {
-		try {
-			md5Digest = MessageDigest.getInstance("MD5");
-			sha256Digest = MessageDigest.getInstance("SHA-256");
-			sha384Digest = MessageDigest.getInstance("SHA-384");
-			sha512Digest = MessageDigest.getInstance("SHA-512");
-		} catch (NoSuchAlgorithmException ignore) {
-			// Ignore
-		}
+	private static final HashTool instance = new HashTool();
+
+
+	private HashTool() {
+
+	}
+
+
+	public HashTool getInstance() {
+		return instance;
 	}
 
 
@@ -46,10 +36,16 @@ public class HashTool {
 
 
 	public static String md5(byte[] message) {
-		byte[] digested = md5Digest.digest(message);
+		MessageDigest digest = null;
+		try {
+			digest = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException exception) {
+			exception.printStackTrace();
+		}
+		byte[] digested = Objects.requireNonNull(digest).digest(message);
 		StringBuilder builder = new StringBuilder();
 		for (byte element : digested) {
-			builder.append(Integer.toHexString(0x000000FF & element | 0xFFFFFF00).substring(6));
+			builder.append(Integer.toHexString((0x000000FF & element) | 0xFFFFFF00).substring(6));
 		}
 		return builder.toString();
 	}
@@ -60,16 +56,32 @@ public class HashTool {
 	}
 
 
+	public static String md5(String message) {
+		return md5(message.getBytes(StandardCharsets.UTF_8));
+	}
+
+
+	public static String MD5(String message) {
+		return MD5(message.getBytes(StandardCharsets.UTF_8));
+	}
+
+
 	// ==========================================================================================================================================================
 
 
 	public static String sha256(byte[] message) {
-		byte[] digested = sha256Digest.digest(message);
+		MessageDigest digest = null;
+		try {
+			digest = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException exception) {
+			exception.printStackTrace();
+		}
+		byte[] digested = Objects.requireNonNull(digest).digest(message);
 		String temp;
 		StringBuilder builder = new StringBuilder();
 		for (byte element : digested) {
 			temp = Integer.toHexString(element & 0xFF);
-			builder.append(temp.length() == 2 ? temp : "0" + temp);
+			builder.append(temp.length() == 2 ? temp : ("0" + temp));
 		}
 		return builder.toString();
 	}
@@ -94,12 +106,18 @@ public class HashTool {
 
 
 	public static String sha384(byte[] message) {
-		byte[] digested = sha384Digest.digest(message);
+		MessageDigest digest = null;
+		try {
+			digest = MessageDigest.getInstance("SHA-384");
+		} catch (NoSuchAlgorithmException exception) {
+			exception.printStackTrace();
+		}
+		byte[] digested = Objects.requireNonNull(digest).digest(message);
 		String temp;
 		StringBuilder builder = new StringBuilder();
 		for (byte element : digested) {
 			temp = Integer.toHexString(element & 0xFF);
-			builder.append(temp.length() == 2 ? temp : "0" + temp);
+			builder.append(temp.length() == 2 ? temp : ("0" + temp));
 		}
 		return builder.toString();
 	}
@@ -124,12 +142,18 @@ public class HashTool {
 
 
 	public static String sha512(byte[] message) {
-		byte[] digested = sha512Digest.digest(message);
+		MessageDigest digest = null;
+		try {
+			digest = MessageDigest.getInstance("SHA-512");
+		} catch (NoSuchAlgorithmException exception) {
+			exception.printStackTrace();
+		}
+		byte[] digested = Objects.requireNonNull(digest).digest(message);
 		String temp;
 		StringBuilder builder = new StringBuilder();
 		for (byte element : digested) {
 			temp = Integer.toHexString(element & 0xFF);
-			builder.append(temp.length() == 2 ? temp : "0" + temp);
+			builder.append(temp.length() == 2 ? temp : ("0" + temp));
 		}
 		return builder.toString();
 	}
@@ -148,6 +172,9 @@ public class HashTool {
 	public static String SHA512(String message) {
 		return SHA512(message.getBytes(StandardCharsets.UTF_8));
 	}
+
+
+	// ==========================================================================================================================================================
 
 
 }

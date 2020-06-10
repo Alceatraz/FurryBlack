@@ -330,21 +330,21 @@ public class Systemd extends Module {
 
 
 		logger.full("读取HELP模板消息");
-		while ((line = readerHelp.readLine()) != null) builder.append(line + "\r\n");
+		while ((line = readerHelp.readLine()) != null) builder.append(line).append("\r\n");
 		builder.setLength(builder.length() - 2);
 		MESSAGE_HELP = builder.toString();
 
 
 		logger.full("读取INFO模板消息");
 		builder.setLength(0);
-		while ((line = readerInfo.readLine()) != null) builder.append(line + "\r\n");
+		while ((line = readerInfo.readLine()) != null) builder.append(line).append("\r\n");
 		builder.setLength(builder.length() - 2);
 		MESSAGE_INFO = builder.toString();
 
 
 		logger.full("读取EULA模板消息");
 		builder.setLength(0);
-		while ((line = readerEula.readLine()) != null) builder.append(line + "\r\n");
+		while ((line = readerEula.readLine()) != null) builder.append(line).append("\r\n");
 		builder.setLength(builder.length() - 2);
 		MESSAGE_EULA = builder.toString();
 
@@ -1106,13 +1106,6 @@ public class Systemd extends Module {
 
 	/**
 	 * 你永远不应该执行这个方法
-	 *
-	 * @param gropid      你永远不应该执行这个方法
-	 * @param userid      你永远不应该执行这个方法
-	 * @param message     你永远不应该执行这个方法
-	 * @param messageid   你永远不应该执行这个方法
-	 * @param messagefont 你永远不应该执行这个方法
-	 * @throws Exception 你永远不应该执行这个方法
 	 */
 	public void doGropMessage(MessageGrop message) throws Exception {
 

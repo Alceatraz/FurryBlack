@@ -172,6 +172,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 		try {
 
+			String workingDir = System.getProperty("user.dir");
+
+
 			// ==========================================================================================================================
 			// 获取APP存储目录
 			// 继承自JCQ, JcqAbstract包含这个对象
@@ -182,22 +185,15 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			// ==========================================================================================================================
 			// 实例化 data/ logs/ 对象
 
+			FOLDER_PICS = Paths.get(workingDir, "data", "picture").toFile();
+
 			FOLDER_ROOT = Paths.get(appDirectory, "Core_Entry").toFile();
-
-
 			FOLDER_CONF = Paths.get(appDirectory, "Core_Entry", "conf").toFile();
-
-
 			FOLDER_DATA = Paths.get(appDirectory, "Core_Entry", "data").toFile();
-			FOLDER_PICS = Paths.get(appDirectory, "Core_Entry", "data", "picture").toFile();
-
-
 			FOLDER_LOGS = Paths.get(appDirectory, "Core_Entry", "logs").toFile();
 			FILE_LOGGER = Paths.get(appDirectory, "Core_Entry", "logs", LoggerX.formatTime("yyyy_MM_dd_HH_mm_ss") + ".txt").toFile();
 
-
 			pictureStorePath = FOLDER_PICS.getAbsolutePath();
-
 
 			// ==========================================================================================================================
 			// 初始化文件夹
@@ -229,15 +225,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 			// ==========================================================================================================================
 			// 获取APP本身的Jar
-
-			String workingDir = System.getProperty("user.dir");
-			String workingJar = AppID + ".jar";
-			File jarFile = Paths.get(workingDir, "data", "app", "org.meowy.cqp.jcq", "app", workingJar).toFile();
+			File jarFile = Paths.get(workingDir, "data", "app", "org.meowy.cqp.jcq", "app", AppID + ".jar").toFile();
 
 			// 别忘了你在JCQ的JVM里 你直接获取的user.dir是JCQ的PWD
-
-			logger.full("加载", jarFile.getAbsolutePath());
 			JAR_INSTANCE = new JarFile(jarFile);
+			logger.full("加载", jarFile.getAbsolutePath());
 
 
 			// ==========================================================================================================================
@@ -281,8 +273,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 
 			exception.printStackTrace();
 
-			logger.exception(exception);
-			SYSTEMD.adminInfo("启动异常 " + exception.toString());
+			long serial = logger.exception(exception);
+			SYSTEMD.adminInfo("启动异常 序号 " + serial + "\r\n" + exception.toString());
 
 		}
 
@@ -333,10 +325,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		try {
 			SYSTEMD.doUserMessage(new MessageUser(typeid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
-			long time = System.currentTimeMillis();
-			SYSTEMD.adminInfo("[私聊消息异常] 异常序号 - " + time + "\r\n" + userid + "：" + message + "\r\n" + exception.toString());
+			long serial = logger.exception(exception);
+			SYSTEMD.adminInfo("[私聊消息异常] 异常索引 - " + serial + "\r\n" + userid + "：" + message + "\r\n" + exception.toString());
 			logger.warn("私聊消息异常", userid + "：" + message);
-			logger.exception(exception);
 		}
 		return IMsg.MSG_IGNORE;
 
@@ -352,10 +343,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		try {
 			SYSTEMD.doDiszMessage(new MessageDisz(diszid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
-			long time = System.currentTimeMillis();
-			SYSTEMD.adminInfo("[组聊消息异常] 异常序号 - " + time + "\r\n" + diszid + "-" + userid + "：" + message + "\r\n" + exception.toString());
+			long serial = logger.exception(exception);
+			SYSTEMD.adminInfo("[组聊消息异常] 异常序号 - " + serial + "\r\n" + diszid + "-" + userid + "：" + message + "\r\n" + exception.toString());
 			logger.warn("组聊消息异常", diszid + "-" + userid + "：" + message);
-			logger.exception(exception);
 		}
 		return IMsg.MSG_IGNORE;
 
@@ -371,10 +361,9 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 		try {
 			SYSTEMD.doGropMessage(new MessageGrop(gropid, userid, message, messageid, messagefont));
 		} catch (Exception exception) {
-			long time = System.currentTimeMillis();
-			SYSTEMD.adminInfo("[群聊消息异常] 异常序号 - " + time + "\r\n" + gropid + "-" + userid + "：" + message + "\r\n" + exception.toString());
+			long serial = logger.exception(exception);
+			SYSTEMD.adminInfo("[群聊消息异常] 异常序号 - " + serial + "\r\n" + gropid + "-" + userid + "：" + message + "\r\n" + exception.toString());
 			logger.warn("群聊消息异常", gropid + "-" + userid + "：" + message);
-			logger.exception(exception);
 		}
 		return IMsg.MSG_IGNORE;
 
@@ -406,11 +395,8 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			SYSTEMD.adminInfo("[成员增加] " + LoggerX.datetime() + "\r\n类型：" + typeName + "\r\n群聊：" + gropid + "\r\n管理：" + operNick + "\r\n用户：" + userNick);
 
 		} catch (Exception exception) {
-
-			long time = System.currentTimeMillis();
-
-			logger.exception(time, "成员增加异常", exception);
-			SYSTEMD.adminInfo("[成员增加异常] - 异常序号" + time + " 原因：\r\n" + exception.toString() + "类型：" + typeName + " 群聊：" + gropid + " 管理：" + operid + " 用户：" + userid);
+			long serial = logger.exception("成员增加异常", exception);
+			SYSTEMD.adminInfo("[成员增加异常] - 异常序号" + serial + " 原因：\r\n" + exception.toString() + "类型：" + typeName + " 群聊：" + gropid + " 管理：" + operid + " 用户：" + userid);
 		}
 
 		return IMsg.MSG_IGNORE;
@@ -440,14 +426,11 @@ public class entry extends JcqApp implements ICQVer, IMsg, IRequest, JcqListener
 			}
 
 		} catch (Exception exception) {
-
-			long time = System.currentTimeMillis();
-
-			logger.exception(time, "成员减少异常", exception);
+			long serial = logger.exception("成员减少异常", exception);
 			if (typeid == 1) {
-				SYSTEMD.adminInfo("[成员减少异常] - 异常序号" + time + " 原因：\r\n" + exception.toString() + "\r\n类型：主动离开\r\n群聊：" + gropid + "\r\n用户：" + userid);
+				SYSTEMD.adminInfo("[成员减少异常] - 异常序号" + serial + " 原因：\r\n" + exception.toString() + "\r\n类型：主动离开\r\n群聊：" + gropid + "\r\n用户：" + userid);
 			} else {
-				SYSTEMD.adminInfo("[成员减少异常] - 异常序号" + time + " 原因：\r\n" + exception.toString() + "\r\n类型：管理踢出\r\n群聊：" + gropid + "\r\n管理：" + operid + "\r\n用户：" + userid);
+				SYSTEMD.adminInfo("[成员减少异常] - 异常序号" + serial + " 原因：\r\n" + exception.toString() + "\r\n类型：管理踢出\r\n群聊：" + gropid + "\r\n管理：" + operid + "\r\n用户：" + userid);
 			}
 
 		}

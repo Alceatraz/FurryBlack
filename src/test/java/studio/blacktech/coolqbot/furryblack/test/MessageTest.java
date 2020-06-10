@@ -9,7 +9,7 @@ public class MessageTest {
 
 
 	@Test
-	void test() throws Exception {
+	void test() {
 
 		String[] sample = {
 				"/admin",
@@ -23,4 +23,6 @@ public class MessageTest {
 		for (String temp : sample) System.out.println(new Message(temp));
 
 	}
+
+
 }

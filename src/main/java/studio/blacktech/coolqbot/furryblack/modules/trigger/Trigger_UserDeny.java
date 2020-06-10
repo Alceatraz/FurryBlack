@@ -336,32 +336,57 @@ public class Trigger_UserDeny extends ModuleTrigger {
 	}
 
 
-	// 对外API 不内部使用
-	public boolean isUserIgnore(long userid) {
-		return ENABLE_USER && GLOBAL_USER_IGNORE.contains(userid);
+	/**
+	 * @param userid 检查的用户
+	 * @return -1 未启动 0 允许 1 用户过滤阻止
+	 */
+	public int isUserIgnore(long userid) {
+		if (!ENABLE_USER) {
+			return -1;
+		} else if (GLOBAL_USER_IGNORE.contains(userid)) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 
-	public boolean isDiszUserIgnore(long diszid, long userid) {
+	/**
+	 * @param diszid
+	 * @param userid
+	 * @return -1 未启动 0 允许 1 用户过滤阻止 2 组聊过滤阻止 3 组聊成员过滤阻止
+	 */
+	public int isDiszUserIgnore(long diszid, long userid) {
 		if (!ENABLE_DISZ) {
-			return false;
+			return -1;
 		} else if (GLOBAL_USER_IGNORE.contains(userid)) {
+			return 1;
 		} else if (GLOBAL_DISZ_IGNORE.contains(diszid)) {
+			return 2;
 		} else if (DISZ_MEMBER_IGNORE.containsKey(diszid) && DISZ_MEMBER_IGNORE.get(diszid).contains(userid)) {
+			return 3;
 		} else {
-			return false;
+			return 0;
 		}
-		return true;
 	}
 
-	public boolean isGropUserIgnore(long gropid, long userid) {
+
+	/**
+	 * @param gropid
+	 * @param userid
+	 * @return -1 未启动 0 允许 1 用户过滤阻止 2 群聊过滤阻止 3 群聊成员过滤阻止
+	 */
+	public int isGropUserIgnore(long gropid, long userid) {
 		if (!ENABLE_GROP) {
-			return false;
+			return -1;
 		} else if (GLOBAL_USER_IGNORE.contains(userid)) {
+			return 1;
 		} else if (GLOBAL_GROP_IGNORE.contains(gropid)) {
+			return 2;
 		} else if (GROP_MEMBER_IGNORE.containsKey(gropid) && GROP_MEMBER_IGNORE.get(gropid).contains(userid)) {
+			return 3;
 		} else {
-			return false;
+			return 0;
 		}
-		return true;
+
 	}
 }

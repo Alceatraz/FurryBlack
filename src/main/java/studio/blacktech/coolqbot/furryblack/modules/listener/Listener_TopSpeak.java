@@ -86,8 +86,6 @@ public class Listener_TopSpeak extends ModuleListener {
 	private String JDBC_USERNAME;
 	private String JDBC_PASSWORD;
 
-	private Object lock;
-	private BlockingQueue<MessageGrop> queue;
 
 	private Connection connection;
 	private ResultSet resultSet;
@@ -99,6 +97,12 @@ public class Listener_TopSpeak extends ModuleListener {
 
 	private boolean ENABLE_GROUP_RECORD_LIST = false;
 	private boolean ENABLE_GROUP_REPORT_LIST = false;
+
+
+	private BlockingQueue<MessageGrop> queue;
+
+	private final Object lock = new Object();
+
 
 	// ==========================================================================================================================================================
 	//
@@ -119,7 +123,7 @@ public class Listener_TopSpeak extends ModuleListener {
 		initDataFolder();
 		initPropertiesConfigurtion();
 
-		lock = new Object();
+
 		queue = new LinkedBlockingQueue<>();
 
 		if (NEW_CONFIG) {
@@ -234,7 +238,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 
 	@Override
-	public boolean boot() throws Exception {
+	public boolean boot() {
 		logger.info("启动工作线程");
 		thread = new Thread(new Worker(queue, lock, connection));
 		thread.start();
@@ -243,7 +247,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 
 	@Override
-	public boolean save() throws Exception {
+	public boolean save() {
 		return true;
 	}
 
@@ -300,28 +304,29 @@ public class Listener_TopSpeak extends ModuleListener {
 			}
 			String command = (prefix == null ? "" : prefix) + message.getParameterSegment(2);
 
+
 			boolean result;
+
 
 			try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 				result = statement.execute(command);
 				resultSet = statement.getResultSet();
-				resultSet.last();
-				colSize = resultSet.getMetaData().getColumnCount();
-				rowSize = resultSet.getRow();
-				resultSet.beforeFirst();
-			} catch (Exception exception) {
-				result = false;
 			}
+
 
 			if (message.hasSwitch("save")) {
 				return new String[] {
-						"结果保存至" + dumpResultSetToCSVFile(message)
+						"结果保存至" + dumpResultSetToCSVFile()
 				};
 			} else if (message.hasSwitch("show")) {
 				return dumpResultSetToString(message);
+			} else if (result) {
+				return new String[] {
+						"命令执行成功\r\n结果集 " + colSize + "列 × " + rowSize + "行\r\n共" + colSize * rowSize + "项"
+				};
 			} else {
 				return new String[] {
-						"命令执行" + (result ? "成功" : "失败") + "\r\n结果集 " + colSize + "列 × " + rowSize + "行\r\n共" + colSize * rowSize + "项"
+						"命令执行失败"
 				};
 			}
 
@@ -331,7 +336,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		case "save":
 			return new String[] {
-					"结果保存至" + dumpResultSetToCSVFile(message)
+					"结果保存至" + dumpResultSetToCSVFile()
 			};
 		}
 
@@ -341,7 +346,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	}
 
 	@Override
-	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) throws SQLException {
+	public void groupMemberIncrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 		if (entry.isMyself(userid)) {
 			new Thread(() -> {
 				try {
@@ -350,7 +355,6 @@ public class Listener_TopSpeak extends ModuleListener {
 					logger.exception("更新群与成员异常", exception);
 				}
 			}).start();
-
 		} else {
 			new Thread(() -> {
 				try {
@@ -364,7 +368,7 @@ public class Listener_TopSpeak extends ModuleListener {
 	}
 
 	@Override
-	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws SQLException {
+	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) {
 
 	}
 
@@ -428,12 +432,15 @@ public class Listener_TopSpeak extends ModuleListener {
 			builder.append("\r\n");
 		}
 		builder.setLength(builder.length() - 2);
+		resultSet.close();
+		resultSet = null;
 		return new String[] {
 				builder.toString()
 		};
 	}
 
-	private File dumpResultSetToCSVFile(Message message) throws SQLException, IOException {
+
+	private File dumpResultSetToCSVFile() {
 		File file = Paths.get(FOLDER_LOGS.getAbsolutePath(), "SQL_result_" + System.currentTimeMillis() + ".csv").toFile();
 		try (FileWriter writer = new FileWriter(file)) {
 			for (int i = 1; i <= colSize; i++) {
@@ -452,6 +459,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			}
 			writer.flush();
 			resultSet.close();
+			resultSet = null;
 		} catch (Exception exception) {
 			return null;
 		}
@@ -477,13 +485,14 @@ public class Listener_TopSpeak extends ModuleListener {
 
 			Trigger_UserDeny userDenyInstance = (Trigger_UserDeny) entry.getTrigger("userdeny");
 
+
 			for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
 
 				long userid = member.getQQId();
 
 				if (entry.isMyself(userid)) continue;
-				if (userDenyInstance.isUserIgnore(userid)) continue;
-				if (userDenyInstance.isGropUserIgnore(gropid, userid)) continue;
+				if (userDenyInstance.isUserIgnore(userid) > 0) continue;
+				if (userDenyInstance.isGropUserIgnore(gropid, userid) > 0) continue;
 
 				String card = entry.getNickname(gropid, userid);
 
@@ -505,6 +514,7 @@ public class Listener_TopSpeak extends ModuleListener {
 			userCardStatement.execute();
 		}
 	}
+
 
 	public void updateSchemaInfo() throws SQLException {
 
@@ -545,8 +555,8 @@ public class Listener_TopSpeak extends ModuleListener {
 					long userid = member.getQQId();
 
 					if (entry.isMyself(userid)) continue;
-					if (userDenyInstance.isUserIgnore(userid)) continue;
-					if (userDenyInstance.isGropUserIgnore(gropid, userid)) continue;
+					if (userDenyInstance.isUserIgnore(userid) > 0) continue;
+					if (userDenyInstance.isGropUserIgnore(gropid, userid) > 0) continue;
 
 					String card = entry.getNickname(gropid, userid);
 

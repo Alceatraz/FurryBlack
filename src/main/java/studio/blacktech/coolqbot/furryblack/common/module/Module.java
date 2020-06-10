@@ -49,6 +49,7 @@ public abstract class Module implements Serializable {
 	// @formatter:off
 
     public Module(
+
             String MODULE_PACKAGENAME,
             String MODULE_COMMANDNAME,
             String MODULE_DISPLAYNAME,
@@ -58,6 +59,7 @@ public abstract class Module implements Serializable {
             String[] MODULE_PRIVACY_STORED,
             String[] MODULE_PRIVACY_CACHED,
             String[] MODULE_PRIVACY_OBTAIN
+
     ) throws Exception {
 
         this.MODULE_PACKAGENAME = MODULE_PACKAGENAME;
