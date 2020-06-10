@@ -19,7 +19,6 @@ import studio.blacktech.coolqbot.furryblack.modules.trigger.Trigger_UserDeny;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +27,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -88,9 +88,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 
 	private Connection connection;
-	private ResultSet resultSet;
-	private int colSize;
-	private int rowSize;
+
 
 	private long FLUSH_DURATION = 60;
 	private long FLUSH_SENTENSE = 10;
@@ -299,45 +297,69 @@ public class Listener_TopSpeak extends ModuleListener {
 			String prefix = null;
 			if (explain) {
 				prefix = "EXPLAIN ";
-			} else if (analyze) {
+			}
+			if (analyze) {
 				prefix = "EXPLAIN ANALYZE ";
 			}
 			String command = (prefix == null ? "" : prefix) + message.getParameterSegment(2);
 
 
-			boolean result;
+			try {
+
+				boolean show = message.hasSwitch("show");
+
+				Statement statement = show ?
+						connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY) :
+						connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+				boolean isResultSet = statement.execute(command);
+
+				int limit = message.hasSwitch("limit") ? Integer.parseInt(message.getSwitch("limit")) : Integer.MAX_VALUE;
 
 
-			try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-				result = statement.execute(command);
-				resultSet = statement.getResultSet();
+				if (isResultSet) {
+					ResultSet resultSet = statement.getResultSet();
+					ResultSetMetaData metaData = resultSet.getMetaData();
+					int columnSize = metaData.getColumnCount();
+					StringBuilder builder = new StringBuilder();
+
+					if (show) {
+						builder.append("命令执行完成 结果集为\r\n");
+						for (int i = 1; i <= columnSize; i++) builder.append(metaData.getColumnName(i)).append("|");
+						builder.setLength(builder.length() - 1);
+						builder.append("\r\n");
+						int count = 0;
+						while (resultSet.next() && count++ < limit) {
+							builder.append("|").append(count).append("|");
+							for (int i = 1; i <= columnSize; i++) builder.append(resultSet.getString(i)).append("|");
+							builder.append("\r\n");
+						}
+						resultSet.close();
+						builder.setLength(builder.length() - 2);
+						return new String[] {
+								builder.toString()
+						};
+					} else {
+						resultSet.last();
+						builder.append("命令执行完成 结果共").append(resultSet.getRow()).append("行");
+						resultSet.close();
+						return new String[] {
+								builder.toString()
+						};
+					}
+				} else {
+					return new String[] {
+							"命令执行完成 无结果集 " + statement.getUpdateCount()
+					};
+				}
+
+
+			} catch (Exception exception) {
+				long serial = logger.exception(exception);
+				return new String[] {
+						"命令执行失败 异常日志索引" + serial
+				};
 			}
-
-
-			if (message.hasSwitch("save")) {
-				return new String[] {
-						"结果保存至" + dumpResultSetToCSVFile()
-				};
-			} else if (message.hasSwitch("show")) {
-				return dumpResultSetToString(message);
-			} else if (result) {
-				return new String[] {
-						"命令执行成功\r\n结果集 " + colSize + "列 × " + rowSize + "行\r\n共" + colSize * rowSize + "项"
-				};
-			} else {
-				return new String[] {
-						"命令执行失败"
-				};
-			}
-
-
-		case "show":
-			return dumpResultSetToString(message);
-
-		case "save":
-			return new String[] {
-					"结果保存至" + dumpResultSetToCSVFile()
-			};
 		}
 
 		return new String[] {
@@ -380,13 +402,13 @@ public class Listener_TopSpeak extends ModuleListener {
 	// ==========================================================================================================================================================
 
 	@Override
-	public boolean doUserMessage(MessageUser message) throws Exception {
+	public boolean doUserMessage(MessageUser message) {
 		return false;
 	}
 
 
 	@Override
-	public boolean doDiszMessage(MessageDisz message) throws Exception {
+	public boolean doDiszMessage(MessageDisz message) {
 		return false;
 	}
 
@@ -421,57 +443,11 @@ public class Listener_TopSpeak extends ModuleListener {
 	}
 
 
-	private String[] dumpResultSetToString(Message message) throws SQLException {
-		int count = 0;
-		int limit = Integer.MAX_VALUE;
-		if (message.hasSwitch("limit")) limit = Integer.parseInt(message.getSwitch("limit"));
-		StringBuilder builder = new StringBuilder();
-		while (resultSet.next() && count++ < limit) {
-			builder.append("|").append(count).append("|");
-			for (int i = 1; i <= colSize; i++) builder.append(resultSet.getString(i)).append("|");
-			builder.append("\r\n");
-		}
-		builder.setLength(builder.length() - 2);
-		resultSet.close();
-		resultSet = null;
-		return new String[] {
-				builder.toString()
-		};
-	}
-
-
-	private File dumpResultSetToCSVFile() {
-		File file = Paths.get(FOLDER_LOGS.getAbsolutePath(), "SQL_result_" + System.currentTimeMillis() + ".csv").toFile();
-		try (FileWriter writer = new FileWriter(file)) {
-			for (int i = 1; i <= colSize; i++) {
-				writer.append("\"");
-				writer.append(resultSet.getMetaData().getColumnName(i).replaceAll("\"", "\"\""));
-				writer.append("\",");
-			}
-			writer.append("\n");
-			while (resultSet.next()) {
-				for (int i = 1; i <= colSize; i++) {
-					writer.append("\"");
-					writer.append(resultSet.getString(i).replaceAll("\"", "\"\""));
-					writer.append("\",");
-				}
-				writer.append("\n");
-			}
-			writer.flush();
-			resultSet.close();
-			resultSet = null;
-		} catch (Exception exception) {
-			return null;
-		}
-		return file;
-	}
-
-
 	public void insertGroupInfo(long gropid) throws SQLException {
 
 		try (
 				PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
-				PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)")
+				PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
 		) {
 
 			Group group = entry.getCQ().getGroupInfo(gropid);
@@ -501,10 +477,9 @@ public class Listener_TopSpeak extends ModuleListener {
 				userCardStatement.setString(3, card);
 				userCardStatement.execute();
 			}
-
 		}
-
 	}
+
 
 	public void insertMemberInfo(Long gropid, long userid) throws SQLException {
 		try (PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)")) {
@@ -754,4 +729,6 @@ public class Listener_TopSpeak extends ModuleListener {
 		}
 	}
 }
+
+
 
