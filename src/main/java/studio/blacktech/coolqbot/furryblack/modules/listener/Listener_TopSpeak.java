@@ -447,7 +447,7 @@ public class Listener_TopSpeak extends ModuleListener {
 
 		try (
 				PreparedStatement gropInfoStatement = connection.prepareStatement("INSERT INTO grop_info VALUES (?,?)");
-				PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)");
+				PreparedStatement userCardStatement = connection.prepareStatement("INSERT INTO user_card VALUES (?,?,?)")
 		) {
 
 			Group group = entry.getCQ().getGroupInfo(gropid);

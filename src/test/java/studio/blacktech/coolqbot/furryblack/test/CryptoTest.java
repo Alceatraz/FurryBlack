@@ -13,8 +13,6 @@ public class CryptoTest {
 	void testHash() {
 
 		HashTool.md5("1234");
-
-
 		RandomTool.nextInt(10);
 
 	}

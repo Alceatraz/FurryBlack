@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -67,7 +68,7 @@ public class Systemd extends Module {
 	private static final String MODULE_COMMANDNAME = "systemd";
 	private static final String MODULE_DISPLAYNAME = "核心模块";
 	private static final String MODULE_DESCRIPTION = "管理所有功能模块并路由所有消息";
-	private static final String MODULE_VERSION = "3.0.5";
+	private static final String MODULE_VERSION = "3.0.6";
 	private static final String[] MODULE_USAGE = new String[] {};
 	private static final String[] MODULE_PRIVACY_STORED = new String[] {};
 	private static final String[] MODULE_PRIVACY_CACHED = new String[] {};
@@ -963,13 +964,42 @@ public class Systemd extends Module {
 
 
 		try (FileWriter writer = new FileWriter(FILE_MEMBERCHANGE, true)) {
+
 			if (isMyself(userid)) {
-				writer.append("# Bot Join Group ").append(LoggerX.datetime()).append("\n");
-				for (Member member : entry.getCQ().getGroupMemberList(gropid)) writer.append(String.valueOf(gropid)).append(":").append(String.valueOf(member.getQQId())).append(":").append(entry.getCQ().getStrangerInfo(member.getQQId()).getNick()).append("\n");
+
+				writer.append("# ");
+				writer.append(LoggerX.datetime(new Date(sendtime)));
+				writer.append(" - Bot Join Group");
+				writer.append("\n");
+
+				for (Member member : entry.getCQ().getGroupMemberList(gropid)) {
+
+					writer.append(String.valueOf(gropid));
+					writer.append(":");
+					writer.append(String.valueOf(member.getQQId()));
+					writer.append(" - ");
+					writer.append(entry.getCQ().getStrangerInfo(member.getQQId()).getNick());
+					writer.append("\n");
+
+				}
+
 			} else {
-				writer.append("# Member Increase ").append(LoggerX.datetime()).append("\n").append(String.valueOf(gropid)).append(":").append(String.valueOf(userid)).append(":").append(entry.getCQ().getStrangerInfo(userid).getNick()).append("\n\n");
+
+				writer.append("# ");
+				writer.append(LoggerX.datetime(new Date(sendtime)));
+				writer.append(" - Member Increase\n");
+				writer.append(String.valueOf(gropid));
+				writer.append(":");
+				writer.append(String.valueOf(userid));
+				writer.append(" - ");
+				writer.append(entry.getCQ().getStrangerInfo(userid).getNick());
+				writer.append("\n");
+
 			}
+
+			writer.append("\n");
 			writer.flush();
+
 		} catch (Exception ignored) {
 
 		}
@@ -985,6 +1015,28 @@ public class Systemd extends Module {
 	 */
 	@Override
 	public void groupMemberDecrease(int typeid, int sendtime, long gropid, long operid, long userid) throws Exception {
+
+		try (FileWriter writer = new FileWriter(FILE_MEMBERCHANGE, true)) {
+
+			writer.append("# ");
+			writer.append(LoggerX.datetime(new Date(sendtime)));
+			if (isMyself(userid)) {
+				writer.append(" - Bot Kicked\n");
+			} else {
+				writer.append(" - Member Decrease\n");
+			}
+			writer.append(String.valueOf(gropid));
+			writer.append(":");
+			writer.append(String.valueOf(userid));
+			writer.append(" - ");
+			writer.append(entry.getCQ().getStrangerInfo(userid).getNick());
+			writer.append("\n\n");
+			writer.flush();
+
+		} catch (Exception ignored) {
+
+		}
+
 		for (String name : TRIGGER_INSTANCE.keySet()) TRIGGER_INSTANCE.get(name).doGroupMemberDecrease(typeid, sendtime, gropid, operid, userid);
 		for (String name : LISTENER_INSTANCE.keySet()) LISTENER_INSTANCE.get(name).doGroupMemberDecrease(typeid, sendtime, gropid, operid, userid);
 		for (String name : EXECUTOR_INSTANCE.keySet()) EXECUTOR_INSTANCE.get(name).doGroupMemberDecrease(typeid, sendtime, gropid, operid, userid);

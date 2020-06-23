@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML5</title>
+</head>
+<body>
+
+<table>
+
+    <tr>
+        <td rowspan="1">1</td>
+        <td rowspan="1">2</td>
+        <td rowspan="1">3</td>
+        <td rowspan="2">1</td>
+        <td rowspan="2">2</td>
+        <td rowspan="2">3</td>
+    </tr>
+
+</table>
+
+</body>
+
+<script type="text/javascript">
+
+    const tdList = document.getElementsByTagName('td');
+
+    for (let item of tdList) {
+        if (item.rowSpan === 2) {
+            console.info(item);
+        }
+    }
+
+</script>
+
+</html>
