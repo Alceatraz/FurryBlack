@@ -968,7 +968,7 @@ public class Systemd extends Module {
 			if (isMyself(userid)) {
 
 				writer.append("# ");
-				writer.append(LoggerX.datetime(new Date(sendtime)));
+				writer.append(LoggerX.datetime(new Date(sendtime * 1000)));
 				writer.append(" - Bot Join Group");
 				writer.append("\n");
 
@@ -986,7 +986,7 @@ public class Systemd extends Module {
 			} else {
 
 				writer.append("# ");
-				writer.append(LoggerX.datetime(new Date(sendtime)));
+				writer.append(LoggerX.datetime(new Date(sendtime * 1000)));
 				writer.append(" - Member Increase\n");
 				writer.append(String.valueOf(gropid));
 				writer.append(":");
